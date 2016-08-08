@@ -15,7 +15,7 @@ module.exports = {
     dbSchema: process.env.dbSchema || null,
 
     // Subscribed Channels
-    channels: process.env.channels.split(' ') || '#sudbury',
+    channels: process.env.channels.split(' ') || '#fsociety',
 
     // Bot Configuration
     nick: process.env.nick || 'AtlasBot',
