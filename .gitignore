@@ -1,0 +1,6 @@
+node_modules
+persist
+*.log
+bot.log
+.env
+.idea

@@ -1,0 +1,10 @@
+{
+  "ecmaVersion": 6,
+  "libs": [],
+  "plugins": {
+    "node": {},
+    "complete_strings": {},
+    "doc_comment": {},
+    "lint": {}
+  }
+}

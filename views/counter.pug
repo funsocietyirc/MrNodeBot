@@ -1,0 +1,32 @@
+extends ./includes/layout.pug
+block title
+	title Channel Statistics module
+block content
+	div.row
+		div.col-md-12
+			div.text-center
+				h1 Last Seen
+				hr
+			table.table.table-striped.sortable
+				thead
+					tr
+						th User
+						th Last Message
+						th(data-defaultsort='enabled') Last Seen
+						th Count
+				tbody
+					each val, index in results
+						tr
+							td!= index
+							td!= val.text
+							// TODO maybe just parse on the actual timestamp?
+							td(data-dateformat="h:mma MMM Do")!= moment(val.timeStamp).format('h:mma MMM Do')
+							td!= val.count
+		div.row
+			div.col-md-12
+				p!= 'Total Count: ' + count
+				p!= 'Total Users: ' + totalUsers
+				p!= 'Administrators: ' + admins
+block body
+	script(src='/assets/moment.min.js')
+	script(src='/assets/bootstrap-sortable.js')
