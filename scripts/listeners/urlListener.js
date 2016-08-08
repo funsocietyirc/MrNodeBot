@@ -33,7 +33,7 @@ module.exports = app => {
         let shortString = color.bgwhite.black.bold('Short:');
         let titleString = color.bgwhite.black.bold('Title:');
         let output = '';
-        if(payload.shortUrl != null && payload.shortUrl.length > 50) {
+        if(payload.shortUrl != null && payload.shortUrl.length > 35) {
             output = output + `${fromString} ${from} ${shortString} ${helpers.ColorHelpArgs(payload.shortUrl)}`;
         }
         if (payload.title != '') {
