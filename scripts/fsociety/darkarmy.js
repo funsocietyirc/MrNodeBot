@@ -15,7 +15,7 @@ let darkChannels = require('../../lib/darkchannels')(process.env.darkArmyChannel
 [
     '#th3g3ntl3man',
     '#darkarmy',
-    '##test'
+    '##funsociety'
 ].forEach( i => {
     darkChannels.push(i);
 });
