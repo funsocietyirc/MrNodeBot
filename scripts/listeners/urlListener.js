@@ -43,6 +43,7 @@ module.exports = app => {
         if(output != '') {
             app.Bot.say(to, output);
         }
+        console.log(output);
     };
 
     // Google API Key required
