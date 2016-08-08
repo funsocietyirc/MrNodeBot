@@ -28,6 +28,7 @@ module.exports = app => {
 
     // Formatting Helper
     const shortSay = (to, from, payload) => {
+        console.log(payload);
         let fromString = color.bgwhite.black.bold('From:');
         let shortString = color.bgwhite.black.bold('Short:');
         let titleString = color.bgwhite.black.bold('Title:');
