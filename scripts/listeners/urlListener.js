@@ -40,7 +40,7 @@ module.exports = app => {
             output = output + space +`${titleString} ${helpers.ColorHelpArgs(payload.title)}`;
         }
         if(output != '') {
-            app.Bot.say(to, output);
+            app.Bot.say(to,`(${from}) ` + output);
         }
     };
 
