@@ -3,7 +3,6 @@ exports.up = function(knex, Promise) {
         table.increments('id').primary();
         table.string('oldnick');
         table.string('newnick');
-        table.string('channels');
         table.timestamp('timestamp').defaultTo(knex.fn.now());
     });
 };

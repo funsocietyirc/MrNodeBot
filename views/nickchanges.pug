@@ -12,14 +12,12 @@ block content
 			table.table.table-striped.sortable
 				thead
 					tr
-						th Old Nick
+						th(data-defaultsort='enabled') Old Nick
 						th New Nick
-						th(data-defaultsort='enabled') Channels
 						th Time Stamp
 				tbody
 					each val in results
 						tr
 							td!= val.oldnick
 							td!= val.newnick
-							td!= val.channels
 							td(data-dateformat="h:mma MMM Do")!= moment(val.created_at).format('h:mma MMM Do')

@@ -15,7 +15,6 @@ module.exports = app => {
         new aliasModel({
                 oldnick: oldnick,
                 newnick: newnick,
-                channels: channels.toString()
             })
             .save()
             .catch(err => {
