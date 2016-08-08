@@ -28,22 +28,20 @@ module.exports = app => {
 
     // Formatting Helper
     const shortSay = (to, from, payload) => {
-        console.log(payload);
         let fromString = color.bgwhite.black.bold('From:');
         let shortString = color.bgwhite.black.bold('Short:');
         let titleString = color.bgwhite.black.bold('Title:');
         let output = '';
-        if(payload.shortUrl != null && payload.shortUrl.length > 35) {
+        if(payload.shortUrl != null && payload.url.length > 35) {
             output = output + `${fromString} ${from} ${shortString} ${helpers.ColorHelpArgs(payload.shortUrl)}`;
         }
-        if (payload.title != '' && payload.url.length > 65) {
+        if (payload.title != '') {
             let space = output == '' ? '' : ' ';
             output = output + space +`${titleString} ${helpers.ColorHelpArgs(payload.title)}`;
         }
         if(output != '') {
             app.Bot.say(to, output);
         }
-        console.log(payload.shortUrl.length);
     };
 
     // Google API Key required
