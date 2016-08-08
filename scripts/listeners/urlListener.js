@@ -36,7 +36,7 @@ module.exports = app => {
         if(payload.shortUrl != null && payload.shortUrl.length > 35) {
             output = output + `${fromString} ${from} ${shortString} ${helpers.ColorHelpArgs(payload.shortUrl)}`;
         }
-        if (payload.title != '') {
+        if (payload.title != '' && payload.url.length > 65) {
             let space = output == '' ? '' : ' ';
             output = output + space +`${titleString} ${helpers.ColorHelpArgs(payload.title)}`;
         }
@@ -126,7 +126,8 @@ module.exports = app => {
 
                     let finalResults = {
                         shortUrl: shortUrl,
-                        title: title
+                        title: title,
+                        url: url,
                     };
                     shortSay(to, from, finalResults);
                     urlCache.set(url, finalResults);
