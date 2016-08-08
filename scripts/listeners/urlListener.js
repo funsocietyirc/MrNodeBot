@@ -101,9 +101,10 @@ module.exports = app => {
                 // Try to extract a title
                 xray(url, 'title')((err, title) => {
                     // If we have an error the page does not exist
-                    if (err || title == '404 File Not Found') {
+                    if (err || title == '404 File Not Found' || title == '') {
                         return;
                     }
+
                     let finalResults = {
                         shortUrl: shortUrl,
                         title: title
