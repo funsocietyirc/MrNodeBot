@@ -29,6 +29,7 @@ module.exports = {
     autoConnect: process.env.autoConnect || false,
     server: process.env.server || 'irc.dal.net',
     ircPort: process.env.ircPort || 6667,
+
     // Nick Servce configuration
     nickservNick: process.env.nickservNick || 'NickServe',
     nickservHost: process.env.nickservHost || null,

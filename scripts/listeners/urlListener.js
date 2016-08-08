@@ -1,3 +1,11 @@
+/**
+    Watch Channels for URLS
+    env options:
+        process.env.googleShortIgnore
+            Space seperated list of channels to ignore for shortner
+        process.env.urlLoggerIgnore
+            Space seperated list of channels to ignore url logging
+**/
 'use strict';
 
 const GoogleUrl = require('google-url');
@@ -23,11 +31,16 @@ module.exports = app => {
         let fromString = color.bgwhite.black.bold('From:');
         let shortString = color.bgwhite.black.bold('Short:');
         let titleString = color.bgwhite.black.bold('Title:');
-        let output = `${fromString} ${from} ${shortString} ${helpers.ColorHelpArgs(payload.shortUrl)}`;
-        if (payload.title != '') {
-            output = output + ` ${titleString} ${helpers.ColorHelpArgs(payload.title)}`;
+        let output = '';
+        if(payload.shortUrl != null && payload.shortUrl.length > 50) {
+            output = output + `${fromString} ${from} ${shortString} ${helpers.ColorHelpArgs(payload.shortUrl)}`;
         }
-        app.Bot.say(to, output);
+        if (payload.title != '') {
+            output = output + output == '' ? '' : ' ' +`${titleString} ${helpers.ColorHelpArgs(payload.title)}`;
+        }
+        if(output != '') {
+            app.Bot.say(to, output);
+        }
     };
 
     // Google API Key required
@@ -42,6 +55,10 @@ module.exports = app => {
 
     // Cache URLS to prevent uncessary API calls
     const urlCache = new HashMap();
+    // Clear cache every hour
+    app.Scheduler.scheduleJob({minute: 0}, () => {
+        urlCache.clear();
+    });
 
     // Log Urls to the Database
     const logUrlInDb = (url, to, from) => {
@@ -97,11 +114,10 @@ module.exports = app => {
                 if (err) {
                     return;
                 }
-
                 // Try to extract a title
                 xray(url, 'title')((err, title) => {
                     // If we have an error the page does not exist
-                    if (err || title == '404 File Not Found' || title == '') {
+                    if (err || title == '404 File Not Found') {
                         return;
                     }
 

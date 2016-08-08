@@ -42,6 +42,9 @@ class MrNodeBot {
         this.Ignore = [];
         this.Admins = [];
 
+        // Assign scheduler
+        this.Scheduler = require('node-schedule');
+
         // // Init the Web server
         this._initWebServer();
         //
@@ -267,6 +270,7 @@ class MrNodeBot {
             this._collections.forEach(item => {
                 eval(`this.${item}.clear();`);
             });
+            // Clear the scheduler
         }
 
         // Load in the models
