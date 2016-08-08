@@ -18,9 +18,9 @@ module.exports = {
     channels: process.env.channels.split(' ') || '#fsociety',
 
     // Bot Configuration
-    nick: process.env.nick || 'AtlasBot',
-    userName: process.env.userName || 'AtlasBot',
-    realName: process.env.realName || 'Atlas NodeJs Bot Framework',
+    nick: process.env.nick || 'MrNodeBotBot',
+    userName: process.env.userName || 'MrNodeBotBot',
+    realName: process.env.realName || 'MrNodeBot NodeJs Bot Framework',
     secure: process.env.secure || false,
     localAddress: process.env.localAddress || null,
     floodProtection: process.env.floodProtection || true,

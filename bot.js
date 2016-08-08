@@ -1,4 +1,4 @@
-/** Atlas IRC Bot By IronY */
+/** MrNodeBot IRC Bot By IronY */
 'use strict';
 
 const HashMap = require('hashmap');
@@ -13,7 +13,7 @@ require('./extensions');
 // Extend For Uncacheing
 require('./lib/uncache')(require);
 
-class Atlas {
+class MrNodeBot {
     constructor(callback) {
         // Assign and normalize callback
         this._callback = callback instanceof Function ? callback : false;
@@ -453,4 +453,4 @@ class Atlas {
 
 }
 
-module.exports = callback => new Atlas(callback);
+module.exports = callback => new MrNodeBot(callback);
