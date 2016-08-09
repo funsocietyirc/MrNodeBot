@@ -1,10 +1,5 @@
 /**
     Watch Channels for URLS
-    env options:
-        process.env.googleShortIgnore
-            Space seperated list of channels to ignore for shortner
-        process.env.urlLoggerIgnore
-            Space seperated list of channels to ignore url logging
 **/
 'use strict';
 
@@ -22,9 +17,9 @@ const xray = require('x-ray')();
 **/
 module.exports = app => {
     // Ignore List For Google shortr responder
-    const googleShortIgnore = process.env.googleShortIgnore ? process.env.googleShortIgnore.split(' ') : [];
+    const googleShortIgnore = app.Config.features.urls.googleShortIgnore;
     // Ignore URL logging for specific channels
-    const urlLoggerIgnore = process.env.urlLoggerIgnore ? process.env.urlLoggerIgnoresplit(' ') : [];
+    const urlLoggerIgnore = app.Config.features.urls.loggingIgnore;
 
     // Formatting Helper
     const shortSay = (to, from, payload) => {
@@ -32,32 +27,32 @@ module.exports = app => {
         let shortString = color.bgwhite.black.bold('Short:');
         let titleString = color.bgwhite.black.bold('Title:');
         let output = '';
-        if(payload.shortUrl != null && payload.url.length > 35) {
+        if (payload.shortUrl != null && payload.url.length > app.Config.features.urls.titleMin) {
             output = output + `${fromString} ${from} ${shortString} ${helpers.ColorHelpArgs(payload.shortUrl)}`;
         }
         if (payload.title != '') {
             let space = output == '' ? '' : ' ';
-            output = output + space +`${titleString} ${helpers.ColorHelpArgs(payload.title)}`;
+            output = output + space + `${titleString} ${helpers.ColorHelpArgs(payload.title.trim())}`;
         }
-        if(output != '') {
-            app.Bot.say(to,`(${from}) ` + output);
+        if (output != '') {
+            app.Bot.say(to, `(${from}) ` + output);
         }
     };
 
     // Google API Key required
-    if (!app.Config.googleAPI) {
+    if (!app.Config.apiKeys.google) {
         return;
     }
 
     // Google API
     const googleUrl = new GoogleUrl({
-        key: app.Config.googleAPI
+        key: app.Config.apiKeys.google
     });
 
     // Cache URLS to prevent uncessary API calls
     const urlCache = new HashMap();
     // Clear cache every hour
-    app.Scheduler.scheduleJob({minute: 0}, () => {
+    app.Scheduler.scheduleJob(app.Config.features.urls.cacheCleanup, () => {
         urlCache.clear();
     });
 

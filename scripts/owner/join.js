@@ -10,7 +10,7 @@ module.exports = app => {
             return;
         }
         let channel = text.getFirst();
-        if(!channel) {
+        if (!channel) {
             app.Bot.say(from, 'I need some more information...');
             return;
         }

@@ -5,33 +5,28 @@ const conLogger = require('../../lib/consoleLogger');
 
 module.exports = app => {
 
-    if (!helpers.IsSet(process.env.twitter_consumer_key) ||
-        !helpers.IsSet(process.env.twitter_consumer_secret) ||
-        !helpers.IsSet(process.env.twitter_access_token_key) ||
-        !helpers.IsSet(process.env.twitter_token_secret)) {
+    // Only load if we have the proper twitter credentials
+    if (!app.Config.apiKeys.twitter.consumerKey ||
+        !app.Config.apiKeys.twitter.consumerSecret ||
+        !app.Config.apiKeys.twitter.tokenKey ||
+        !app.Config.apiKeys.twitter.tokenSecret) {
         return false;
     }
-    const client = new Twitter({
-        consumer_key: process.env.twitter_consumer_key,
-        consumer_secret: process.env.twitter_consumer_secret,
-        access_token_key: process.env.twitter_access_token_key,
-        access_token_secret: process.env.twitter_token_secret,
-    });
 
-    // People to follow
-    const followers =  'whoismrrobot, samesmail, mrrobotquotes';
-    // Associated to channels
-    const channels = [
-        '#fsociety'
-    ] || [];
+    const client = new Twitter({
+        consumer_key: app.Config.apiKeys.twitter.consumerKey,
+        consumer_secret: app.Config.apiKeys.twitter.consumerSecret,
+        access_token_key: app.Config.apiKeys.twitter.tokenKey,
+        access_token_secret: app.Config.apiKeys.twitter.tokenSecret,
+    });
 
     const watcher = () => {
         client.stream('user', {
-            with: followers
+            with: app.Config.features.twitter.followers
         }, function(stream) {
             stream.on('data', function(tweet) {
-                channels.forEach((chan) => {
-                    if(helpers.IsSet(tweet.text)) {
+                app.Config.features.twitter.channels.forEach((chan) => {
+                    if (helpers.IsSet(tweet.text)) {
                         app.Bot.say(chan, `[Twitter] @${tweet.user.screen_name}: ${tweet.text}`);
                     }
                 });

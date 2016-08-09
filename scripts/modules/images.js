@@ -26,8 +26,7 @@ module.exports = app => {
                         if (!good) {
                             // If not delete url
                             new urlModel().query(qb => {
-                                qb.where(function () {
-                                    console.log(`Deleting URL: ${url}`)
+                                qb.where(function() {
                                     this.where('url', url);
                                 });
                             }).destroy();

@@ -47,11 +47,11 @@ module.exports = app => {
     };
 
     // Update only works in production as to not git pull away any new changes
-        app.Commands.set('update', {
-            desc: 'Hot swap out the Bot, if hard is specified it will do a hard reboot',
-            access: app.Config.accessLevels.owner,
-            call: upgrade
-        });
+    app.Commands.set('update', {
+        desc: 'Hot swap out the Bot, if hard is specified it will do a hard reboot',
+        access: app.Config.accessLevels.owner,
+        call: upgrade
+    });
 
     // Live reload the scripts
     app.Commands.set('reload', {

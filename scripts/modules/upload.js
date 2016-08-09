@@ -84,8 +84,7 @@ module.exports = app => {
 
                 // Move the image to the uploads dir
                 let fileName = `${randToken.generate(6)}${path.extname(file.name)}`;
-
-                file.mv(path.resolve('uploads/') + fileName, err => {
+                file.mv(app.AppRoot + '/uploads/' + fileName, err => {
                     // if something went wrong, return
                     if (err) {
                         res.send('Something went wrong with the image upload');
@@ -95,7 +94,8 @@ module.exports = app => {
                     // Add the Url to the database
                     if (app.Models.has('url')) {
                         let url = app.Models.get('url');
-                        let urlPath = `${req.protocol}://${req.get('host')}/uploads/${fileName}`;
+                        let host = app.Config.express.address;
+                        let urlPath = `${host}/uploads/${fileName}`;
                         new url({
                                 url: urlPath,
                                 to: tResults.get('channel'),

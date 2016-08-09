@@ -45,8 +45,8 @@ module.exports = app => {
                 procUptime.toFixed(2),
                 procText()
             ),
-            app.Config.nodeConfig.repository.url, // 8
-            app.Config.nodeConfig.author // 9
+            app.Config.project.repository.url, // 8
+            app.Config.project.author // 9
         );
 
         app.Bot.say(to, out);

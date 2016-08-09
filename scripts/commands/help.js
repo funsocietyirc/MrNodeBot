@@ -57,7 +57,7 @@ module.exports = app => {
         });
 
         res.render('commands', {
-            results: _.sortBy(results,'access')
+            results: _.sortBy(results, 'access')
         });
     };
 

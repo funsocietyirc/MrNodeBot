@@ -9,7 +9,7 @@ const helpers = require('../../helpers');
 **/
 module.exports = app => {
     const changes = (to, from, text, message) => {
-        gitlog(app.Config.gitlog, function(error, commits) {
+        gitlog(app.Config.gitLog, function(error, commits) {
 
             // Exit on error
             if (error) {
@@ -35,7 +35,7 @@ module.exports = app => {
 
             // Last commit link
             if (commits && commits[0]) {
-                app.Bot.say(from, `Last Commit: ${app.Config.nodeConfig.repository.url}/commit/${commits[0].abbrevHash}`);
+                app.Bot.say(from, `Last Commit: ${app.Config.project.repository.url}/commit/${commits[0].abbrevHash}`);
             }
         });
     };

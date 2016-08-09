@@ -5,7 +5,7 @@
   Commands: yoda
 **/
 module.exports = app => {
-    if (!app.Config.mashableAPI) {
+    if (!app.Config.apiKeys.mashable) {
         return;
     }
 
