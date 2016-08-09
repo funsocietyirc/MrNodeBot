@@ -24,7 +24,7 @@ module.exports = app => {
     };
 
     const listen = (to, from, text, message, is) => {
-        if (conversational && !is.triggered && app.random.bool(1, is.privMsg ? 1 : 500)(app.randomEngine)) {
+        if (!app.Config.features.conversational.ignoredChans.contains(to) && conversational && !is.triggered && app.random.bool(1, is.privMsg ? 1 : app.Config.features.conversational.randomChance)(app.randomEngine)) {
             var replyText = chatBot.answer(text).replaceAll('<br>', '');
             app.Bot.say(to, `${from}, ${replyText}`);
         }
@@ -37,7 +37,7 @@ module.exports = app => {
     });
 
     app.Listeners.set('converse', {
-        desc: 'Provides a one in five hundred chance of random reply to message',
+        desc: `Provides a 1 in ${app.Config.features.conversational.randomChance} chance of random reply to message`,
         call: listen
     });
 
