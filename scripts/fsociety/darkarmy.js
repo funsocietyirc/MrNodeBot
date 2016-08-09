@@ -16,7 +16,7 @@ module.exports = app => {
 
     // Grab a list of the 'darm army channels'
     let darkChannels = app.Config.features.darkArmy.additionalChannels.concat(require('../../lib/darkchannels')(app.Config.features.darkArmy.totalChannels));
-    
+
     // Join the dark army channels
     const joinChannels = () => {
         if (!darkChannels.length) {
@@ -41,7 +41,7 @@ module.exports = app => {
     // will be turned on if process.env.darkArmReport is set to true
     const onJoin = (channel, nick, message) => {
         if (nick != app.Bot.nick && darkChannels.indexOf(channel) > -1) {
-            if (app.Config.features.darkArm.report) {
+            if (app.Config.features.darkArmy.report) {
                 app.Bot.say(app.Config.owner.nick, `${nick} joined the Dark Army Channel:  ${channel}`);
             }
             // Defer for twenty seconds in the avent the join order is out of whack
