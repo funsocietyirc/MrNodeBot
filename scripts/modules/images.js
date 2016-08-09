@@ -6,23 +6,18 @@ const checkUrl = require('../../lib/checkUrl');
 module.exports = app => {
     const urlModel = app.Models.get('url');
 
-    // Get all the images in the log
-    const imageQuery = function(qb) {
-        return qb
-            .where('url', 'like', '%.jpeg')
-            .orWhere('url', 'like', '%.jpg')
-            .orWhere('url', 'like', '%.gif')
-            .orWhere('url', 'like', '%.png');
-    };
 
     // Clean the DB of stagnet URLS
     const cleanUrls = () => {
         new urlModel().query(qb => {
-            this
-                .where('url', 'like', '%.jpeg')
-                .orWhere('url', 'like', '%.jpg')
-                .orWhere('url', 'like', '%.gif')
-                .orWhere('url', 'like', '%.png');
+                // Build Up Query
+                qb.where(function() {
+                    this
+                        .where('url', 'like', '%.jpeg')
+                        .orWhere('url', 'like', '%.jpg')
+                        .orWhere('url', 'like', '%.gif')
+                        .orWhere('url', 'like', '%.png');
+                });
             })
             .fetchAll()
             .then(results => {
@@ -56,7 +51,14 @@ module.exports = app => {
                     qb.where('from', req.params.user);
                 }
 
-                imageQuery(qb)
+                // Build Up Query
+                qb.where(function() {
+                        this
+                            .where('url', 'like', '%.jpeg')
+                            .orWhere('url', 'like', '%.jpg')
+                            .orWhere('url', 'like', '%.gif')
+                            .orWhere('url', 'like', '%.png');
+                    })
                     .orderBy('timestamp', req.query.sort || 'desc')
                     .limit(req.query.length || 50);
             })
