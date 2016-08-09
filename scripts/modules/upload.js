@@ -85,7 +85,7 @@ module.exports = app => {
                 // Move the image to the uploads dir
                 let fileName = `${randToken.generate(6)}${path.extname(file.name)}`;
 
-                file.mv(path.resolve('uploads/') + fileName, err => {
+                file.mv(path.dirname(require.main.filename) + '/uploads/' + fileName, err => {
                     // if something went wrong, return
                     if (err) {
                         res.send('Something went wrong with the image upload');

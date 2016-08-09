@@ -6,17 +6,19 @@ const checkUrl = require('../../lib/checkUrl');
 module.exports = app => {
     const urlModel = app.Models.get('url');
 
+    // Get all the images in the log
+    const imageQuery = function(qb) {
+        qb
+            .where('url', 'like', '%.jpeg')
+            .orWhere('url', 'like', '%.jpg')
+            .orWhere('url', 'like', '%.gif')
+            .orWhere('url', 'like', '%.png');
+    };
+
     // Clean the DB of stagnet URLS
     const cleanUrls = () => {
         new urlModel().query(qb => {
-                // Build Up Query
-                qb.where(function() {
-                    this
-                        .where('url', 'like', '%.jpeg')
-                        .orWhere('url', 'like', '%.jpg')
-                        .orWhere('url', 'like', '%.gif')
-                        .orWhere('url', 'like', '%.png');
-                });
+                imageQuery(qb);
             })
             .fetchAll()
             .then(results => {
@@ -26,7 +28,7 @@ module.exports = app => {
                         if (!good) {
                             // If not delete url
                             new urlModel().query(qb => {
-                                qb.where(function () {
+                                qb.where(function() {
                                     console.log(`Deleting URL: ${url}`)
                                     this.where('url', url);
                                 });
@@ -50,14 +52,7 @@ module.exports = app => {
                     qb.where('from', req.params.user);
                 }
 
-                // Build Up Query
-                qb.where(function() {
-                        this
-                            .where('url', 'like', '%.jpeg')
-                            .orWhere('url', 'like', '%.jpg')
-                            .orWhere('url', 'like', '%.gif')
-                            .orWhere('url', 'like', '%.png');
-                    })
+                imageQuery(qb)
                     .orderBy('timestamp', req.query.sort || 'desc')
                     .limit(req.query.length || 50);
             })
