@@ -22,12 +22,15 @@ module.exports = app => {
             .then(results => {
                 results.pluck('url').forEach(url => {
                     // Check if url is valid
-                    if (!checkUrl(url)) {
-                        // If not delete url
-                        new UrlModel({
-                            url: url
-                        }).destroy();
-                    }
+                    checkUrl(url, good => {
+                        if (!good) {
+                            // If not delete url
+                            new UrlModel({
+                                url: url
+                            }).destroy();
+                        }
+                    });
+
                 });
             });
     };
