@@ -58,7 +58,7 @@ module.exports = app => {
                     return;
                 }
                 // Exit if trying to remove owner
-                if (String(user).toLowerCase() == String(app.Config.ownerNick).toLocaleLowerCase()) {
+                if (String(user).toLowerCase() == String(app.Config.owner.nick).toLocaleLowerCase()) {
                     app.Bot.say(from, `You cannot remove ${user} because ${user} owns me..`);
                     return;
                 }

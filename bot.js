@@ -19,13 +19,13 @@ class MrNodeBot {
         this._callback = callback instanceof Function ? callback : false;
 
         // Configuration Object
-        this.Config = require('./config');
+        this.Config = require('./newconfig');
 
         // Set Script Directories
-        this._scriptDirectories = this.Config.scripts;
+        this._scriptDirectories = this.Config.bot.scripts;
 
         // Set Model location
-        this._modelDirectories = this.Config.models;
+        this._modelDirectories = this.Config.bot.models;
 
         // Grab the IRC instance
         this.Bot = require('./lib/bot');
@@ -70,20 +70,20 @@ class MrNodeBot {
     _initWebServer() {
         conLogger('Starting Web Server...', 'info');
         this.WebServer = require('./lib/webServer')(this);
-        conLogger(`Web Server started on port ${this.Config.expressConfig.port}`, 'success');
+        conLogger(`Web Server started on port ${this.Config.express.port}`, 'success');
     }
 
     _initIrc() {
         conLogger('Connecting to IRC', 'info');
         // Connect the Bot to the irc network
         this.Bot.connect(20, () => {
-            conLogger(`Connected to ${this.Config.server} as ${this.Bot.nick}`, 'success');
+            conLogger(`Connected to ${this.Config.irc.server} as ${this.Bot.nick}`, 'success');
 
             // If there is a password and we are on the same nick we were configured for, identify
-            if (this.Config.nickservPass && this.Config.nick == this.Bot.nick) {
-                let first = this.Config.nickservHost ? `@${this.Config.nickservHost}` : '';
-                let nickserv = `${this.Config.nickservNick}${first}`;
-                this.Bot.say(nickserv, `identify ${this.Config.nickservPass}`);
+            if (this.Config.nickserv.password && this.Config.irc.nick == this.Bot.nick) {
+                let first = this.Config.nickserv.host ? `@${this.Config.nickserv.host}` : '';
+                let nickserv = `${this.Config.nickserv.nick}${first}`;
+                this.Bot.say(nickserv, `identify ${this.Config.nickserv.password}`);
             }
 
             this._loadDynamicAssets();
@@ -96,7 +96,7 @@ class MrNodeBot {
     }
 
     _initDbSubSystem() {
-        if (this.Config.dbEngine) {
+        if (this.Config.knex.enabled) {
             conLogger('Initializing Database Sub System', 'info');
             this.Database = require('./lib/orm');
 
@@ -257,7 +257,7 @@ class MrNodeBot {
             }
             // Default to owner nick if no admin list exists
             else {
-                this.Admins = [String(this.Config.ownerNick).toLocaleLowerCase()];
+                this.Admins = [String(this.Config.owner.nick).toLocaleLowerCase()];
                 storage.setItemSync('admins', this.Admins);
             }
             conLogger(`Total Administrators: ${this.Admins.length}`, 'info');
@@ -282,7 +282,7 @@ class MrNodeBot {
         });
 
         // Load in the Scripts
-        if (this.Config.disableScripts) {
+        if (!this.Config.disableScripts) {
             this._scriptDirectories.forEach(script => {
                 this._loadScriptsFromDir(script);
             });
@@ -382,15 +382,15 @@ class MrNodeBot {
                     });
                     // Send a check to nickserv to see if the user is registered
                     // Will spawn the notice listener to do the rest of the work
-                    let first = app.Config.nickservHost ? `@${app.Config.nickservHost}` : '';
-                    app.Bot.say(`${app.Config.nickservNick}${first}`, `acc ${from}`);
+                    let first = app.Config.nickserv.host ? `@${app.Config.nickserv.host}` : '';
+                    app.Bot.say(`${app.Config.nickserv.nick}${first}`, `acc ${from}`);
                 }
             }
         }
     }
 
     _handleAuthedCommands(app, nick, to, text, message) {
-        if (String(nick).toLowerCase() === String(app.Config.nickservNick).toLowerCase()) {
+        if (String(nick).toLowerCase() === String(app.Config.nickserv.nick).toLowerCase()) {
             let textArray = text.split(' '),
                 user = textArray[0],
                 acc = textArray[1],
@@ -406,7 +406,7 @@ class MrNodeBot {
                     admTextArray = admCall.text.split(' ');
 
                 // Check if the user is identified, pass it along in the is object
-                admCall.is.identified = code == app.Config.nickservAccCode;
+                admCall.is.identified = code == app.Config.nickserv.accCode;
 
                 // Clean the output
                 admTextArray.splice(0, admCall.to === admCall.from ? 1 : 2);
@@ -421,7 +421,7 @@ class MrNodeBot {
                         (admCmd.access === app.Config.accessLevels.owner);
 
                     let unauthorized =
-                        (admCmd.access == app.Config.accessLevels.owner && admCall.from !== app.Config.ownerNick) || (admCmd.access === app.Config.accessLevels.admin && !app.Admins.contains(String(admCall.from).toLowerCase()));
+                        (admCmd.access == app.Config.accessLevels.owner && admCall.from !== app.Config.owner.nick) || (admCmd.access === app.Config.accessLevels.admin && !app.Admins.contains(String(admCall.from).toLowerCase()));
 
                     // Alert user of failed administrative command attempts
                     if (admCmd.access === app.Config.accessLevels.admin && !app.Admins.contains(String(admCall.from).toLowerCase())) {

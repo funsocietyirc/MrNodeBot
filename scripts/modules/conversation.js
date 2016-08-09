@@ -15,7 +15,7 @@ const chatBot = (function() {
 **/
 module.exports = app => {
     // See if we are conversational or not
-    let conversational = process.env.converse || false;
+    let conversational = app.Config.features.conversational.enabled;
 
     const converse = (to, from, text, message) => {
         conversational = !conversational;

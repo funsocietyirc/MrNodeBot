@@ -1,33 +1,23 @@
 /*
     Dark Army Channel Module
     - Join a list of channels following a bitshift algo
-    Variables:
-    process.env.darkArmyChannels Total Number of channels to Load (Default 5)
-    process.env.darkArmyReport set to true if you want the bot to alert you that someone joined (defaults false)
-    process.env.darkArmyDelay the dealy between joining channels, to prevent flood kick in seconds (defaults to 5 seconds)
 */
 'use strict';
 const conLogger = require('../../lib/consoleLogger');
-const totalChans = 5;
-const timeDelay = 5;
-
-let darkChannels = require('../../lib/darkchannels')(process.env.darkArmyChannels || totalChans);
-[
-    '#th3g3ntl3man',
-    '#darkarmy',
-    '##funsociety'
-].forEach( i => {
-    darkChannels.push(i);
-});
 
 module.exports = app => {
 
+    let darkChannels = require('../../lib/darkchannels')(app.Config.features.darkArmy.totalChannels);
+    app.Config.features.darkArmy.additionalChannels.forEach( i => {
+        darkChannels.push(i);
+    });
+
     // Join the dark army channels
     const joinChannels = () => {
-        let interval = (process.env.darkArmyDelay || timeDelay) * 1000; // In seconds
+        let interval = app.Config.features.darkArmy.delay * 1000; // In seconds
         let timeMessage = `I am joining the Dark Army! It will take me ` + interval * darkChannels.length + ` seconds...`;
         if (app.Config.debug) {
-            app.Bot.say(app.Config.ownerNick, timeMessage);
+            app.Bot.say(app.Config.owner.nick, timeMessage);
         }
         conLogger(timeMessage, 'info');
         for (var i = 0; i < darkChannels.length; i++) {
@@ -40,26 +30,26 @@ module.exports = app => {
     // Report back if anyone joins them (to owner)
     // will be turned on if process.env.darkArmReport is set to true
     const onJoin = (channel, nick, message) => {
-        if (nick != app.Bot.nick && (channel == '##test' || darkChannels.indexOf(channel) > -1)) {
-            if (process.env.darkArmyReport) {
-                app.Bot.say(app.Config.ownerNick, `${nick} joined the Dark Army Channel:  ${channel}`);
+        if (nick != app.Bot.nick && darkChannels.indexOf(channel) > -1) {
+            if (app.Config.features.darkArm.report) {
+                app.Bot.say(app.Config.owner.nick, `${nick} joined the Dark Army Channel:  ${channel}`);
             }
             // Defer for twenty seconds in the avent the join order is out of whack
             setTimeout(() => {
                 // Check to see if they are in channel
                 if (!app.Bot.isInChannel('#fsociety', nick)) {
                         app.Bot.say(nick, 'The time is now, #Fsociety needs your help. Joins us.');
-                        app.Bot.send('invite', nick, '#fsociety');
+                        app.Bot.send('invite', nick, app.Config.features.darkArmy.mainChannel);
                 }
-            },20000);
+            },app.Config.features.darkArmy.greeterDealy*1000);
         }
     };
 
     // Topic lock if possible
     const topicLock = (channel, topic, nick, message) => {
         if (darkChannels.indexOf(channel) > -1 && !app.Bot.isTopicLocked(channel)) {
-            if (topic.indexOf("#fsociety") == -1 || topic == '') {
-                app.Bot.send('topic', channel, `${topic} | #fsociety`);
+            if (topic.indexOf(app.Config.features.darkArmy.mainChannel) == -1 || topic == '') {
+                app.Bot.send('topic', channel, `${topic} | ${app.Config.features.darkArmy.mainChannel}`);
             }
         }
     };

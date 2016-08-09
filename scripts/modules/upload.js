@@ -94,7 +94,7 @@ module.exports = app => {
                     // Add the Url to the database
                     if (app.Models.has('url')) {
                         let url = app.Models.get('url');
-                        let host = app.Config.webHost != null ?  app.Config.webHost :  `${req.protocol}://${req.get('host')}`;
+                        let host = app.Config.express.address;
                         let urlPath = `${host}/uploads/${fileName}`;
                         new url({
                                 url: urlPath,
