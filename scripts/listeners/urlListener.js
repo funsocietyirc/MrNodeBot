@@ -37,7 +37,7 @@ module.exports = app => {
         }
         if (payload.title != '') {
             let space = output == '' ? '' : ' ';
-            output = output + space +`${titleString} ${helpers.ColorHelpArgs(payload.title)}`;
+            output = output + space +`${titleString} ${helpers.ColorHelpArgs(payload.title.trim())}`;
         }
         if(output != '') {
             app.Bot.say(to,`(${from}) ` + output);
