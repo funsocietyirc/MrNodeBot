@@ -67,6 +67,7 @@ module.exports = {
     },
 
     // Express Web Server Config
+    webHost: process.env.webHost || null,
     expressConfig: {
         port: process.env.expressPort || false
     },

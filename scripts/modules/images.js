@@ -8,7 +8,7 @@ module.exports = app => {
 
     // Get all the images in the log
     const imageQuery = function(qb) {
-        qb
+        return qb
             .where('url', 'like', '%.jpeg')
             .orWhere('url', 'like', '%.jpg')
             .orWhere('url', 'like', '%.gif')
@@ -18,7 +18,11 @@ module.exports = app => {
     // Clean the DB of stagnet URLS
     const cleanUrls = () => {
         new urlModel().query(qb => {
-                imageQuery(qb);
+            this
+                .where('url', 'like', '%.jpeg')
+                .orWhere('url', 'like', '%.jpg')
+                .orWhere('url', 'like', '%.gif')
+                .orWhere('url', 'like', '%.png');
             })
             .fetchAll()
             .then(results => {

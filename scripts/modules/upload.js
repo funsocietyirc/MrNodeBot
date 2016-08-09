@@ -94,7 +94,8 @@ module.exports = app => {
                     // Add the Url to the database
                     if (app.Models.has('url')) {
                         let url = app.Models.get('url');
-                        let urlPath = `${req.protocol}://${req.get('host')}/uploads/${fileName}`;
+                        let host = app.Config.webHost  || `${req.protocol}://${req.get('host')}`;
+                        let urlPath = `${host}/uploads/${fileName}`;
                         new url({
                                 url: urlPath,
                                 to: tResults.get('channel'),
