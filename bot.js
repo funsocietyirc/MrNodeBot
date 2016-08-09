@@ -270,7 +270,7 @@ class MrNodeBot {
             this._collections.forEach(item => {
                 eval(`this.${item}.clear();`);
             });
-            // Clear the scheduler
+
         }
 
         // Load in the models
