@@ -48,7 +48,7 @@ module.exports = app => {
         });
     };
 
-    app.Commands.set('tracker', {
+    app.Commands.set('track', {
         desc: 'Track someone',
         access: app.Config.accessLevels.admin,
         call: tracker

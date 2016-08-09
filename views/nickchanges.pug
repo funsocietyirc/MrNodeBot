@@ -20,4 +20,4 @@ block content
 						tr
 							td!= val.oldnick
 							td!= val.newnick
-							td(data-dateformat="h:mma MMM Do")!= moment(val.created_at).format('h:mma MMM Do')
+							td(data-dateformat="h:mma MMM Do")!= moment(val.timestamp).format('h:mma MMM Do')

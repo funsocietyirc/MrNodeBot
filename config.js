@@ -24,7 +24,7 @@ module.exports = {
     secure: process.env.secure || false,
     localAddress: process.env.localAddress || null,
     floodProtection: process.env.floodProtection || true,
-    floodProtectionDelay: process.env.floodProtectionDelay || 250,
+    floodProtectionDelay: process.env.floodProtectionDelay || 1000,
     autoRejoin: process.env.autoRejoin || true,
     autoConnect: process.env.autoConnect || false,
     server: process.env.server || 'irc.dal.net',
