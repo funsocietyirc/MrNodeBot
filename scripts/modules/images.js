@@ -25,8 +25,10 @@ module.exports = app => {
                     checkUrl(url, good => {
                         if (!good) {
                             // If not delete url
-                            new urlModel({
-                                url: url
+                            new urlModel().query(qb => {
+                                qb.where(function () {
+                                    this.where('url', url);
+                                });
                             }).destroy();
                         }
                     });
