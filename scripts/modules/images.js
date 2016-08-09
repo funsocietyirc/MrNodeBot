@@ -25,7 +25,7 @@ module.exports = app => {
                     checkUrl(url, good => {
                         if (!good) {
                             // If not delete url
-                            new UrlModel({
+                            new urlModel({
                                 url: url
                             }).destroy();
                         }
