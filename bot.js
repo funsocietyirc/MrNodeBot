@@ -45,6 +45,9 @@ class MrNodeBot {
         // Assign scheduler
         this.Scheduler = require('node-schedule');
 
+	// Track root path
+	this.AppRoot = require('app-root-path');
+
         // // Init the Web server
         this._initWebServer();
         //
