@@ -158,7 +158,7 @@ class MrNodeBot {
 
         // Catch all to prevent drop on error
         this.Bot.addListener('error', message => {
-            conLogger(`Client Error: ${message}`, 'error');
+            // This can now be turned on by setting showErrors in the bot configuration
         });
 
         conLogger('Listeners Initialized', 'success');

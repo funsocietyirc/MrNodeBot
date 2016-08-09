@@ -1,15 +1,12 @@
 // This configuration file is used primary by the knex cli tool
 var config = require('./config');
+// Switch between engines
+const knexConfig = config.knex.engine === 'sqlite' ? config.knex.sqlite : config.knex.mysql;
+
 module.exports = {
     development: {
-        client: config.dbEngine,
-        connection: {
-            host     : config.dbHost,
-            user     : config.dbUser,
-            password : config.dbPass,
-            database : config.dbSchema,
-            charset  : 'utf8'
-        },
+        client: knexConfig.client,
+        connection: knexConfig.connection,
         pool: {
             min: 2,
             max: 10

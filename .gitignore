@@ -3,3 +3,4 @@ persist
 *.log
 .idea
 config.js
+data.sqlite
