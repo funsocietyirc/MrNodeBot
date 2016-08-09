@@ -6,12 +6,17 @@
 const conLogger = require('../../lib/consoleLogger');
 
 module.exports = app => {
+    // Check to see if a main channel has been Set, if not bail out
+    if (app.Config.features.darkArmy.mainChannel === '') {
+        return;
+    }
 
-    let darkChannels = require('../../lib/darkchannels')(app.Config.features.darkArmy.totalChannels);
-    app.Config.features.darkArmy.additionalChannels.forEach(i => {
-        darkChannels.push(i);
-    });
+    // Join main channel
+    app.Bot.join(app.Config.features.darkArmy.mainChannel);
 
+    // Grab a list of the 'darm army channels'
+    let darkChannels = app.Config.features.darkArmy.additionalChannels.concat(require('../../lib/darkchannels')(app.Config.features.darkArmy.totalChannels));
+    
     // Join the dark army channels
     const joinChannels = () => {
         if (!darkChannels.length) {
