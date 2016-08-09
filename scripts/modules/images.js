@@ -1,11 +1,45 @@
 'use strict';
 const _ = require('lodash');
+const checkUrl = require('../../lib/checkUrl');
 
 // Display a list of images in the Web Front end
 module.exports = app => {
+    const urlModel = app.Models.get('url');
+
+    // Clean the DB of stagnet URLS
+    const cleanUrls = () => {
+        new urlModel().query(qb => {
+                // Build Up Query
+                qb.where(function() {
+                    this
+                        .where('url', 'like', '%.jpeg')
+                        .orWhere('url', 'like', '%.jpg')
+                        .orWhere('url', 'like', '%.gif')
+                        .orWhere('url', 'like', '%.png');
+                });
+            })
+            .fetchAll()
+            .then(results => {
+                results.pluck('url').forEach(url => {
+                    // Check if url is valid
+                    checkUrl(url, good => {
+                        if (!good) {
+                            // If not delete url
+                            new urlModel().query(qb => {
+                                qb.where(function () {
+                                    console.log(`Deleting URL: ${url}`)
+                                    this.where('url', url);
+                                });
+                            }).destroy();
+                        }
+                    });
+
+                });
+            });
+    };
+
     // Web Front End
     const images = (req, res) => {
-        let urlModel = app.Models.get('url');
         new urlModel().query(qb => {
                 // If there is a channel in the query string
                 if (req.params.channel) {
@@ -17,8 +51,7 @@ module.exports = app => {
                 }
 
                 // Build Up Query
-                qb
-                    .where(function() {
+                qb.where(function() {
                         this
                             .where('url', 'like', '%.jpeg')
                             .orWhere('url', 'like', '%.jpg')
@@ -53,5 +86,16 @@ module.exports = app => {
             path: '/images/:channel?/:user?',
             name: 'urls'
         });
+        // Command to clean URLS
+        // Command
+        app.Commands.set('clean-images', {
+            desc: 'clean images from the logging database if they are no longer relevent',
+            access: app.Config.accessLevels.owner,
+            call: cleanUrls
+        });
+        // Schedule Job every hour to verify images still exist
+        app.Scheduler.scheduleJob({
+            hour: 23
+        }, cleanUrls);
     }
 };
