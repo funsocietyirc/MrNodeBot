@@ -44,15 +44,12 @@ module.exports = app => {
             if (process.env.darkArmyReport) {
                 app.Bot.say(app.Config.ownerNick, `${nick} joined the Dark Army Channel:  ${channel}`);
             }
+            // Defer for twenty seconds in the avent the join order is out of whack
             setTimeout(() => {
                 // Check to see if they are in channel
                 if (!app.Bot.isInChannel('#fsociety', nick)) {
-                    setTimeout(() => {
                         app.Bot.say(nick, 'The time is now, #Fsociety needs your help. Joins us.');
-                    });
-                    setTimeout(() => {
                         app.Bot.send('invite', nick, '#fsociety');
-                    }, 4000);
                 }
             },20000);
         }
