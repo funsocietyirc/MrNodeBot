@@ -19,7 +19,7 @@ class MrNodeBot {
         this._callback = callback instanceof Function ? callback : false;
 
         // Configuration Object
-        this.Config = require('./newconfig');
+        this.Config = require('./config');
 
         // Set Script Directories
         this._scriptDirectories = this.Config.bot.scripts;
