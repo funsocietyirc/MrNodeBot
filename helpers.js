@@ -26,10 +26,14 @@ exports.timeFormat = d => {
 // String representation of access level
 exports.accessString = str => {
     switch (str) {
-        case 0: return 'Guest';
-        case 1: return 'Identified';
-        case 2: return 'Administrator';
-        case 3: return 'Owner'
+        case 0:
+            return 'Guest';
+        case 1:
+            return 'Identified';
+        case 2:
+            return 'Administrator';
+        case 3:
+            return 'Owner'
     }
 };
 

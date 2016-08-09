@@ -68,7 +68,7 @@ module.exports = {
             sqlite: {
                 client: 'sqlite3',
                 connection: {
-                    filename: "./mydb.sqlite"
+                    filename: "./data.sqlite"
                 }
             }
         }
@@ -143,7 +143,8 @@ module.exports = {
             ]
         },
         conversational: {
-            enabled: false
+            enabled: false,
+            ignoredChans: []
         }
     },
 };

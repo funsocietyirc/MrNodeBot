@@ -23,7 +23,7 @@ module.exports = app => {
     };
 
     const frontEnd = (req, res) => {
-        new aliasModel().fetchAll().then( results => {
+        new aliasModel().fetchAll().then(results => {
             res.render('nickchanges', {
                 results: results.toJSON(),
                 moment: require('moment')

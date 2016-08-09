@@ -10,8 +10,8 @@ module.exports = app => {
             return;
         }
         let nick = text.getFirst();
-        let  body = text.stripFirst();
-        if(!nick || !body) {
+        let body = text.stripFirst();
+        if (!nick || !body) {
             app.Bot.say(to, 'I need some more information...');
             return;
         }

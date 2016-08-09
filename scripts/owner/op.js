@@ -11,8 +11,8 @@ module.exports = app => {
         }
         let txtArray = text.split(' ');
         let channel = txtArray[0];
-        let  nick = txtArray[1];
-        if(!channel || !nick) {
+        let nick = txtArray[1];
+        if (!channel || !nick) {
             app.Bot.say(to, 'I need some more information...');
             return;
         }

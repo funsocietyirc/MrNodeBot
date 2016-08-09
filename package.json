@@ -1,55 +1,55 @@
 {
-  "name": "MrNodeBot",
-  "version": "0.1.1",
-  "description": "FSocietys NodeJS IRC Bot",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "Dave Richer <dave@develops.io>",
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/funsocietyirc/MrNodeBot"
-  },
-  "keywords": [
-    "irc",
-    "bot",
-    "fsociety"
-  ],
-  "dependencies": {
-    "app-root-path": "^1.3.0",
-    "body-parser": "^1.15.0",
-    "bookshelf": "^0.10.0",
-    "bot": "0.0.3",
-    "chalk": "^1.1.3",
-    "express": "^4.13.0",
-    "express-fileupload": "git://github.com/pajtai/express-fileupload.git",
-    "freeport": "^1.0.5",
-    "gitlog": "^2.0.1",
-    "google-url": "^0.0.4",
-    "hashmap": "^2.0.3",
-    "irc": "git://github.com/funsocietyirc/node-irc.git",
-    "irc-colors": "^1.3.*",
-    "knex": "^0.11.*",
-    "lodash": "^4.14.*",
-    "moment": "^2.14.*",
-    "moment-countdown": "^0.0.3",
-    "mysql": "^2.10.2",
-    "named-routes": "2.0.6",
-    "node-env-file": "^0.1.7",
-    "node-persist": "^0.0.11",
-    "node-schedule": "^1.1.1",
-    "pug": "^2.0.0-beta4",
-    "rand-token": "^0.2.1",
-    "random-js": "^1.0.4",
-    "serve-favicon": "^2.3.0",
-    "shelljs": "^0.7.3",
-    "sqlite3": "^3.1.4",
-    "twitter": "^1.3.0",
-    "unirest": "^0.5.0",
-    "url-exists": "^1.0.3",
-    "validator": "^5.1.0",
-    "x-ray": "^2.3.0"
-  }
+    "name": "MrNodeBot",
+    "version": "0.1.1",
+    "description": "FSocietys NodeJS IRC Bot",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "Dave Richer <dave@develops.io>",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/funsocietyirc/MrNodeBot"
+    },
+    "keywords": [
+        "irc",
+        "bot",
+        "fsociety"
+    ],
+    "dependencies": {
+        "app-root-path": "^1.3.0",
+        "body-parser": "^1.15.0",
+        "bookshelf": "^0.10.0",
+        "bot": "0.0.3",
+        "chalk": "^1.1.3",
+        "express": "^4.13.0",
+        "express-fileupload": "git://github.com/pajtai/express-fileupload.git",
+        "freeport": "^1.0.5",
+        "gitlog": "^2.0.1",
+        "google-url": "^0.0.4",
+        "hashmap": "^2.0.3",
+        "irc": "git://github.com/funsocietyirc/node-irc.git",
+        "irc-colors": "^1.3.*",
+        "knex": "^0.11.*",
+        "lodash": "^4.14.*",
+        "moment": "^2.14.*",
+        "moment-countdown": "^0.0.3",
+        "mysql": "^2.10.2",
+        "named-routes": "2.0.6",
+        "node-env-file": "^0.1.7",
+        "node-persist": "^0.0.11",
+        "node-schedule": "^1.1.1",
+        "pug": "^2.0.0-beta4",
+        "rand-token": "^0.2.1",
+        "random-js": "^1.0.4",
+        "serve-favicon": "^2.3.0",
+        "shelljs": "^0.7.3",
+        "sqlite3": "^3.1.4",
+        "twitter": "^1.3.0",
+        "unirest": "^0.5.0",
+        "url-exists": "^1.0.3",
+        "validator": "^5.1.0",
+        "x-ray": "^2.3.0"
+    }
 }

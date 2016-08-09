@@ -8,14 +8,19 @@ const conLogger = require('../../lib/consoleLogger');
 module.exports = app => {
 
     let darkChannels = require('../../lib/darkchannels')(app.Config.features.darkArmy.totalChannels);
-    app.Config.features.darkArmy.additionalChannels.forEach( i => {
+    app.Config.features.darkArmy.additionalChannels.forEach(i => {
         darkChannels.push(i);
     });
 
     // Join the dark army channels
     const joinChannels = () => {
-        let interval = app.Config.features.darkArmy.delay * 1000; // In seconds
-        let timeMessage = `I am joining the Dark Army! It will take me ` + interval * darkChannels.length + ` seconds...`;
+        if (!darkChannels.length) {
+            return;
+        }
+
+        const interval = app.Config.features.darkArmy.delay * 1000; // In seconds
+        const timeMessage = `I am joining the Dark Army! It will take me ` + interval * darkChannels.length + ` seconds...`;
+
         if (app.Config.debug) {
             app.Bot.say(app.Config.owner.nick, timeMessage);
         }
@@ -38,10 +43,10 @@ module.exports = app => {
             setTimeout(() => {
                 // Check to see if they are in channel
                 if (!app.Bot.isInChannel('#fsociety', nick)) {
-                        app.Bot.say(nick, 'The time is now, #Fsociety needs your help. Joins us.');
-                        app.Bot.send('invite', nick, app.Config.features.darkArmy.mainChannel);
+                    app.Bot.say(nick, 'The time is now, #Fsociety needs your help. Joins us.');
+                    app.Bot.send('invite', nick, app.Config.features.darkArmy.mainChannel);
                 }
-            },app.Config.features.darkArmy.greeterDealy*1000);
+            }, app.Config.features.darkArmy.greeterDealy * 1000);
         }
     };
 

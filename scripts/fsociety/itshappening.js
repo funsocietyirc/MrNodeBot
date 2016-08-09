@@ -1,3 +1,2 @@
 // Time related commands
-module.exports = app => {
-};
+module.exports = app => {};
