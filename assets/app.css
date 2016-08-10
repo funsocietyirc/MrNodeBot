@@ -1,7 +1,7 @@
 html {
     /* give this to all tags from html to .fullscreen */
     height: 100%;
-    background-image: url('/assets/mrnodebot.png');
+    background: url('/assets/mrnodebot.png')  no-repeat center center fixed;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
@@ -11,10 +11,7 @@ body {
 	min-height:93%;
 	background-color: rgba(0,0,0,0.8);
 }
-.padded {
-	padding-right: 5px;
-	padding-left: 5px;
-}
+
 .site-wrapper {
 	margin-top: 60px;
 }

@@ -4,7 +4,7 @@ block title
 block head
     script(src='/assets/moment.min.js')
 block content
-    div.row.padded
+    div.row
         div.col-md-12.text-center
             div.page-header
                 h1 Images
@@ -15,7 +15,7 @@ block content
             span.help-block All Images with a jpeg, jpg, png, gif extension will automagically show up here.
             a.btn.btn-block.btn-warning(href=url('upload')) Upload
             hr
-    div.row.padded
+    div.row
         div.col-md-12.text-left
             if !currentChannel
                 each channel in channels
