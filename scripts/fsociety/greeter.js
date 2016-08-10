@@ -7,7 +7,7 @@ TODO: Make multi-channel and configurable
 const _ = require('lodash');
 
 // More readable inline leet speak
-const l33t = (text) => text
+const l33t = text => text
     .replace('a', '4')
     .replace('b', '6')
     .replace('e', '3')
