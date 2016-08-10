@@ -11,7 +11,10 @@ body {
 	min-height:93%;
 	background-color: rgba(0,0,0,0.8);
 }
-
+.padded {
+	padding-right: 5px;
+	padding-left: 5px;
+}
 .site-wrapper {
 	margin-top: 60px;
 }
