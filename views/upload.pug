@@ -9,16 +9,17 @@ block content
                 hr
                 form.form(ref="uploadForm", id="uploadForm", action=url("upload"), method="post", encType="multipart/form-data")
                     div.form-group
-                        div.row
-                            div.col-md-9
-                                span.control-label(for="image") File
-                                input.form-control(type="file", name="image", multiple accept='image/*')
-                                span.help-block Only Image files are accepted
-                            div.col-md-3
-                                div.checkbox
-                                    label
-                                        input#nsfw.form-control(type="checkbox", name="nsfw", checked=false)
-                                        | NSFW
+                        div.container
+                            div.row
+                                div.col-md-9
+                                    span.control-label(for="image") File
+                                    input.form-control(type="file", name="image", multiple accept='image/*')
+                                    span.help-block Only Image files are accepted
+                                div.col-md-3
+                                    div.checkbox
+                                        label
+                                            input#nsfw.form-control(type="checkbox", name="nsfw", checked=false)
+                                            | NSFW
                     div.form-group
                         span.control-label(for="token") Token
                         input#token.form-control(type="text",name="token")
