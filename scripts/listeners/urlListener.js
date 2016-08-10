@@ -28,11 +28,11 @@ module.exports = app => {
         let titleString = color.bgwhite.black.bold('Title:');
         let output = '';
         if (payload.shortUrl != null && payload.url.length > app.Config.features.urls.titleMin) {
-            output = output + `${fromString} ${from} ${shortString} ${helpers.ColorHelpArgs(payload.shortUrl)}`;
+            output = output + `${shortString} ${color.blue(payload.shortUrl)}`;
         }
         if (payload.title != '') {
             let space = output == '' ? '' : ' ';
-            output = output + space + `${titleString} ${helpers.ColorHelpArgs(payload.title.trim())}`;
+            output = output + space + `${titleString} ${color.yellow(payload.title.trim())}`;
         }
         if (output != '') {
             app.Bot.say(to, `(${from}) ` + output);
