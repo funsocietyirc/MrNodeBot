@@ -7,6 +7,7 @@ module.exports = {
         disableScripts: false,
         // Script Directories
         scripts: [
+            '/scripts/pages'
             '/scripts/commands',
             '/scripts/admin',
             '/scripts/owner',
