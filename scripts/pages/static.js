@@ -3,7 +3,7 @@
 module.exports = app => {
     // Register upload Handler
     app.WebRoutes.set('landingPage', {
-        handler: (req,req) => {
+        handler: (req,res) => {
             res.render('landing', {});
         },
         desc: 'Landing Page',
