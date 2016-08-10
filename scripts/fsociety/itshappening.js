@@ -8,7 +8,7 @@ module.exports = app => {
 
     const itsHappening = (to, from, text, message) => {
         let nextDay = moment().day(day).hour(hour);
-        let nextEpisode = moment.duration(nextDay.diff(moment()));
+        let nextEpisode = moment.duration(nextDay.diff(moment().now()));
         let outputArray = [];
         measures.forEach(measure => {
             if (nextEpisode[measure]() != 0) {
