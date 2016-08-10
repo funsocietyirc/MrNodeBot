@@ -9,17 +9,18 @@ block content
 				hr
 				form.form(ref="uploadForm", id="uploadForm", action=url("upload"), method="post", encType="multipart/form-data")
 					div.form-group
-						span.control-label(for="image") File
-						input.form-control(type="file", name="image", multiple accept='image/*')
-						span.help-block Only Image files are accepted
+						div.col-md-8
+							span.control-label(for="image") File
+							input.form-control(type="file", name="image", multiple accept='image/*')
+							span.help-block Only Image files are accepted
+						div.col-md-4
+							span.control-label(for="nsfw") NSFW
+							input#nsfw.form-control(type="checkbox", name="nsfw", checked=false)
+							span.help-block Mark the Image Not safe for work
 					div.form-group
 						span.control-label(for="token") Token
 						input#token.form-control(type="text",name="token")
 						span.help-block Inside a channel use, [BotName] upload-token
-					div.form-group
-						span.control-label(for="nsfw") NSFW
-						input#nsfw.form-control(type="checkbox", name="nsfw", checked=false)
-						span.help-block Mark the Image Not safe for work
 					div.form-group
 						input.btn.btn-success.form-control(type="submit", value="Upload")
 				span.help-block Your token will still be here on your next visit
