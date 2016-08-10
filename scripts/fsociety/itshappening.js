@@ -17,7 +17,7 @@ module.exports = app => {
             }
         });
         let countDown = outputArray.join(', ');
-        app.Bot.say(to, `The next episode of Mr. Robot airs in: ${countDown}`);
+        app.Bot.say(to, `The next episode of Mr. Robot airs in: ${countDown} (Eastern Standard Time)`);
     };
 
     app.Commands.set('next-episode', {
