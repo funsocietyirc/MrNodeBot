@@ -17,6 +17,10 @@ block content
 						input#token.form-control(type="text",name="token")
 						span.help-block Inside a channel use, [BotName] upload-token
 					div.form-group
+						span.control-label(for="nsfw") NSFW
+						input#nsfw.form-control(type="radio", name="nsfw")
+						span.help-block Mark the Image Not safe for work
+					div.form-group
 						input.btn.btn-success.form-control(type="submit", value="Upload")
 				span.help-block Your token will still be here on your next visit
 block body
