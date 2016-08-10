@@ -72,6 +72,7 @@ module.exports = app => {
         let file = req.files.image;
         let model = app.Models.get('token');
         let token = req.body.token;
+        let nsfw = req.body.nsfw || false;
 
         new model()
             .where('token', token)
@@ -103,7 +104,11 @@ module.exports = app => {
                             })
                             .save()
                             .then(() => {
-                                app.Bot.say(tResults.get('channel'), `${tResults.get('user')} just uploaded: ${urlPath}`);
+                                let msg =  `${tResults.get('user')} just uploaded: ${urlPath}`;
+                                if(nsfw) {
+                                    msg = `${msg} (NSFW)`;
+                                }
+                                app.Bot.say(tResults.get('channel'),msg);
                             });
                     }
 
