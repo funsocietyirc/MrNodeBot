@@ -23,9 +23,8 @@ module.exports = app => {
 
     // Formatting Helper
     const shortSay = (to, from, payload) => {
-        let fromString = color.bgwhite.black.bold('From:');
-        let shortString = color.bgwhite.black.bold('Short:');
-        let titleString = color.bgwhite.black.bold('Title:');
+        let shortString = color.bold('Short:');
+        let titleString = color.bold('Title:');
         let output = '';
         if (payload.shortUrl != null && payload.url.length > app.Config.features.urls.titleMin) {
             output = output + `${shortString} ${color.blue(payload.shortUrl)}`;
