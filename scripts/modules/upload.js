@@ -72,6 +72,7 @@ module.exports = app => {
         let file = req.files.image;
         let model = app.Models.get('token');
         let token = req.body.token;
+        app.Bot.say('irony', req.body.nsfw);
         let nsfw = req.body.nsfw || false;
 
         new model()
