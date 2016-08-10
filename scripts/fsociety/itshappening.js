@@ -1,3 +1,4 @@
+'use strict';
 // Time related commands
 module.exports = app => {
     const moment = require('moment');
