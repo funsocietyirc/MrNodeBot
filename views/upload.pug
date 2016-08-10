@@ -1,23 +1,28 @@
 extends ./includes/layout.pug
 block title
-	title Image Upload module
+    title Image Upload module
 block content
-	div.row
-		div.col-md-12
-			div.text-center
-				h1 Image Upload
-				hr
-				form.form(ref="uploadForm", id="uploadForm", action=url("upload"), method="post", encType="multipart/form-data")
-					div.form-group
-						span.control-label(for="image") File
-						input.form-control(type="file", name="image", multiple accept='image/*')
-						span.help-block Only Image files are accepted
-					div.form-group
-						span.control-label(for="token") Token
-						input#token.form-control(type="text",name="token")
-						span.help-block Inside a channel use, [BotName] upload-token
-					div.form-group
-						input.btn.btn-success.form-control(type="submit", value="Upload")
-				span.help-block Your token will still be here on your next visit
+    div.row
+        div.col-md-12
+            div.text-center
+                h1 Image Upload
+                hr
+                form.form(ref="uploadForm", id="uploadForm", action=url("upload"), method="post", encType="multipart/form-data")
+                    div.form-group
+                        span.control-label(for="image") File
+                        input.form-control(type="file", name="image", multiple accept='image/*')
+                        span.help-block Only Image files are accepted
+                    div.form-group
+                        div.checkbox
+                            label
+                                input#nsfw(type="checkbox", name="nsfw", checked=false)
+                                | NSFW
+                    div.form-group
+                        span.control-label(for="token") Token
+                        input#token.form-control(type="text",name="token")
+                        span.help-block Inside a channel use, [BotName] upload-token
+                    div.form-group
+                        input.btn.btn-success.form-control(type="submit", value="Upload")
+                span.help-block Your token will still be here on your next visit
 block body
-	script(src='/assets/tokenStorage.js')
+    script(src='/assets/tokenStorage.js')

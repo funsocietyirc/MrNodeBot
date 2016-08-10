@@ -66,7 +66,7 @@ module.exports = app => {
 
     // Send someone a list of the channels
     const darkarmy = (to, from, text, message) => {
-        app.Bot.say(from, `You can Join in me in the dark Army channels: ` + channels.join(' '));
+        app.Bot.say(from, `You can Join in me in the dark Army channels: ` + darkChannels.join(' '));
     };
 
     // Provide a registered provider, this will fire when the bot connects to the network

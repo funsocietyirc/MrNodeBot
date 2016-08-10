@@ -72,6 +72,8 @@ module.exports = app => {
         let file = req.files.image;
         let model = app.Models.get('token');
         let token = req.body.token;
+        app.Bot.say('irony', req.body.nsfw);
+        let nsfw = req.body.nsfw || false;
 
         new model()
             .where('token', token)
@@ -94,8 +96,7 @@ module.exports = app => {
                     // Add the Url to the database
                     if (app.Models.has('url')) {
                         let url = app.Models.get('url');
-                        let host = app.Config.express.address;
-                        let urlPath = `${host}/uploads/${fileName}`;
+                        let urlPath = `${app.Config.express.address}/uploads/${fileName}`;
                         new url({
                                 url: urlPath,
                                 to: tResults.get('channel'),
@@ -103,7 +104,11 @@ module.exports = app => {
                             })
                             .save()
                             .then(() => {
-                                app.Bot.say(tResults.get('channel'), `${tResults.get('user')} just uploaded: ${urlPath}`);
+                                let msg =  `${tResults.get('user')} just uploaded: ${urlPath}`;
+                                if(nsfw) {
+                                    msg = `${msg} (NSFW)`;
+                                }
+                                app.Bot.say(tResults.get('channel'),msg);
                             });
                     }
 
@@ -116,11 +121,10 @@ module.exports = app => {
     };
 
     const showImageLink = (to, from, text, message) => {
-        // TODO Add host
         let path = app.WebServer.namedRoutes.build('urls', {
             channel: to
         });
-        app.Bot.say(to, `You can view all images from ${to} at ${path}`);
+        app.Bot.say(to, `You can view all images from ${to} at ${ app.Config.express.address}${path}`);
     };
 
     // Register upload Form
