@@ -15,8 +15,9 @@ block content
                                 input.form-control(type="file", name="image", multiple accept='image/*')
                                 span.help-block Only Image files are accepted
                             div.col-md-3
-                                span.control-label(for="nsfw") NSFW
-                                input#nsfw.form-control(type="checkbox", name="nsfw", checked=false)
+                                div.checkbox
+                                    label
+                                        input#nsfw.form-control(type="checkbox", name="nsfw", checked=false) NSFW
                     div.form-group
                         span.control-label(for="token") Token
                         input#token.form-control(type="text",name="token")
