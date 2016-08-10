@@ -48,20 +48,19 @@ block content
                 hr
     div.row
     each link in results
-        div.col-md-12
-            div.panel.panel-primary.text-center
-                div.panel-heading
-                    a(style="color:white",href=url('urls', {channel: link.to})) #{link.to}
-                    span.padded /
-                    a(style="color:white",href=url('urls', {channel: link.to, user: link.from})) #{link.from}
-                    span.padded /
-                    span #{moment(link.timestamp).format('h:mma MMM Do')}
-                div.panel-body.text-center
-                    a(style="color:white",href=link.url)
-                        img(src=link.url).center-block.img-responsive
-                div.panel-footer.text-right
-                    a(style="color:white",href=link.url, download=link.url).btn.btn-primary.btn-sm
-                        i.fa.fa-download.icon-spin
+        div.panel.panel-primary.text-center
+            div.panel-heading
+                a(style="color:white",href=url('urls', {channel: link.to})) #{link.to}
+                span.padded /
+                a(style="color:white",href=url('urls', {channel: link.to, user: link.from})) #{link.from}
+                span.padded /
+                span #{moment(link.timestamp).format('h:mma MMM Do')}
+            div.panel-body.text-center
+                a(style="color:white",href=link.url)
+                    img(src=link.url).center-block.img-responsive
+            div.panel-footer.text-right
+                a(style="color:white",href=link.url, download=link.url).btn.btn-primary.btn-sm
+                    i.fa.fa-download.icon-spin
     div.row
         div.col-md-12
             hr
