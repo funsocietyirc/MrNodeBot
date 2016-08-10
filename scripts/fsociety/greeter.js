@@ -6,17 +6,22 @@ TODO: Make multi-channel and configurable
 
 const _ = require('lodash');
 
-// More readable inline leet speak
-const l33t = text => text
-    .replace('a', '4')
-    .replace('b', '6')
-    .replace('e', '3')
-    .replace('s', '$')
-    .replace('i', '1')
-    .replace('t', '7')
-    .replace('o', '0');
-
 module.exports = app => {
+    // More readable inline leet speak
+    const l33t = text => text
+        .replace('a', '4')
+        .replace('b', '6')
+        .replace('e', '3')
+        .replace('s', '$')
+        .replace('i', '1')
+        .replace('t', '7')
+        .replace('o', '0');
+        
+    // Do not load module if we have no database
+    if (!app.Database && !app.Models.has('greeter')) {
+        return;
+    }
+
     const salutations = _.map([
         'Greetings', 'Hail', 'Welcome', 'Salutations', 'Alhoa',
         'Howdy', 'Hi', 'Hey', 'Hiya', 'Good Day', 'Yo', 'How are you', 'Salute', 'What\'s up', 'Bonsoir'
