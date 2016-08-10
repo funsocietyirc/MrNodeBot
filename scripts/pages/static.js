@@ -1,7 +1,7 @@
 // Static Routes and pages
 'use strict';
 module.exports = app => {
-    // Register upload Handler
+    // Landing Page
     app.WebRoutes.set('landingPage', {
         handler: (req,res) => {
             let ip =  req.headers['x-forwarded-for'] || req.connection.remoteAddress;
@@ -11,6 +11,16 @@ module.exports = app => {
         desc: 'Landing Page',
         path: '/',
         name: 'landingPage',
+        verb: 'get'
+    });
+    // Landing Page
+    app.WebRoutes.set('chat', {
+        handler: (req,res) => {
+            res.render('chat', {});
+        },
+        desc: 'Chat',
+        path: '/chat',
+        name: 'chat',
         verb: 'get'
     });
 };
