@@ -7,6 +7,7 @@ module.exports = {
         disableScripts: false,
         // Script Directories
         scripts: [
+            '/scripts/pages'
             '/scripts/commands',
             '/scripts/admin',
             '/scripts/owner',
@@ -65,11 +66,11 @@ module.exports = {
                 password: 'mrnodebot',
                 database: 'mrnodebot'
             },
-            sqlite: {
-                client: 'sqlite3',
-                connection: {
-                    filename: "./data.sqlite"
-                }
+        },
+        sqlite: {
+            client: 'sqlite3',
+            connection: {
+                filename: "./data.sqlite"
             }
         }
     },

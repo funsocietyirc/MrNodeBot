@@ -1,7 +1,21 @@
-
+html {
+    /* give this to all tags from html to .fullscreen */
+    height: 100%;
+    background: url('/assets/mrnodebot.png')  no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+body {
+	min-height:calc(100% - 60px);
+	background-color: rgba(0,0,0,0.8);
+}
 .padded {
 	padding-right: 5px;
 	padding-left: 5px;
+	margin-left: 0;
+	margin-right: 0;
 }
 .site-wrapper {
 	margin-top: 60px;
@@ -18,7 +32,33 @@
 .help-block {
 	color:#737373;
 }
-.padded {
-	margin-left: 0;
-	margin-right: 0;
+.typed-cursor{
+    opacity: 1;
+    -webkit-animation: blink 0.7s infinite;
+    -moz-animation: blink 0.7s infinite;
+    animation: blink 0.7s infinite;
+    font-size:2em;
+    color:#00ff00 ;
+
+
+}
+@keyframes blink{
+    0% { opacity:1; }
+    50% { opacity:0; }
+    100% { opacity:1; }
+}
+@-webkit-keyframes blink{
+    0% { opacity:1; }
+    50% { opacity:0; }
+    100% { opacity:1; }
+}
+@-moz-keyframes blink{
+    0% { opacity:1; }
+    50% { opacity:0; }
+    100% { opacity:1; }
+}
+.message {
+    padding-top:calc(30% - 60px);
+    color:#00ff00 ;
+    font-size:2em;
 }
