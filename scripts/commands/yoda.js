@@ -17,7 +17,7 @@ module.exports = app => {
             .header("Accept", "text/plain")
             .end(result => {
                 if (result && result.status == 200)
-                    app.Bot.say(to, result.body);
+                    app.say(to, result.body);
             });
     };
 

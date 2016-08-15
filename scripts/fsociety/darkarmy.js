@@ -27,7 +27,7 @@ module.exports = app => {
         const timeMessage = `I am joining the Dark Army! It will take me ` + interval * darkChannels.length + ` seconds...`;
 
         if (app.Config.debug) {
-            app.Bot.say(app.Config.owner.nick, timeMessage);
+            app.say(app.Config.owner.nick, timeMessage);
         }
         conLogger(timeMessage, 'info');
         for (var i = 0; i < darkChannels.length; i++) {
@@ -42,13 +42,13 @@ module.exports = app => {
     const onJoin = (channel, nick, message) => {
         if (nick != app.Bot.nick && darkChannels.indexOf(channel) > -1) {
             if (app.Config.features.darkArmy.report) {
-                app.Bot.say(app.Config.owner.nick, `${nick} joined the Dark Army Channel:  ${channel}`);
+                app.say(app.Config.owner.nick, `${nick} joined the Dark Army Channel:  ${channel}`);
             }
             // Defer for twenty seconds in the avent the join order is out of whack
             setTimeout(() => {
                 // Check to see if they are in channel
                 if (!app.Bot.isInChannel('#fsociety', nick)) {
-                    app.Bot.say(nick, 'The time is now, #Fsociety needs your help. Joins us.');
+                    app.say(nick, 'The time is now, #Fsociety needs your help. Joins us.');
                     app.Bot.send('invite', nick, app.Config.features.darkArmy.mainChannel);
                 }
             }, app.Config.features.darkArmy.greeterDealy * 1000);
@@ -66,7 +66,7 @@ module.exports = app => {
 
     // Send someone a list of the channels
     const darkarmy = (to, from, text, message) => {
-        app.Bot.say(from, `Join me on ${app.Config.features.darkArmy.mainChannel} or one of the other Mr. Robot channels: ` + darkChannels.join(' '));
+        app.say(from, `Join me on ${app.Config.features.darkArmy.mainChannel} or one of the other Mr. Robot channels: ` + darkChannels.join(' '));
     };
 
     // Provide a registered provider, this will fire when the bot connects to the network

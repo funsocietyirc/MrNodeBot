@@ -10,12 +10,12 @@ module.exports = app => {
     const stats = (to, from, text, message) => {
         app.Stats.forEach((value, key) => {
             if (!app.Commands.get(key)[2])
-                app.Bot.say(from, `${key} : ${value}`);
+                app.say(from, `${key} : ${value}`);
         });
     };
 
     const uptime = (to, from, text, message) => {
-        app.Bot.say(from, `I have been alive since ${helpers.Uptime()}`);
+        app.say(from, `I have been alive since ${helpers.Uptime()}`);
     };
 
     // Get command usage statistics

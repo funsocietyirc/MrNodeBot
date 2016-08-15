@@ -24,7 +24,7 @@ module.exports = app => {
     const addQuote = (to, from, text, message) => {
         // No Quote provided
         if (!text || text.isEmpty()) {
-            app.Bot.say(to, 'No quote specified');
+            app.say(to, 'No quote specified');
             return;
         };
 
@@ -32,7 +32,7 @@ module.exports = app => {
         text = text.trim();
 
         if (!quotes.has(text)) {
-            app.Bot.say(to, 'Quote has been added');
+            app.say(to, 'Quote has been added');
             // Define the quote
             quotes.set(text, {
                 to: to,
@@ -41,14 +41,14 @@ module.exports = app => {
             });
             storage.setItemSync('quotes', quotes);
         } else {
-            app.Bot.say(to, 'Quote already exists');
+            app.say(to, 'Quote already exists');
         }
     };
 
     const delQuote = (to, from, text, message) => {
         // No Quote provided
         if (!text || text.isEmpty()) {
-            app.Bot.say(to, 'Invalid quote sepcified');
+            app.say(to, 'Invalid quote sepcified');
             return;
         };
 
@@ -57,7 +57,7 @@ module.exports = app => {
 
         // Invalid Quote
         if (!quotes.has(text)) {
-            app.Bot.say(to, 'This quote does not exist');
+            app.say(to, 'This quote does not exist');
             return;
         }
 
@@ -65,7 +65,7 @@ module.exports = app => {
         quotes.remove(text);
         storage.setItemSync('quotes', quotes);
 
-        app.Bot.say(to, ' Quote has been removed');
+        app.say(to, ' Quote has been removed');
     };
 
     const randomQuote = (to, from, text, message) => {
@@ -77,7 +77,7 @@ module.exports = app => {
 
         // Bail out if we could not find key
         if (!quote) {
-            app.Bot.say(to, 'There must not be any quotes yet');
+            app.say(to, 'There must not be any quotes yet');
             return;
         }
 
@@ -93,7 +93,7 @@ module.exports = app => {
         // Output
         var dateString = Moment(data.added).format('MMMM YY, h:mm:ss a');
         var first = color.white.bold(`on ${dateString} by ${data.from}`);
-        app.Bot.say(to, `"${quote}" : ${first}`);
+        app.say(to, `"${quote}" : ${first}`);
     };
 
     // Add a quote

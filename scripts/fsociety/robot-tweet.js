@@ -27,7 +27,7 @@ module.exports = app => {
             stream.on('data', function(tweet) {
                 app.Config.features.twitter.channels.forEach((chan) => {
                     if (helpers.IsSet(tweet.text)) {
-                        app.Bot.say(chan, `[Twitter] @${tweet.user.screen_name}: ${tweet.text}`);
+                        app.say(chan, `[Twitter] @${tweet.user.screen_name}: ${tweet.text}`);
                     }
                 });
             });

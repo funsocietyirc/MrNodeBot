@@ -10,7 +10,7 @@ module.exports = app => {
     const registerToken = (to, from, text, message) => {
         // Only accept messages from channel
         if (to === from) {
-            app.Bot.say(to, 'You must be in a channel to request a token');
+            app.say(to, 'You must be in a channel to request a token');
             return;
         }
 
@@ -34,7 +34,7 @@ module.exports = app => {
                         })
                         .save()
                         .then(() => {
-                            app.Bot.say(from, `Your new token for ${to} is ${token}`);
+                            app.say(from, `Your new token for ${to} is ${token}`);
                         });
                 }
                 // If previous token exists
@@ -50,7 +50,7 @@ module.exports = app => {
                             patch: true
                         })
                         .then(() => {
-                            app.Bot.say(from, `Your new token for ${to} is ${token}`);
+                            app.say(from, `Your new token for ${to} is ${token}`);
                         });
                 }
             });
@@ -72,7 +72,7 @@ module.exports = app => {
         let file = req.files.image;
         let model = app.Models.get('token');
         let token = req.body.token;
-        app.Bot.say('irony', req.body.nsfw);
+        app.say('irony', req.body.nsfw);
         let nsfw = req.body.nsfw || false;
 
         new model()
@@ -108,7 +108,7 @@ module.exports = app => {
                                 if(nsfw) {
                                     msg = `${msg} (NSFW)`;
                                 }
-                                app.Bot.say(tResults.get('channel'),msg);
+                                app.say(tResults.get('channel'),msg);
                             });
                     }
 
@@ -124,7 +124,7 @@ module.exports = app => {
         let path = app.WebServer.namedRoutes.build('urls', {
             channel: to
         });
-        app.Bot.say(to, `You can view all images from ${to} at ${ app.Config.express.address}${path}`);
+        app.say(to, `You can view all images from ${to} at ${ app.Config.express.address}${path}`);
     };
 
     // Register upload Form

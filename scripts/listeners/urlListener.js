@@ -34,7 +34,7 @@ module.exports = app => {
             output = output + space + `${titleString} ${color.yellow(payload.title.trim())}`;
         }
         if (output != '') {
-            app.Bot.say(to, `(${from}) ` + output);
+            app.say(to, `(${from}) ` + output);
         }
     };
 

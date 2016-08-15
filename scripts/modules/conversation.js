@@ -20,13 +20,13 @@ module.exports = app => {
     const converse = (to, from, text, message) => {
         conversational = !conversational;
         let formatText = conversational ? 'now' : 'no longer';
-        app.Bot.say(to, `I am ${formatText} conversational`);
+        app.say(to, `I am ${formatText} conversational`);
     };
 
     const listen = (to, from, text, message, is) => {
         if (!app.Config.features.conversational.ignoredChans.contains(to) && conversational && !is.triggered && app.random.bool(1, is.privMsg ? 1 : app.Config.features.conversational.randomChance)(app.randomEngine)) {
             var replyText = chatBot.answer(text).replaceAll('<br>', '');
-            app.Bot.say(to, `${from}, ${replyText}`);
+            app.say(to, `${from}, ${replyText}`);
         }
     };
 

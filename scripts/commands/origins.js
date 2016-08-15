@@ -49,7 +49,7 @@ module.exports = app => {
             app.Config.project.author // 9
         );
 
-        app.Bot.say(to, out);
+        app.say(to, out);
     };
 
     app.Commands.set('origins', {

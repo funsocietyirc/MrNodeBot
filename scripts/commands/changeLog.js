@@ -13,29 +13,29 @@ module.exports = app => {
 
             // Exit on error
             if (error) {
-                app.Bot.say(from, helpers.TitleLine(
+                app.say(from, helpers.TitleLine(
                     'Something has gone wrong retrieving the change log'
                 ));
                 return;
             }
 
-            app.Bot.say(from, helpers.TitleLine(
+            app.say(from, helpers.TitleLine(
                 `${app.Bot.nick} Change log, last ${app.Bot.nick} changes:`
             ));
 
-            app.Bot.say(from, helpers.RedSlashes(
+            app.say(from, helpers.RedSlashes(
                 'Hash / Author / Subject / Date'
             ));
 
             // List the commits
             commits.forEach(commit => {
-                app.Bot.say(from, helpers.RedSlashes(
+                app.say(from, helpers.RedSlashes(
                     `${commit.abbrevHash} / ${commit.authorName} / ${commit.subject} / ${commit.authorDateRel}`));
             });
 
             // Last commit link
             if (commits && commits[0]) {
-                app.Bot.say(from, `Last Commit: ${app.Config.project.repository.url}/commit/${commits[0].abbrevHash}`);
+                app.say(from, `Last Commit: ${app.Config.project.repository.url}/commit/${commits[0].abbrevHash}`);
             }
         });
     };

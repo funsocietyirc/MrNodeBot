@@ -22,7 +22,7 @@ module.exports = app => {
         let answerString = answer ? 'heads' : 'tails';
         let outcomeString = rand === answer ? 'win' : 'lose';
 
-        app.Bot.say(to, `It was ${randString} you picked ${answerString}, you ${outcomeString}`);
+        app.say(to, `It was ${randString} you picked ${answerString}, you ${outcomeString}`);
     };
 
     // Flip a coin

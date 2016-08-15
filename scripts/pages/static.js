@@ -5,7 +5,7 @@ module.exports = app => {
     app.WebRoutes.set('landingPage', {
         handler: (req,res) => {
             let ip =  req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-            app.Bot.say(app.Config.owner.nick, `Landing page has been visited by: ${ip}`);
+            app.say(app.Config.owner.nick, `Landing page has been visited by: ${ip}`);
             res.render('landing', {});
         },
         desc: 'Landing Page',

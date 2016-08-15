@@ -10,37 +10,37 @@ const helpers = require('../../helpers');
 **/
 module.exports = app => {
     const list = (to, from, text, message) => {
-        app.Bot.say(from, color.white.bggray.bold(`${app.Bot.nick} has the following commands available.`));
+        app.say(from, color.white.bggray.bold(`${app.Bot.nick} has the following commands available.`));
         app.Commands.forEach((value, key) => {
             if (app.Commands.get(key).access !== app.Config.accessLevels.admin && app.Commands.get(key).access !== app.Config.accessLevels.owner) {
-                app.Bot.say(from, `${color.bgwhite.black.bold(key)} ${helpers.ColorHelpArgs(value.desc)}`);
+                app.say(from, `${color.bgwhite.black.bold(key)} ${helpers.ColorHelpArgs(value.desc)}`);
             }
         });
         if (to !== from) {
-            app.Bot.say(to, `The list has been sent to you ${from}, please consider messaging me directly next time`);
+            app.say(to, `The list has been sent to you ${from}, please consider messaging me directly next time`);
         }
     };
 
     const help = (to, from, text, message) => {
         if (text.isEmpty()) {
-            app.Bot.say(from, color.white.bggray.bold(`${app.Bot.nick} has the following commands available.`));
+            app.say(from, color.white.bggray.bold(`${app.Bot.nick} has the following commands available.`));
             let keys = [];
             app.Commands.forEach((value, key) => {
                 if (value.access !== app.Config.accessLevels.admin && value.access !== app.Config.accessLevels.owner)
                     keys.push(key);
             });
-            app.Bot.say(from, keys.join(', '));
-            app.Bot.say(from, color.white.bggray.bold('Use help <command> for more information'));
+            app.say(from, keys.join(', '));
+            app.say(from, color.white.bggray.bold('Use help <command> for more information'));
             if (to !== from)
-                app.Bot.say(to, `${from} I have messaged you my instructions. Be gentle.`);
+                app.say(to, `${from} I have messaged you my instructions. Be gentle.`);
         } else {
             let cmd = text.getFirst();
             if (app.Commands.has(cmd)) {
                 let cmdObj = app.Commands.get(cmd);
                 if (!cmdObj[2])
-                    app.Bot.say(from, `${color.bgwhite.black.bold(cmd)} ${helpers.ColorHelpArgs(cmdObj.desc)}`);
+                    app.say(from, `${color.bgwhite.black.bold(cmd)} ${helpers.ColorHelpArgs(cmdObj.desc)}`);
             } else {
-                app.Bot.say(from, `${cmd} is not a valid command`);
+                app.say(from, `${cmd} is not a valid command`);
             }
         }
     };

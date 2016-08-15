@@ -11,19 +11,19 @@ module.exports = app => {
         let target = text.getFirst() || 'soft'; // Default to soft update
         // Die if there is no git available
         if (!shell.which('git')) {
-            app.Bot.say(to, 'Can not update, Git is not available on the host');
+            app.say(to, 'Can not update, Git is not available on the host');
             return;
         }
         // Die if something goes wrong with git pull
         if (shell.exec('git pull').code !== 0) {
-            app.Bot.say(to, 'Something went wrong with the pull request');
+            app.say(to, 'Something went wrong with the pull request');
             return;
         }
 
         // Parse any additional arguments
         switch (target) {
             case 'cycle':
-                app.Bot.say(to, 'I will be back!');
+                app.say(to, 'I will be back!');
                 // Delay so the bot has a chance to talk
                 setTimeout(() => {
                     app.Bootstrap(true);

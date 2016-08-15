@@ -17,56 +17,56 @@ module.exports = app => {
         switch (cmd) {
             // List administrators
             case 'list':
-                app.Bot.say(from, helpers.TitleLine('Administrators:'));
+                app.say(from, helpers.TitleLine('Administrators:'));
                 app.Admins.forEach(admin => {
-                    app.Bot.say(from, admin);
+                    app.say(from, admin);
                 });
                 break;
                 // Get Administrative commands
             case 'help':
-                app.Bot.say(from, helpers.TitleLine(`${app.Bot.nick} has the following administrative commands available.`));
+                app.say(from, helpers.TitleLine(`${app.Bot.nick} has the following administrative commands available.`));
 
                 app.Commands.forEach((value, key) => {
                     if (app.Commands.get(key).access === app.Config.accessLevels.admin) {
-                        app.Bot.say(from, `${color.bgwhite.black.bold(key)} --- ${helpers.ColorHelpArgs(value.desc)}`);
+                        app.say(from, `${color.bgwhite.black.bold(key)} --- ${helpers.ColorHelpArgs(value.desc)}`);
                     }
                 });
                 break;
             case 'add':
                 if (!user) {
-                    app.Bot.say(from, 'You need to specify a user');
+                    app.say(from, 'You need to specify a user');
                     return;
                 }
                 // Exit if already an administrator
                 if (app.Admins.contains(user)) {
-                    app.Bot.say(from, `${user} is already an Administrator`);
+                    app.say(from, `${user} is already an Administrator`);
                     return;
                 }
                 app.Admins.push(user.toLowerCase());
                 storage.setItemSync('admins', app.Admins);
-                app.Bot.say(from, `${user} is now an Administrator`);
-                app.Bot.say(user, helpers.ColorHelpArgs('Hey there, you are now an Administrator. use [admin help] to get commands'));
+                app.say(from, `${user} is now an Administrator`);
+                app.say(user, helpers.ColorHelpArgs('Hey there, you are now an Administrator. use [admin help] to get commands'));
                 break;
             case 'del':
                 if (!user) {
-                    app.Bot.say(from, 'You need to specify a user');
+                    app.say(from, 'You need to specify a user');
                     return;
                 }
                 // Exit if already an administrator
                 if (!app.Admins.contains(user)) {
-                    app.Bot.say(from, `${user} is not currently an Administrator`);
+                    app.say(from, `${user} is not currently an Administrator`);
                     return;
                 }
                 // Exit if trying to remove owner
                 if (String(user).toLowerCase() == String(app.Config.owner.nick).toLocaleLowerCase()) {
-                    app.Bot.say(from, `You cannot remove ${user} because ${user} owns me..`);
+                    app.say(from, `You cannot remove ${user} because ${user} owns me..`);
                     return;
                 }
 
                 // Everything checked out
                 app.Admins.splice(app.Admins.indexOf(user));
                 storage.setItemSync('admins', app.Admins);
-                app.Bot.say(from, `${user} is no longer an Administrator`);
+                app.say(from, `${user} is no longer an Administrator`);
                 break;
         }
     };

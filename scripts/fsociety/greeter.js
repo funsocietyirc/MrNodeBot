@@ -16,7 +16,7 @@ module.exports = app => {
         .replace('i', '1')
         .replace('t', '7')
         .replace('o', '0');
-        
+
     // Do not load module if we have no database
     if (!app.Database && !app.Models.has('greeter')) {
         return;
@@ -64,7 +64,7 @@ module.exports = app => {
                 setTimeout(() => {
                     let greeting = app.random.pick(app.randomEngine, salutations);
                     let append = app.random.pick(app.randomEngine, appends);
-                    app.Bot.say(nick, `${greeting} ${nick}, ${append}.`);
+                    app.say(nick, `${greeting} ${nick}, ${append}.`);
                 }, app.Config.features.darkArmy.greeterDealy * 1000);
             });
         }
@@ -72,7 +72,7 @@ module.exports = app => {
 
     const cleanGreetDb = (to, from, text, message) => {
         if (!text) {
-            app.Bot.say(from, 'You must specifiy a channel when clearing the greeter cache');
+            app.say(from, 'You must specifiy a channel when clearing the greeter cache');
             return;
         }
         let channel = text.getFirst();
@@ -80,17 +80,17 @@ module.exports = app => {
             .where('channel', 'like', channel)
             .destroy()
             .then(() => {
-                app.Bot.say(from, `Greet cache has been cleared for ${channel}`);
+                app.say(from, `Greet cache has been cleared for ${channel}`);
             })
             .catch(err => {
-                app.Bot.say(from, `Something went wrong clearing the greet cache for ${channel}`);
+                app.say(from, `Something went wrong clearing the greet cache for ${channel}`);
                 console.log(err.message);
             });
     };
 
     const getTotalGreetedByChannel = (to, from, text, message) => {
         if(!text) {
-            app.Bot.say(from, 'You must specifiy a channel when clearing the greeter cache');
+            app.say(from, 'You must specifiy a channel when clearing the greeter cache');
             return;
         }
         let channel = text.getFirst();
@@ -98,10 +98,10 @@ module.exports = app => {
             .where('channel', 'like', channel)
             .count()
             .then(total => {
-                app.Bot.say(from, `A total of ${total} greets have been sent out for the channel ${channel}`);
+                app.say(from, `A total of ${total} greets have been sent out for the channel ${channel}`);
             })
             .catch(err => {
-                app.Bot.say(from, `Something went wrong fetching the greet total for ${channel}`);
+                app.say(from, `Something went wrong fetching the greet total for ${channel}`);
                 console.log(err);
             });
     };

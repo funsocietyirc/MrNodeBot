@@ -6,6 +6,7 @@ const storage = require('node-persist');
 const helpers = require('./helpers');
 
 const conLogger = require('./lib/consoleLogger');
+const RandomString = require('./lib/randomString');
 
 // Load in overrides
 require('./extensions');
@@ -383,7 +384,7 @@ class MrNodeBot {
                     // Send a check to nickserv to see if the user is registered
                     // Will spawn the notice listener to do the rest of the work
                     let first = app.Config.nickserv.host ? `@${app.Config.nickserv.host}` : '';
-                    app.Bot.say(`${app.Config.nickserv.nick}${first}`, `acc ${from}`);
+                    app.say(`${app.Config.nickserv.nick}${first}`, `acc ${from}`);
                 }
             }
         }
@@ -425,7 +426,7 @@ class MrNodeBot {
 
                     // Alert user of failed administrative command attempts
                     if (admCmd.access === app.Config.accessLevels.admin && !app.Admins.contains(String(admCall.from).toLowerCase())) {
-                        app.Bot.say(admCall.from, 'Failed Administrative command attempt logged');
+                        app.say(admCall.from, 'Failed Administrative command attempt logged');
                     }
 
                     // Log to the console if a user without access a command they are not privy too
@@ -439,7 +440,7 @@ class MrNodeBot {
                 }
                 // Is not identified
                 else {
-                    app.Bot.say(admCall.from, 'You must be identified with NickServ to use this command');
+                    app.say(admCall.from, 'You must be identified with NickServ to use this command');
                 }
 
                 // Remove the callback from the stack
@@ -456,6 +457,11 @@ class MrNodeBot {
         if (!textArray[0]) {
             return;
         }
+    }
+
+    // Send a message to the target
+    say(target, message) {
+        this.Bot.say(target, RandomString(this.random, this.randomEngine, message));
     }
 
 }
