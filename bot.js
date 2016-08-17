@@ -10,7 +10,7 @@ const RandomString = require('./lib/randomString');
 // Load in overrides
 require('./extensions');
 
-// Extend For Uncacheing
+// Extend For Un-cache
 require('./lib/uncache')(require);
 
 class MrNodeBot {
@@ -31,12 +31,16 @@ class MrNodeBot {
         this._ircClient = require('./lib/ircclient');
 
         // A list of collections used
-        this._collections = ['AdmCallbacks', 'NickChanges', 'Registered', 'Listeners', 'WebRoutes', 'Commands', 'Models', 'Stats', 'OnJoin', 'OnTopic'];
-
-        // Initalize collections
-        this._collections.forEach(item => {
-            eval(`this.${item} = new HashMap();`);
-        });
+        this.AdmCallbacks = new HashMap();
+        this.NickChanges = new HashMap();
+        this.Registered = new HashMap();
+        this.Listeners = new HashMap();
+        this.WebRoutes = new HashMap();
+        this.Commands = new HashMap();
+        this.Models = new HashMap();
+        this.Stats = new HashMap();
+        this.OnJoin = new HashMap();
+        this.OnTopic = new HashMap();
 
         // Lists
         this.Ignore = [];
@@ -133,7 +137,7 @@ class MrNodeBot {
 
         // Handle Notices, also used to check validation for NickServ requests
         this._ircClient.addListener('notice', (from, text, message) => {
-            this._handleAuthedCommands(self, from, text, message);
+            this._handleAuthenticatedCommands(self, from, text, message);
         });
 
         // Handle CTCP Requests
@@ -164,6 +168,7 @@ class MrNodeBot {
         conLogger('Listeners Initialized', 'success');
     }
 
+    //noinspection JSMethodCanBeStatic
     _clearCache(fullPath) {
         require.uncache(require.resolve(fullPath));
     }
@@ -272,10 +277,16 @@ class MrNodeBot {
 
         // Clear dynamic assets
         if (clearCache || false) {
-            // Clear the HashMaps
-            this._collections.forEach(item => {
-                eval(`this.${item}.clear();`);
-            });
+            this.AdmCallbacks.clear();
+            this.NickChanges.clear();
+            this.Registered.clear();
+            this.Listeners.clear();
+            this.WebRoutes.clear();
+            this.Commands.clear();
+            this.Models.clear();
+            this.Stats.clear();
+            this.OnJoin.clear();
+            this.OnTopic.clear();
         }
 
         // Load in the models
@@ -334,7 +345,7 @@ class MrNodeBot {
     // Fired when the bot connects to the network
     _handleRegistered(app) {
         app.Registered.forEach((value, key) => {
-            value.call();
+            value.call(app);
         });
     }
 
@@ -344,19 +355,19 @@ class MrNodeBot {
         let is = {
             ignored: app.Ignore.contains(from.toLowerCase()),
             self: from === app._ircClient.nick,
-            privMsg: to === from
+            privateMsg: to === from
         };
 
         // Format the text, extract the command, and remove the trigger / command to send to handler
         let textArray = text.split(' '),
-            cmd = is.privMsg ? textArray[0] : textArray[1];
-        textArray.splice(0, is.privMsg ? 1 : 2);
+            cmd = is.privateMsg ? textArray[0] : textArray[1];
+        textArray.splice(0, is.privateMsg ? 1 : 2);
         let output = textArray.join(' ');
 
-        // Check on trigger for priv messages
-        is.triggered = (is.privMsg && app.Commands.has(cmd) ? true : (text.startsWith(app._ircClient.nick) && app.Commands.has(cmd)));
+        // Check on trigger for private messages
+        is.triggered = (is.privateMsg && app.Commands.has(cmd) ? true : (text.startsWith(app._ircClient.nick) && app.Commands.has(cmd)));
 
-        // Proc the listeners
+        // Process the listeners
         if (!is.triggered && !is.ignored && !is.self) {
             app.Listeners.forEach((value, key) => {
                 value.call(to, from, text, message, is);
@@ -391,7 +402,8 @@ class MrNodeBot {
         }
     }
 
-    _handleAuthedCommands(app, nick, to, text, message) {
+    //noinspection JSMethodCanBeStatic
+    _handleAuthenticatedCommands(app, nick, to, text, message) {
         if (String(nick).toLowerCase() === String(app.Config.nickserv.nick).toLowerCase()) {
             let textArray = text.split(' '),
                 user = textArray[0],
@@ -441,7 +453,7 @@ class MrNodeBot {
                 }
                 // Is not identified
                 else {
-                    app.say(admCall.from, 'You must be identified with NickServ to use this command');
+                    app.say(admCall.from, 'You must be identified with nickserv to use this command');
                 }
 
                 // Remove the callback from the stack
@@ -451,6 +463,7 @@ class MrNodeBot {
     }
 
     // Handle CTCP commands
+    //noinspection JSMethodCanBeStatic
     _handleCtcpCommands(app, from, to, text, type, message) {
         let textArray = text.split(' ');
 
@@ -458,9 +471,10 @@ class MrNodeBot {
         if (!textArray[0]) {
             return;
         }
+        app.say(from,'That tickles');
     }
 
-    // Run through randomizer parser
+    // Run through random parser
     _filterMessage (message) {
         return RandomString(this.random, this.randomEngine, message);
     }
