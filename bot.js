@@ -461,7 +461,9 @@ class MrNodeBot {
     }
 
     // Run through randomizer parser
-    _filterMessage = message => RandomString(this.random, this.randomEngine, message);
+    _filterMessage (message) {
+         return RandomString(this.random, this.randomEngine, message);
+    }
 
     // Send a message to the target
     say(target, message) {
