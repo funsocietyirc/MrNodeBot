@@ -467,15 +467,15 @@ class MrNodeBot {
 
     // Send a message to the target
     say(target, message) {
-        this._ircClient.say(target,_filterMessage(message));
+        this._ircClient.say(target,this._filterMessage(message));
     }
     // Send a action to the target
     action(target, message) {
-        this._ircClient.action(target,_filterMessage(message));
+        this._ircClient.action(target,this._filterMessage(message));
     }
     // Send notice to the target
     notice(target,message) {
-        this._ircClient.notice(target, _filterMessage(message));
+        this._ircClient.notice(target,this. _filterMessage(message));
     }
 };
 
