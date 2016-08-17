@@ -1,4 +1,4 @@
-'ust strict';
+'use strict';
 
 module.exports = app => {
     let active = false;
