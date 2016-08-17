@@ -10,7 +10,7 @@ const helpers = require('../../helpers');
 **/
 module.exports = app => {
     const list = (to, from, text, message) => {
-        app.say(from, color.white.bggray.bold(`${app.Bot.nick} has the following commands available.`));
+        app.say(from, color.white.bggray.bold(`${app._ircClient.nick} has the following commands available.`));
         app.Commands.forEach((value, key) => {
             if (app.Commands.get(key).access !== app.Config.accessLevels.admin && app.Commands.get(key).access !== app.Config.accessLevels.owner) {
                 app.say(from, `${color.bgwhite.black.bold(key)} ${helpers.ColorHelpArgs(value.desc)}`);
@@ -23,7 +23,7 @@ module.exports = app => {
 
     const help = (to, from, text, message) => {
         if (text.isEmpty()) {
-            app.say(from, color.white.bggray.bold(`${app.Bot.nick} has the following commands available.`));
+            app.say(from, color.white.bggray.bold(`${app._ircClient.nick} has the following commands available.`));
             let keys = [];
             app.Commands.forEach((value, key) => {
                 if (value.access !== app.Config.accessLevels.admin && value.access !== app.Config.accessLevels.owner)

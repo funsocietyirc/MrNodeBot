@@ -16,7 +16,7 @@ module.exports = app => {
             return;
         }
 
-        app.Bot.whois(user, (info) => {
+        app._ircClient.whois(user, (info) => {
             if (!info) {
                 app.say(to, 'Something has gone very wrong');
                 return;
@@ -43,7 +43,7 @@ module.exports = app => {
                       ${metroString} ${timezoneString}`);
                 });
             }).on('error', err => {
-                app.Bot.action(to, 'tinkers with his satellite uplink');
+                app.action(to, 'tinkers with his satellite uplink');
             }).end();
         });
     };

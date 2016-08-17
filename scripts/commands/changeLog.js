@@ -20,7 +20,7 @@ module.exports = app => {
             }
 
             app.say(from, helpers.TitleLine(
-                `${app.Bot.nick} Change log, last ${app.Bot.nick} changes:`
+                `${app._ircClient.nick} Change log, last ${app._ircClient.nick} changes:`
             ));
 
             app.say(from, helpers.RedSlashes(

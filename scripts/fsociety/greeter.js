@@ -59,11 +59,11 @@ module.exports = app => {
 
     const onJoin = (channel, nick, message) => {
         // Make sure we are not reporting ourselves
-        if (nick !== app.Bot.nick && channel === app.Config.features.darkArmy.mainChannel) {
+        if (nick !== app._ircClient.nick && channel === app.Config.features.fsociety.mainChannel) {
             checkChannel(channel, nick, () => {
                 setTimeout(() => {
                     app.say(nick, `{${salutations}} ${nick},{${appends}}.`);
-                }, app.Config.features.darkArmy.greeterDealy * 1000);
+                }, app.Config.features.fsociety.greeterDealy * 1000);
             });
         }
     };

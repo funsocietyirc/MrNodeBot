@@ -22,7 +22,7 @@ module.exports = app => {
         }
 
         // Quit if not on the channel
-        if (!app.Bot.chans[chan]) {
+        if (!app._ircClient.chans[chan]) {
             app.say(to, `I am not on channel ${chan}`);
             return;
         }

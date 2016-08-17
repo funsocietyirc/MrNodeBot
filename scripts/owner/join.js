@@ -16,7 +16,7 @@ module.exports = app => {
         }
 
         // Join the channel
-        app.Bot.join(channel, () => {
+        app._ircClient.join(channel, () => {
             app.say(from, `I have joined ${channel}`);
         });
 

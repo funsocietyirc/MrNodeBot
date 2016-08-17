@@ -24,7 +24,7 @@ module.exports = app => {
                 break;
                 // Get Administrative commands
             case 'help':
-                app.say(from, helpers.TitleLine(`${app.Bot.nick} has the following administrative commands available.`));
+                app.say(from, helpers.TitleLine(`${app._ircClient.nick} has the following administrative commands available.`));
 
                 app.Commands.forEach((value, key) => {
                     if (app.Commands.get(key).access === app.Config.accessLevels.admin) {

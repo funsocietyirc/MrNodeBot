@@ -28,7 +28,7 @@ module.exports = app => {
 
         // Format and sub
         out = out.format(
-            app.Bot.nick, // 0
+            app._ircClient.nick, // 0
             app.Config.project.version, // 1
             app.Config.owner.nick, // 2
             app.Admins.length > 1 ? ' but I also listen to {0} {1}.'.format( // 3

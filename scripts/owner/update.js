@@ -30,7 +30,7 @@ module.exports = app => {
                 }, 2000);
                 break;
             default:
-                app.Bot.action(to, 'is feeling so fresh and so clean');
+                app.action(to, 'is feeling so fresh and so clean');
                 app.Bootstrap(false);
                 break;
         }
@@ -38,11 +38,11 @@ module.exports = app => {
 
     const reload = (to, from, text, message) => {
         app.Bootstrap(false);
-        app.Bot.action(to, 'Is feeling so fresh and so clean');
+        app.action(to, 'Is feeling so fresh and so clean');
     };
 
     const halt = (to, from, text, message) => {
-        app.Bot.disconnect();
+        app._ircClient.disconnect();
         process.exit(42);
     };
 

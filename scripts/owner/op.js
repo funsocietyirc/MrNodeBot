@@ -16,7 +16,7 @@ module.exports = app => {
             app.say(to, 'I need some more information...');
             return;
         }
-        app.Bot.send('mode', channel, '+o', nick);
+        app._ircClient.send('mode', channel, '+o', nick);
         app.say(to, 'I have given all the power to ' + nick + ' on ' + channel);
     };
     // Terminate the bot and the proc watcher that keeps it up

@@ -4,7 +4,6 @@
 const HashMap = require('hashmap');
 const storage = require('node-persist');
 const helpers = require('./helpers');
-
 const conLogger = require('./lib/consoleLogger');
 const RandomString = require('./lib/randomString');
 
@@ -29,7 +28,7 @@ class MrNodeBot {
         this._modelDirectories = this.Config.bot.models;
 
         // Grab the IRC instance
-        this.Bot = require('./lib/bot');
+        this._ircClient = require('./lib/ircclient');
 
         // A list of collections used
         this._collections = ['AdmCallbacks', 'NickChanges', 'Registered', 'Listeners', 'WebRoutes', 'Commands', 'Models', 'Stats', 'OnJoin', 'OnTopic'];
@@ -77,14 +76,14 @@ class MrNodeBot {
     _initIrc() {
         conLogger('Connecting to IRC', 'info');
         // Connect the Bot to the irc network
-        this.Bot.connect(20, () => {
-            conLogger(`Connected to ${this.Config.irc.server} as ${this.Bot.nick}`, 'success');
+        this._ircClient.connect(20, () => {
+            conLogger(`Connected to ${this.Config.irc.server} as ${this._ircClient.nick}`, 'success');
 
             // If there is a password and we are on the same nick we were configured for, identify
-            if (this.Config.nickserv.password && this.Config.irc.nick == this.Bot.nick) {
+            if (this.Config.nickserv.password && this.Config.irc.nick == this._ircClient.nick) {
                 let first = this.Config.nickserv.host ? `@${this.Config.nickserv.host}` : '';
                 let nickserv = `${this.Config.nickserv.nick}${first}`;
-                this.Bot.say(nickserv, `identify ${this.Config.nickserv.password}`);
+                this._ircClient.say(nickserv, `identify ${this.Config.nickserv.password}`);
             }
 
             this._loadDynamicAssets();
@@ -118,47 +117,47 @@ class MrNodeBot {
         let self = this;
 
         // Handle On Connect
-        this.Bot.addListener('registered', () => {
+        this._ircClient.addListener('registered', () => {
             this._handleRegistered(self);
         });
 
         // Handle Channel Messages
-        this.Bot.addListener('message#', (from, to, text, message) => {
+        this._ircClient.addListener('message#', (from, to, text, message) => {
             this._handleCommands(self, from, to, text, message);
         });
 
         // Handle Private Messages
-        this.Bot.addListener('pm', (from, text, message) => {
+        this._ircClient.addListener('pm', (from, text, message) => {
             this._handleCommands(self, from, from, text, message);
         });
 
         // Handle Notices, also used to check validation for NickServ requests
-        this.Bot.addListener('notice', (from, text, message) => {
+        this._ircClient.addListener('notice', (from, text, message) => {
             this._handleAuthedCommands(self, from, text, message);
         });
 
         // Handle CTCP Requests
-        this.Bot.addListener('ctcp', (from, to, text, type, message) => {
+        this._ircClient.addListener('ctcp', (from, to, text, type, message) => {
             this._handleCtcpCommands(self, from, to, text, message);
         });
 
         // Handle Nick changes
-        this.Bot.addListener('nick', (oldnick, newnick, channels, message) => {
+        this._ircClient.addListener('nick', (oldnick, newnick, channels, message) => {
             this._handleNickChanges(self, oldnick, newnick, channels, message);
         });
 
         // Handle On Joins
-        this.Bot.addListener('join', (channel, nick, message) => {
+        this._ircClient.addListener('join', (channel, nick, message) => {
             this._handleOnJoin(self, channel, nick, message);
         });
 
         // Handle Topic changes
-        this.Bot.addListener('topic', (channel, topic, nick, message) => {
+        this._ircClient.addListener('topic', (channel, topic, nick, message) => {
             this._handleOnTopic(self, channel, topic, nick, message);
         });
 
         // Catch all to prevent drop on error
-        this.Bot.addListener('error', message => {
+        this._ircClient.addListener('error', message => {
             // This can now be turned on by setting showErrors in the bot configuration
         });
 
@@ -268,13 +267,15 @@ class MrNodeBot {
     }
 
     _loadDynamicAssets(clearCache) {
+        // Reload the Configuration
+        this.Config = require('./config.js');
+
         // Clear dynamic assets
         if (clearCache || false) {
             // Clear the HashMaps
             this._collections.forEach(item => {
                 eval(`this.${item}.clear();`);
             });
-
         }
 
         // Load in the models
@@ -301,7 +302,7 @@ class MrNodeBot {
         hard = hard || false;
         if (hard) {
             conLogger('Rebooting...', 'info');
-            this.Bot.disconnect();
+            this._ircClient.disconnect();
             process.exit();
         } else {
             conLogger('Reloading...', 'info');
@@ -342,7 +343,7 @@ class MrNodeBot {
         // Build the is object to pass along to the command router
         let is = {
             ignored: app.Ignore.contains(from.toLowerCase()),
-            self: from === app.Bot.nick,
+            self: from === app._ircClient.nick,
             privMsg: to === from
         };
 
@@ -353,7 +354,7 @@ class MrNodeBot {
         let output = textArray.join(' ');
 
         // Check on trigger for priv messages
-        is.triggered = (is.privMsg && app.Commands.has(cmd) ? true : (text.startsWith(app.Bot.nick) && app.Commands.has(cmd)));
+        is.triggered = (is.privMsg && app.Commands.has(cmd) ? true : (text.startsWith(app._ircClient.nick) && app.Commands.has(cmd)));
 
         // Proc the listeners
         if (!is.triggered && !is.ignored && !is.self) {
@@ -459,15 +460,21 @@ class MrNodeBot {
         }
     }
 
+    // Run through randomizer parser
+    _filterMessage = message => RandomString(this.random, this.randomEngine, message);
+
     // Send a message to the target
     say(target, message) {
-        this.Bot.say(target, RandomString(this.random, this.randomEngine, message));
+        this._ircClient.say(target,_filterMessage(message));
     }
-
     // Send a action to the target
     action(target, message) {
-        this.Bot.action(target, RandomString(this.random, this.randomEngine, message));
+        this._ircClient.action(target,_filterMessage(message));
     }
-}
+    // Send notice to the target
+    notice(target,message) {
+        this._ircClient.notice(target, _filterMessage(message));
+    }
+};
 
 module.exports = callback => new MrNodeBot(callback);
