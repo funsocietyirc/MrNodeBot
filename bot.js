@@ -464,6 +464,10 @@ class MrNodeBot {
         this.Bot.say(target, RandomString(this.random, this.randomEngine, message));
     }
 
+    // Send a action to the target
+    action(target, message) {
+        this.Bot.action(target, RandomString(this.random, this.randomEngine, message));
+    }
 }
 
 module.exports = callback => new MrNodeBot(callback);

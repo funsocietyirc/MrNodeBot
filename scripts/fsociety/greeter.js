@@ -25,11 +25,11 @@ module.exports = app => {
     const salutations = _.map([
         'Greetings', 'Hail', 'Welcome', 'Salutations', 'Alhoa',
         'Howdy', 'Hi', 'Hey', 'Hiya', 'Good Day', 'Yo', 'How are you', 'Salute', 'What\'s up', 'Bonsoir'
-    ], l33t);
+    ], l33t).join('|');
 
     const appends = _.map([
         'hello friend', 'it\'s happening', 'what are your instructions', 'I saved a chair for you'
-    ], l33t);
+    ], l33t).join('|');
 
     // Model
     const greetModel = app.Models.get('greeter');
@@ -62,9 +62,7 @@ module.exports = app => {
         if (nick !== app.Bot.nick && channel === app.Config.features.darkArmy.mainChannel) {
             checkChannel(channel, nick, () => {
                 setTimeout(() => {
-                    let greeting = app.random.pick(app.randomEngine, salutations);
-                    let append = app.random.pick(app.randomEngine, appends);
-                    app.say(nick, `${greeting} ${nick}, ${append}.`);
+                    app.say(nick, `{${salutations}} ${nick},{${appends}}.`);
                 }, app.Config.features.darkArmy.greeterDealy * 1000);
             });
         }
