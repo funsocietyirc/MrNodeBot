@@ -466,12 +466,7 @@ class MrNodeBot {
     //noinspection JSMethodCanBeStatic
     _handleCtcpCommands(app, from, to, text, type, message) {
         let textArray = text.split(' ');
-
-        // Return on no command
-        if (!textArray[0]) {
-            return;
-        }
-        app.say(from,'That tickles');
+        return;
     }
 
     // Run through random parser
