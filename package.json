@@ -38,7 +38,7 @@
     "named-routes": "2.0.6",
     "node-persist": "^0.0.12",
     "node-schedule": "^1.1.1",
-    "pug": "^2.0.0-beta4",
+    "pug": "^2.0.0-beta5",
     "rand-token": "^0.2.1",
     "random-js": "^1.0.4",
     "serve-favicon": "^2.3.0",
