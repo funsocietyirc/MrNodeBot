@@ -4,6 +4,7 @@ const HashMap = require('hashmap');
 const Moment = require('moment');
 const color = require('irc-colors');
 const storage = require('node-persist');
+const consoleLogger = require('../../lib/consoleLogger');
 
 /**
   Keep Track of quotes
@@ -24,15 +25,15 @@ module.exports = app => {
     const addQuote = (to, from, text, message) => {
         // No Quote provided
         if (!text || text.isEmpty()) {
-            app.Bot.say(to, 'No quote specified');
+            app.say(to, 'No quote specified');
             return;
-        };
+        }
 
-        // Nomralize text
+        // Normalize text
         text = text.trim();
 
         if (!quotes.has(text)) {
-            app.Bot.say(to, 'Quote has been added');
+            app.say(to, 'Quote has been added');
             // Define the quote
             quotes.set(text, {
                 to: to,
@@ -41,23 +42,23 @@ module.exports = app => {
             });
             storage.setItemSync('quotes', quotes);
         } else {
-            app.Bot.say(to, 'Quote already exists');
+            app.say(to, 'Quote already exists');
         }
     };
 
     const delQuote = (to, from, text, message) => {
         // No Quote provided
         if (!text || text.isEmpty()) {
-            app.Bot.say(to, 'Invalid quote sepcified');
+            app.say(to, 'Invalid quote sepcified');
             return;
-        };
+        }
 
         // Normalize text
         text = text.trim();
 
         // Invalid Quote
         if (!quotes.has(text)) {
-            app.Bot.say(to, 'This quote does not exist');
+            app.say(to, 'This quote does not exist');
             return;
         }
 
@@ -65,19 +66,19 @@ module.exports = app => {
         quotes.remove(text);
         storage.setItemSync('quotes', quotes);
 
-        app.Bot.say(to, ' Quote has been removed');
+        app.say(to, ' Quote has been removed');
     };
 
     const randomQuote = (to, from, text, message) => {
         // Get a random number, offset by -1
         var randomNumber = app.random.integer(1, quotes.count())(app.randomEngine) - 1;
 
-        // Get the quote text to deal with the hashmap system
+        // Get the quote text to deal with the hash map system
         var quote = quotes.keys()[randomNumber];
 
         // Bail out if we could not find key
         if (!quote) {
-            app.Bot.say(to, 'There must not be any quotes yet');
+            app.say(to, 'There must not be any quotes yet');
             return;
         }
 
@@ -86,14 +87,14 @@ module.exports = app => {
 
         // Something went wrong extracting metadata
         if (!data || !data.added || !data.from) {
-            Util.log(`Something went wrong with the quote system metadata for quote: ${quote}`);
+            consoleLogger(`Something went wrong with the quote system metadata for quote: ${quote}`, 'error');
             return;
         }
 
         // Output
         var dateString = Moment(data.added).format('MMMM YY, h:mm:ss a');
         var first = color.white.bold(`on ${dateString} by ${data.from}`);
-        app.Bot.say(to, `"${quote}" : ${first}`);
+        app.say(to, `"${quote}" : ${first}`);
     };
 
     // Add a quote

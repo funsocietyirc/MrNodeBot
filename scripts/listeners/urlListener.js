@@ -16,7 +16,7 @@ const xray = require('x-ray')();
   Npm Requires: google-url
 **/
 module.exports = app => {
-    // Ignore List For Google shortr responder
+    // Ignore List For Google service responder
     const googleShortIgnore = app.Config.features.urls.googleShortIgnore;
     // Ignore URL logging for specific channels
     const urlLoggerIgnore = app.Config.features.urls.loggingIgnore;
@@ -34,7 +34,7 @@ module.exports = app => {
             output = output + space + `${titleString} ${color.yellow(payload.title.trim())}`;
         }
         if (output != '') {
-            app.Bot.say(to, `(${from}) ` + output);
+            app.say(to, `(${from}) ` + output);
         }
     };
 
@@ -48,7 +48,7 @@ module.exports = app => {
         key: app.Config.apiKeys.google
     });
 
-    // Cache URLS to prevent uncessary API calls
+    // Cache URLS to prevent unnecessary API calls
     const urlCache = new HashMap();
     // Clear cache every hour
     app.Scheduler.scheduleJob(app.Config.features.urls.cacheCleanup, () => {
@@ -119,7 +119,7 @@ module.exports = app => {
                     let finalResults = {
                         shortUrl: shortUrl,
                         title: title,
-                        url: url,
+                        url: url
                     };
                     shortSay(to, from, finalResults);
                     urlCache.set(url, finalResults);
@@ -155,7 +155,7 @@ module.exports = app => {
     };
 
     // List for urls
-    app.Listeners.set('url-listner', {
+    app.Listeners.set('url-listener', {
         desc: 'Listen for URLS',
         call: handle
     });

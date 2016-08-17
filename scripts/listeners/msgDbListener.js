@@ -2,7 +2,7 @@
 
 /** Log all incoming channel messages to a Sql Database **/
 module.exports = app => {
-    // Asure the database and logging table eixsts
+    // Assure the database and logging table eixsts
     if (!app.Database && !app.Models.has('logging')) {
         return;
     }

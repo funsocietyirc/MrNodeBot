@@ -17,7 +17,7 @@ module.exports = app => {
         consumer_key: app.Config.apiKeys.twitter.consumerKey,
         consumer_secret: app.Config.apiKeys.twitter.consumerSecret,
         access_token_key: app.Config.apiKeys.twitter.tokenKey,
-        access_token_secret: app.Config.apiKeys.twitter.tokenSecret,
+        access_token_secret: app.Config.apiKeys.twitter.tokenSecret
     });
 
     const watcher = () => {
@@ -27,7 +27,7 @@ module.exports = app => {
             stream.on('data', function(tweet) {
                 app.Config.features.twitter.channels.forEach((chan) => {
                     if (helpers.IsSet(tweet.text)) {
-                        app.Bot.say(chan, `[Twitter] @${tweet.user.screen_name}: ${tweet.text}`);
+                        app.say(chan, `[Twitter] @${tweet.user.screen_name}: ${tweet.text}`);
                     }
                 });
             });

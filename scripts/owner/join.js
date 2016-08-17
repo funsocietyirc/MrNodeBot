@@ -6,18 +6,18 @@
 module.exports = app => {
     const join = (to, from, text, message) => {
         if (!text) {
-            app.Bot.say(from, 'I need some more information...');
+            app.say(from, 'I need some more information...');
             return;
         }
         let channel = text.getFirst();
         if (!channel) {
-            app.Bot.say(from, 'I need some more information...');
+            app.say(from, 'I need some more information...');
             return;
         }
 
         // Join the channel
-        app.Bot.join(channel, () => {
-            app.Bot.say(from, `I have joined ${channel}`);
+        app._ircClient.join(channel, () => {
+            app.say(from, `I have joined ${channel}`);
         });
 
     };

@@ -17,13 +17,13 @@ module.exports = app => {
 
         // Quit if no argument
         if (chan.isEmpty() || style.isEmpty()) {
-            app.Bot.say(to, "You must specify a channel name as the first argument and a style as the second");
+            app.say(to, "You must specify a channel name as the first argument and a style as the second");
             return;
         }
 
         // Quit if not on the channel
-        if (!app.Bot.chans[chan]) {
-            app.Bot.say(to, `I am not on channel ${chan}`);
+        if (!app._ircClient.chans[chan]) {
+            app.say(to, `I am not on channel ${chan}`);
             return;
         }
 
@@ -32,7 +32,7 @@ module.exports = app => {
             'zebra', 'rainbow', 'america', 'shit', 'pipboy'
         ];
 
-        let proc, x;
+        let proc = 0, x;
 
         switch (style) {
             case 'zebra':
@@ -55,10 +55,10 @@ module.exports = app => {
                 proc = color.lime.bggray(output);
                 break;
             default:
-                app.Bot.say(from, `${style} is not a valid style, please try ${validStyles.join(',')}`);
+                app.say(from, `${style} is not a valid style, please try ${validStyles.join(',')}`);
                 return;
         }
-        app.Bot.say(chan, proc);
+        app.say(chan, proc);
     };
 
     app.Commands.set('stylize', {

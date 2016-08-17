@@ -2,14 +2,14 @@
 const Moment = require('moment');
 
 /**
-    Database Sepcific Commands
+    Database Specific Commands
     Commands: last-mentioned, random-line
 **/
 module.exports = app => {
     // Only enabled if there is a database available
     if (!app.Database && !app.Models.has('logging')) {
         return
-    };
+    }
 
     // Grab the model
     const logging = app.Models.get('logging');
@@ -19,7 +19,7 @@ module.exports = app => {
             .where('to', '=', to)
             .count()
             .then(result => {
-                app.Bot.say(to, `Total Messages from ${to}: ${result}`);
+                app.say(to, `Total Messages from ${to}: ${result}`);
             });
     };
 
@@ -34,14 +34,14 @@ module.exports = app => {
             })
             .fetch()
             .then(result => {
-                app.Bot.say(to, `${result.get('from')} : ${result.get('text')}`);
+                app.say(to, `${result.get('from')} : ${result.get('text')}`);
             });
     };
 
     const lastMentioned = (to, from, text, message) => {
         // No text was provided
         if (!text) {
-            app.Bot.say(to, 'You did not enter in a word silly');
+            app.say(to, 'You did not enter in a word silly');
             return;
         }
         new logging()
@@ -55,7 +55,7 @@ module.exports = app => {
             .fetch()
             .then(result => {
                 if (!result) {
-                    app.Bot.say(to, 'Nothing was ever said like that in this this channel');
+                    app.say(to, 'Nothing was ever said like that in this this channel');
                     return;
                 }
 
@@ -65,15 +65,15 @@ module.exports = app => {
                 if (resTo === resFrom) {
                     // The request is from the originator of the private message
                     if (resfrom !== from) {
-                        app.Bot.say(to, 'The last utterance of that was told to me in private and I am not willing to share');
+                        app.say(to, 'The last utterance of that was told to me in private and I am not willing to share');
                     }
                     // Request is from someone other then who sent the message
                     else {
-                        app.Bot.say(from, `You said "${result.get('text')}" on ${Moment(result.get('timestamp')).format('hh:mm:ss a MMM Do YY')} in a private message`);
+                        app.say(from, `You said "${result.get('text')}" on ${Moment(result.get('timestamp')).format('hh:mm:ss a MMM Do YY')} in a private message`);
                     }
                 } else {
                     // If it was not a private message
-                    app.Bot.say(to, `${resFrom} said "${result.get('text')}" on ${Moment(result.get('timestamp')).format('hh:mm:ss a MMM Do YY')} in this channel`);
+                    app.say(to, `${resFrom} said "${result.get('text')}" on ${Moment(result.get('timestamp')).format('hh:mm:ss a MMM Do YY')} in this channel`);
                 }
             });
     };

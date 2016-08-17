@@ -39,7 +39,7 @@ module.exports = app => {
 
         // We have no user
         if (!user) {
-            app.Bot.say(to, 'you must specify a user');
+            app.say(to, 'you must specify a user');
             return;
         }
 
@@ -54,11 +54,11 @@ module.exports = app => {
             .fetch()
             .then(result => {
                 if (!result) {
-                    app.Bot.say(to, `${from}, I have never seen ${user} active`);
+                    app.say(to, `${from}, I have never seen ${user} active`);
                     return;
                 }
                 let timeString = Moment(result.get('timestamp')).format('h:mma MMM Do');
-                app.Bot.say(to, `${result.get('from')} was last active on ${result.get('to')} at ${timeString} saying: ${result.get('text')}`);
+                app.say(to, `${result.get('from')} was last active on ${result.get('to')} at ${timeString} saying: ${result.get('text')}`);
             });
     };
 

@@ -12,13 +12,13 @@ module.exports = app => {
         var user = text.getFirst();
 
         if (!user) {
-            app.Bot.say(to, 'You must specify a user as a the first argument');
+            app.say(to, 'You must specify a user as a the first argument');
             return;
         }
 
-        app.Bot.whois(user, (info) => {
+        app._ircClient.whois(user, (info) => {
             if (!info) {
-                app.Bot.say(to, 'Something has gone very wrong');
+                app.say(to, 'Something has gone very wrong');
                 return;
             }
             let options = {
@@ -31,19 +31,19 @@ module.exports = app => {
                 res.setEncoding('utf8');
                 res.on('data', chunk => {
                     if (res.statusCode !== 200) {
-                        app.Bot.say(to, `${user} has been hidden by a power much greater than mine`);
+                        app.say(to, `${user} has been hidden by a power much greater than mine`);
                         return;
                     }
                     let results = JSON.parse(chunk);
                     let zipString = results.zip_code ? `Zip ${results.zip_code}` : '';
                     let metroString = results.metro_code ? `Metro ${results.metro_code}` : '';
                     let timezoneString = results.time_zone ? `Time Zone ${results.time_zone}` : '';
-                    app.Bot.say(to, `I have tracked ${user} down to ${results.city}, ${results.region_name},
+                    app.say(to, `I have tracked ${user} down to ${results.city}, ${results.region_name},
                       ${results.country_name} (${results.latitude}, ${results.longitude}) ${zipString}
                       ${metroString} ${timezoneString}`);
                 });
             }).on('error', err => {
-                app.Bot.action(to, 'tinkers with his satellite uplink');
+                app.action(to, 'tinkers with his satellite uplink');
             }).end();
         });
     };

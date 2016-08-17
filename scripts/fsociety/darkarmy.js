@@ -7,15 +7,15 @@ const conLogger = require('../../lib/consoleLogger');
 
 module.exports = app => {
     // Check to see if a main channel has been Set, if not bail out
-    if (app.Config.features.darkArmy.mainChannel === '') {
+    if (app.Config.features.fsociety.mainChannel === '') {
         return;
     }
 
     // Join main channel
-    app.Bot.join(app.Config.features.darkArmy.mainChannel);
+    app._ircClient.join(app.Config.features.fsociety.mainChannel);
 
     // Grab a list of the 'darm army channels'
-    let darkChannels = app.Config.features.darkArmy.additionalChannels.concat(require('../../lib/darkchannels')(app.Config.features.darkArmy.totalChannels));
+    let darkChannels = app.Config.features.fsociety.additionalChannels.concat(require('../../lib/darkchannels')(app.Config.features.fsociety.totalChannels));
 
     // Join the dark army channels
     const joinChannels = () => {
@@ -23,16 +23,16 @@ module.exports = app => {
             return;
         }
 
-        const interval = app.Config.features.darkArmy.delay * 1000; // In seconds
+        const interval = app.Config.features.fsociety.delay * 1000; // In seconds
         const timeMessage = `I am joining the Dark Army! It will take me ` + interval * darkChannels.length + ` seconds...`;
 
         if (app.Config.debug) {
-            app.Bot.say(app.Config.owner.nick, timeMessage);
+            app.say(app.Config.owner.nick, timeMessage);
         }
         conLogger(timeMessage, 'info');
         for (var i = 0; i < darkChannels.length; i++) {
             setTimeout(function(i) {
-                app.Bot.join(darkChannels[i]);
+                app._ircClient.join(darkChannels[i]);
             }, interval * i, i);
         }
     };
@@ -40,33 +40,33 @@ module.exports = app => {
     // Report back if anyone joins them (to owner)
     // will be turned on if process.env.darkArmReport is set to true
     const onJoin = (channel, nick, message) => {
-        if (nick != app.Bot.nick && darkChannels.indexOf(channel) > -1) {
-            if (app.Config.features.darkArmy.report) {
-                app.Bot.say(app.Config.owner.nick, `${nick} joined the Dark Army Channel:  ${channel}`);
+        if (nick != app._ircClient.nick && darkChannels.indexOf(channel) > -1) {
+            if (app.Config.features.fsociety.report) {
+                app.say(app.Config.owner.nick, `${nick} joined the Dark Army Channel:  ${channel}`);
             }
-            // Defer for twenty seconds in the avent the join order is out of whack
+            // Defer for twenty seconds in the event the join order is out of whack
             setTimeout(() => {
                 // Check to see if they are in channel
-                if (!app.Bot.isInChannel('#fsociety', nick)) {
-                    app.Bot.say(nick, 'The time is now, #Fsociety needs your help. Joins us.');
-                    app.Bot.send('invite', nick, app.Config.features.darkArmy.mainChannel);
+                if (!app._ircClient.isInChannel('#fsociety', nick)) {
+                    app.say(nick, 'The time is now, #Fsociety needs your help. Joins us.');
+                    app._ircClient.send('invite', nick, app.Config.features.fsociety.mainChannel);
                 }
-            }, app.Config.features.darkArmy.greeterDealy * 1000);
+            }, app.Config.features.fsociety.greeterDealy * 1000);
         }
     };
 
     // Topic lock if possible
     const topicLock = (channel, topic, nick, message) => {
-        if (darkChannels.indexOf(channel) > -1 && !app.Bot.isTopicLocked(channel)) {
-            if (topic.indexOf(app.Config.features.darkArmy.mainChannel) == -1 || topic == '') {
-                app.Bot.send('topic', channel, `${topic} | ${app.Config.features.darkArmy.mainChannel}`);
+        if (darkChannels.indexOf(channel) > -1 && !app._ircClient.isTopicLocked(channel)) {
+            if (topic.indexOf(app.Config.features.fsociety.mainChannel) == -1 || topic == '') {
+                app._ircClient.send('topic', channel, `${topic} | ${app.Config.features.fsociety.mainChannel}`);
             }
         }
     };
 
     // Send someone a list of the channels
     const darkarmy = (to, from, text, message) => {
-        app.Bot.say(from, `Join me on ${app.Config.features.darkArmy.mainChannel} or one of the other Mr. Robot channels: ` + darkChannels.join(' '));
+        app.say(from, `Join me on ${app.Config.features.fsociety.mainChannel} or one of the other Mr. Robot channels: ` + darkChannels.join(' '));
     };
 
     // Provide a registered provider, this will fire when the bot connects to the network

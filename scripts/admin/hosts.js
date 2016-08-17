@@ -34,7 +34,7 @@ module.exports = app => {
 
         // User requested Help
         if (cmd === 'help') {
-            app.Bot.say(from, helpers.TitleLine('hosts commands: add del list'));
+            app.say(from, helpers.TitleLine('hosts commands: add del list'));
             return;
         }
 
@@ -42,13 +42,13 @@ module.exports = app => {
 
             // Check we got host input
             if (!host) {
-                app.Bot.say(from, 'Host required for add or del commands');
+                app.say(from, 'Host required for add or del commands');
                 return;
             }
 
             // check it is valid
             if (!validator.isIP(host)) {
-                app.Bot.say(from, 'You have specified an invalid host');
+                app.say(from, 'You have specified an invalid host');
                 return;
             }
 
@@ -56,7 +56,7 @@ module.exports = app => {
             if (cmd === 'add') {
                 Hosts.push(host);
                 storage.setItemSync('hosts', Hosts);
-                app.Bot.say(from, `${host} has been added to the Hosts list`);
+                app.say(from, `${host} has been added to the Hosts list`);
                 return;
             }
 
@@ -66,9 +66,9 @@ module.exports = app => {
                 if (index > -1) {
                     Hosts.splice(index, 1);
                     storage.setItemSync('hosts', Hosts);
-                    app.Bot.say(from, `${host} has been deleted to the Hosts list`);
+                    app.say(from, `${host} has been deleted to the Hosts list`);
                 } else {
-                    app.Bot.say(from, `${host} is not in the hosts list`);
+                    app.say(from, `${host} is not in the hosts list`);
                 }
                 return;
             }
@@ -76,18 +76,18 @@ module.exports = app => {
 
         // List the results
         if (cmd === 'list') {
-            app.Bot.say(from, 'Generating Hosts list');
+            app.say(from, 'Generating Hosts list');
             Hosts.forEach(ip => {
                 dns.reverse(ip, (err, domains) => {
                     if (err != null) {
                         let first = helpers.ColorHelpArgs(`[${ip}]`);
-                        app.Bot.say(from, `${color.red.bold(ip)} : ${first}`);
+                        app.say(from, `${color.red.bold(ip)} : ${first}`);
                         return;
-                    };
+                    }
                     if (domains) {
                         domains.forEach(domain => {
                             var first = helpers.ColorHelpArgs(`[${domain}]`);
-                            app.Bot.say(from, `${color.green.bold(ip)} : ${first}`);
+                            app.say(from, `${color.green.bold(ip)} : ${first}`);
                         });
                     }
                 });

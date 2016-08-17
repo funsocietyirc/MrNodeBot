@@ -2,7 +2,7 @@
 
 module.exports = app => {
     const echo = (to, from, text, message) => {
-        app.Bot.say(to, text);
+        app.say(to, text);
     };
 
     // Echo Test command
