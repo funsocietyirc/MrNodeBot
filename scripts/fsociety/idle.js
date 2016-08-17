@@ -22,7 +22,7 @@ module.exports = app => {
 
     //  check for active
     const setActive = (channel,topic,nick,message) => {
-        if(channel == Config.features.darkArmy.mainChannel) {
+        if(channel == app.Config.features.darkArmy.mainChannel) {
             active = true;
         }
     };
