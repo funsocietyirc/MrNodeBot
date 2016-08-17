@@ -43,7 +43,7 @@ module.exports = app => {
             .then(results => {
                 // Does not exist
                 if (!results) {
-                    // Logg that we have greeted for this channel
+                    // Log that we have greeted for this channel
                     new greetModel({
                         channel: channel,
                         nick: nick
@@ -70,7 +70,7 @@ module.exports = app => {
 
     const cleanGreetDb = (to, from, text, message) => {
         if (!text) {
-            app.say(from, 'You must specifiy a channel when clearing the greeter cache');
+            app.say(from, 'You must specify a channel when clearing the greeter cache');
             return;
         }
         let channel = text.getFirst();
@@ -88,7 +88,7 @@ module.exports = app => {
 
     const getTotalGreetedByChannel = (to, from, text, message) => {
         if(!text) {
-            app.say(from, 'You must specifiy a channel when clearing the greeter cache');
+            app.say(from, 'You must specify a channel when clearing the greeter cache');
             return;
         }
         let channel = text.getFirst();

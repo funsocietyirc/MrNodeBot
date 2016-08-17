@@ -2,14 +2,14 @@
 const Moment = require('moment');
 
 /**
-    Database Sepcific Commands
+    Database Specific Commands
     Commands: last-mentioned, random-line
 **/
 module.exports = app => {
     // Only enabled if there is a database available
     if (!app.Database && !app.Models.has('logging')) {
         return
-    };
+    }
 
     // Grab the model
     const logging = app.Models.get('logging');

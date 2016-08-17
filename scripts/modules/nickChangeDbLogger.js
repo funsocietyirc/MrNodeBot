@@ -14,7 +14,7 @@ module.exports = app => {
         // If we have a database connection, log
         new aliasModel({
                 oldnick: oldnick,
-                newnick: newnick,
+                newnick: newnick
             })
             .save()
             .catch(err => {

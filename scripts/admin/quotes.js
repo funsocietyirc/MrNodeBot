@@ -4,6 +4,7 @@ const HashMap = require('hashmap');
 const Moment = require('moment');
 const color = require('irc-colors');
 const storage = require('node-persist');
+const consoleLogger = require('../../lib/consoleLogger');
 
 /**
   Keep Track of quotes
@@ -26,9 +27,9 @@ module.exports = app => {
         if (!text || text.isEmpty()) {
             app.say(to, 'No quote specified');
             return;
-        };
+        }
 
-        // Nomralize text
+        // Normalize text
         text = text.trim();
 
         if (!quotes.has(text)) {
@@ -50,7 +51,7 @@ module.exports = app => {
         if (!text || text.isEmpty()) {
             app.say(to, 'Invalid quote sepcified');
             return;
-        };
+        }
 
         // Normalize text
         text = text.trim();
@@ -72,7 +73,7 @@ module.exports = app => {
         // Get a random number, offset by -1
         var randomNumber = app.random.integer(1, quotes.count())(app.randomEngine) - 1;
 
-        // Get the quote text to deal with the hashmap system
+        // Get the quote text to deal with the hash map system
         var quote = quotes.keys()[randomNumber];
 
         // Bail out if we could not find key
@@ -86,7 +87,7 @@ module.exports = app => {
 
         // Something went wrong extracting metadata
         if (!data || !data.added || !data.from) {
-            Util.log(`Something went wrong with the quote system metadata for quote: ${quote}`);
+            consoleLogger(`Something went wrong with the quote system metadata for quote: ${quote}`, 'error');
             return;
         }
 

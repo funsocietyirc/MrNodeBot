@@ -3,7 +3,7 @@
 const shell = require('shelljs');
 
 /**
-  Handle realtime upgrades, updates, and restarts
+  Handle real time upgrades, updates, and restarts
   Commands: update reload halt
 **/
 module.exports = app => {

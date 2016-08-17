@@ -10,11 +10,11 @@ module.exports = app => {
 
     const messages = [
         'scratches nose', 'inhales a line of morphine', 'hacks the planet', 'smokes a joint', 'calculates humanity',
-        'owns the FBI', 'takes down ECORP', 'figures shit out', 'reads 2600', 'hacks Ashley Madison', 'ponders existance',
-        'drops the mic','thinks alloud', 'blows up his hardrives', 'modifys his source code', 'pushes himself upstream',
+        'owns the FBI', 'takes down ECORP', 'figures shit out', 'reads 2600', 'hacks Ashley Madison', 'ponders existence',
+        'drops the mic', 'blows up his hard drives', 'modifies his source code', 'pushes himself upstream',
         'jumps up, jumps up, and gets down', 'plans a cyber attack', 'bridges interfaces', 'explores his source',
-        'compiles exploits', 'nmaps random IPs', 'initiates port scans','googles how to hack','installs slackware','install arch','installs debian',
-        'trys to infect the channel and spread himself','searches for zero day','runs for president','attempts to program himself a companion bot',
+        'compiles exploits', 'Nmaps random IPs', 'initiates port scans','Googles how to hack','installs Slackware','install Arch','installs Debian',
+        'attempts to infect the channel and spread himself','searches for zero day','runs for president','attempts to program himself a companion bot',
         'starts X', 'spins up a VM', 'pulls himself from git'
     ].join('|');
 
@@ -38,7 +38,7 @@ module.exports = app => {
     // Add the channel listener
     app.Listeners.set('fsocietyActive', {
         call: setActive,
-        desc: 'fsocietyActive',
+        desc: 'fsocietyActive'
     });
 
 };

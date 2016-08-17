@@ -1,9 +1,11 @@
 'use strict';
 
+const storage = require("node-persist");
+
 /**
   Manipulation of the Ignore list.
-  Users on the mute list are not acknolwedged by the bot
-  Commands: mute unmute Ignored
+  Users on the mute list are not acknowledged by the bot
+  Commands: mute un-mute Ignored
 **/
 module.exports = app => {
     const mute = (to, from, text, message) => {
@@ -49,7 +51,7 @@ module.exports = app => {
 
     // Unmute a user
     app.Commands.set('unmute', {
-        desc: 'Unmute a user',
+        desc: 'Un-mute a user',
         access: app.Config.accessLevels.admin,
         call: unmute
     });

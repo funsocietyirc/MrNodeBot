@@ -3,13 +3,12 @@
 const chatBot = (function() {
     var botObj = botObj || require('../../node_modules/bot/lib/bot.js'),
         botDb = botDb || require('../../node_modules/bot/lib/db.js'),
-        botDefaults = botDefaults || require('../../node_modules/bot/db/defaults.json'),
-        bot = new botObj(new botDb, botDefaults);
-    return bot;
+        botDefaults = botDefaults || require('../../node_modules/bot/db/defaults.json');
+    return new botObj(new botDb, botDefaults);
 }());
 
 /**
-  Make the bot randomlly conversational
+  Make the bot randomly conversational
   Commands: converse
   Listeners: converse
 **/

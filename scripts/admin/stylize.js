@@ -32,7 +32,7 @@ module.exports = app => {
             'zebra', 'rainbow', 'america', 'shit', 'pipboy'
         ];
 
-        let proc, x;
+        let proc = 0, x;
 
         switch (style) {
             case 'zebra':

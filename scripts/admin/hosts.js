@@ -83,7 +83,7 @@ module.exports = app => {
                         let first = helpers.ColorHelpArgs(`[${ip}]`);
                         app.say(from, `${color.red.bold(ip)} : ${first}`);
                         return;
-                    };
+                    }
                     if (domains) {
                         domains.forEach(domain => {
                             var first = helpers.ColorHelpArgs(`[${domain}]`);

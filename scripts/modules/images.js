@@ -6,7 +6,7 @@ const checkUrl = require('../../lib/checkUrl');
 module.exports = app => {
     const urlModel = app.Models.get('url');
 
-    // Clean the DB of stagnet URLS
+    // Clean the DB of broken URLS
     const cleanUrls = () => {
         new urlModel().query(qb => {
                 // Build Up Query

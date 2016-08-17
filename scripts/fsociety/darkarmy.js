@@ -44,7 +44,7 @@ module.exports = app => {
             if (app.Config.features.fsociety.report) {
                 app.say(app.Config.owner.nick, `${nick} joined the Dark Army Channel:  ${channel}`);
             }
-            // Defer for twenty seconds in the avent the join order is out of whack
+            // Defer for twenty seconds in the event the join order is out of whack
             setTimeout(() => {
                 // Check to see if they are in channel
                 if (!app._ircClient.isInChannel('#fsociety', nick)) {

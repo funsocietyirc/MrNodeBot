@@ -1,5 +1,5 @@
 'use strict';
-const moment = require('moment')
+const moment = require('moment');
 const c = require('irc-colors');
 const startTime = moment();
 

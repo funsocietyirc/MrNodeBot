@@ -100,7 +100,7 @@ module.exports = app => {
                         new url({
                                 url: urlPath,
                                 to: tResults.get('channel'),
-                                from: tResults.get('user'),
+                                from: tResults.get('user')
                             })
                             .save()
                             .then(() => {

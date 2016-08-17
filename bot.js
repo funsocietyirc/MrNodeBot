@@ -10,7 +10,7 @@ const RandomString = require('./lib/randomString');
 // Load in overrides
 require('./extensions');
 
-// Extend For Uncacheing
+// Extend For cache reasons
 require('./lib/uncache')(require);
 
 class MrNodeBot {
@@ -33,7 +33,7 @@ class MrNodeBot {
         // A list of collections used
         this._collections = ['AdmCallbacks', 'NickChanges', 'Registered', 'Listeners', 'WebRoutes', 'Commands', 'Models', 'Stats', 'OnJoin', 'OnTopic'];
 
-        // Initalize collections
+        // Initialize collections
         this._collections.forEach(item => {
             eval(`this.${item} = new HashMap();`);
         });
@@ -91,7 +91,7 @@ class MrNodeBot {
             // Run The callback
             if (this._callback) {
                 this._callback(this);
-            };
+            }
         });
     }
 
@@ -164,7 +164,7 @@ class MrNodeBot {
         conLogger('Listeners Initialized', 'success');
     }
 
-    _clearCache(fullPath) {
+    static _clearCache(fullPath) {
         require.uncache(require.resolve(fullPath));
     }
 
@@ -172,7 +172,6 @@ class MrNodeBot {
     _loadModelsFromDir(dir) {
         let path = require('path');
         let normalizedPath = path.join(__dirname, dir);
-        let self = this;
 
         // TODO Move to foreach (comment)
         conLogger(`Loading all Models from ${dir}`, 'loading');
@@ -183,7 +182,7 @@ class MrNodeBot {
 
             // Attempt to Load the module
             try {
-                self._clearCache(fullPath);
+                this._clearCache(fullPath);
 
                 conLogger(`Loading Model: ${file} `, 'success');
 
@@ -332,7 +331,7 @@ class MrNodeBot {
     }
 
     // Fired when the bot connects to the network
-    _handleRegistered(app) {
+    static _handleRegistered(app) {
         app.Registered.forEach((value, key) => {
             value.call();
         });
@@ -391,7 +390,7 @@ class MrNodeBot {
         }
     }
 
-    _handleAuthedCommands(app, nick, to, text, message) {
+    static _handleAuthedCommands(app, nick, to, text, message) {
         if (String(nick).toLowerCase() === String(app.Config.nickserv.nick).toLowerCase()) {
             let textArray = text.split(' '),
                 user = textArray[0],
@@ -451,13 +450,14 @@ class MrNodeBot {
     }
 
     // Handle CTCP commands
-    _handleCtcpCommands(app, from, to, text, type, message) {
+    static _handleCtcpCommands(app, from, to, text, type, message) {
         let textArray = text.split(' ');
 
         // Return on no command
         if (!textArray[0]) {
             return;
         }
+        app.say(from, 'Hello');
     }
 
     // Run through randomizer parser
@@ -477,6 +477,6 @@ class MrNodeBot {
     notice(target,message) {
         this._ircClient.notice(target,this. _filterMessage(message));
     }
-};
+}
 
 module.exports = callback => new MrNodeBot(callback);
