@@ -173,28 +173,8 @@ class MrNodeBot {
     }
 
     // Models Loader
+    // TODO find a better way of doing this
     _loadModelsFromDir(dir) {
-        let path = require('path');
-        let normalizedPath = path.join(__dirname, dir);
-        let self = this;
-
-        // TODO Move to foreach (comment)
-        conLogger(`Loading all Models from ${dir}`, 'loading');
-
-        require("fs").readdirSync(normalizedPath).forEach(file => {
-            // Attempt to see if the module is already loaded
-            let fullPath = `${normalizedPath}${path.sep}${file}`;
-
-            // Attempt to Load the module
-            try {
-                self._clearCache(fullPath);
-                require(fullPath);
-                conLogger(`Loading Model: ${file} `, 'success');
-
-            } catch (err) {
-                conLogger(`[${err}] in: ${fullPath}`.replace(`${path.sep}${path.sep}`, `${path.sep}`), 'error');
-            }
-        });
     }
 
     // Extensions Loader
@@ -278,11 +258,6 @@ class MrNodeBot {
             this.OnJoin.clear();
             this.OnTopic.clear();
         }
-
-        // Load in the models
-        this._modelDirectories.forEach(model => {
-            this._loadModelsFromDir(model);
-        });
 
         // Load in the Scripts
         if (!this.Config.disableScripts) {
