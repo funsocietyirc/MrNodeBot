@@ -48,7 +48,7 @@ exports.Uptime = () => startTime.toString();
  * @param x
  * @constructor
  */
-let IsSet = x => !!(x != undefined && x != null && x != '');
+exports.IsSet = x => !!(x != undefined && x != null && x != '');
 
 
 /* Color stuffs */
