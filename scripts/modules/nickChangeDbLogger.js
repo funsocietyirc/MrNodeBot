@@ -1,29 +1,29 @@
 'use strict';
+const Models = require('bookshelf-model-loader');
 
 module.exports = app => {
     // Log nick changes in the alias table
-    if (!app.Database && !app.Models.has('alias')) {
+    if (!app.Database && !Models.Alias) {
         return;
     }
 
     // Grab Model
-    const aliasModel = app.Models.get('alias');
+    const aliasModel = Models.Alias;
 
     // Handler
     const nickChange = (oldnick, newnick, channels, message) => {
         // If we have a database connection, log
-        new aliasModel({
+        aliasModel.create({
                 oldnick: oldnick,
                 newnick: newnick
             })
-            .save()
             .catch(err => {
                 console.log(err.message);
             });
     };
 
     const frontEnd = (req, res) => {
-        new aliasModel().fetchAll().then(results => {
+        aliasModel.fetchAll().then(results => {
             res.render('nickchanges', {
                 results: results.toJSON(),
                 moment: require('moment')

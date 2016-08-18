@@ -43,11 +43,12 @@ exports.timeDiff = time => moment.duration(moment(time, 'DD/MM/YYYY').diff(momen
 /* Get the current uptime */
 exports.Uptime = () => startTime.toString();
 
-exports.IsSet = function (x) {
-    if (x != undefined && x != null && x != '') {
-        return true;
-    }
-};
+/**
+ * @returns {boolean}
+ * @param x
+ * @constructor
+ */
+let IsSet = x => !!(x != undefined && x != null && x != '');
 
 
 /* Color stuffs */

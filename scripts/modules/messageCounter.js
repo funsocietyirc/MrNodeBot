@@ -1,5 +1,6 @@
 'use strict';
 const Moment = require('moment');
+const Models = require('bookshelf-model-loader');
 
 /**
   Message Statistics Module
@@ -25,11 +26,11 @@ module.exports = app => {
     //
 
     // If we have Database availability
-    if (!app.Database || !app.Models.has('logging')) {
+    if (!app.Database || !Models.Logging) {
         return;
     }
 
-    const logging = app.Models.get('logging');
+    const logging = Models.Logging;
 
     /**
         Show the last known activity of a given username
@@ -43,7 +44,7 @@ module.exports = app => {
             return;
         }
 
-        new logging()
+        logging
             .query(qb => {
                 qb
                     .select('to', 'from', 'text', 'timestamp')

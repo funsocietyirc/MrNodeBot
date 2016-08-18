@@ -1,19 +1,20 @@
 'use strict';
+const Models = require('bookshelf-model-loader');
+
 module.exports = app => {
     // Bailout if we do not have database
-    if(!app.Database ||  !app.Models.has('topics')) {
+    if(!app.Database ||  !Models.Topics) {
       return;
     }
-    const topicsModel = app.Models.get('topics');
+    const topicsModel = Models.Topics;
 
     // Handler
     const loggingCmd = (channel,topic,nick,message) => {
-        new topicsModel({
+        topicsModel.create({
             channel: channel,
             topic: topic,
             nick:nick
             })
-            .save()
             .catch(err => {
                 console.log(err.message);
             });

@@ -37,7 +37,6 @@ class MrNodeBot {
         this.Listeners = new HashMap();
         this.WebRoutes = new HashMap();
         this.Commands = new HashMap();
-        this.Models = new HashMap();
         this.Stats = new HashMap();
         this.OnJoin = new HashMap();
         this.OnTopic = new HashMap();
@@ -189,16 +188,8 @@ class MrNodeBot {
             // Attempt to Load the module
             try {
                 self._clearCache(fullPath);
-
+                require(fullPath);
                 conLogger(`Loading Model: ${file} `, 'success');
-
-                let modPath = `./${dir}/${file}`;
-                let mod = require(modPath);
-
-                if (!this.Models.has(mod.modelName)) {
-                    let model = mod.model(this);
-                    this.Models.set(mod.modelName, model);
-                }
 
             } catch (err) {
                 conLogger(`[${err}] in: ${fullPath}`.replace(`${path.sep}${path.sep}`, `${path.sep}`), 'error');
@@ -283,7 +274,6 @@ class MrNodeBot {
             this.Listeners.clear();
             this.WebRoutes.clear();
             this.Commands.clear();
-            this.Models.clear();
             this.Stats.clear();
             this.OnJoin.clear();
             this.OnTopic.clear();
