@@ -24,9 +24,6 @@ class MrNodeBot {
         // Set Script Directories
         this._scriptDirectories = this.Config.bot.scripts;
 
-        // Set Model location
-        this._modelDirectories = this.Config.bot.models;
-
         // Grab the IRC instance
         this._ircClient = require('./lib/ircclient');
 

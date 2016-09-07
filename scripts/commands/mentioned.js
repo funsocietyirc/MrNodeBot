@@ -31,7 +31,10 @@ module.exports = app => {
                     .select('from', 'text')
                     .where('to', to)
                     .orderByRaw('rand()')
-                    .limit(1)
+                    .limit(1);
+                    if(text) {
+                        qb.andWhere('text','like', text);
+                    }
             })
             .fetch()
             .then(result => {
