@@ -1,10 +1,11 @@
 /**
-Greet the users in #fsociety
-TODO: Make multi-channel and configurable
-**/
+ Greet the users in #fsociety
+ TODO: Make multi-channel and configurable
+ **/
 'use strict';
 
 const _ = require('lodash');
+const Models = require('bookshelf-model-loader');
 
 module.exports = app => {
     // More readable inline leet speak
@@ -18,7 +19,7 @@ module.exports = app => {
         .replace('o', '0');
 
     // Do not load module if we have no database
-    if (!app.Database && !app.Models.has('greeter')) {
+    if (!app.Database && !Models.Greeter) {
         return;
     }
 
@@ -32,22 +33,22 @@ module.exports = app => {
     ], l33t).join('|');
 
     // Model
-    const greetModel = app.Models.get('greeter');
+    const greetModel = Models.Greeter;
     // Check DB to see if they were already greeted
     const checkChannel = (channel, nick, callback) => {
-        new greetModel().query(qb => {
-                qb.where('channel', 'like', channel)
-                    .andWhere('nick', 'like', nick);
-            })
+        greetModel.query(qb => {
+            qb.where('channel', 'like', channel)
+                .andWhere('nick', 'like', nick);
+        })
             .fetch()
             .then(results => {
                 // Does not exist
                 if (!results) {
                     // Log that we have greeted for this channel
-                    new greetModel({
+                    greetModel.create({
                         channel: channel,
                         nick: nick
-                    }).save().catch(err => {
+                    }).catch(err => {
                         console.log(err.message);
                     });
                     if (typeof(callback) === typeof(Function)) {
@@ -74,7 +75,7 @@ module.exports = app => {
             return;
         }
         let channel = text.getFirst();
-        new greetModel()
+        greetModel
             .where('channel', 'like', channel)
             .destroy()
             .then(() => {
@@ -87,12 +88,12 @@ module.exports = app => {
     };
 
     const getTotalGreetedByChannel = (to, from, text, message) => {
-        if(!text) {
+        if (!text) {
             app.say(from, 'You must specify a channel when clearing the greeter cache');
             return;
         }
         let channel = text.getFirst();
-        new greetModel()
+        greetModel
             .where('channel', 'like', channel)
             .count()
             .then(total => {

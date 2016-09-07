@@ -1,23 +1,29 @@
 'use strict';
 const _ = require('lodash');
 const checkUrl = require('../../lib/checkUrl');
+const Models = require('bookshelf-model-loader');
 
 // Display a list of images in the Web Front end
 module.exports = app => {
-    const urlModel = app.Models.get('url');
+    // Bailout if we do not have database
+    if (!app.Database || !Models.Url) {
+        return;
+    }
+
+    const urlModel = Models.Url;
 
     // Clean the DB of broken URLS
     const cleanUrls = () => {
-        new urlModel().query(qb => {
-                // Build Up Query
-                qb.where(function() {
-                    this
-                        .where('url', 'like', '%.jpeg')
-                        .orWhere('url', 'like', '%.jpg')
-                        .orWhere('url', 'like', '%.gif')
-                        .orWhere('url', 'like', '%.png');
-                });
-            })
+        urlModel.query(qb => {
+            // Build Up Query
+            qb.where(function () {
+                this
+                    .where('url', 'like', '%.jpeg')
+                    .orWhere('url', 'like', '%.jpg')
+                    .orWhere('url', 'like', '%.gif')
+                    .orWhere('url', 'like', '%.png');
+            });
+        })
             .fetchAll()
             .then(results => {
                 results.pluck('url').forEach(url => {
@@ -25,11 +31,7 @@ module.exports = app => {
                     checkUrl(url, good => {
                         if (!good) {
                             // If not delete url
-                            new urlModel().query(qb => {
-                                qb.where(function() {
-                                    this.where('url', url);
-                                });
-                            }).destroy();
+                            urlModel.where('url', url).destroy();
                         }
                     });
 
@@ -39,27 +41,27 @@ module.exports = app => {
 
     // Web Front End
     const images = (req, res) => {
-        new urlModel().query(qb => {
-                // If there is a channel in the query string
-                if (req.params.channel) {
-                    qb.where('to', req.params.channel.replaceAll('%23', '#'));
-                }
-                // If there is a from in the query string
-                if (req.params.user) {
-                    qb.where('from', req.params.user);
-                }
+        urlModel.query(qb => {
+            // If there is a channel in the query string
+            if (req.params.channel) {
+                qb.where('to', req.params.channel.replaceAll('%23', '#'));
+            }
+            // If there is a from in the query string
+            if (req.params.user) {
+                qb.where('from', req.params.user);
+            }
 
-                // Build Up Query
-                qb.where(function() {
-                        this
-                            .where('url', 'like', '%.jpeg')
-                            .orWhere('url', 'like', '%.jpg')
-                            .orWhere('url', 'like', '%.gif')
-                            .orWhere('url', 'like', '%.png');
-                    })
-                    .orderBy('timestamp', req.query.sort || 'desc')
-                    .limit(req.query.length || 50);
+            // Build Up Query
+            qb.where(function () {
+                this
+                    .where('url', 'like', '%.jpeg')
+                    .orWhere('url', 'like', '%.jpg')
+                    .orWhere('url', 'like', '%.gif')
+                    .orWhere('url', 'like', '%.png');
             })
+                .orderBy('timestamp', req.query.sort || 'desc')
+                .limit(req.query.length || 50);
+        })
             .fetchAll()
             .then(results => {
                 // Get Unique list of channels from results
@@ -78,23 +80,21 @@ module.exports = app => {
     };
 
     // Register Route with Application
-    if (app.Database && app.Models.has('url')) {
-        app.WebRoutes.set('urls', {
-            handler: images,
-            desc: 'Image Front End',
-            path: '/images/:channel?/:user?',
-            name: 'urls'
-        });
-        // Command to clean URLS
-        // Command
-        app.Commands.set('clean-images', {
-            desc: 'clean images from the logging database if they are no longer relevent',
-            access: app.Config.accessLevels.owner,
-            call: cleanUrls
-        });
-        // Schedule Job every hour to verify images still exist
-        app.Scheduler.scheduleJob({
-            hour: 23
-        }, cleanUrls);
-    }
+    app.WebRoutes.set('urls', {
+        handler: images,
+        desc: 'Image Front End',
+        path: '/images/:channel?/:user?',
+        name: 'urls'
+    });
+    // Command to clean URLS
+    // Command
+    app.Commands.set('clean-images', {
+        desc: 'clean images from the logging database if they are no longer relevent',
+        access: app.Config.accessLevels.owner,
+        call: cleanUrls
+    });
+    // Schedule Job every hour to verify images still exist
+    app.Scheduler.scheduleJob({
+        hour: 23
+    }, cleanUrls);
 };

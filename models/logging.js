@@ -1,9 +1,12 @@
 'use strict';
-// Logging Model
-module.exports.model = app => app.Database.Model.extend({
+var Models = require('bookshelf-model-loader');
+
+var Logging = Models.Base.extend({
     tableName: 'logging',
-    hasTimestamps: ['timestamp']
+    hasTimestamps: ['timestamp'],
+    soft: false
 });
 
-// Name model
-module.exports.modelName = 'logging';
+module.exports = {
+    Logging: Models.Bookshelf.model('logging', Logging)
+};

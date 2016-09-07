@@ -19,7 +19,7 @@ module.exports = {
         models: [
             '/models'
         ],
-        // Currently running Enviroment
+        // Currently running Environment
         env: 'devel'
     },
     // Owner configuration

@@ -23,7 +23,7 @@ module.exports = app => {
     };
 
     const listen = (to, from, text, message, is) => {
-        if (!app.Config.features.conversational.ignoredChans.contains(to) && conversational && !is.triggered && app.random.bool(1, is.privMsg ? 1 : app.Config.features.conversational.randomChance)(app.randomEngine)) {
+        if (!app.Config.features.conversational.ignoredChans.contains(to) && conversational && !is.triggered && app.random.bool(1, is.privateMsg ? 1 : app.Config.features.conversational.randomChance)(app.randomEngine)) {
             var replyText = chatBot.answer(text).replaceAll('<br>', '');
             app.say(to, `${from}, ${replyText}`);
         }

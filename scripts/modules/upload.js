@@ -4,8 +4,16 @@
 
 const path = require('path');
 const randToken = require('rand-token');
+const Models = require('bookshelf-model-loader');
 
 module.exports = app => {
+    // Log nick changes in the alias table
+    if (!app.Database && !Models.Token) {
+        return;
+    }
+
+    const tokenModel = Models.Token;
+
     // Register a user to a token
     const registerToken = (to, from, text, message) => {
         // Only accept messages from channel
@@ -14,10 +22,9 @@ module.exports = app => {
             return;
         }
 
-        let model = app.Models.get('token');
         let token = randToken.generate(8);
 
-        new model()
+        tokenModel
             .query(qb => {
                 qb
                     .where('user', from)
@@ -27,19 +34,18 @@ module.exports = app => {
             .then(result => {
                 // If no previous tokens exist
                 if (!result) {
-                    new model({
+                    tokenModel.create({
                             user: from,
                             channel: to,
                             token: token
                         })
-                        .save()
                         .then(() => {
                             app.say(from, `Your new token for ${to} is ${token}`);
                         });
                 }
                 // If previous token exists
                 else {
-                    new model()
+                    tokenModel
                         .where({
                             user: from,
                             channel: to
@@ -70,12 +76,10 @@ module.exports = app => {
         }
 
         let file = req.files.image;
-        let model = app.Models.get('token');
         let token = req.body.token;
-        app.say('irony', req.body.nsfw);
         let nsfw = req.body.nsfw || false;
 
-        new model()
+        tokenModel
             .where('token', token)
             .fetch()
             .then(tResults => {
@@ -94,15 +98,14 @@ module.exports = app => {
                     }
 
                     // Add the Url to the database
-                    if (app.Models.has('url')) {
-                        let url = app.Models.get('url');
+                    if (Models.Url) {
+                        let urlModel = Models.Url;
                         let urlPath = `${app.Config.express.address}/uploads/${fileName}`;
-                        new url({
+                        urlModel.create({
                                 url: urlPath,
                                 to: tResults.get('channel'),
                                 from: tResults.get('user')
                             })
-                            .save()
                             .then(() => {
                                 let msg =  `${tResults.get('user')} just uploaded: ${urlPath}`;
                                 if(nsfw) {

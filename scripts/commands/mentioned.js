@@ -1,5 +1,7 @@
 'use strict';
 const Moment = require('moment');
+const Models = require('bookshelf-model-loader');
+
 
 /**
     Database Specific Commands
@@ -7,15 +9,15 @@ const Moment = require('moment');
 **/
 module.exports = app => {
     // Only enabled if there is a database available
-    if (!app.Database && !app.Models.has('logging')) {
+    if (!app.Database && !Models.Logging) {
         return
     }
 
     // Grab the model
-    const logging = app.Models.get('logging');
+    const loggingModel = Models.Logging;
 
     const total = (to, from, text, message) => {
-        new logging()
+        loggingModel
             .where('to', '=', to)
             .count()
             .then(result => {
@@ -24,13 +26,15 @@ module.exports = app => {
     };
 
     const randomLine = (to, from, text, message) => {
-        new logging()
-            .query(qb => {
+        loggingModel.query(qb => {
                 qb
                     .select('from', 'text')
                     .where('to', to)
                     .orderByRaw('rand()')
-                    .limit(1)
+                    .limit(1);
+                    if(text) {
+                        qb.andWhere('text','like', text);
+                    }
             })
             .fetch()
             .then(result => {
@@ -44,7 +48,7 @@ module.exports = app => {
             app.say(to, 'You did not enter in a word silly');
             return;
         }
-        new logging()
+        loggingModel
             .query(qb => {
                 qb
                     .where('text', 'like', text)

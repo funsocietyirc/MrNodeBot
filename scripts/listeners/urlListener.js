@@ -9,6 +9,7 @@ const color = require('irc-colors');
 const helpers = require('../../helpers');
 const _ = require('lodash');
 const xray = require('x-ray')();
+const Models = require('bookshelf-model-loader');
 
 /**
   Translate urls into Google short URLS
@@ -59,7 +60,7 @@ module.exports = app => {
     const logUrlInDb = (url, to, from) => {
         // Make sure we have DB Connectivity
         if (!app.Database ||
-            !app.Models.has('url') ||
+            !Models.Url ||
             urlLoggerIgnore.some(hash => {
                 if (_.includes(hash, to.toLowerCase())) {
                     return true;
@@ -71,14 +72,13 @@ module.exports = app => {
 
         // Grab the model
 
-        let urlModel = app.Models.get('url');
+        let urlModel = Models.Url;
         // Log the url to the db
-        new urlModel({
+        urlModel.create({
                 url: url,
                 to: to,
                 from: from
             })
-            .save()
             .catch((err) => {
                 console.log(err);
             });
@@ -99,6 +99,7 @@ module.exports = app => {
         ) {
             return;
         }
+
         if (urlCache.has(url)) {
             shortSay(to, from, urlCache.get(url));
         } else {

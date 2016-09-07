@@ -1,24 +1,25 @@
 'use strict';
+const Models = require('bookshelf-model-loader');
+
 
 /** Log all incoming channel messages to a Sql Database **/
 module.exports = app => {
-    // Assure the database and logging table eixsts
-    if (!app.Database && !app.Models.has('logging')) {
+    // Assure the database and logging table exists
+    if (!app.Database && !Models.Logging) {
         return;
     }
 
-    const loggingModel = app.Models.get('logging');
+    const loggingModel = Models.Logging;
 
     // Handler
     const loggingCmd = (to, from, text, message) => {
-        new loggingModel({
+        loggingModel.create({
                 from: from,
                 to: to,
                 text: require('irc-colors').stripColorsAndStyle(text),
                 ident: message.user,
                 host: message.host
             })
-            .save()
             .catch(err => {
                 console.log(err.message);
             });
