@@ -48,14 +48,14 @@ class MrNodeBot {
         // Track root path
         this.AppRoot = require('app-root-path').toString();
 
+        // Init the Database subsystem
+        this._initDbSubSystem();
+        
         // // Init the Web server
         this._initWebServer();
         //
         // // Init irc
         this._initIrc();
-
-        // Init the Database subsystem
-        this._initDbSubSystem();
 
         // Init storage
         this._initStorageSubSystem();
@@ -167,11 +167,6 @@ class MrNodeBot {
     //noinspection JSMethodCanBeStatic
     _clearCache(fullPath) {
         require.uncache(require.resolve(fullPath));
-    }
-
-    // Models Loader
-    // TODO find a better way of doing this
-    _loadModelsFromDir(dir) {
     }
 
     // Extensions Loader

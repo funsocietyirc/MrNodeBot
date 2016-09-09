@@ -18,9 +18,11 @@ const Models = require('bookshelf-model-loader');
 **/
 module.exports = app => {
     // Ignore List For Google service responder
-    const googleShortIgnore = app.Config.features.urls.googleShortIgnore;
+    const googleShortIgnore = app.Config.features.urls.googleShortIgnore || [];
     // Ignore URL logging for specific channels
-    const urlLoggerIgnore = app.Config.features.urls.loggingIgnore;
+    const urlLoggerIgnore = app.Config.features.urls.loggingIgnore || [];
+    // Anounce Ignore
+    const announceIgnore = app.Config.features.urls.announceIgnore || [];
 
     // Formatting Helper
     const shortSay = (to, from, payload) => {
@@ -38,16 +40,6 @@ module.exports = app => {
             app.say(to, `(${from}) ` + output);
         }
     };
-
-    // Google API Key required
-    if (!app.Config.apiKeys.google) {
-        return;
-    }
-
-    // Google API
-    const googleUrl = new GoogleUrl({
-        key: app.Config.apiKeys.google
-    });
 
     // Cache URLS to prevent unnecessary API calls
     const urlCache = new HashMap();
@@ -87,6 +79,16 @@ module.exports = app => {
     // Shorten Urls through google service and send them back
     // config.googleShorten needs to exist has a blank array
     const googleShorten = (url, to, from) => {
+        // Google API Key required
+        if (!app.Config.apiKeys.google) {
+            return;
+        }
+
+        // Google API
+        const googleUrl = new GoogleUrl({
+            key: app.Config.apiKeys.google
+        });
+
         // Check input / Gate
         if (
             url.startsWith('http://goo.gl/') ||
@@ -139,8 +141,12 @@ module.exports = app => {
         // Actions to pass them too
         let actions = [
             logUrlInDb,
-            googleShorten
         ];
+
+        // check to see if we are ignoring the URL announce for a channel
+        if(!announceIgnore.contains(to)) {
+            actions.push(googleShorten);
+        }
 
         // Input does not contain urls
         if (!urls) {

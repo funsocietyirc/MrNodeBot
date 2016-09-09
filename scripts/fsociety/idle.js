@@ -7,6 +7,7 @@ module.exports = app => {
     }
 
     let active = false;
+    let initial = true;
 
     const messages = [
         'scratches nose', 'inhales a line of morphine', 'hacks the planet', 'smokes a joint', 'calculates humanity',
@@ -21,7 +22,11 @@ module.exports = app => {
     // Increment by min
     const minTimer =  () => {
         if(!active) {
-            app.action(app.Config.features.fsociety.mainChannel, `{${messages}}`);
+            if(!initial) {
+                app.action(app.Config.features.fsociety.mainChannel, `{${messages}}`);
+            } else {
+                initial = false;
+            }
         }
         active = false;
         setTimeout(minTimer, app.Config.features.fsociety.idleChat *  60000);
@@ -30,6 +35,7 @@ module.exports = app => {
 
     //  check for active
     const setActive = (channel,topic,nick,message) => {
+        // TODO make this open to other channels
         if(channel == app.Config.features.fsociety.mainChannel) {
             active = true;
         }
