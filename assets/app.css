@@ -9,7 +9,8 @@ html {
 }
 body {
 	min-height:calc(100% - 60px);
-	background-color: rgba(0,0,0,0.8);
+    background: black;
+	background: rgba(0,0,0,0.8);
 }
 .padded {
 	padding-right: 5px;
@@ -22,6 +23,7 @@ body {
 }
 .channelLink {
 	display: inline-block;
+    margin-top:5px;
 }
 .channelLink:not(:only-of-type):not(:last-of-type):after {
 	margin-right:5px;
@@ -39,8 +41,6 @@ body {
     animation: blink 0.7s infinite;
     font-size:2em;
     color:#00ff00 ;
-
-
 }
 @keyframes blink{
     0% { opacity:1; }
