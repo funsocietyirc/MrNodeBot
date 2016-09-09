@@ -17,6 +17,8 @@ const Models = require('bookshelf-model-loader');
   Npm Requires: google-url
 **/
 module.exports = app => {
+    // Ignore the users entirely
+    const userIgnore =  app.Config.features.urls.userIgnore || [];
     // Ignore List For Google service responder
     const googleShortIgnore = app.Config.features.urls.googleShortIgnore || [];
     // Ignore URL logging for specific channels
@@ -134,9 +136,19 @@ module.exports = app => {
 
     // Handler
     const handle = (to, from, text) => {
+        // Check to see if the user is ignored from url listening, good for bots that repete
+        if(userIgnore.contains(from)) {
+            return;
+        }
+
         const pattern = /\b((?:[a-z][\w-]+:(?:\/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))/ig;
         // Array of urls
         let urls = text.toString().match(pattern);
+
+        // Input does not contain urls
+        if (!urls) {
+            return;
+        }
 
         // Actions to pass them too
         let actions = [
@@ -144,13 +156,8 @@ module.exports = app => {
         ];
 
         // check to see if we are ignoring the URL announce for a channel
-        if(!announceIgnore.contains(to)) {
+        if (!announceIgnore.contains(to)) {
             actions.push(googleShorten);
-        }
-
-        // Input does not contain urls
-        if (!urls) {
-            return;
         }
 
         // Shorten and output

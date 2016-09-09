@@ -9,7 +9,6 @@ module.exports = app => {
         return;
     }
 
-    console.log(Models.Url);
     // Provide URLs
     if (Models.Url) {
         const urlHandler = (req, res) => {
@@ -29,6 +28,7 @@ module.exports = app => {
                 .then(results => {
                     res.json({
                         results: results.toJSON(),
+                        //count: results.count(),
                         status: 'success'
                     });
                 });
