@@ -4,7 +4,8 @@ var Models = require('bookshelf-model-loader');
 var Url = Models.Base.extend({
     tableName: 'url',
     hasTimestamps: ['timestamp'],
-    soft: false
+    soft: false,
+    hidden: ['id']
 });
 
 module.exports = {
