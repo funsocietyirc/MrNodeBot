@@ -14,22 +14,28 @@ module.exports = app => {
         const urlHandler = (req, res) => {
             Models.Url.query(qb => {
                     // If there is a channel in the query string
-                    if (req.params.channel) {
-                        qb.where('to', req.params.channel.replaceAll('%23', '#'));
+                    if (req.query.channel) {
+                        qb.where('to', req.query.channel.replaceAll('%23', '#'));
                     }
                     // If there is a from in the query string
-                    if (req.params.user) {
-                        qb.where('from', req.params.user);
+                    if (req.query.user) {
+                        qb.where('from', req.query.user);
                     }
                     // Build Up Query
                     qb.orderBy('timestamp', req.query.sort || 'desc');
                 })
-                .fetchAll()
+                .fetchPage({
+                    pageSize: 50,
+                    page: req.query.page || 1
+                })
                 .then(results => {
                     res.json({
-                        results: results.toJSON(),
-                        //count: results.count(),
-                        status: 'success'
+                        rowCount: results.pagination.rowCount,
+                        pageCount: results.pagination.pageCount,
+                        page: results.pagination.page,
+                        pageSize: results.pagination.pageSize,
+                        status: 'success',
+                        results: results.toJSON()
                     });
                 });
         };
