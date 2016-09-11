@@ -9,21 +9,6 @@ const Models = require('bookshelf-model-loader');
   Web Routes: counter
 **/
 module.exports = app => {
-    // Web Front end
-    // const frontEnd = (req, res) => {
-    //     let output = {};
-    //     messageStats.forEach((value, key) => {
-    //         output[key] = value;
-    //     });
-    //     res.render('counter', {
-    //         results: output,
-    //         count: messageCount,
-    //         moment: Moment,
-    //         totalUsers: messageStats.count(),
-    //         admins: app.Admins.join()
-    //     });
-    // };
-    //
 
     // If we have Database availability
     if (!app.Database || !Models.Logging) {
@@ -70,12 +55,4 @@ module.exports = app => {
         call: lastActive
     });
 
-    //
-    // // Web Route
-    // app.WebRoutes.set('counter', {
-    //     desc: 'Keep track of all incoming messages',
-    //     handler: frontEnd,
-    //     path: '/counter',
-    //     name: 'counter'
-    // });
 };

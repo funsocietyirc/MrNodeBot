@@ -22,6 +22,7 @@ module.exports = app => {
             });
     };
 
+    // Web front end
     const frontEnd = (req, res) => {
         aliasModel.fetchAll().then(results => {
             res.render('nickchanges', {
@@ -30,6 +31,36 @@ module.exports = app => {
             });
         });
     };
+
+    // Listen known nicks for a given alias
+    const aka = (to,from,text,message) => {
+      if(!text) {
+        app.say(to, `No one is no one is no one...`);
+        return;
+      }
+      Models.Alias
+      .query(qb => {
+        qb
+        .distinct('newnick')
+        .where('oldnick', 'like', text)
+        .select('newnick');
+      })
+      .fetchAll()
+      .then(results => {
+        if(!results.length) {
+          app.say(to,'I have no data on that alias...');
+          return;
+        }
+        let nicks = results.pluck('newnick').join(' | ');
+        app.say(to, `${text} is also known as: ${nicks}`);
+      });
+    };
+
+    app.Commands.set('aka', {
+        desc: '[alias] get known aliases',
+        access: app.Config.accessLevels.identified,
+        call: aka
+    });
 
     // Listen and Log
     app.NickChanges.set('databaseLogging', {

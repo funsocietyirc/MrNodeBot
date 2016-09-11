@@ -51,7 +51,6 @@ module.exports = app => {
                 });
             });
     };
-
     // Subscribe to web service
     app.WebRoutes.set('api.urls', {
         handler: urlHandler,
@@ -60,5 +59,4 @@ module.exports = app => {
         name: 'api.urls',
         verb: 'get'
     });
-
 };

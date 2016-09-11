@@ -91,7 +91,7 @@ module.exports = app => {
 
     // random-line command
     app.Commands.set('random-line', {
-        desc: 'Get a random line from the channel',
+        desc: 'Get a random line from the channel, accepts argument as search string',
         access: app.Config.accessLevels.identified,
         call: randomLine
     });
