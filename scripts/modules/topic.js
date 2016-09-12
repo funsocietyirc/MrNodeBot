@@ -42,8 +42,8 @@ module.exports = app => {
                     app.say(to, `There is no data available for ${channel}`);
                     return;
                 }
+                app.say(to, `The Topic history has been private messaged to you ${from}`);
                 results.each(result => {
-                    app.say(to, `The Topic history has been private messaged to you ${from}`);
                     app.say(from, `${result.attributes.topic} | ${result.attributes.nick} on ${result.attributes.timestamp} `);
                 });
             });
@@ -65,13 +65,16 @@ module.exports = app => {
             })
             .fetchAll()
             .then(results => {
-                app.say(to, `Attemting to revert the topic as per your request ${from}`);
+                if(results.length < 2) {
+                  app.say(to, 'There is not enough data available for this channel');
+                  return;
+                }
+                app.say(to, `Attempting to revert the topic as per your request ${from}`);
                 app._ircClient.send('topic', to, results.pluck('topic')[1]);
             });
     };
-
     app.Commands.set('topic-revert', {
-        desc: 'revert-topic',
+        desc: 'Restore the topic in the active channel to its previous state',
         access: app.Config.accessLevels.admin,
         call: revertTopic
     });
