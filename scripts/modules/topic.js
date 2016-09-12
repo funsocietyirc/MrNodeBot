@@ -43,8 +43,10 @@ module.exports = app => {
                     return;
                 }
                 app.say(to, `The Topic history has been private messaged to you ${from}`);
+                let count = 0;
                 results.each(result => {
-                    app.say(from, `${result.attributes.topic} | ${result.attributes.nick} on ${result.attributes.timestamp} `);
+                    app.say(from, `[${count}]: ${result.attributes.topic} | ${result.attributes.nick} on ${result.attributes.timestamp} `);
+                    count = count + 1;
                 });
             });
     };
