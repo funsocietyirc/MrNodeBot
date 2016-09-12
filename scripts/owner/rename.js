@@ -5,8 +5,10 @@
 */
 module.exports = app => {
     const rename = (to, from, text, message) => {
-      app.say(to, `I was once ${app.nick} but now I am ${text || app.Config.irc.nick}... The times, they are changing.`);
-      app.rename(text);
+      let oldNick = app.nick;
+      app.nick = text;
+      app.say(to, `I was once ${oldNick} but now I am ${app.nick}... The times, they are changing.`);
+
     };
 
     // Terminate the bot and the proc watcher that keeps it up

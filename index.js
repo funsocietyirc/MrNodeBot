@@ -6,8 +6,9 @@
 
 const fs = require('fs');
 const conLogger = require('./lib/consoleLogger');
-
 const args = require('minimist')(process.argv.slice(2));
+
+// Check if specified config file exists
 if (args.config) {
     fs.access(args.config, fs.F_OK, err => {
         if (err) {

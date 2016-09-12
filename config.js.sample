@@ -7,7 +7,7 @@ module.exports = {
         disableScripts: false,
         // Script Directories
         scripts: [
-            '/scripts/pages'
+            '/scripts/pages',
             '/scripts/commands',
             '/scripts/admin',
             '/scripts/owner',
@@ -31,12 +31,12 @@ module.exports = {
     irc: {
         nick: 'MrNodeBot',
         server: 'irc.freenode.net',
-        userName: 'MrNodeBot',
+	      userName: 'MrNodeBot',
         realName: 'MrNodeBot',
-        port: 6667,
+        port: 6665,
         localAddress: null,
-        debug: false,
-        showErrors: false,
+        debug: true,
+        showErrors: true,
         autoRejoin: false,
         channels: [
             '#MrNodeBot'
@@ -52,7 +52,8 @@ module.exports = {
         stripColors: false,
         channelPrefixes: '&#',
         messageSplit: '512',
-        encoding: 'utf8'
+        encoding: 'utf8',
+	      autoConnect: false, // DO NOT ADJUST THIS
     },
     // Knex configuration http://knexjs.org/#Installation-client
     knex: {
@@ -62,9 +63,9 @@ module.exports = {
             client: 'mysql',
             connection: {
                 host: '127.0.0.1',
-                user: 'mrnodebot',
-                password: 'mrnodebot',
-                database: 'mrnodebot'
+                user: '',
+                password: '',
+                database: ''
             },
         },
         sqlite: {
@@ -112,38 +113,36 @@ module.exports = {
     },
     // Express Configuration
     express: {
-        port: 1337,
-        address: 'http://localhost:1337'
+        port: 8084,
+        address: 'http://localhost:8084'
     },
     // Feature Configuration
     features: {
         urls: {
             googleShortIgnore: [],
             loggingIgnore: [],
+            announceIgnore: [],
             titleMin: 35,
             cacheCleanup: {
                 minute: 0
             }
         },
-        darkArmy: {
-            mainChannel: '#fsociety',
+        fsociety: {
+            mainChannel: '',
             totalChannels: 0,
             report: false,
             delay: 5, // In seconds,
-            additionalChannels: [
-                // '#th3g3ntl3man',
-                // '#darkarmy',
-                // '##funsociety'
-            ],
+            additionalChannels: [],
             greeterDealy: 20,
+            idleChat: 5// Mins
         },
         twitter: {
-            followers: 'whoismrrobot, samesmail, mrrobotquotes',
+            followers: 'davericher, funsocietyirc',
             channels: [
-                '#fsociety'
             ]
         },
         conversational: {
+            randomChange: 5000,
             enabled: false,
             ignoredChans: []
         }

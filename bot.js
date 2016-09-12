@@ -252,7 +252,7 @@ class MrNodeBot {
         }
 
         // Load in the Scripts
-        if (!this.Config.disableScripts) {
+        if (!this.Config.bot.disableScripts) {
             this._scriptDirectories.forEach(script => {
                 this._loadScriptsFromDir(script);
             });
@@ -424,10 +424,6 @@ class MrNodeBot {
         }
     }
 
-    get nick() {
-        return this._ircClient.nick;
-    }
-
     // Handle CTCP commands
     //noinspection JSMethodCanBeStatic
     _handleCtcpCommands(app, from, to, text, type, message) {
@@ -450,11 +446,15 @@ class MrNodeBot {
     notice(target, message) {
       this._ircClient.notice(target, this._filterMessage(message));
     }
-    // Rename the bot
-    rename(nick) {
-      nick = nick || this.Config.irc.nick;
-      this._ircClient.send('nick', nick);
-      this._ircClient.nick = nick;
+
+    // Properties
+    get nick() {
+        return this._ircClient.nick;
+    }
+    set nick(newNick) {
+      newNick = newNick || this.Config.irc.nick;
+      this._ircClient.send('nick', newNick);
+      this._ircClient.nick = newNick;
     }
 }
 
