@@ -14,12 +14,12 @@ require('./extensions');
 require('./lib/uncache')(require);
 
 class MrNodeBot {
-    constructor(callback) {
+    constructor(callback, configPath) {
         // Assign and normalize callback
         this._callback = callback instanceof Function ? callback : false;
 
         // Configuration Object
-        this.Config = require('./config');
+        this.Config = require(configPath || './config');
 
         // Set Script Directories
         this._scriptDirectories = this.Config.bot.scripts;
@@ -50,7 +50,7 @@ class MrNodeBot {
 
         // Init the Database subsystem
         this._initDbSubSystem();
-        
+
         // // Init the Web server
         this._initWebServer();
         //
@@ -280,6 +280,11 @@ class MrNodeBot {
 
     // Handle Nick changes
     _handleNickChanges(app, oldnick, newnick, channels, message) {
+        // track if the bots nick was changed
+        if (oldnick === this._ircClient.nick) {
+            this._ircClient.nick = newnick;
+        }
+        // Run events
         app.NickChanges.forEach((value, key) => {
             value.call(oldnick, newnick, channels, message);
         });
@@ -419,29 +424,37 @@ class MrNodeBot {
         }
     }
 
+    get nick() {
+        return this._ircClient.nick;
+    }
+
     // Handle CTCP commands
     //noinspection JSMethodCanBeStatic
     _handleCtcpCommands(app, from, to, text, type, message) {
         let textArray = text.split(' ');
         return;
     }
-
     // Run through random parser
-    _filterMessage (message) {
+    _filterMessage(message) {
         return RandomString(this.random, this.randomEngine, message);
     }
-
     // Send a message to the target
     say(target, message) {
-        this._ircClient.say(target,this._filterMessage(message));
+      this._ircClient.say(target, this._filterMessage(message));
     }
     // Send a action to the target
     action(target, message) {
-        this._ircClient.action(target,this._filterMessage(message));
+      this._ircClient.action(target, this._filterMessage(message));
     }
     // Send notice to the target
-    notice(target,message) {
-        this._ircClient.notice(target,this. _filterMessage(message));
+    notice(target, message) {
+      this._ircClient.notice(target, this._filterMessage(message));
+    }
+    // Rename the bot
+    rename(nick) {
+      nick = nick || this.Config.irc.nick;
+      this._ircClient.send('nick', nick);
+      this._ircClient.nick = nick;
     }
 }
 

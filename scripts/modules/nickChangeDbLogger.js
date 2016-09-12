@@ -32,7 +32,7 @@ module.exports = app => {
         });
     };
 
-    // Listen known nicks for a given alias
+    // List known nicks for a given alias
     const aka = (to,from,text,message) => {
       if(!text) {
         app.say(to, `No one is no one is no one...`);
