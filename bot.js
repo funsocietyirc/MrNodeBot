@@ -63,6 +63,9 @@ class MrNodeBot {
         // Setup the app
         this._initRandomSubSystem();
 
+        // Initialize the user manager
+        this._initUserManager();
+
         // Add the listeners
         this._initListeners();
     }
@@ -99,10 +102,6 @@ class MrNodeBot {
         if (this.Config.knex.enabled) {
             conLogger('Initializing Database Sub System', 'info');
             this.Database = require('./lib/orm');
-
-            // Update database to latest migration
-            this.Database.knex.migrate.latest();
-
             conLogger('Database Sub System Initialized', 'success');
         } else {
             conLogger('No Database system found, features limited', 'error');
@@ -162,6 +161,16 @@ class MrNodeBot {
         });
 
         conLogger('Listeners Initialized', 'success');
+    }
+
+    _initUserManager() {
+      if(!this.Database) {
+        conLogger('Database not present, UserManager disabled');
+        return;
+      }
+
+      let UserManager = require('./lib/userManager');
+      this._userManager = new UserManager();
     }
 
     //noinspection JSMethodCanBeStatic
@@ -332,8 +341,9 @@ class MrNodeBot {
         // Process the listeners
         if (!is.triggered && !is.ignored && !is.self) {
             app.Listeners.forEach((value, key) => {
-              if(typeof(call) === function)
+              if(typeof value === 'function') {
                 value.call(to, from, text, message, is);
+              }
             });
         }
 

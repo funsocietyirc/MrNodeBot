@@ -1,5 +1,4 @@
 'use strict';
-'use strict';
 var Models = require('bookshelf-model-loader');
 
 var Topics = Models.Base.extend({
