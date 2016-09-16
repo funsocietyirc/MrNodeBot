@@ -1,7 +1,7 @@
 'use strict';
 const Moment = require('moment');
 const Models = require('bookshelf-model-loader');
-
+const _ = require('lodash');
 
 /**
     Database Specific Commands
@@ -51,8 +51,8 @@ module.exports = app => {
         loggingModel
             .query(qb => {
                 qb
-                    .where('text', 'like', text)
-                    .andWhere('to', 'like', to)
+                    .where('to','=',to)
+                    .andWhere('text', 'like', text)
                     .orderBy('id', 'desc')
                     .limit(1);
             })
@@ -102,4 +102,5 @@ module.exports = app => {
         access: app.Config.accessLevels.identified,
         call: lastMentioned
     });
+
 };

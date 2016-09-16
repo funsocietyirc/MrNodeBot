@@ -3,6 +3,7 @@
 
 const HashMap = require('hashmap');
 const storage = require('node-persist');
+const fs = require("fs");
 const helpers = require('./helpers');
 const conLogger = require('./lib/consoleLogger');
 const RandomString = require('./lib/randomString');
@@ -164,13 +165,13 @@ class MrNodeBot {
     }
 
     _initUserManager() {
-      if(!this.Database) {
-        conLogger('Database not present, UserManager disabled');
-        return;
-      }
+        if (!this.Database) {
+            conLogger('Database not present, UserManager disabled');
+            return;
+        }
 
-      let UserManager = require('./lib/userManager');
-      this._userManager = new UserManager();
+        let UserManager = require('./lib/userManager');
+        this._userManager = new UserManager();
     }
 
     //noinspection JSMethodCanBeStatic
@@ -187,7 +188,8 @@ class MrNodeBot {
 
         conLogger(`Loading all scripts from ${dir}`, 'loading');
 
-        require("fs").readdirSync(normalizedPath).forEach(file => {
+        // Require In the scripts
+        fs.readdirSync(normalizedPath).forEach(file => {
             // Attempt to see if the module is already loaded
             let fullPath = `${normalizedPath}${path.sep}${file}`;
 
@@ -244,11 +246,12 @@ class MrNodeBot {
     }
 
     _loadDynamicAssets(clearCache) {
-        // Reload the Configuration
-        this.Config = require('./config.js');
-
         // Clear dynamic assets
         if (clearCache || false) {
+            // Reload the Configuration
+            this._clearCache('./config.js');
+            this.Config = require('./config.js');
+
             this.AdmCallbacks.clear();
             this.NickChanges.clear();
             this.Registered.clear();
@@ -265,6 +268,25 @@ class MrNodeBot {
             this._scriptDirectories.forEach(script => {
                 this._loadScriptsFromDir(script);
             });
+
+            // Read in command rebindings
+            if (this.Config.commandBindings && this.Config.commandBindings.constructor === Array) {
+                this.Config.commandBindings.forEach(commandBinding => {
+                    if (!commandBinding.alias || !commandBinding.command) {
+                        conLogger(`Improper structure in config.js for commandBindings`, 'error');
+                        return;
+                    }
+                    if (!this.Commands.has(commandBinding.command)) {
+                        conLogger(`The command ${commandBinding.command} for alias ${commandBinding.alias} does not exist`, 'error');
+                        return;
+                    }
+                    if (this.Commands.has(commandBinding.alias)) {
+                        conLogger(`The alias ${commandBinding.alias} for the command ${commandBinding.command} already exists`,'error');
+                        return;
+                    }
+                    this.Commands.set(commandBinding.alias, this.Commands.get(commandBinding.command));
+                });
+            }
         }
 
         // Load the web routes
@@ -341,9 +363,9 @@ class MrNodeBot {
         // Process the listeners
         if (!is.triggered && !is.ignored && !is.self) {
             app.Listeners.forEach((value, key) => {
-              if(typeof value === 'function') {
-                value.call(to, from, text, message, is);
-              }
+                if (typeof value === 'function') {
+                    value.call(to, from, text, message, is);
+                }
             });
         }
 
@@ -438,24 +460,24 @@ class MrNodeBot {
     // Handle CTCP commands
     //noinspection JSMethodCanBeStatic
     _handleCtcpCommands(app, from, to, text, type, message) {
-        let textArray = text.split(' ');
-        return;
-    }
-    // Run through random parser
+            let textArray = text.split(' ');
+            return;
+        }
+        // Run through random parser
     _filterMessage(message) {
-        return RandomString(this.random, this.randomEngine, message);
-    }
-    // Send a message to the target
+            return RandomString(this.random, this.randomEngine, message);
+        }
+        // Send a message to the target
     say(target, message) {
-      this._ircClient.say(target, this._filterMessage(message));
-    }
-    // Send a action to the target
+            this._ircClient.say(target, this._filterMessage(message));
+        }
+        // Send a action to the target
     action(target, message) {
-      this._ircClient.action(target, this._filterMessage(message));
-    }
-    // Send notice to the target
+            this._ircClient.action(target, this._filterMessage(message));
+        }
+        // Send notice to the target
     notice(target, message) {
-      this._ircClient.notice(target, this._filterMessage(message));
+        this._ircClient.notice(target, this._filterMessage(message));
     }
 
     // Properties
@@ -463,9 +485,9 @@ class MrNodeBot {
         return this._ircClient.nick;
     }
     set nick(newNick) {
-      newNick = newNick || this.Config.irc.nick;
-      this._ircClient.send('nick', newNick);
-      this._ircClient.nick = newNick;
+        newNick = newNick || this.Config.irc.nick;
+        this._ircClient.send('nick', newNick);
+        this._ircClient.nick = newNick;
     }
 }
 

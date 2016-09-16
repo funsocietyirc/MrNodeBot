@@ -82,6 +82,10 @@ module.exports = app => {
 
     // Revert to the last known topic
     const revertTopic = (to, from, text, message) => {
+        if (!app._ircClient.isOp(to, app.Config.bot.nick)) {
+            app.say(to, `I am not an op in this channel...`);
+            return;
+        }
         getTopics(to, 2)
             .then(results => {
                 if (results.length < 2) {
@@ -104,6 +108,12 @@ module.exports = app => {
             app.say(to, 'You need to give me something to work with here...');
             return;
         }
+
+        if (!app._ircClient.isOp(to, app.Config.bot.nick)) {
+            app.say(to, `I am not an op in this channel...`);
+            return;
+        }
+
         getTopics(to, 1)
             .then(results => {
                 if (!results.length) {
@@ -124,6 +134,11 @@ module.exports = app => {
 
     // Subtract a topic segment
     const subtractTopic = (to, from, text, message) => {
+        if (!app._ircClient.isOp(to, app.Config.bot.nick)) {
+            app.say(to, `I am not an op in this channel...`);
+            return;
+        }
+
         getTopics(to, 1)
             .then(results => {
                 if (!results.length) {
