@@ -98,7 +98,7 @@ module.exports = app => {
                 let topic = results.pluck('topic')[0];
                 let topicString = topic || '';
                 let dividerstring = topic ? ' | ' : '';
-                app._ircClient.send('topic', to, `${topic} | ${text}`);
+                app._ircClient.send('topic', to, `${topicString}${dividerstring}${text}`);
             });
     };
     app.Commands.set('topic-append', {
