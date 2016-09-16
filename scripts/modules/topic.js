@@ -117,18 +117,24 @@ module.exports = app => {
                 app.say(to, 'That is all she wrote folks');
                 return;
               }
-              topic = topic.split(' | ');
 
-              if(!message || !isNaN(message) || message > topic.length || message < 0) {
+              topic = topic.split(' | ');
+              topic.reverse();
+              if(!message) {
                 topic.pop();
               } else {
-                topic.splice(message, 1);
+                let index = array.indexOf(message);
+                if(index === -1) {
+                  app.say(to,`I am not sure you are reading that correctly ${from}`);
+                  return;
+                }
+                topic.splice(index, 1);
               }
-
               topic = topic.join(' | ');
               app._ircClient.send('topic', to, topic);
           });
     };
+
     app.Commands.set('topic-subtract', {
         desc: 'Remove a segement from the channels topic',
         access: app.Config.accessLevels.admin,
@@ -153,8 +159,9 @@ module.exports = app => {
                 app.say(from, `There is no segments available for the topic in ${to}`);
                 return;
               }
+              app.say(to, `I have oh so personally delivered that information to you ${from}`);
               app.say(from, `Here are the topic segements for ${to}`);
-              let x = 0;
+              let x = 1;
               topic.forEach(r => {
                 app.say(from, `[${x}] ${r}`);
                 x = 1 + x;
@@ -163,7 +170,7 @@ module.exports = app => {
     };
     app.Commands.set('topic-segments', {
         desc: 'Get a list of the current topic segments',
-        access: app.Config.accessLevels.admin,
+        access: app.Config.accessLevels.identified,
         call: topicSegments
     });
 
