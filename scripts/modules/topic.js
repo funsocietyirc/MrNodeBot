@@ -56,20 +56,21 @@ module.exports = app => {
         call: topics
     });
 
+    const getTopics = (channel, limit) => topicsModel.query(qb => {
+        qb.where('channel', channel).orderBy('timestamp', 'desc');
+        if (limit) {
+            qb.limit(limit);
+        }
+        qb.select(['topic'])
+    }).fetchAll();
+
     // Revert to the last known topic
     const revertTopic = (to, from, text, message) => {
-        topicsModel.query(qb => {
-                qb
-                    .where('channel', 'like', to)
-                    .orderBy('timestamp', 'desc')
-                    .limit(2)
-                    .select(['topic']);
-            })
-            .fetchAll()
+        getTopics(to, 2)
             .then(results => {
-                if(results.length < 2) {
-                  app.say(to, 'There is not enough data available for this channel');
-                  return;
+                if (results.length < 2) {
+                    app.say(to, 'There is not enough data available for this channel');
+                    return;
                 }
                 app.say(to, `Attempting to revert the topic as per your request ${from}`);
                 app._ircClient.send('topic', to, results.pluck('topic')[1]);
@@ -80,4 +81,26 @@ module.exports = app => {
         access: app.Config.accessLevels.admin,
         call: revertTopic
     });
+
+    const appendTopic = (to, from, text, message) => {
+        if (!message) {
+            app.say(to, 'You need to give me something to work with here...');
+            return;
+        }
+        getTopics(to, 1)
+            .then(results => {
+                if (!results.length) {
+                    app.say(to, 'There is not topics available for this channel');
+                    return;
+                }
+                app._ircClient.send('topic', to, `${results.pluck('topic')[0]} | ${text}`);
+            });
+    };
+    app.Commands.set('topic-append', {
+        desc: 'Append to the previous topic (in channel)',
+        access: app.Config.accessLevels.admin,
+        call: appendTopic
+    });
+
+
 };
