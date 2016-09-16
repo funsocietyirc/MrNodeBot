@@ -151,7 +151,6 @@ module.exports = app => {
                 app._ircClient.send('topic', to, topic);
             });
     };
-
     app.Commands.set('topic-subtract', {
         desc: 'Remove a segement from the channels topic',
         access: app.Config.accessLevels.admin,

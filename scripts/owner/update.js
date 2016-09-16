@@ -53,6 +53,9 @@ module.exports = app => {
         call: upgrade
     });
 
+    // Joke TODO Remove
+    app.Commands.set('upgrayeddd', app.Commands.get('update'));
+
     // Live reload the scripts
     app.Commands.set('reload', {
         desc: 'Live reload the Bot from local storage',

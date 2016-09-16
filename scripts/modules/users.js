@@ -1,4 +1,4 @@
-'use static';
+'use strict';
 module.exports = app => {
   // Register a User
   const register  = (to,from,text,message) => {

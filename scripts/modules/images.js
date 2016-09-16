@@ -15,15 +15,15 @@ module.exports = app => {
     // Clean the DB of broken URLS
     const cleanUrls = () => {
         urlModel.query(qb => {
-            // Build Up Query
-            qb.where(function () {
-                this
-                    .where('url', 'like', '%.jpeg')
-                    .orWhere('url', 'like', '%.jpg')
-                    .orWhere('url', 'like', '%.gif')
-                    .orWhere('url', 'like', '%.png');
-            });
-        })
+                // Build Up Query
+                qb.where(function() {
+                    this
+                        .where('url', 'like', '%.jpeg')
+                        .orWhere('url', 'like', '%.jpg')
+                        .orWhere('url', 'like', '%.gif')
+                        .orWhere('url', 'like', '%.png');
+                });
+            })
             .fetchAll()
             .then(results => {
                 results.pluck('url').forEach(url => {
@@ -42,27 +42,27 @@ module.exports = app => {
     // Web Front End
     const images = (req, res) => {
         urlModel.query(qb => {
-            // If there is a channel in the query string
-            if (req.params.channel) {
-                qb.where('to', req.params.channel.replaceAll('%23', '#'));
-            }
-            // If there is a from in the query string
-            if (req.params.user) {
-                qb.where('from', req.params.user);
-            }
+                // If there is a channel in the query string
+                if (req.params.channel) {
+                    qb.where('to', req.params.channel.replaceAll('%23', '#'));
+                }
+                // If there is a from in the query string
+                if (req.params.user) {
+                    qb.where('from', req.params.user);
+                }
 
-            // Build Up Query
-            qb.where(function () {
-                this
-                    .where('url', 'like', '%.jpeg')
-                    .orWhere('url', 'like', '%.jpg')
-                    .orWhere('url', 'like', '%.gif')
-                    .orWhere('url', 'like', '%.png')
-                    .distinct('url');
+                // Build Up Query
+                qb.where(function() {
+                        this
+                            .where('url', 'like', '%.jpeg')
+                            .orWhere('url', 'like', '%.jpg')
+                            .orWhere('url', 'like', '%.gif')
+                            .orWhere('url', 'like', '%.png')
+                            .distinct('url');
+                    })
+                    .orderBy('timestamp', req.query.sort || 'desc')
+                    .limit(req.query.length || 50);
             })
-                .orderBy('timestamp', req.query.sort || 'desc')
-                .limit(req.query.length || 50);
-        })
             .fetchAll()
             .then(results => {
                 // Get Unique list of channels from results
