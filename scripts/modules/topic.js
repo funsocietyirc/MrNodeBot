@@ -123,10 +123,11 @@ module.exports = app => {
 
               topic = topic.split(' | ');
               topic.reverse();
-              if(!message) {
+              if(!text) {
                 topic.pop();
               } else {
-                let index = array.indexOf(message);
+                let index = topic.indexOf(text);
+                console.log(index,text);
                 if(index === -1) {
                   app.say(to,`I am not sure you are reading that correctly ${from}`);
                   return;
