@@ -95,7 +95,9 @@ module.exports = app => {
                     app.say(to, 'There is not topics available for this channel');
                     return;
                 }
-                let topic = results.pluck('topic')[0] || '';
+                let topic = results.pluck('topic')[0];
+                let topicString = topic || '';
+                let dividerstring = topic ? ' | ' : '';
                 app._ircClient.send('topic', to, `${topic} | ${text}`);
             });
     };
