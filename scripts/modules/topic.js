@@ -56,6 +56,7 @@ module.exports = app => {
         call: topics
     });
 
+    // Helper function to get a the a promise on the channels topics
     const getTopics = (channel, limit) => topicsModel.query(qb => {
         qb.where('channel', channel).orderBy('timestamp', 'desc');
         if (limit) {
@@ -82,6 +83,7 @@ module.exports = app => {
         call: revertTopic
     });
 
+    // Append a topic segment
     const appendTopic = (to, from, text, message) => {
         if (!message) {
             app.say(to, 'You need to give me something to work with here...');
@@ -102,5 +104,60 @@ module.exports = app => {
         call: appendTopic
     });
 
+    // Subtract a topic segment
+    const subtractTopic = (to,from,text,message) => {
+      getTopics(to, 1)
+          .then(results => {
+              if (!results.length) {
+                  app.say(to, 'There is not topics available for this channel');
+                  return;
+              }
+              let topic = results.pluck('topic')[0];
+              if(!topic) {
+                app.say(to, 'That is all she wrote folks');
+                return;
+              }
+              topic = topic.split(' | ');
+              topic.pop();
+              topic = topic.join(' | ');
+              app._ircClient.send('topic', to, topic);
+          });
+    };
+    app.Commands.set('topic-subtract', {
+        desc: 'Remove a segement from the channels topic',
+        access: app.Config.accessLevels.admin,
+        call: subtractTopic
+    });
+
+    // Get a list of the topics segments
+    const topicSegments = (to,from,text,message) => {
+      getTopics(to, 1)
+          .then(results => {
+              if (!results.length) {
+                  app.say(to, 'There is not topics available for this channel');
+                  return;
+              }
+              let topic = results.pluck('topic')[0];
+              if(!topic) {
+                app.say(from, `There is no topic data available for ${to}`);
+                return;
+              }
+              topic = topic.split(' | ');
+              if(!topic.length) {
+                app.say(from, `There is no segments available for the topic in ${to}`);
+                return;
+              }
+              let x = 0;
+              topic.forEach(r => {
+                app.say(from, `[${x}] ${r}`);
+                x = 1 + x;
+              });
+          });
+    };
+    app.Commands.set('topic-segments', {
+        desc: 'Get a list of the current topic segments',
+        access: app.Config.accessLevels.admin,
+        call: topicSegments
+    });
 
 };
