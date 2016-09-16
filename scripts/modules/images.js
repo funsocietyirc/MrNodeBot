@@ -57,7 +57,8 @@ module.exports = app => {
                     .where('url', 'like', '%.jpeg')
                     .orWhere('url', 'like', '%.jpg')
                     .orWhere('url', 'like', '%.gif')
-                    .orWhere('url', 'like', '%.png');
+                    .orWhere('url', 'like', '%.png')
+                    .distinct('url');
             })
                 .orderBy('timestamp', req.query.sort || 'desc')
                 .limit(req.query.length || 50);

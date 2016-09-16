@@ -1,6 +1,9 @@
 'use strict';
 const Models = require('bookshelf-model-loader');
 
+// Used to break up topics
+const divider = ' | ';
+
 module.exports = app => {
     const topicsModel = Models.Topics;
 
@@ -11,13 +14,25 @@ module.exports = app => {
 
     // Toppic logging handler
     const loggingCmd = (channel, topic, nick, message) => {
-        topicsModel.create({
-                channel: channel,
-                topic: topic,
-                nick: nick
+        topicsModel.query(qb => {
+                qb.where('channel', 'like', channel)
+                    .orderBy('id', 'desc')
+                    .limit(1)
+                    .select(['topic']);
             })
-            .catch(err => {
-                console.log(err.message);
+            .fetch()
+            .then(lastTopic => {
+                if (lastTopic && topic === lastTopic.attributes.topic) {
+                    return;
+                }
+                topicsModel.create({
+                        channel: channel,
+                        topic: topic,
+                        nick: nick
+                    })
+                    .catch(err => {
+                        console.log(err.message);
+                    });
             });
     };
     app.OnTopic.set('topicDbLogger', {
@@ -92,12 +107,12 @@ module.exports = app => {
         getTopics(to, 1)
             .then(results => {
                 if (!results.length) {
-                    app.say(to, 'There is not topics available for this channel');
+                    app.say(to, 'There is no topics available for this channel');
                     return;
                 }
                 let topic = results.pluck('topic')[0];
                 let topicString = topic || '';
-                let dividerstring = topic ? ' | ' : '';
+                let dividerstring = topic ? divider : '';
                 app._ircClient.send('topic', to, `${topicString}${dividerstring}${text}`);
             });
     };
@@ -108,34 +123,33 @@ module.exports = app => {
     });
 
     // Subtract a topic segment
-    const subtractTopic = (to,from,text,message) => {
-      getTopics(to, 1)
-          .then(results => {
-              if (!results.length) {
-                  app.say(to, 'There is not topics available for this channel');
-                  return;
-              }
-              let topic = results.pluck('topic')[0];
-              if(!topic) {
-                app.say(to, 'That is all she wrote folks');
-                return;
-              }
-
-              topic = topic.split(' | ');
-              if(!text) {
-                topic.splice(-1,1);
-              } else {
-                let index = topic.indexOf(text);
-                console.log(index,text);
-                if(index === -1) {
-                  app.say(to,`I am not sure you are reading that correctly ${from}`);
-                  return;
+    const subtractTopic = (to, from, text, message) => {
+        getTopics(to, 1)
+            .then(results => {
+                if (!results.length) {
+                    app.say(to, 'There is not topics available for this channel');
+                    return;
                 }
-                topic.splice(index, 1);
-              }
-              topic = topic.join(' | ');
-              app._ircClient.send('topic', to, topic);
-          });
+                let topic = results.pluck('topic')[0];
+                if (!topic) {
+                    app.say(to, 'That is all she wrote folks');
+                    return;
+                }
+
+                topic = topic.split(divider);
+                if (!text) {
+                    topic.splice(-1, 1);
+                } else {
+                    let index = topic.indexOf(text);
+                    if (index === -1) {
+                        app.say(to, `I am not sure you are reading that correctly ${from}`);
+                        return;
+                    }
+                    topic.splice(index, 1);
+                }
+                topic = topic.join(devider);
+                app._ircClient.send('topic', to, topic);
+            });
     };
 
     app.Commands.set('topic-subtract', {
@@ -145,31 +159,31 @@ module.exports = app => {
     });
 
     // Get a list of the topics segments
-    const topicSegments = (to,from,text,message) => {
-      getTopics(to, 1)
-          .then(results => {
-              if (!results.length) {
-                  app.say(to, 'There is not topics available for this channel');
-                  return;
-              }
-              let topic = results.pluck('topic')[0];
-              if(!topic) {
-                app.say(from, `There is no topic data available for ${to}`);
-                return;
-              }
-              topic = topic.split(' | ');
-              if(!topic.length) {
-                app.say(from, `There is no segments available for the topic in ${to}`);
-                return;
-              }
-              app.say(to, `I have oh so personally delivered that information to you ${from}`);
-              app.say(from, `Here are the topic segements for ${to}`);
-              let x = 1;
-              topic.forEach(r => {
-                app.say(from, `[${x}] ${r}`);
-                x = 1 + x;
-              });
-          });
+    const topicSegments = (to, from, text, message) => {
+        getTopics(to, 1)
+            .then(results => {
+                if (!results.length) {
+                    app.say(to, 'There is not topics available for this channel');
+                    return;
+                }
+                let topic = results.pluck('topic')[0];
+                if (!topic) {
+                    app.say(from, `There is no topic data available for ${to}`);
+                    return;
+                }
+                topic = topic.split(devider);
+                if (!topic.length) {
+                    app.say(from, `There is no segments available for the topic in ${to}`);
+                    return;
+                }
+                app.say(to, `I have oh so personally delivered that information to you ${from}`);
+                app.say(from, `Here are the topic segements for ${to}`);
+                let x = 1;
+                topic.forEach(r => {
+                    app.say(from, `[${x}] ${r}`);
+                    x = 1 + x;
+                });
+            });
     };
     app.Commands.set('topic-segments', {
         desc: 'Get a list of the current topic segments',
