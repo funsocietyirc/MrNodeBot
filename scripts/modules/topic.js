@@ -122,9 +122,8 @@ module.exports = app => {
               }
 
               topic = topic.split(' | ');
-              topic.reverse();
               if(!text) {
-                topic.pop();
+                topic.splice(-1,1);
               } else {
                 let index = topic.indexOf(text);
                 console.log(index,text);
