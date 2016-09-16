@@ -38,6 +38,10 @@ module.exports = app => {
             })
             .fetch()
             .then(result => {
+              if(!result) {
+                app.say(to, `Nothing like that has ever been said in here... yet!`);
+                return;
+              }
                 app.say(to, `${result.get('from')} : ${result.get('text')}`);
             });
     };
