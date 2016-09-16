@@ -118,7 +118,13 @@ module.exports = app => {
                 return;
               }
               topic = topic.split(' | ');
-              topic.pop();
+
+              if(!message || !isNaN(message) || message > topic.length || message < 0) {
+                topic.pop();
+              } else {
+                topic.splice(message, 1);
+              }
+
               topic = topic.join(' | ');
               app._ircClient.send('topic', to, topic);
           });
@@ -147,6 +153,7 @@ module.exports = app => {
                 app.say(from, `There is no segments available for the topic in ${to}`);
                 return;
               }
+              app.say(from, `Here are the topic segements for ${to}`);
               let x = 0;
               topic.forEach(r => {
                 app.say(from, `[${x}] ${r}`);
