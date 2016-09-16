@@ -32,16 +32,16 @@ module.exports = app => {
                     .where('to', to)
                     .orderByRaw('rand()')
                     .limit(1);
-                if (text) {
-                    qb.andWhere('text', 'like', text);
-                }
+                    if(text) {
+                        qb.andWhere('text','like', text);
+                    }
             })
             .fetch()
             .then(result => {
-                if (!result) {
-                    app.say(to, `Nothing like that has ever been said in here... yet!`);
-                    return;
-                }
+              if(!result) {
+                app.say(to, `Nothing like that has ever been said in here... yet!`);
+                return;
+              }
                 app.say(to, `${result.get('from')} : ${result.get('text')}`);
             });
     };
@@ -55,9 +55,9 @@ module.exports = app => {
         loggingModel
             .query(qb => {
                 qb
-                    .where('to', '=', to)
+                    .where('to','=',to)
                     .andWhere('text', 'like', text)
-                    .orderBy('id', 'asc')
+                    .orderBy('id', 'desc')
                     .limit(1);
             })
             .fetch()

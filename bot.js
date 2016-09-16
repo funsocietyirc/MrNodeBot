@@ -363,9 +363,7 @@ class MrNodeBot {
         // Process the listeners
         if (!is.triggered && !is.ignored && !is.self) {
             app.Listeners.forEach((value, key) => {
-                if (typeof value === 'function') {
-                    value.call(to, from, text, message, is);
-                }
+                value.call(to, from, text, message, is);
             });
         }
 
