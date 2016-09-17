@@ -34,15 +34,16 @@ module.exports = app => {
 
         // List of valid styles
         const validStyles = [
-            'zebra', 'rainbow', 'america', 'shit', 'pipboy'
+            'zebra', 'rainbow', 'america', 'shit', 'pipboy', 'mrrobot'
         ];
 
-        let proc = '', x;
+        let proc = '',
+            x;
 
         switch (style) {
             case 'zebra':
                 for (x = 0; x < output.length; x++) {
-                    proc += ( x === 0 || x % 2 === 0) ? color.black.bgwhite(output[x]) : color.white.bgblack(output[x]);
+                    proc += (x === 0 || x % 2 === 0) ? color.black.bgwhite(output[x]) : color.white.bgblack(output[x]);
                 }
                 break;
             case 'rainbow':
@@ -58,6 +59,9 @@ module.exports = app => {
                 break;
             case 'pipboy':
                 proc = color.lime.bggray(output);
+                break;
+            case 'mrrobot':
+                proc = color.red.bgblack(output);
                 break;
             default:
                 app.say(from, `${style} is not a valid style, please try ${validStyles.join(',')}`);
