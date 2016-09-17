@@ -1,7 +1,6 @@
 'use strict';
 const Moment = require('moment');
 const Models = require('bookshelf-model-loader');
-const _ = require('lodash');
 
 /**
     Database Specific Commands
@@ -27,21 +26,17 @@ module.exports = app => {
 
     const randomLine = (to, from, text, message) => {
         loggingModel.query(qb => {
-                qb
-                    .select('from', 'text')
-                    .where('to', to)
-                    .orderByRaw('rand()')
-                    .limit(1);
-                    if(text) {
-                        qb.andWhere('text','like', text);
-                    }
+                qb.select('from', 'text').where('to', to).orderByRaw('rand()').limit(1);
+                if (text) {
+                    qb.andWhere('text', 'like', text);
+                }
             })
             .fetch()
             .then(result => {
-              if(!result) {
-                app.say(to, `Nothing like that has ever been said in here... yet!`);
-                return;
-              }
+                if (!result) {
+                    app.say(to, `Nothing like that has ever been said in here... yet!`);
+                    return;
+                }
                 app.say(to, `${result.get('from')} : ${result.get('text')}`);
             });
     };
@@ -55,7 +50,7 @@ module.exports = app => {
         loggingModel
             .query(qb => {
                 qb
-                    .where('to','=',to)sadsad
+                    .where('to', '=', to)
                     .andWhere('text', 'like', text)
                     .orderBy('id', 'desc')
                     .limit(1);
