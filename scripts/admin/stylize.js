@@ -37,12 +37,12 @@ module.exports = app => {
             'zebra', 'rainbow', 'america', 'shit', 'pipboy'
         ];
 
-        let proc = 0, x;
+        let proc , x;
 
         switch (style) {
             case 'zebra':
                 for (x = 1; x < output.length; x++) {
-                    proc += (x % 2 === 0) ? color.black.bgwhite(output[x]) : color.white.bgblack(output[x]);
+                    proc += (x % 2 === 0) ? color.black.bgwhite(output[x-1]) : color.white.bgblack(output[x-1]);
                 }
                 break;
             case 'rainbow':
