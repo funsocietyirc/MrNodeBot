@@ -41,8 +41,8 @@ module.exports = app => {
 
         switch (style) {
             case 'zebra':
-                for (x = 1; x < output.length; x++) {
-                    proc += (x % 2 === 0) ? color.black.bgwhite(output[x]) : color.white.bgblack(output[x]);
+                for (x = 0; x < output.length; x++) {
+                    proc += ( x === 0 || x % 2 === 0) ? color.black.bgwhite(output[x]) : color.white.bgblack(output[x]);
                 }
                 break;
             case 'rainbow':
