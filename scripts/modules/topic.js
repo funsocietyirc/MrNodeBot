@@ -162,7 +162,7 @@ module.exports = app => {
                     }
                     topic.splice(index, 1);
                 }
-                topic = topic.join(devider);
+                topic = topic.join(divider);
                 app._ircClient.send('topic', to, topic);
             });
     };
@@ -185,7 +185,7 @@ module.exports = app => {
                     app.say(from, `There is no topic data available for ${to}`);
                     return;
                 }
-                topic = topic.split(devider);
+                topic = topic.split(divider);
                 if (!topic.length) {
                     app.say(from, `There is no segments available for the topic in ${to}`);
                     return;

@@ -55,7 +55,7 @@ module.exports = app => {
         loggingModel
             .query(qb => {
                 qb
-                    .where('to','=',to)
+                    .where('to','=',to)sadsad
                     .andWhere('text', 'like', text)
                     .orderBy('id', 'desc')
                     .limit(1);
