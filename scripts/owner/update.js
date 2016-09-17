@@ -1,4 +1,9 @@
 'use strict';
+const scriptInfo = {
+    name: 'update',
+    file: 'update.js',
+    createdBy: 'Dave Richer'
+};
 
 const shell = require('shelljs');
 
@@ -66,4 +71,7 @@ module.exports = app => {
         access: app.Config.accessLevels.owner,
         call: halt
     });
+
+    // Return the script info
+    return scriptInfo;
 };

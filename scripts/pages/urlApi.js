@@ -1,5 +1,10 @@
 // Static Routes and pages
 'use strict';
+const scriptInfo = {
+    name: 'urlApi',
+    file: 'urlApi.js',
+    createdBy: 'Dave Richer'
+};
 
 const Models = require('bookshelf-model-loader');
 
@@ -59,4 +64,7 @@ module.exports = app => {
         name: 'api.urls',
         verb: 'get'
     });
+
+    // Return the script info
+    return scriptInfo;
 };

@@ -1,4 +1,9 @@
 'use strict';
+const scriptInfo = {
+    name: 'hello',
+    file: 'hello.js',
+    createdBy: 'Dave Richer'
+};
 
 const color = require('irc-colors');
 
@@ -13,4 +18,7 @@ module.exports = app => {
             app.say(to, color.rainbow(`{${introduction}} {${salutation}} ${from}`));
         }
     });
+
+    // Return the script info
+    return scriptInfo;
 };

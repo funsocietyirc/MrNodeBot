@@ -1,4 +1,9 @@
 'use strict';
+const scriptInfo = {
+    name: 'quotes',
+    file: 'quotes.js',
+    createdBy: 'Dave Richer'
+};
 
 const HashMap = require('hashmap');
 const Moment = require('moment');
@@ -118,4 +123,6 @@ module.exports = app => {
         call: randomQuote
     });
 
+    // Return the script info
+    return scriptInfo;
 };

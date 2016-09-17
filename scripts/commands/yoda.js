@@ -1,4 +1,9 @@
 'use strict';
+const scriptInfo = {
+    name: 'yoda',
+    file: 'yoda.js',
+    createdBy: 'Dave Richer'
+};
 
 /**
   Repeat user input as yoda
@@ -27,4 +32,7 @@ module.exports = app => {
         access: app.Config.accessLevels.guest,
         call: yoda
     });
+
+    // Return the script info
+    return scriptInfo;
 };

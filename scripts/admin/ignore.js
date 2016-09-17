@@ -1,4 +1,9 @@
 'use strict';
+const scriptInfo = {
+    name: 'ignore',
+    file: 'ignore.js',
+    createdBy: 'Dave Richer'
+};
 
 const storage = require("node-persist");
 
@@ -63,4 +68,6 @@ module.exports = app => {
         call: ignored
     });
 
+    // Return the script info
+    return scriptInfo;
 };

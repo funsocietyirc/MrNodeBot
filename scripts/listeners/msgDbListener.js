@@ -1,4 +1,10 @@
 'use strict';
+const scriptInfo = {
+    name: 'mesgDbListener',
+    file: 'msgDbListener.js',
+    createdBy: 'Dave Richer'
+};
+
 const Models = require('bookshelf-model-loader');
 
 
@@ -30,4 +36,7 @@ module.exports = app => {
         desc: 'Log everything to a database',
         call: loggingCmd
     });
+
+    // Return the script info
+    return scriptInfo;
 };

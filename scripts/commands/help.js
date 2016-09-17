@@ -1,4 +1,9 @@
 'use strict';
+const scriptInfo = {
+    name: 'help',
+    file: 'help.js',
+    createdBy: 'Dave Richer'
+};
 
 const color = require('irc-colors');
 const _ = require('lodash');
@@ -83,4 +88,6 @@ module.exports = app => {
         call: help
     });
 
+    // Return the script info
+    return scriptInfo;
 };

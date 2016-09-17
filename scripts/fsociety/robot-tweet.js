@@ -1,4 +1,10 @@
 'use strict';
+const scriptInfo = {
+    name: 'robotTweet',
+    file: 'robot-tweet.js',
+    createdBy: 'Dave Richer'
+};
+
 const Twitter = require('twitter');
 const helpers = require('../../helpers');
 const conLogger = require('../../lib/consoleLogger');
@@ -42,4 +48,7 @@ module.exports = app => {
         desc: 'Twitter watcher',
         name: 'TwitterWatcher'
     });
+
+    // Return the script info
+    return scriptInfo;
 };

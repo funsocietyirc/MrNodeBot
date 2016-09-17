@@ -14,6 +14,7 @@ require('./extensions');
 // Extend For Un-cache
 require('./lib/uncache')(require);
 
+
 class MrNodeBot {
     constructor(callback, configPath) {
         // Assign and normalize callback
@@ -48,6 +49,9 @@ class MrNodeBot {
 
         // Track root path
         this.AppRoot = require('app-root-path').toString();
+
+        // Class Variables
+        this._loadedScripts = null;
 
         // Init the Database subsystem
         this._initDbSubSystem();
@@ -185,6 +189,7 @@ class MrNodeBot {
     _loadScriptsFromDir(dir) {
         let path = require('path');
         let normalizedPath = path.join(__dirname, dir);
+        let loadedScripts = [];
 
         conLogger(`Loading all scripts from ${dir}`, 'loading');
 
@@ -192,16 +197,20 @@ class MrNodeBot {
         fs.readdirSync(normalizedPath).forEach(file => {
             // Attempt to see if the module is already loaded
             let fullPath = `${normalizedPath}${path.sep}${file}`;
-
             // Attempt to Load the module
             try {
                 this._clearCache(fullPath);
                 conLogger(`Loading Script: ${file} `, 'success');
-                require(`./${dir}/${file}`)(this);
+                loadedScripts.push({
+                  fullPath: fullPath,
+                  info: require(`./${dir}/${file}`)(this)
+                });
             } catch (err) {
                 conLogger(`[${err}] in: ${fullPath}`.replace(`${path.sep}${path.sep}`, `${path.sep}`), 'error');
             }
         });
+
+        return loadedScripts;
     }
 
     // Application Setup
@@ -266,7 +275,7 @@ class MrNodeBot {
         // Load in the Scripts
         if (!this.Config.bot.disableScripts) {
             this._scriptDirectories.forEach(script => {
-                this._loadScriptsFromDir(script);
+                this._loadedScripts = this._loadScriptsFromDir(script);
             });
 
             // Read in command rebindings

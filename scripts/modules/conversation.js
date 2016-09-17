@@ -1,4 +1,9 @@
 'use strict';
+const scriptInfo = {
+    name: 'conversation',
+    file: 'conversation.js',
+    createdBy: 'Dave Richer'
+};
 
 const chatBot = (function() {
     var botObj = botObj || require('../../node_modules/bot/lib/bot.js'),
@@ -40,4 +45,6 @@ module.exports = app => {
         call: listen
     });
 
+    // Return the script info
+    return scriptInfo;
 };

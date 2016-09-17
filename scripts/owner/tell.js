@@ -1,4 +1,10 @@
 'use strict';
+const scriptInfo = {
+    name: 'tell',
+    file: 'tell.js',
+    createdBy: 'Dave Richer'
+};
+
 /*
     Send a message
     tell <nick> <message>
@@ -24,4 +30,7 @@ module.exports = app => {
         access: app.Config.accessLevels.owner,
         call: tell
     });
+
+    // Return the script info
+    return scriptInfo;
 };

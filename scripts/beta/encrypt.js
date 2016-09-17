@@ -1,4 +1,11 @@
 'use strict';
+
+const scriptInfo = {
+    name: 'encrypt',
+    file: 'encrypt.js',
+    createdBy: 'Dave Richer'
+};
+
 const Models = require('bookshelf-model-loader');
 const config = require('../../config');
 
@@ -60,4 +67,6 @@ module.exports = (app) => {
         call: encrypt
     });
 
+    // Return the script info
+    return scriptInfo;
 };

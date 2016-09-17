@@ -3,6 +3,12 @@
     - Join a list of channels following a bitshift algo
 */
 'use strict';
+const scriptInfo = {
+    name: 'darkarmy',
+    file: 'darkarmy.js',
+    createdBy: 'Dave Richer'
+};
+
 const conLogger = require('../../lib/consoleLogger');
 
 module.exports = app => {
@@ -95,4 +101,6 @@ module.exports = app => {
         name: 'topicjacking'
     });
 
+    // Return the script info
+    return scriptInfo;
 };

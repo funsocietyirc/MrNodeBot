@@ -1,4 +1,9 @@
 'use strict';
+const scriptInfo = {
+    name: 'stylize',
+    file: 'stylize.js',
+    createdBy: 'Dave Richer'
+};
 
 const color = require('irc-colors');
 
@@ -67,4 +72,6 @@ module.exports = app => {
         call: stylize
     });
 
+    // Return the script info
+    return scriptInfo;
 };

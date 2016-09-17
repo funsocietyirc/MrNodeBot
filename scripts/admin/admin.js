@@ -1,4 +1,9 @@
 'use strict';
+const scriptInfo = {
+    name: 'admin',
+    file: 'admin.js',
+    createdBy: 'Dave Richer'
+};
 
 const color = require('irc-colors');
 const storage = require('node-persist');
@@ -76,4 +81,6 @@ module.exports = app => {
         access: app.Config.accessLevels.admin,
         call: admin
     });
+    // Return the script info
+    return scriptInfo;
 };

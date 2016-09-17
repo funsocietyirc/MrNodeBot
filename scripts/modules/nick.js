@@ -1,4 +1,10 @@
 'use strict';
+const scriptInfo = {
+    name: 'nick',
+    file: 'nick.js',
+    createdBy: 'Dave Richer'
+};
+
 const Models = require('bookshelf-model-loader');
 
 module.exports = app => {
@@ -75,4 +81,7 @@ module.exports = app => {
         desc: 'Nick Changes',
         name: 'nickchanges'
     });
+
+    // Return the script info
+    return scriptInfo;
 };

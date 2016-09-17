@@ -1,6 +1,11 @@
 // TODO make sure the file sizes are random using rand-token
 
 'use strict';
+const scriptInfo = {
+    name: 'upload',
+    file: 'upload.js',
+    createdBy: 'Dave Richer'
+};
 
 const path = require('path');
 const randToken = require('rand-token');
@@ -161,4 +166,6 @@ module.exports = app => {
         call: showImageLink
     });
 
+    // Return the script info
+    return scriptInfo;
 };

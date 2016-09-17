@@ -1,4 +1,9 @@
 'use strict';
+const scriptInfo = {
+    name: 'flip',
+    file: 'flip.js',
+    createdBy: 'Dave Richer'
+};
 
 module.exports = app => {
     const flip = (to, from, text, message) => {
@@ -31,4 +36,7 @@ module.exports = app => {
         access: app.Config.accessLevels.guest,
         call: flip
     });
+
+    // Return the script info
+    return scriptInfo;
 };

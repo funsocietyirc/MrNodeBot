@@ -1,5 +1,11 @@
 'use strict';
 
+const scriptInfo = {
+    name: 'tracker',
+    file: 'tracker.js',
+    createdBy: 'Dave Richer'
+};
+
 const http = require('http');
 
 /**
@@ -58,4 +64,7 @@ module.exports = app => {
         access: app.Config.accessLevels.admin,
         call: tracker
     });
+
+    // Return the script info
+    return scriptInfo;
 };

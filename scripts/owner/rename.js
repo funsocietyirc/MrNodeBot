@@ -1,4 +1,10 @@
 'use strict';
+const scriptInfo = {
+    name: 'rename',
+    file: 'rename.js',
+    createdBy: 'Dave Richer'
+};
+
 /*
     Op Someone
     op <channel> <nick>
@@ -17,4 +23,7 @@ module.exports = app => {
         access: app.Config.accessLevels.owner,
         call: rename
     });
+
+    // Return the script info
+    return scriptInfo;
 };

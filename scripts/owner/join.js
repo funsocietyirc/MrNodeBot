@@ -1,4 +1,10 @@
 'use strict';
+const scriptInfo = {
+    name: 'join',
+    file: 'join.js',
+    createdBy: 'Dave Richer'
+};
+
 /*
     Join a channel
     join <channel>
@@ -27,4 +33,7 @@ module.exports = app => {
         access: app.Config.accessLevels.owner,
         call: join
     });
+
+    // Return the script info
+    return scriptInfo;
 };

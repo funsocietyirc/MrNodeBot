@@ -1,4 +1,9 @@
 'use strict';
+const scriptInfo = {
+    name: 'stats',
+    file: 'stats.js',
+    createdBy: 'Dave Richer'
+};
 
 const helpers = require('../../helpers');
 
@@ -32,4 +37,6 @@ module.exports = app => {
         call: uptime
     });
 
+    // Return the script info
+    return scriptInfo;
 };

@@ -1,4 +1,9 @@
 'use strict';
+const scriptInfo = {
+    name: 'origins',
+    file: 'origin.js',
+    createdBy: 'Dave Richer'
+};
 
 const helpers = require('../../helpers');
 
@@ -57,4 +62,7 @@ module.exports = app => {
         access: app.Config.accessLevels.guest,
         call: origins
     });
+
+    // Return the script info
+    return scriptInfo;
 };

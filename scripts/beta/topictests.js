@@ -1,4 +1,11 @@
 'use strict';
+
+const scriptInfo = {
+    name: 'topicTest',
+    file: 'topictest.js',
+    createdBy: 'Dave Richer'
+};
+
 module.exports = app => {
   const isInChannel  = (to,from,text,message) => {
     app._ircClient.isOp(to,from);
@@ -13,4 +20,7 @@ module.exports = app => {
       access: app.Config.accessLevels.owner,
       call: isInChannel
   });
+
+  // Return the script info
+  return scriptInfo;
 };

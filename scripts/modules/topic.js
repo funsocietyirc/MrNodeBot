@@ -1,4 +1,10 @@
 'use strict';
+const scriptInfo = {
+    name: 'topic',
+    file: 'topic.js',
+    createdBy: 'Dave Richer'
+};
+
 const Models = require('bookshelf-model-loader');
 
 // Used to break up topics
@@ -205,4 +211,6 @@ module.exports = app => {
         call: topicSegments
     });
 
+    // Return the script info
+    return scriptInfo;
 };

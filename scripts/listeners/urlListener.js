@@ -2,6 +2,11 @@
     Watch Channels for URLS
 **/
 'use strict';
+const scriptInfo = {
+    name: 'urlListener',
+    file: 'urlListener.js',
+    createdBy: 'Dave Richer'
+};
 
 const GoogleUrl = require('google-url');
 const HashMap = require('hashmap');
@@ -173,4 +178,7 @@ module.exports = app => {
         desc: 'Listen for URLS',
         call: handle
     });
+
+    // Return the script info
+    return scriptInfo;
 };

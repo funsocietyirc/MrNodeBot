@@ -3,6 +3,11 @@
  TODO: Make multi-channel and configurable
  **/
 'use strict';
+const scriptInfo = {
+    name: 'greeter',
+    file: 'greeter.js',
+    createdBy: 'Dave Richer'
+};
 
 const _ = require('lodash');
 const Models = require('bookshelf-model-loader');
@@ -125,4 +130,6 @@ module.exports = app => {
         call: getTotalGreetedByChannel
     });
 
+    // Return the script info
+    return scriptInfo;
 };

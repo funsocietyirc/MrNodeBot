@@ -1,5 +1,11 @@
 'use strict';
 
+const scriptInfo = {
+    name: 'changeLog',
+    file: 'changeLog.js',
+    createdBy: 'Dave Richer'
+};
+
 const gitlog = require('gitlog');
 const helpers = require('../../helpers');
 
@@ -45,4 +51,7 @@ module.exports = app => {
         access: app.Config.accessLevels.guest,
         call: changes
     });
+
+    // Return the script info
+    return scriptInfo;
 };

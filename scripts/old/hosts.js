@@ -1,4 +1,9 @@
 'use strict';
+const scriptInfo = {
+    name: 'hosts',
+    file: 'hosts.js',
+    createdBy: 'Dave Richer'
+};
 
 const dns = require('dns');
 const validator = require('validator');
@@ -102,4 +107,6 @@ module.exports = app => {
         call: hostCmd
     });
 
+    // Return the script info
+    return scriptInfo;
 };

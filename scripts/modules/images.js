@@ -1,4 +1,10 @@
 'use strict';
+const scriptInfo = {
+    name: 'images',
+    file: 'images.js',
+    createdBy: 'Dave Richer'
+};
+
 const _ = require('lodash');
 const checkUrl = require('../../lib/checkUrl');
 const Models = require('bookshelf-model-loader');
@@ -98,4 +104,7 @@ module.exports = app => {
     app.Scheduler.scheduleJob({
         hour: 23
     }, cleanUrls);
+
+    // Return the script info
+    return scriptInfo;
 };

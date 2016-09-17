@@ -1,6 +1,14 @@
 'use strict';
+const scriptInfo = {
+    name: 'users',
+    file: 'users.js',
+    createdBy: 'Dave Richer'
+};
+
 module.exports = app => {
   // Register a User
+  // Current use case: User is already registered with services, but can register and be able to
+  // identify with other nicks/hosts
   const register  = (to,from,text,message) => {
     let args = text.split(' ');
     if(!args[0]) {
@@ -17,10 +25,12 @@ module.exports = app => {
       app.say(from, 'Something went wrong creating your account, the username may exist');
     });
   };
-
   app.Commands.set('register', {
       desc: '[email] [password] - Register your nick',
-      access: app.Config.accessLevels.guest,
+      access: app.Config.accessLevels.identified,
       call: register
   });
+
+  // Return the script info
+  return scriptInfo;
 };

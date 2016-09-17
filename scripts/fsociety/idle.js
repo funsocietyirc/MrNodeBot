@@ -1,4 +1,9 @@
 'use strict';
+const scriptInfo = {
+    name: 'idle',
+    file: 'idle.js',
+    createdBy: 'Dave Richer'
+};
 
 module.exports = app => {
     // We do not have the configuration needed
@@ -47,4 +52,6 @@ module.exports = app => {
         desc: 'fsocietyActive'
     });
 
+    // Return the script info
+    return scriptInfo;
 };

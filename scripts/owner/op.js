@@ -1,4 +1,9 @@
 'use strict';
+const scriptInfo = {
+    name: 'op',
+    file: 'op.js',
+    createdBy: 'Dave Richer'
+};
 /*
     Op Someone
     op <channel> <nick>
@@ -25,4 +30,7 @@ module.exports = app => {
         access: app.Config.accessLevels.owner,
         call: op
     });
+
+    // Return the script info
+    return scriptInfo;
 };

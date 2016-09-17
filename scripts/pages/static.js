@@ -1,5 +1,11 @@
 // Static Routes and pages
 'use strict';
+const scriptInfo = {
+    name: 'static',
+    file: 'static.js',
+    createdBy: 'Dave Richer'
+};
+
 module.exports = app => {
     // Landing Page
     app.WebRoutes.set('landingPage', {
@@ -23,4 +29,7 @@ module.exports = app => {
         name: 'chat',
         verb: 'get'
     });
+
+    // Return the script info
+    return scriptInfo;
 };

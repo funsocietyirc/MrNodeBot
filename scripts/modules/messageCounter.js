@@ -1,4 +1,10 @@
 'use strict';
+const scriptInfo = {
+    name: 'messageCounter',
+    file: 'messageCounter.js',
+    createdBy: 'Dave Richer'
+};
+
 const Moment = require('moment');
 const Models = require('bookshelf-model-loader');
 
@@ -55,4 +61,6 @@ module.exports = app => {
         call: lastActive
     });
 
+    // Return the script info
+    return scriptInfo;
 };
