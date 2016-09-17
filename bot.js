@@ -50,8 +50,13 @@ class MrNodeBot {
         // Track root path
         this.AppRoot = require('app-root-path').toString();
 
-        // Class Variables
+        // Class Variables that are initialized elsewhere
         this._loadedScripts = null;
+        this.Database = null;
+        this.Webserver = null;
+        this.random = null;
+        this.randomEngine = null;
+
 
         // Init the Database subsystem
         this._initDbSubSystem();

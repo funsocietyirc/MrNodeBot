@@ -49,9 +49,7 @@ module.exports = app => {
                     let zipString = results.zip_code ? `Zip ${results.zip_code}` : '';
                     let metroString = results.metro_code ? `Metro ${results.metro_code}` : '';
                     let timezoneString = results.time_zone ? `Time Zone ${results.time_zone}` : '';
-                    app.say(to, `I have tracked ${user} down to ${results.city}, ${results.region_name},
-                      ${results.country_name} (${results.latitude}, ${results.longitude}) ${zipString}
-                      ${metroString} ${timezoneString}`);
+                    app.say(to, `I have tracked ${user} down to ${results.city}, ${results.region_name}, ${results.country_name} (${results.latitude}, ${results.longitude}) ${zipString} ${metroString} ${timezoneString}`);
                 });
             }).on('error', err => {
                 app.action(to, 'tinkers with his satellite uplink');
