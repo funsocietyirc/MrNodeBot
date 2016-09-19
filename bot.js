@@ -67,7 +67,6 @@ class MrNodeBot {
         // // Init irc
         this._initIrc();
 
-
         // Init storage
         this._initStorageSubSystem();
 
