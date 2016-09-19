@@ -67,6 +67,7 @@ class MrNodeBot {
         // // Init irc
         this._initIrc();
 
+
         // Init storage
         this._initStorageSubSystem();
 
@@ -78,6 +79,7 @@ class MrNodeBot {
 
         // Add the listeners
         this._initListeners();
+
     }
 
     _initWebServer() {
