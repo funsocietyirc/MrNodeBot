@@ -42,7 +42,7 @@ module.exports = app => {
                 qb.orderBy('timestamp', req.query.sort || 'desc');
             })
             .fetchPage({
-                pageSize: 50,
+                pageSize: req.query.pageSize || 25,
                 page: req.query.page || 1
             })
             .then(results => {
