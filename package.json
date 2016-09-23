@@ -24,6 +24,7 @@
     "bookshelf-model-loader": "^0.9.6",
     "bot": "0.0.3",
     "chalk": "^1.1.3",
+    "cors": "^2.8.1",
     "express": "^4.13.0",
     "express-fileupload": "git://github.com/pajtai/express-fileupload.git",
     "freeport": "^1.0.5",
