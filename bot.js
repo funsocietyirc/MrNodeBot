@@ -448,12 +448,14 @@ class MrNodeBot {
                     // Alert user of failed administrative command attempts
                     if (admCmd.access === app.Config.accessLevels.admin && !app.Admins.contains(String(admCall.from).toLowerCase())) {
                         app.say(admCall.from, 'Failed Administrative command attempt logged');
+			return;
                     }
 
                     // Log to the console if a user without access a command they are not privy too
                     if (unauthorized) {
                         conLogger(`${admCall.from} on ${admCall.to} tried to use the ${admCmd.access} command ${admCall.cmd}`, 'error');
-                    }
+	            return;        
+		    }
 
                     if (call) {
                         app.Commands.get(admCall.cmd).call(admCall.to, admCall.from, output, admCall.message, admCall.is);
