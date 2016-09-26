@@ -14,7 +14,6 @@ require('./extensions');
 // Extend For Un-cache
 require('./lib/uncache')(require);
 
-
 class MrNodeBot {
     constructor(callback, configPath) {
         // Assign and normalize callback
@@ -22,6 +21,7 @@ class MrNodeBot {
 
         // Configuration Object
         this.Config = require(configPath || './config');
+        this.Config.irc.autoConnect = false;
 
         // Set Script Directories
         this._scriptDirectories = this.Config.bot.scripts;
@@ -208,8 +208,8 @@ class MrNodeBot {
                 this._clearCache(fullPath);
                 conLogger(`Loading Script: ${file} `, 'success');
                 loadedScripts.push({
-                  fullPath: fullPath,
-                  info: require(`./${dir}/${file}`)(this)
+                    fullPath: fullPath,
+                    info: require(`./${dir}/${file}`)(this)
                 });
             } catch (err) {
                 conLogger(`[${err}] in: ${fullPath}`.replace(`${path.sep}${path.sep}`, `${path.sep}`), 'error');
@@ -266,6 +266,7 @@ class MrNodeBot {
             // Reload the Configuration
             this._clearCache('./config.js');
             this.Config = require('./config.js');
+            this.Config.irc.autoConnect = false;
 
             this.AdmCallbacks.clear();
             this.NickChanges.clear();
@@ -296,7 +297,7 @@ class MrNodeBot {
                         return;
                     }
                     if (this.Commands.has(commandBinding.alias)) {
-                        conLogger(`The alias ${commandBinding.alias} for the command ${commandBinding.command} already exists`,'error');
+                        conLogger(`The alias ${commandBinding.alias} for the command ${commandBinding.command} already exists`, 'error');
                         return;
                     }
                     this.Commands.set(commandBinding.alias, this.Commands.get(commandBinding.command));
@@ -442,22 +443,28 @@ class MrNodeBot {
                         (admCmd.access === app.Config.accessLevels.admin && app.Admins.contains(String(admCall.from).toLowerCase())) ||
                         (admCmd.access === app.Config.accessLevels.owner);
 
+                    // Bail
+                    if (!call) {
+                        return;
+                    }
+
                     let unauthorized =
-                        (admCmd.access == app.Config.accessLevels.owner && admCall.from !== app.Config.owner.nick) || (admCmd.access === app.Config.accessLevels.admin && !app.Admins.contains(String(admCall.from).toLowerCase()));
+                        (admCmd.access == app.Config.accessLevels.owner && admCall.from !== app.Config.owner.nick) ||
+                        (admCmd.access === app.Config.accessLevels.admin && !app.Admins.contains(String(admCall.from).toLowerCase()));
 
                     // Alert user of failed administrative command attempts
                     if (admCmd.access === app.Config.accessLevels.admin && !app.Admins.contains(String(admCall.from).toLowerCase())) {
                         app.say(admCall.from, 'Failed Administrative command attempt logged');
+                        return;
                     }
 
                     // Log to the console if a user without access a command they are not privy too
                     if (unauthorized) {
                         conLogger(`${admCall.from} on ${admCall.to} tried to use the ${admCmd.access} command ${admCall.cmd}`, 'error');
+                        return;
                     }
 
-                    if (call) {
-                        app.Commands.get(admCall.cmd).call(admCall.to, admCall.from, output, admCall.message, admCall.is);
-                    }
+                    app.Commands.get(admCall.cmd).call(admCall.to, admCall.from, output, admCall.message, admCall.is);
                 }
                 // Is not identified
                 else {

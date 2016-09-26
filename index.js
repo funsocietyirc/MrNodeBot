@@ -3,7 +3,6 @@
   MrNodeBot
 **/
 
-
 const fs = require('fs');
 const conLogger = require('./lib/consoleLogger');
 const args = require('minimist')(process.argv.slice(2));

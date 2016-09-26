@@ -4,3 +4,4 @@ persist
 .idea
 config.js
 data.sqlite
+.tags
