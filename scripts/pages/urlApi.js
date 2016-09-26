@@ -17,6 +17,10 @@ module.exports = app => {
 
     /**
       Build the Base query.
+      args:
+        req - express quest
+        callback - function that is exposed to the query buffer
+
       query params:
         type:
           images -- will filter based on image file types
@@ -62,7 +66,7 @@ module.exports = app => {
     **/
     const sourcesHandler = (req, res) => {
       applyQuery(req, qb => {
-        qb.select(['from','to']);
+        qb = qb.select(['from','to']);
       })
       .fetchAll()
       .then(results => {
