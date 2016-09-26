@@ -19,7 +19,7 @@ module.exports = app => {
       Build the Base query.
       args:
         req - express quest
-        callback - function that is exposed to the query buffer
+        callback
 
       query params:
         type:
@@ -28,20 +28,25 @@ module.exports = app => {
         channel -- matches channel
 
     **/
-    const applyQuery = (req, callback) => Models.Url.query(qb => {
-        // If there is a channel in the query string
+    const applyQuery = req => Models.Url.query(qb => {
+
+        // Apply Where conditions
+        let where = {};
         if (req.query.channel) {
-            qb = qb.where('to', req.query.channel.replaceAll('%23', '#'));
+            where.to = eq.query.channel.replaceAll('%23', '#');
         }
-        // If there is a from in the query string
         if (req.query.user) {
-            qb = qb.where('from', req.query.user);
+            where.from = req.query.user;
         }
+        if (where.to || where.from) {
+            qb = qb.where(where);
+        }
+
         // Search for images only
         if (req.query.type) {
             switch (req.query.type) {
                 case 'images':
-                    qb = qb.where(function() {
+                    qb = qb.andWhere(function() {
                         this
                             .where('url', 'like', '%.jpeg')
                             .orWhere('url', 'like', '%.jpg')
@@ -53,9 +58,6 @@ module.exports = app => {
             }
         }
 
-        if(callback) {
-          callback(qb);
-        }
         // Build Up Query
         qb = qb.orderBy('timestamp', req.query.sort || 'desc');
     });
@@ -65,22 +67,22 @@ module.exports = app => {
       Returns a unique list of combined nicks and channels
     **/
     const sourcesHandler = (req, res) => {
-      applyQuery(req, function(qb) {
-        qb = qb.select(['from','to']);
-      })
-      .fetchAll()
-      .then(results => {
-        let channels = _.uniqBy(results.pluck('to'));
-        let nicks = _.uniqBy(results.pluck('from'));
-        res.json({
-          status: 'success',
-          results: {
-            channels,
-            nicks,
-            count: channels.length + nicks.length
-          }
-        });
-      });
+        applyQuery(req, qb => {
+                return qb.select(['from', 'to']);
+            })
+            .fetchAll()
+            .then(results => {
+                let channels = _.uniqBy(results.pluck('to'));
+                let nicks = _.uniqBy(results.pluck('from'));
+                res.json({
+                    status: 'success',
+                    results: {
+                        channels,
+                        nicks,
+                        count: channels.length + nicks.length
+                    }
+                });
+            });
     };
 
     /**
