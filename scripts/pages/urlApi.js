@@ -28,38 +28,22 @@ module.exports = app => {
         channel -- matches channel
 
     **/
-    const applyQuery = req => Models.Url.query(qb => {
-
-        // Apply Where conditions
-        let where = {};
-        if (req.query.channel) {
-            where.to = eq.query.channel.replaceAll('%23', '#');
-        }
-        if (req.query.user) {
-            where.from = req.query.user;
-        }
-        if (where.to || where.from) {
-            qb = qb.where(where);
-        }
-
-        // Search for images only
-        if (req.query.type) {
-            switch (req.query.type) {
-                case 'images':
-                    qb = qb.andWhere(function() {
-                        this
-                            .where('url', 'like', '%.jpeg')
-                            .orWhere('url', 'like', '%.jpg')
-                            .orWhere('url', 'like', '%.gif')
-                            .orWhere('url', 'like', '%.png');
-                    });
-                    break;
-                default:
-            }
-        }
-
-        // Build Up Query
-        qb = qb.orderBy('timestamp', req.query.sort || 'desc');
+    const applyQuery = req => Models.Url.query(function(qb) {
+        qb.where(function () {
+          if (req.query.channel) {
+              this.where('to', req.query.channel.replaceAll('%23', '#'));
+          }
+          if (req.query.user) {
+              this.where('from', req.query.user);
+          }
+          if(req.query.type && req.query.type === 'images'){
+            this
+                .andwhere('url', 'like', '%.jpeg')
+                .orWhere('url', 'like', '%.jpg')
+                .orWhere('url', 'like', '%.gif')
+                .orWhere('url', 'like', '%.png');
+          }
+        }).orderBy('timestamp', req.query.sort || 'desc');
     });
 
     /**
@@ -67,9 +51,7 @@ module.exports = app => {
       Returns a unique list of combined nicks and channels
     **/
     const sourcesHandler = (req, res) => {
-        applyQuery(req, qb => {
-                return qb.select(['from', 'to']);
-            })
+        applyQuery(req)
             .fetchAll()
             .then(results => {
                 let channels = _.uniqBy(results.pluck('to'));
