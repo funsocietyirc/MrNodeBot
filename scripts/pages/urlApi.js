@@ -31,17 +31,17 @@ module.exports = app => {
     const applyQuery = (req, callback) => Models.Url.query(qb => {
         // If there is a channel in the query string
         if (req.query.channel) {
-            qb.where('to', req.query.channel.replaceAll('%23', '#'));
+            qb = qb.where('to', req.query.channel.replaceAll('%23', '#'));
         }
         // If there is a from in the query string
         if (req.query.user) {
-            qb.where('from', req.query.user);
+            qb = qb.where('from', req.query.user);
         }
         // Search for images only
         if (req.query.type) {
             switch (req.query.type) {
                 case 'images':
-                    qb.where(function() {
+                    qb = qb.where(function() {
                         this
                             .where('url', 'like', '%.jpeg')
                             .orWhere('url', 'like', '%.jpg')
@@ -65,7 +65,7 @@ module.exports = app => {
       Returns a unique list of combined nicks and channels
     **/
     const sourcesHandler = (req, res) => {
-      applyQuery(req, qb => {
+      applyQuery(req, function(qb) {
         qb = qb.select(['from','to']);
       })
       .fetchAll()
