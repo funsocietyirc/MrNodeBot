@@ -1,5 +1,19 @@
-// Static Routes and pages
 'use strict';
+
+/**
+Build the Base query.
+args:
+  req - express quest
+  callback
+
+query params:
+  type:
+    images -- will filter based on image file types
+  user -- matches user
+  channel -- matches channel
+
+**/
+
 const scriptInfo = {
     name: 'urlApi',
     file: 'urlApi.js',
@@ -15,45 +29,20 @@ module.exports = app => {
         return;
     }
 
-    /**
-      Build the Base query.
-      args:
-        req - express quest
-        callback
-
-      query params:
-        type:
-          images -- will filter based on image file types
-        user -- matches user
-        channel -- matches channel
-
-    **/
-    const applyQuery = req => Models.Url.query(qb => {
-        qb.where(function () {
-          if (req.query.channel) {
-              this.where('to', req.query.channel.replaceAll('%23', '#'));
-          }
-          if (req.query.user) {
-              this.where('from', req.query.user);
-          }
-
-          if(req.query.type && req.query.type === 'images'){
-            this
-                .andWhere('url', 'like', '%.jpeg')
-                .orWhere('url', 'like', '%.jpg')
-                .orWhere('url', 'like', '%.gif')
-                .orWhere('url', 'like', '%.png');
-          }
-        });
-        qb.orderBy('timestamp', req.query.sort || 'desc');
-    });
 
     /**
       Get the available sources.
       Returns a unique list of combined nicks and channels
     **/
     const sourcesHandler = (req, res) => {
-        applyQuery(req)
+        Models.Url.query(qb => {
+                qb.where('url', 'like', '%.jpeg')
+                    .orWhere('url', 'like', '%.jpg')
+                    .orWhere('url', 'like', '%.gif')
+                    .orWhere('url', 'like', '%.png')
+                    .distinct('to', 'from')
+                    .select(['to', 'from']);
+            })
             .fetchAll()
             .then(results => {
                 let channels = _.uniqBy(results.pluck('to'));
@@ -73,7 +62,43 @@ module.exports = app => {
       Get list of available urls
     **/
     const urlHandler = (req, res) => {
-        applyQuery(req)
+        Models.Url.query(qb => {
+                let init = false;
+                let getWhere = () => init ? 'andWhere' : 'where';
+
+                // If there is a channel in the query string
+                if (req.query.channel) {
+                    qb.where('to', req.query.channel.replaceAll('%23', '#'));
+                    init = true;
+                }
+                // If there is a from in the query string
+                if (req.query.user) {
+                    qb[getWhere()]('from', req.query.user);
+                    init = true;
+                }
+
+                // Search for images only
+                if (req.query.type) {
+                    switch (req.query.type) {
+                        case 'images':
+                            qb[getWhere()](function() {
+                                this
+                                    .where('url', 'like', '%.jpeg')
+                                    .orWhere('url', 'like', '%.jpg')
+                                    .orWhere('url', 'like', '%.gif')
+                                    .orWhere('url', 'like', '%.png');
+                            });
+                            init = true;
+                            break;
+                        default:
+                    }
+                }
+
+                // Build Up Query
+                qb
+                  .distinct('to','from','url')
+                  .orderBy('timestamp', req.query.sort || 'desc');
+            })
             .fetchPage({
                 pageSize: req.query.pageSize || 25,
                 page: req.query.page || 1
