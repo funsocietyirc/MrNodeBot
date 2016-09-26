@@ -28,7 +28,7 @@ module.exports = app => {
         channel -- matches channel
 
     **/
-    const applyQuery = req => Models.Url.query(function(qb) {
+    const applyQuery = req => Models.Url.query(qb => {
         qb.where(function () {
           if (req.query.channel) {
               this.where('to', req.query.channel.replaceAll('%23', '#'));
@@ -36,14 +36,16 @@ module.exports = app => {
           if (req.query.user) {
               this.where('from', req.query.user);
           }
+
           if(req.query.type && req.query.type === 'images'){
             this
-                .andwhere('url', 'like', '%.jpeg')
+                .andWhere('url', 'like', '%.jpeg')
                 .orWhere('url', 'like', '%.jpg')
                 .orWhere('url', 'like', '%.gif')
                 .orWhere('url', 'like', '%.png');
           }
-        }).orderBy('timestamp', req.query.sort || 'desc');
+        });
+        qb.orderBy('timestamp', req.query.sort || 'desc');
     });
 
     /**
