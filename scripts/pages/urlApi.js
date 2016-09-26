@@ -57,7 +57,7 @@ module.exports = app => {
           callback(qb);
         }
         // Build Up Query
-        qb.orderBy('timestamp', req.query.sort || 'desc');
+        qb = qb.orderBy('timestamp', req.query.sort || 'desc');
     });
 
     /**
