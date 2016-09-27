@@ -22,6 +22,9 @@ module.exports = app => {
 
   const correct = (to, from, text, message) => {
     let results = text.match(expression);
+    if(!results) {
+      return;
+    }
     results.forEach(i => {
     });
   };

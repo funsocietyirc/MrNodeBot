@@ -55,6 +55,16 @@ module.exports = app => {
         urlCache.clear();
     });
 
+    // Send to socket IO
+    const pushUrl = (url, to, from) => {
+      // Push URL Event
+      if((/\.(gif|jpg|jpeg|tiff|png)$/i).test(url)) {
+        app._pusher.trigger('public', 'image', {url,to,from});
+      } else {
+        app._pusher.trigger('public', 'url', {url,to,from});
+      }
+    };
+
     // Log Urls to the Database
     const logUrlInDb = (url, to, from) => {
         // Make sure we have DB Connectivity
@@ -157,12 +167,17 @@ module.exports = app => {
 
         // Actions to pass them too
         let actions = [
-            logUrlInDb,
+            logUrlInDb
         ];
 
         // check to see if we are ignoring the URL announce for a channel
         if (!announceIgnore.contains(to)) {
             actions.push(googleShorten);
+        }
+
+        // Load in pusher if it is active
+        if(app.Config.pusher.enabled && app._pusher) {
+          actions.push(pushUrl);
         }
 
         // Shorten and output
