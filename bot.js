@@ -3,6 +3,7 @@
 
 const HashMap = require('hashmap');
 const storage = require('node-persist');
+const Pusher = require('pusher');
 const fs = require("fs");
 const helpers = require('./helpers');
 const conLogger = require('./lib/consoleLogger');
@@ -28,6 +29,9 @@ class MrNodeBot {
 
         // Grab the IRC instance
         this._ircClient = require('./lib/ircclient');
+
+        // Start pusher, or assign it to false
+        this._pusher = this.Config.pusher.enabled ? new Pusher(this.Config.pusher.config) : false;
 
         // A list of collections used
         this.AdmCallbacks = new HashMap();
