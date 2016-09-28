@@ -66,6 +66,11 @@ module.exports = app => {
                 let init = false;
                 let getWhere = () => init ? 'andWhere' : 'where';
 
+                // Select the appropriate fields
+                qb.select([
+                  'id','to','from','url','timestamp'
+                ]);
+
                 // If there is a channel in the query string
                 if (req.query.channel) {
                     qb.where('to', req.query.channel.replaceAll('%23', '#'));
@@ -106,7 +111,7 @@ module.exports = app => {
             .then(results => {
                 res.json({
                     rowCount: results.pagination.rowCount,
-                    pageCount: results.pagination.pageCount,
+                    pageCount: Math.round(results.pagination.pageSize / results.pagination.rowCount) || 1 ,
                     page: results.pagination.page,
                     pageSize: results.pagination.pageSize,
                     status: 'success',
