@@ -15,7 +15,7 @@ require('./extensions');
 // Extend For Un-cache
 require('./lib/uncache')(require);
 
-// class MrNodeBot {
+class MrNodeBot {
     constructor(callback, configPath) {
         // Assign and normalize callback
         this._callback = callback instanceof Function ? callback : false;
