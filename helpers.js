@@ -5,6 +5,17 @@ const startTime = moment();
 
 require('moment-countdown');
 
+exports.smartHttp = (function() {
+  var url = require('url'),
+    adapters = {
+      'http:': require('http'),
+      'https:': require('https'),
+    };
+  return function(inputUrl) {
+    return adapters[url.parse(inputUrl).protocol]
+  }
+}());
+
 exports.timeFormat = d => {
     var months = d.get('months'),
         days = d.get('days'),

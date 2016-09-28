@@ -6,7 +6,7 @@ const scriptInfo = {
 };
 
 const _ = require('lodash');
-const http = require('http');
+const helpers = require('../../helpers');
 const fileType = require('file-type');
 const checkUrl = require('../../lib/checkUrl');
 const Models = require('bookshelf-model-loader');
@@ -42,7 +42,7 @@ module.exports = app => {
                             urlModel.where('url', url).destroy();
                             return;
                         }
-                        http.get(url, res => {
+                        helpers.smartHttp(url).get(url, res => {
                           res.once('data', chunk => {
                             res.destroy();
                             // Check extension
