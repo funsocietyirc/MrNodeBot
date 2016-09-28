@@ -101,7 +101,6 @@ module.exports = app => {
 
                 // Build Up Query
                 qb
-                  .distinct('to','from','url')
                   .orderBy('timestamp', req.query.sort || 'desc');
             })
             .fetchPage({

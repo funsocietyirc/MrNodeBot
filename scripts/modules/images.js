@@ -6,6 +6,8 @@ const scriptInfo = {
 };
 
 const _ = require('lodash');
+const http = require('http');
+const fileType = require('file-type');
 const checkUrl = require('../../lib/checkUrl');
 const Models = require('bookshelf-model-loader');
 
@@ -38,7 +40,21 @@ module.exports = app => {
                         if (!good) {
                             // If not delete url
                             urlModel.where('url', url).destroy();
+                            return;
                         }
+                        http.get(url, res => {
+                          res.once('data', chunk => {
+                            res.destroy();
+                            // Check extension
+                            let ext = fileType(chunk).ext.toLowerCase();
+                            // If Valid image extension bailout
+                            if(ext === 'png' || ext === 'gif' || ext === 'jpg' || ext === 'jpeg' ) {
+                              return;
+                            }
+                            // Remove from database
+                            urlModel.where('url',url).destroy();
+                          });
+                        });
                     });
 
                 });
