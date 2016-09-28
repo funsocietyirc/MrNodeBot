@@ -46,7 +46,11 @@ module.exports = app => {
                           res.once('data', chunk => {
                             res.destroy();
                             // Check extension
-                            let ext = fileType(chunk).ext.toLowerCase();
+                            let type = fileType(chunk);
+                            let ext = '';
+                            if(type && type.ext) {
+                              ext = type.ext;
+                            }
                             // If Valid image extension bailout
                             if(ext === 'png' || ext === 'gif' || ext === 'jpg' || ext === 'jpeg' ) {
                               return;
