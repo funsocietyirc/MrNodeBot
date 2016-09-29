@@ -10,7 +10,7 @@ const Moment = require('moment');
 const _ = require('lodash');
 const c = require('irc-colors');
 const rightPad = require('right-pad');
-
+const reqPromise = require('request-promise-native');
 
 module.exports = app => {
         // No Database Data available...
@@ -19,9 +19,24 @@ module.exports = app => {
         }
 
         /**
+          Helpers
+        **/
+        const validHosts = /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$|^(([a-zA-Z]|[a-zA-Z][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z]|[A-Za-z][A-Za-z0-9\-]*[A-Za-z0-9])$|^\s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:)))(%.+)?\s*$/;
+        const titleLine = text => c.underline.white.bgblack(text);
+        const contentLine = text => {
+            return text
+                .replaceAll('|', c.red.bgblack.bold('|'))
+                .replaceAll('(', c.red.bgblack.bold('('))
+                .replaceAll(')', c.red.bgblack.bold(')'))
+                .replaceAll('#', c.white.bgblack('#'))
+                .replaceAll('@', c.blue.bgblack('@'))
+                .replaceAll('~', c.green.bgblack('~'))
+                .replaceAll('!', c.yellow.bgblack('!'));
+        };
+        /**
           Render the data object
         **/
-        const renderData = (nick, dbResults, whoisResults) => {
+        const renderData = (nick, dbResults, whoisResults, locResults) => {
             console.log(whoisResults);
             let db = _(dbResults);
             let result = {
@@ -32,7 +47,7 @@ module.exports = app => {
                 idents: db.map('ident').uniq(),
                 firstResult: db.first(),
                 lastResult: db.last(),
-                totalLines: db.size(),
+                totalLines: db.size().toString(),
             }
             if (whoisResults) {
                 _.merge(result, {
@@ -45,22 +60,25 @@ module.exports = app => {
                     realName: whoisResults.realname || '',
                 });
             }
+            if (locResults) {
+              _merge(result, {
+                countryCode: locResults.country_code || '',
+                countryName: locResults.country_name || '',
+                regionCode: locResults.region_code || '',
+                regionName: locResults.region_name || '',
+                city: locResults.city || '',
+                postal: locResults.zip_code || '',
+                timeZone: locResults.time_zone || '',
+                lat: locResults.latitude || '',
+                long: locResults.longitude || ''
+              });
+            }
             return result;
         };
 
         /**
           Report the data back to IRC
         **/
-        const titleLine = text => c.underline.white.bgblack(text);
-        const contentLine = text => text
-            .replaceAll('|', c.red.bgblack.bold('|'))
-            .replaceAll('(', c.red.bgblack.bold('('))
-            .replaceAll(')', c.red.bgblack.bold(')'))
-            .replaceAll('#', c.white.bgblack('#'))
-            .replaceAll('@', c.blue.bgblack('@'))
-            .replaceAll('~', c.green.bgblack('~'))
-            .replaceAll('!', c.yellow.bgblack('!'));
-
         const reportToIrc = (to, data) => {
                 // Display data
                 const sayHelper = (header, content) => {
@@ -74,16 +92,22 @@ module.exports = app => {
         const primaryNick = data.primaryNick ? `${data.primaryNick}` : '-(Unidentified)-';
         const seedText = '{Filling tubes....|Connecting To Gibsons...|Following white rabbit...|Articulaiting Splines}';
 
-        app.say(to, `${c.underline.red.bgblack(rightPad(seedText, (pad * 3), ' '))}`)
-        sayHelper(`${primaryNick}`, `${data.currentNick}${c.clear}!${data.currentIdent}@${data.currentHost} ${realName}`);
+        app.say(to, `${c.underline.red.bgblack(rightPad('Hello Friend...', pad * 4, ' '))}`);
+        sayHelper(`${primaryNick}`, `${data.currentNick}!${data.currentIdent}@${data.currentHost} ${realName}`);
         sayHelper('Nicks', data.nicks.join(' | '));
         sayHelper('Past Channels', data.pastChannels.join(' | '));
         sayHelper('Current Channels', data.currentChannels.join(' | '));
         sayHelper('Hosts', data.hosts.join(' | '));
         sayHelper('Idents', data.idents.join(' | '));
-        sayHelper('Server', `${data.currentServer} ` + (data.secureServer ? '(SSL)' : ''));
+        sayHelper('Server', `${data.currentServer} ` + (data.secureServer ? '(SSL)' : '(Plain Text)'));
         sayHelper('First Active', `as ${data.firstResult.from} on ${firstDateActive.format('h:mma MMM Do')} (${firstDateActive.fromNow()}) On: ${data.firstResult.to}`);
         sayHelper('Last Active', `as ${data.lastResult.from} on ${lastDateActive.format('h:mma MMM Do')} (${lastDateActive.fromNow()}) On: ${data.lastResult.to}`);
+        if(data.city && data.regionName && data.countyName) {
+          sayHelper('Logged In From', `${data.city}, ${data.regionName}, ${data.countryName}`);
+        }
+        if(data.postal && data.timeZone && data.lat && data.long) {
+          sayHelper('Misc', `Time Zone: ${data.timeZone} Postal: ${data.postal} Lat: ${data.lat} Long: ${data.long}`);
+        }
         sayHelper('Total Lines', `${contentLine(data.totalLines)}`);
     };
 
@@ -142,15 +166,33 @@ module.exports = app => {
                 app.say(to, `${nick} has evaded our tracking..`);
                 return;
             }
-            queryBuilder(convertSubFrom(subCommand), whoisResults[convertSubInfo(subCommand)])
-                .then(results => {
-                    // No results
-                    if (!results) {
-                        app.say(to, `I am afraid I do not have enought data...`);
-                        return;
-                    }
-                    reportToIrc(to, renderData(nick, results.toJSON(), whoisResults));
+            new Promise((resolve, reject) => {
+              return reqPromise({
+                method: 'GET',
+                uri: `http://freegeoip.net/json/${whoisResults.host}`,
+                json: true
+              })
+              .then(result => {
+                resolve(result);
+              })
+              .catch(err => {
+                resolve(false);
+              });
+            })
+            .then(locResults => {
+              queryBuilder(convertSubFrom(subCommand), whoisResults[convertSubInfo(subCommand)])
+                .then(dbResults => {
+                  if(!dbResults.length) {
+                    app.say(to, `I am afraid I do not have enought data...`);
+                    return;
+                  }
+                  //console.log(dbResults.toJSON(), whoisResults, locResults);
+                  reportToIrc(to, renderData(nick, dbResults.toJSON(), whoisResults, locResults));
                 });
+              })
+            .catch(err => {
+              console.log(err);
+            });
         });
     };
 
