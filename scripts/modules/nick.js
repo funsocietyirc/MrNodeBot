@@ -84,11 +84,11 @@ module.exports = app => {
               qb.where(subCommand, 'like', info[convertSub()]);
             }).fetchAll().then(results => {
                 let sorted = results.toJSON();
-                sorted = _(sorted).uniqBy(subCommand).value();
-                let nicks = _.map(sorted, 'from');
-                let channels = _.map(sorted, 'to');
-                let hosts = _.map(sorted, 'host');
-                let idents = _.map(sorted, 'ident');
+                //sorted = _(sorted).uniqBy(subCommand).value();
+                let nicks = _(sorted).map('from').uniq();
+                let channels = _(sorted).map('to').uniq();
+                let hosts = _(sorted).map('host').uniq()
+                let idents = _(sorted).map('ident').uniq()
                 app.say(to, `${nick}!${info.user}@${info.host} goes a little like this...`);
                 app.say(to, `Nicks: ${nicks.join(',')}`);
                 app.say(to, `Past Channels: ${channels.join(',')}`);
