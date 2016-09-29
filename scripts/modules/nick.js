@@ -80,6 +80,8 @@ module.exports = app => {
               return subCommand;
             };
 
+            console.log(info);
+
             Models.Logging.query(qb => {
               qb.where(subCommand, info[convertSub()]);
             }).fetchAll().then(results => {
