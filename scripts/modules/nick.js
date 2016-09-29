@@ -40,12 +40,14 @@ module.exports = app => {
     };
 
     const akaActive = (to, from, text, message) => {
+      // No Text
+      if (!text) {
+          app.say(to, 'No one is no one is no one is no one, ad infinitum...');
+          return;
+      }
+
         // Bail if there is no argument
         text = text.split(' ');
-        if (!text) {
-            app.say(to, 'No one is no one is no one is no one, ad infinitum...');
-            return;
-        }
 
         // Parse Text
         const subCommand = text.splice(0, 1)[0];
@@ -91,8 +93,10 @@ module.exports = app => {
             Models.Logging.query(qb => {
               qb.where(convertSubFrom(), 'like', info[convertSubInfo()]);
             }).fetchAll().then(results => {
+                if(!results) {
+                  app.say(to,`I am afraid I do not have enought data...`);
+                }
                 let sorted = results.toJSON();
-                //sorted = _(sorted).uniqBy(subCommand).value();
                 let nicks = _(sorted).map('from').uniq();
                 let channels = _(sorted).map('to').uniq();
                 let hosts = _(sorted).map('host').uniq()
@@ -107,19 +111,6 @@ module.exports = app => {
                 let currentServer = info.server ? info.server : '';
                 app.say(to, `Server: ${currentServer}`);
             });
-
-
-            // Info Contents
-            // {
-            //     nick: "Ned",
-            //     user: "martyn",
-            //     host: "10.0.0.18",
-            //     realname: "Unknown",
-            //     channels: ["@#purpledishwashers", "#blah", "#mmmmbacon"],
-            //     server: "*.dollyfish.net.nz",
-            //     serverinfo: "The Dollyfish Underworld",
-            //     operator: "is an IRC Operator"
-            // }
         });
     };
 
