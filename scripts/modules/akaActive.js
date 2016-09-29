@@ -51,14 +51,15 @@ module.exports = app => {
         /**
           Report the data back to IRC
         **/
-        const titleLine = text => c.white.bgblack(text);
+        const titleLine = text => c.underline.white.bgblack(text);
         const contentLine = text => text
             .replaceAll('|', c.red.bgblack.bold('|'))
             .replaceAll('(', c.red.bgblack.bold('('))
             .replaceAll(')', c.red.bgblack.bold(')'))
             .replaceAll('#', c.white.bgblack('#'))
             .replaceAll('@', c.blue.bgblack('@'))
-            .replaceAll('~', c.green.bgblack('~'));
+            .replaceAll('~', c.green.bgblack('~'))
+            .replaceAll('!', c.yellow.bgblack('!'));
 
         const reportToIrc = (to, data) => {
                 // Display data
@@ -70,16 +71,17 @@ module.exports = app => {
         const lastDateActive = Moment(data.lastResult.timestamp);
         const pad = 19;
         const realName = data.realName ? `(${data.realName})` : '';
-        const primaryNick = data.primaryNick ? `${data.primaryNick}` : 'Unidentified';
+        const primaryNick = data.primaryNick ? `${data.primaryNick}` : '-(Unidentified)-';
+        const seedText = '{Filling tubes....|Connecting To Gibsons...|Following white rabbit...|Articulaiting Splines}';
 
-        app.say(to, `${c.red.bgblack(rightPad('Preparing to h4x0r....', pad + 5, ' '))}`)
-        sayHelper(`${primaryNick}`, `${data.currentNick}!${data.currentIdent}@${data.currentHost} ${realName}`);
+        app.say(to, `${c.underline.red.bgblack(rightPad(seedText, (pad * 3), ' '))}`)
+        sayHelper(`${primaryNick}`, `${data.currentNick}${c.clear}!${data.currentIdent}@${data.currentHost} ${realName}`);
         sayHelper('Nicks', data.nicks.join(' | '));
         sayHelper('Past Channels', data.pastChannels.join(' | '));
         sayHelper('Current Channels', data.currentChannels.join(' | '));
         sayHelper('Hosts', data.hosts.join(' | '));
         sayHelper('Idents', data.idents.join(' | '));
-        sayHelper('Server', `${data.currentServer} ` + (data.secureServer ? '(Secure Connection)' : ''));
+        sayHelper('Server', `${data.currentServer} ` + (data.secureServer ? '(SSL)' : ''));
         sayHelper('First Active', `as ${data.firstResult.from} on ${firstDateActive.format('h:mma MMM Do')} (${firstDateActive.fromNow()}) On: ${data.firstResult.to}`);
         sayHelper('Last Active', `as ${data.lastResult.from} on ${lastDateActive.format('h:mma MMM Do')} (${lastDateActive.fromNow()}) On: ${data.lastResult.to}`);
         sayHelper('Total Lines', `${contentLine(data.totalLines)}`);
