@@ -62,7 +62,7 @@ module.exports = app => {
                                 });
                             });
                         });
-                    };
+                    });
                 };
 
             // Web Front End
