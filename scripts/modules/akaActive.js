@@ -91,13 +91,13 @@ module.exports = app => {
         const realName = data.realName ? `(${data.realName})` : '';
         const primaryNick = data.primaryNick ? `${data.primaryNick}` : '-(Unidentified)-';
         const seedText = '{Filling tubes....|Connecting To Gibsons...|Following white rabbit...|Articulaiting Splines}';
-        const city = data.city ? `City: ${data.city} ` : '';
-        const regionName = data.regionName ? `Region: ${data.regionName} ` : '';
-        const countryName = data.countryName ? `Country: ${data.countryName} ` : '';
-        const postal = data.postal ? `Postal: ${data.postal} ` : '';
-        const timeZone = data.timeZone ? `Time Zone: ${data.timeZone} ` : '';
-        const lat = data.lat ? `Lat: ${data.lat} ` : '';
-        const long = data.long ? `Long: ${data.long} ` : '';
+        const city = data.city ? `City(${data.city}) ` : '';
+        const regionName = data.regionName ? `Region(${data.regionName}) ` : '';
+        const countryName = data.countryName ? `Country(${data.countryName}) ` : '';
+        const postal = data.postal ? `Postal(${data.postal}) ` : '';
+        const timeZone = data.timeZone ? `Time Zone(${data.timeZone}) ` : '';
+        const lat = data.lat ? `Lat(${data.lat}) ` : '';
+        const long = data.long ? `Long(${data.long}) ` : '';
 
         app.say(to, `${c.underline.red.bgblack(rightPad('Hello Friend...', pad * 4, ' '))}`);
         sayHelper(`${primaryNick}`, `${data.currentNick}!${data.currentIdent}@${data.currentHost} ${realName}`);
@@ -113,7 +113,7 @@ module.exports = app => {
         sayHelper('Last Message', data.lastResult.text);
 
         if(city || regionName || countryName || postal || timeZone || lat || long) {
-          sayHelper('Location Data', `${city}${regionName}${countryName}${postal}${timeZone}${lat}`);
+          sayHelper('Location Data', `${city}${regionName}${countryName}${postal}${timeZone}${lat}${long}`);
         }
         sayHelper('Total Lines', `${contentLine(data.totalLines)}`);
     };
