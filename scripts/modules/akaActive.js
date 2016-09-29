@@ -91,6 +91,13 @@ module.exports = app => {
         const realName = data.realName ? `(${data.realName})` : '';
         const primaryNick = data.primaryNick ? `${data.primaryNick}` : '-(Unidentified)-';
         const seedText = '{Filling tubes....|Connecting To Gibsons...|Following white rabbit...|Articulaiting Splines}';
+        const city = data.city ? `City: ${data.city} ` : '';
+        const regionName = data.regionName ? `Region: ${data.regionName} ` : '';
+        const countryName = data.countryName ? `Country: ${data.countryName} ` : '';
+        const postal = data.postal ? `Postal: ${data.postal} ` : '';
+        const timeZone = data.timeZone ? `Time Zone: ${data.timeZone} ` : '';
+        const lat = data.lat ? `Lat: ${data.lat} ` : '';
+        const long = data.long ? `Long: ${data.long} ` : '';
 
         app.say(to, `${c.underline.red.bgblack(rightPad('Hello Friend...', pad * 4, ' '))}`);
         sayHelper(`${primaryNick}`, `${data.currentNick}!${data.currentIdent}@${data.currentHost} ${realName}`);
@@ -101,12 +108,12 @@ module.exports = app => {
         sayHelper('Idents', data.idents.join(' | '));
         sayHelper('Server', `${data.currentServer} ` + (data.secureServer ? '(SSL)' : '(Plain Text)'));
         sayHelper('First Active', `as ${data.firstResult.from} on ${firstDateActive.format('h:mma MMM Do')} (${firstDateActive.fromNow()}) On: ${data.firstResult.to}`);
+        sayHelper('First Message', data.firstResult.text);
         sayHelper('Last Active', `as ${data.lastResult.from} on ${lastDateActive.format('h:mma MMM Do')} (${lastDateActive.fromNow()}) On: ${data.lastResult.to}`);
-        if(data.city && data.regionName && data.countyName) {
-          sayHelper('Logged In From', `${data.city}, ${data.regionName}, ${data.countryName}`);
-        }
-        if(data.postal && data.timeZone && data.lat && data.long) {
-          sayHelper('Misc', `Time Zone: ${data.timeZone} Postal: ${data.postal} Lat: ${data.lat} Long: ${data.long}`);
+        sayHelper('Last Message', data.lastResult.text);
+
+        if(city || regionName || countryName || postal || timeZone || lat || long) {
+          sayHelper('Location Data', `${city}${regionName}${countryName}${postal}${timeZone}${lat}`);
         }
         sayHelper('Total Lines', `${contentLine(data.totalLines)}`);
     };
@@ -131,7 +138,7 @@ module.exports = app => {
 
     // Build the initial query
     const queryBuilder = (field, value) => Models.Logging.query(qb => {
-        qb.select(['id', 'timestamp', 'ident', 'from', 'to', 'host']);
+        qb.select(['id', 'timestamp', 'ident', 'from', 'to', 'host','text']);
         qb.where(field, 'like', value);
     }).fetchAll();
 
