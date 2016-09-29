@@ -47,11 +47,10 @@ module.exports = app => {
                                 res.destroy();
                                 // Check extension
                                 let type = fileType(chunk);
-                                if (type.hasOwnProperty('ext') && (type.ext === 'png' || type.ext === 'gif' || type.ext === 'jpg' || type.ext === 'jpeg')) {
-                                    return;
+                                if (type && !type.hasOwnProperty('ext') && (type.ext !== 'png' || type.ext !== 'gif' || type.ext !== 'jpg' || type.ext !== 'jpeg')) {
+                                  // Remove from database
+                                  urlModel.where('url', url).destroy();
                                 }
-                                // Remove from database
-                                urlModel.where('url', url).destroy();
                             });
                         });
                     });
