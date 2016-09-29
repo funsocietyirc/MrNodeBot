@@ -1,6 +1,6 @@
 'use strict';
 const scriptInfo = {
-    name: 'images',
+    name: 'Image Module',
     file: 'images.js',
     createdBy: 'Dave Richer'
 };
@@ -43,21 +43,16 @@ module.exports = app => {
                             return;
                         }
                         helpers.smartHttp(url).get(url, res => {
-                          res.once('data', chunk => {
-                            res.destroy();
-                            // Check extension
-                            let type = fileType(chunk);
-                            let ext = '';
-                            if(type && type.ext) {
-                              ext = type.ext;
-                            }
-                            // If Valid image extension bailout
-                            if(ext === 'png' || ext === 'gif' || ext === 'jpg' || ext === 'jpeg' ) {
-                              return;
-                            }
-                            // Remove from database
-                            urlModel.where('url',url).destroy();
-                          });
+                            res.once('data', chunk => {
+                                res.destroy();
+                                // Check extension
+                                let type = fileType(chunk);
+                                if (type.hasOwnProperty(ext) && (ext === 'png' || ext === 'gif' || ext === 'jpg' || ext === 'jpeg')) {
+                                    return;
+                                }
+                                // Remove from database
+                                urlModel.where('url', url).destroy();
+                            });
                         });
                     });
 
@@ -113,6 +108,7 @@ module.exports = app => {
         path: '/images/:channel?/:user?',
         name: 'urls'
     });
+
     // Command to clean URLS
     // Command
     app.Commands.set('clean-images', {
