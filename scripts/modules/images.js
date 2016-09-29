@@ -47,7 +47,7 @@ module.exports = app => {
                                 res.destroy();
                                 // Check extension
                                 let type = fileType(chunk);
-                                if (type.hasOwnProperty(ext) && (ext === 'png' || ext === 'gif' || ext === 'jpg' || ext === 'jpeg')) {
+                                if (type.hasOwnProperty('ext') && (type.ext === 'png' || type.ext === 'gif' || type.ext === 'jpg' || type.ext === 'jpeg')) {
                                     return;
                                 }
                                 // Remove from database
