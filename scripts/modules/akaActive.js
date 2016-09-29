@@ -53,12 +53,12 @@ module.exports = app => {
         **/
         const titleLine = text => c.white.bgblack(text);
         const contentLine = text => text
-          .replaceAll('|', c.red.bgblack.bold('|'))
-          .replaceAll('(', c.red.bgblack.bold('('))
-          .replaceAll(')', c.red.bgblack.bold(')'))
-          .replaceAll('#', c.white.bgblack('#'))
-          .replaceAll('@', c.blue.bgblack('@'))
-          .replaceAll('~', c.green.bgblack('~'));
+            .replaceAll('|', c.red.bgblack.bold('|'))
+            .replaceAll('(', c.red.bgblack.bold('('))
+            .replaceAll(')', c.red.bgblack.bold(')'))
+            .replaceAll('#', c.white.bgblack('#'))
+            .replaceAll('@', c.blue.bgblack('@'))
+            .replaceAll('~', c.green.bgblack('~'));
 
         const reportToIrc = (to, data) => {
                 // Display data
