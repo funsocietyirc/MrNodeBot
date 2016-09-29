@@ -50,6 +50,7 @@ module.exports = app => {
         // Parse Text
         const subCommand = text.splice(0, 1)[0];
         const nick = text.splice(0, 1)[0];
+        console.log(subCommand);
 
         if (!subCommand || !nick) {
             app.say(to, 'Both a Sub Command and a Nick are required');
@@ -58,7 +59,7 @@ module.exports = app => {
 
         // Check for valid commands
         const validCommands = ['ident', 'host'];
-        if (!_.has(validCommands, subCommand)) {
+        if (validCommands.indexOf(subCommand) == -1) {
             app.say(to, 'That is not a valid Sub Command silly');
             return;
         }
