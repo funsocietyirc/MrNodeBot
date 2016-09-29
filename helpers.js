@@ -65,4 +65,4 @@ exports.IsSet = x => !!(x != undefined && x != null && x != '');
 /* Color stuffs */
 exports.ColorHelpArgs = text => text.replaceAll('[', c.red.bold('[')).replaceAll(']', c.red.bold(']'));
 exports.RedSlashes = text => text.replaceAll('/', c.red.bold('/'));
-exports.TitleLine = text => c.white.bgblack.bold(text);
+exports.TitleLine = text => c.bgblack.white.bold(text);

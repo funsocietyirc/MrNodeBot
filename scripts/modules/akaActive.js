@@ -8,62 +8,81 @@ const scriptInfo = {
 const Models = require('bookshelf-model-loader');
 const Moment = require('moment');
 const _ = require('lodash');
+const c = require('irc-colors');
+const rightPad = require('right-pad');
+
 
 module.exports = app => {
-    // No Database Data available...
-    if (!app.Database && !Models.Logging) {
-        return;
-    }
-
-    /**
-      Render the data object
-    **/
-    const renderData = (nick, dbResults, whoisResults) => {
-        let db = _(dbResults);
-        let result = {
-            currentNick: nick,
-            nicks: db.map('from').uniq(),
-            pastChannels: db.map('to').uniq(),
-            hosts: db.map('host').uniq(),
-            idents: db.map('ident').uniq(),
-            firstResult: db.first(),
-            lastResult: db.last(),
-            totalLines: db.size(),
+        // No Database Data available...
+        if (!app.Database && !Models.Logging) {
+            return;
         }
-        if (whoisResults) {
-            _.merge(result, {
-                currentChannels: whoisResults.channels ? whoisResults.channels.join(',') : '',
-                currentServer: whoisResults.server || '',
-                currentIdent: whoisResults.user || '',
-                currentHost: whoisResults.host || '',
-                primaryNick: whoisResults.account || '',
-                secureServer: whoisResults.secure || ''
-            });
-        }
-        return result;
-    };
 
-    /**
-      Report the data back to IRC
-    **/
-    const reportToIrc = (to, data) => {
-        // Display data
-        let firstDateActive = Moment(data.firstResult.timestamp);
-        let lastDateActive = Moment(data.lastResult.timestamp);
+        /**
+          Render the data object
+        **/
+        const renderData = (nick, dbResults, whoisResults) => {
+            console.log(whoisResults);
+            let db = _(dbResults);
+            let result = {
+                currentNick: nick,
+                nicks: db.map('from').uniq(),
+                pastChannels: db.map('to').uniq(),
+                hosts: db.map('host').uniq(),
+                idents: db.map('ident').uniq(),
+                firstResult: db.first(),
+                lastResult: db.last(),
+                totalLines: db.size(),
+            }
+            if (whoisResults) {
+                _.merge(result, {
+                    currentChannels: whoisResults.channels || [],
+                    currentServer: whoisResults.server || '',
+                    currentIdent: whoisResults.user || '',
+                    currentHost: whoisResults.host || '',
+                    primaryNick: whoisResults.account || '',
+                    secureServer: whoisResults.secure || '',
+                    realName: whoisResults.realname || '',
+                });
+            }
+            return result;
+        };
 
-        app.say(to, `${data.currentNick}!${data.currentIdent}@${data.currentHost} goes a little like this...`);
-        if (data.primaryNick) {
-            app.say(to, `Primary Nick: ${data.primaryNick} (Identified)`);
-        }
-        app.say(to, `Nicks: ${data.nicks.join(',')}`);
-        app.say(to, `Past Channels: ${data.pastChannels.join(',')}`);
-        app.say(to, `Current Channels: ${data.currentChannels}`);
-        app.say(to, `Hosts: ${data.hosts.join(',')}`);
-        app.say(to, `Idents: ${data.idents.join(',')}`);
-        app.say(to, `Server: ${data.currentServer} ` + (data.secureServer ? '(Secure Connection)' : ''));
-        app.say(to, `First Active: as ${data.firstResult.from} on ${firstDateActive.format('h:mma MMM Do')} (${firstDateActive.fromNow()}) On: ${data.firstResult.to}`);
-        app.say(to, `Last Active: as ${data.firstResult.from} on ${lastDateActive.format('h:mma MMM Do')} (${lastDateActive.fromNow()}) On: ${data.lastResult.to}`);
-        app.say(to, `Total Lines Associated: ${data.totalLines}`);
+        /**
+          Report the data back to IRC
+        **/
+        const titleLine = text => c.white.bgblack(text);
+        const contentLine = text => text
+          .replaceAll('|', c.red.bgblack.bold('|'))
+          .replaceAll('(', c.red.bgblack.bold('('))
+          .replaceAll(')', c.red.bgblack.bold(')'))
+          .replaceAll('#', c.white.bgblack('#'))
+          .replaceAll('@', c.blue.bgblack('@'))
+          .replaceAll('~', c.green.bgblack('~'));
+
+        const reportToIrc = (to, data) => {
+                // Display data
+                const sayHelper = (header, content) => {
+                        app.say(to, `${titleLine(rightPad(`${header}${header ? ':' : ' '}`, pad, ' '))} ${contentLine(content)}`);
+        };
+
+        const firstDateActive = Moment(data.firstResult.timestamp);
+        const lastDateActive = Moment(data.lastResult.timestamp);
+        const pad = 19;
+        const realName = data.realName ? `(${data.realName})` : '';
+        const primaryNick = data.primaryNick ? `${data.primaryNick}` : 'Unidentified';
+
+        app.say(to, `${c.red.bgblack(rightPad('Preparing to h4x0r....', pad + 5, ' '))}`)
+        sayHelper(`${primaryNick} (Identified)`, `${data.currentNick}!${data.currentIdent}@${data.currentHost} ${realName}`);
+        sayHelper('Nicks', data.nicks.join(' | '));
+        sayHelper('Past Channels', data.pastChannels.join(' | '));
+        sayHelper('Current Channels', data.currentChannels.join(' | '));
+        sayHelper('Hosts', data.hosts.join(' | '));
+        sayHelper('Idents', data.idents.join(' | '));
+        sayHelper('Server', `${data.currentServer} ` + (data.secureServer ? '(Secure Connection)' : ''));
+        sayHelper('First Active', `as ${data.firstResult.from} on ${firstDateActive.format('h:mma MMM Do')} (${firstDateActive.fromNow()}) On: ${data.firstResult.to}`);
+        sayHelper('Last Active', `as ${data.lastResult.from} on ${lastDateActive.format('h:mma MMM Do')} (${lastDateActive.fromNow()}) On: ${data.lastResult.to}`);
+        sayHelper('Total Lines', `${contentLine(data.totalLines)}`);
     };
 
     // Handle info verbiage
@@ -98,8 +117,9 @@ module.exports = app => {
         const args = text.split(' ');
 
         // Parse Text
-        const subCommand = args.splice(0, 1)[0];
         const nick = args.splice(0, 1)[0];
+        const subCommand = args.splice(0, 1)[0];
+
 
         if (!subCommand || !nick) {
             app.say(to, 'Both a Sub Command and a Nick are required');
@@ -133,7 +153,7 @@ module.exports = app => {
     };
 
     app.Commands.set('aka-active', {
-        desc: '[Sub Command] [nick]',
+        desc: '[Nick] [Sub Command] - Advanced Analytics tool',
         access: app.Config.accessLevels.admin,
         call: akaActive
     });
