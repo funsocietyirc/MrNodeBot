@@ -58,7 +58,7 @@ module.exports = app => {
         }
 
         // Check for valid commands
-        const validCommands = ['ident', 'host'];
+        const validCommands = ['ident', 'host', 'nick'];
         if (validCommands.indexOf(subCommand) == -1) {
             app.say(to, 'That is not a valid Sub Command silly');
             return;
@@ -72,7 +72,7 @@ module.exports = app => {
                 return;
             }
 
-            let convertSub = () => {
+            let convertSubInfo = () => {
               switch (subCommand) {
                 case 'ident':
                   return 'user';
@@ -80,8 +80,16 @@ module.exports = app => {
               return subCommand;
             };
 
+            let convertSubFrom = () => {
+              switch(subCommand):
+              case 'nick':
+                return 'from'
+              }
+              return subCommand;
+            };
+
             Models.Logging.query(qb => {
-              qb.where(subCommand, 'like', info[convertSub()]);
+              qb.where(convertSubFrom(), 'like', info[convertSubInfo()]);
             }).fetchAll().then(results => {
                 let sorted = results.toJSON();
                 //sorted = _(sorted).uniqBy(subCommand).value();
