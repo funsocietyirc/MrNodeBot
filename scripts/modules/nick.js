@@ -126,6 +126,7 @@ module.exports = app => {
                 app.say(to, `Hosts: ${hosts.join(',')}`);
                 app.say(to, `Idents: ${idents.join(',')}`);
                 app.say(to, `Server: ${currentServer}`);
+                app.say(to, `Last Active: ${lastActive} On: ${lastChannel}`);
             });
         });
     };
