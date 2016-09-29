@@ -81,7 +81,7 @@ module.exports = app => {
             };
 
             let convertSubFrom = () => {
-              switch(subCommand):
+              switch(subCommand) {
               case 'nick':
                 return 'from'
               }
