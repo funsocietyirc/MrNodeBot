@@ -76,9 +76,8 @@ module.exports = app => {
               switch (subCommand) {
                 case 'ident':
                   return 'user';
-                default:
-                  return subCommand;
               }
+              return subCommand;
             };
 
             Models.Logging.query(qb => {
