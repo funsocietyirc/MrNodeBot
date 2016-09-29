@@ -6,6 +6,8 @@ const scriptInfo = {
 };
 
 const Models = require('bookshelf-model-loader');
+const Moment = require('moment');
+
 const _ = require('lodash');
 
 module.exports = app => {
@@ -34,17 +36,17 @@ module.exports = app => {
         aliasModel.fetchAll().then(results => {
             res.render('nickchanges', {
                 results: results.toJSON(),
-                moment: require('moment')
+                moment: Moment
             });
         });
     };
 
     const akaActive = (to, from, text, message) => {
-      // No Text
-      if (!text) {
-          app.say(to, 'No one is no one is no one is no one, ad infinitum...');
-          return;
-      }
+        // No Text
+        if (!text) {
+            app.say(to, 'No one is no one is no one is no one, ad infinitum...');
+            return;
+        }
 
         // Bail if there is no argument
         text = text.split(' ');
@@ -74,42 +76,56 @@ module.exports = app => {
                 return;
             }
 
+            // Handle info verbiage
             let convertSubInfo = () => {
-              switch (subCommand) {
-                case 'ident':
-                  return 'user';
-              }
-              return subCommand;
+                switch (subCommand) {
+                    case 'ident':
+                        return 'user';
+                }
+                return subCommand;
             };
 
+            // Handle query verbiage
             let convertSubFrom = () => {
-              switch(subCommand) {
-              case 'nick':
-                return 'from'
-              }
-              return subCommand;
+                switch (subCommand) {
+                    case 'nick':
+                        return 'from'
+                }
+                return subCommand;
             };
 
             Models.Logging.query(qb => {
-              qb.where(convertSubFrom(), 'like', info[convertSubInfo()]);
-            }).fetchAll().then(results => {
-                if(!results) {
-                  app.say(to,`I am afraid I do not have enought data...`);
+                qb
+                  .select(['id','timestamp','ident','from','to','host'])
+                  .where(convertSubFrom(), 'like', info[convertSubInfo()])
+                  .orderBy('timestamp','desc');
+            })
+            .fetchAll()
+            .then(results => {
+                // No results
+                if (!results) {
+                    app.say(to, `I am afraid I do not have enought data...`);
                 }
+
+                // Parse data
                 let sorted = results.toJSON();
                 let nicks = _(sorted).map('from').uniq();
                 let channels = _(sorted).map('to').uniq();
-                let hosts = _(sorted).map('host').uniq()
-                let idents = _(sorted).map('ident').uniq()
+                let hosts = _(sorted).map('host').uniq();
+                let idents = _(sorted).map('ident').uniq();
+                let currentChannels = info.channels ? info.channels.join(',') : '';
+                let currentServer = info.server ? info.server : '';
+                let lastActive = Moment(sorted[0].timestamp).format('h:mma MMM Do');
+
+                // Display data
                 app.say(to, `${nick}!${info.user}@${info.host} goes a little like this...`);
                 app.say(to, `Nicks: ${nicks.join(',')}`);
                 app.say(to, `Past Channels: ${channels.join(',')}`);
-                let currentChannels = info.channels ? info.channels.join(',') : '';
                 app.say(to, `Current Channels: ${currentChannels}`);
                 app.say(to, `Hosts: ${hosts.join(',')}`);
                 app.say(to, `Idents: ${idents.join(',')}`);
-                let currentServer = info.server ? info.server : '';
                 app.say(to, `Server: ${currentServer}`);
+                app.say(to, `Last Active: ${lastActive}`);
             });
         });
     };
