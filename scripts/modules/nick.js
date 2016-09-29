@@ -80,10 +80,8 @@ module.exports = app => {
               return subCommand;
             };
 
-            console.log(info);
-
             Models.Logging.query(qb => {
-              qb.where(subCommand, info[convertSub()]);
+              qb.where(subCommand, 'like', info[convertSub()]);
             }).fetchAll().then(results => {
                 let sorted = results.toJSON();
                 sorted = _(sorted).uniqBy(subCommand).value();
