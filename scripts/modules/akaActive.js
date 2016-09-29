@@ -61,7 +61,7 @@ module.exports = app => {
                 });
             }
             if (locResults) {
-              _merge(result, {
+              _.merge(result, {
                 countryCode: locResults.country_code || '',
                 countryName: locResults.country_name || '',
                 regionCode: locResults.region_code || '',
