@@ -73,7 +73,7 @@ module.exports = app => {
         const primaryNick = data.primaryNick ? `${data.primaryNick}` : 'Unidentified';
 
         app.say(to, `${c.red.bgblack(rightPad('Preparing to h4x0r....', pad + 5, ' '))}`)
-        sayHelper(`${primaryNick} (Identified)`, `${data.currentNick}!${data.currentIdent}@${data.currentHost} ${realName}`);
+        sayHelper(`${primaryNick}`, `${data.currentNick}!${data.currentIdent}@${data.currentHost} ${realName}`);
         sayHelper('Nicks', data.nicks.join(' | '));
         sayHelper('Past Channels', data.pastChannels.join(' | '));
         sayHelper('Current Channels', data.currentChannels.join(' | '));
