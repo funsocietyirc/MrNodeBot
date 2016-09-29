@@ -117,7 +117,6 @@ module.exports = app => {
                 let currentServer = info.server ? info.server : '';
                 let lastActive = Moment(sorted[0].timestamp).format('h:mma MMM Do');
                 let lastChannel = sorted[0].to;
-                let lastSaid = sorted[0].text;
 
                 // Display data
                 app.say(to, `${nick}!${info.user}@${info.host} goes a little like this...`);
@@ -127,7 +126,6 @@ module.exports = app => {
                 app.say(to, `Hosts: ${hosts.join(',')}`);
                 app.say(to, `Idents: ${idents.join(',')}`);
                 app.say(to, `Server: ${currentServer}`);
-                app.say(to, `Last Active: ${lastActive} On: ${lastChannel} Saying: ${lastSaid}`);
             });
         });
     };
