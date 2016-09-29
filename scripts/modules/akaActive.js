@@ -33,9 +33,11 @@ module.exports = app => {
         }
         if (whoisResults) {
             result.currentChannels = whoisResults.channels ? whoisResults.channels.join(',') : '';
-            result.currentServer = whoisResults.server ? whoisResults.server : '';
-            result.currentIdent = whoisResults.user ? whoisResults.user : '';
-            result.currentHost = whoisResults.host ? whoisResults.host : '';
+            result.currentServer = whoisResults.server || '';
+            result.currentIdent = whoisResults.user || '';
+            result.currentHost = whoisResults.host || '';
+            result.primaryNick = whoisResults.account || '';
+            result.secureServer = whoisResults.secure || '';
         }
         return result;
     };
@@ -49,12 +51,15 @@ module.exports = app => {
         let lastDateActive =  Moment(data.lastResult.timestamp);
 
         app.say(to, `${data.currentNick}!${data.currentIdent}@${data.currentHost} goes a little like this...`);
+        if(data.primaryNick) {
+          app.say(to, `Primary Nick: ${data.primaryNick}`);
+        }
         app.say(to, `Nicks: ${data.nicks.join(',')}`);
         app.say(to, `Past Channels: ${data.pastChannels.join(',')}`);
         app.say(to, `Current Channels: ${data.currentChannels}`);
         app.say(to, `Hosts: ${data.hosts.join(',')}`);
         app.say(to, `Idents: ${data.idents.join(',')}`);
-        app.say(to, `Server: ${data.currentServer}`);
+        app.say(to, `Server: ${data.currentServer} ` + (data.secureServer ? '(Secure Connection)' : ''));
         app.say(to, `First Active: ${firstDateActive.format('h:mma MMM Do')} (${firstDateActive.fromNow()}) On: ${data.firstResult.to}`);
         app.say(to, `Last Active: ${lastDateActive.format('h:mma MMM Do')} (${lastDateActive.fromNow()}) On: ${data.lastResult.to}`);
         app.say(to, `Total Lines Associated: ${data.totalLines}`);
