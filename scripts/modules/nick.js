@@ -67,8 +67,8 @@ module.exports = app => {
         // Send Whois Command
         app._ircClient.whois(nick, info => {
             // Verify Info object
-            if (!info || !Object.keys(info).length) {
-                app.say(to, `${nick} is not currently online`);
+            if (!info || !Object.keys(info).length || !info.user || !info.host) {
+                app.say(to, `${nick} has evaded our tracking..`);
                 return;
             }
 
@@ -93,9 +93,13 @@ module.exports = app => {
                 let idents = _.map(sorted, 'ident');
                 app.say(to, `${nick}!${info.user}@${info.host} goes a little like this...`);
                 app.say(to, `Nicks: ${nicks.join(',')}`);
-                app.say(to, `Channels: ${channels.join(',')}`);
+                app.say(to, `Past Channels: ${channels.join(',')}`);
+                let currentChannels = info.channels ? info.channels.join(',') : '';
+                app.say(to, `Current Channels: ${currentChannels}`);
                 app.say(to, `Hosts: ${hosts.join(',')}`);
                 app.say(to, `Idents: ${idents.join(',')}`);
+                let currentServer = info.server ? info.server : '';
+                app.say(to, `Server: ${currentServer}`);
             });
 
 
