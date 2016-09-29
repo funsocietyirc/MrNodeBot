@@ -484,35 +484,40 @@ class MrNodeBot {
     // Handle CTCP commands
     //noinspection JSMethodCanBeStatic
     _handleCtcpCommands(app, from, to, text, type, message) {
-            let textArray = text.split(' ');
-            return;
-        }
-        // Run through random parser
+        let textArray = text.split(' ');
+        return;
+    };
+
+    // Run through random parser
     _filterMessage(message) {
-            return RandomString(this.random, this.randomEngine, message);
-        }
-        // Send a message to the target
+        return RandomString(this.random, this.randomEngine, message);
+    };
+
+    // Send a message to the target
     say(target, message) {
-            this._ircClient.say(target, this._filterMessage(message));
-        }
-        // Send a action to the target
+        this._ircClient.say(target, this._filterMessage(message));
+    };
+
+    // Send a action to the target
     action(target, message) {
-            this._ircClient.action(target, this._filterMessage(message));
-        }
-        // Send notice to the target
+        this._ircClient.action(target, this._filterMessage(message));
+    };
+
+    // Send notice to the target
     notice(target, message) {
         this._ircClient.notice(target, this._filterMessage(message));
-    }
+    };
 
     // Properties
     get nick() {
         return this._ircClient.nick;
-    }
+    };
+
     set nick(newNick) {
         newNick = newNick || this.Config.irc.nick;
         this._ircClient.send('nick', newNick);
         this._ircClient.nick = newNick;
-    }
+    };
 }
 
 module.exports = callback => new MrNodeBot(callback);

@@ -7,11 +7,10 @@ const scriptInfo = {
 
 const Models = require('bookshelf-model-loader');
 const Moment = require('moment');
-
 const _ = require('lodash');
 
 module.exports = app => {
-    // Log nick changes in the alias table
+    // No Database Data available...
     if (!app.Database && !Models.Logging) {
         return;
     }
@@ -32,12 +31,14 @@ module.exports = app => {
             totalLines: db.size(),
         }
         if (whoisResults) {
-            result.currentChannels = whoisResults.channels ? whoisResults.channels.join(',') : '';
-            result.currentServer = whoisResults.server || '';
-            result.currentIdent = whoisResults.user || '';
-            result.currentHost = whoisResults.host || '';
-            result.primaryNick = whoisResults.account || '';
-            result.secureServer = whoisResults.secure || '';
+            _.merge(result, {
+                currentChannels: whoisResults.channels ? whoisResults.channels.join(',') : '',
+                currentServer: whoisResults.server || '',
+                currentIdent: whoisResults.user || '',
+                currentHost: whoisResults.host || '',
+                primaryNick: whoisResults.account || '',
+                secureServer: whoisResults.secure || ''
+            });
         }
         return result;
     };
@@ -47,12 +48,12 @@ module.exports = app => {
     **/
     const reportToIrc = (to, data) => {
         // Display data
-        let firstDateActive =  Moment(data.firstResult.timestamp);
-        let lastDateActive =  Moment(data.lastResult.timestamp);
+        let firstDateActive = Moment(data.firstResult.timestamp);
+        let lastDateActive = Moment(data.lastResult.timestamp);
 
         app.say(to, `${data.currentNick}!${data.currentIdent}@${data.currentHost} goes a little like this...`);
-        if(data.primaryNick) {
-          app.say(to, `Primary Nick: ${data.primaryNick}`);
+        if (data.primaryNick) {
+            app.say(to, `Primary Nick: ${data.primaryNick} (Identified)`);
         }
         app.say(to, `Nicks: ${data.nicks.join(',')}`);
         app.say(to, `Past Channels: ${data.pastChannels.join(',')}`);
@@ -60,8 +61,8 @@ module.exports = app => {
         app.say(to, `Hosts: ${data.hosts.join(',')}`);
         app.say(to, `Idents: ${data.idents.join(',')}`);
         app.say(to, `Server: ${data.currentServer} ` + (data.secureServer ? '(Secure Connection)' : ''));
-        app.say(to, `First Active: ${firstDateActive.format('h:mma MMM Do')} (${firstDateActive.fromNow()}) On: ${data.firstResult.to}`);
-        app.say(to, `Last Active: ${lastDateActive.format('h:mma MMM Do')} (${lastDateActive.fromNow()}) On: ${data.lastResult.to}`);
+        app.say(to, `First Active: as ${data.firstResult.from} on ${firstDateActive.format('h:mma MMM Do')} (${firstDateActive.fromNow()}) On: ${data.firstResult.to}`);
+        app.say(to, `Last Active: as ${data.firstResult.from} on ${lastDateActive.format('h:mma MMM Do')} (${lastDateActive.fromNow()}) On: ${data.lastResult.to}`);
         app.say(to, `Total Lines Associated: ${data.totalLines}`);
     };
 
@@ -94,11 +95,11 @@ module.exports = app => {
     **/
     const akaActive = (to, from, text, message) => {
         // Bail if there is no argument
-        text = text.split(' ');
+        const args = text.split(' ');
 
         // Parse Text
-        const subCommand = text.splice(0, 1)[0];
-        const nick = text.splice(0, 1)[0];
+        const subCommand = args.splice(0, 1)[0];
+        const nick = args.splice(0, 1)[0];
 
         if (!subCommand || !nick) {
             app.say(to, 'Both a Sub Command and a Nick are required');
