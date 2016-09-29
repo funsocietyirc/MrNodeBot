@@ -58,7 +58,7 @@ module.exports = app => {
 
         // Check for valid commands
         const validCommands = ['ident', 'host'];
-        if (!validCommands.includes(subCommand)) {
+        if (!validCommands.indexOf(subCommand) > -1) {
             app.say(to, 'That is not a valid Sub Command silly');
             return;
         }
