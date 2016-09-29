@@ -61,17 +61,17 @@ module.exports = app => {
                 });
             }
             if (locResults) {
-              _.merge(result, {
-                countryCode: locResults.country_code || '',
-                countryName: locResults.country_name || '',
-                regionCode: locResults.region_code || '',
-                regionName: locResults.region_name || '',
-                city: locResults.city || '',
-                postal: locResults.zip_code || '',
-                timeZone: locResults.time_zone || '',
-                lat: locResults.latitude || '',
-                long: locResults.longitude || ''
-              });
+                _.merge(result, {
+                    countryCode: locResults.country_code || '',
+                    countryName: locResults.country_name || '',
+                    regionCode: locResults.region_code || '',
+                    regionName: locResults.region_name || '',
+                    city: locResults.city || '',
+                    postal: locResults.zip_code || '',
+                    timeZone: locResults.time_zone || '',
+                    lat: locResults.latitude || '',
+                    long: locResults.longitude || ''
+                });
             }
             return result;
         };
@@ -166,6 +166,20 @@ module.exports = app => {
             return;
         }
 
+        const getLocationData = (host) =>
+          new Promise((resolve, reject) =>
+            reqPromise({
+              method: 'GET',
+              uri: `http://freegeoip.net/json/${host}`,
+              json: true
+            })
+            .then(result => {
+              resolve(result);
+            })
+            .catch(err => {
+              resolve(false);
+            }));
+
         // Send Whois Command
         app._ircClient.whois(nick, whoisResults => {
             // Verify Info object
@@ -173,19 +187,7 @@ module.exports = app => {
                 app.say(to, `${nick} has evaded our tracking..`);
                 return;
             }
-            new Promise((resolve, reject) => {
-              return reqPromise({
-                method: 'GET',
-                uri: `http://freegeoip.net/json/${whoisResults.host}`,
-                json: true
-              })
-              .then(result => {
-                resolve(result);
-              })
-              .catch(err => {
-                resolve(false);
-              });
-            })
+            getLocationData(whoisResults.host)
             .then(locResults => {
               queryBuilder(convertSubFrom(subCommand), whoisResults[convertSubInfo(subCommand)])
                 .then(dbResults => {
@@ -193,7 +195,6 @@ module.exports = app => {
                     app.say(to, `I am afraid I do not have enought data...`);
                     return;
                   }
-                  //console.log(dbResults.toJSON(), whoisResults, locResults);
                   reportToIrc(to, renderData(nick, dbResults.toJSON(), whoisResults, locResults));
                 });
               })
