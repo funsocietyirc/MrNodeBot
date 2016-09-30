@@ -19,6 +19,7 @@ module.exports = app => {
             timestamp
         });
     };
+    
     // Send Announcement Over IRC
     const irc = (to, from, text, message, timestamp) => {
         if (!app._ircClient || !app.channels.length) {

@@ -35,6 +35,8 @@ class MrNodeBot {
 
         // Start pusher, or assign it to false
         this._pusher = this.Config.pusher.enabled ? new Pusher(this.Config.pusher.config) : false;
+        // TwitterClient
+        this._twitterClient = require('./lib/twitterClient');
 
         // A list of collections used
         this.AdmCallbacks = new HashMap();
