@@ -1,5 +1,7 @@
 /** MrNodeBot IRC Bot By IronY */
 'use strict';
+// Extend the max
+process.setMaxListeners(0);
 
 const HashMap = require('hashmap');
 const storage = require('node-persist');

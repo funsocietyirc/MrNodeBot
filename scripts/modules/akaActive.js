@@ -11,7 +11,6 @@ const _ = require('lodash');
 const c = require('irc-colors');
 const rightPad = require('right-pad');
 const reqPromise = require('request-promise-native');
-
 module.exports = app => {
         // No Database Data available...
         if (!app.Database && !Models.Logging) {
@@ -35,9 +34,9 @@ module.exports = app => {
         /**
           Render the data object
         **/
-        const renderData = (nick, dbResults, whoisResults, locResults) => {
-            console.log(whoisResults);
+        const renderData = (nick, subCommand, dbResults, whoisResults, locResults) => {
             let db = _(dbResults);
+
             let result = {
                 currentNick: nick,
                 nicks: db.map('from').uniq(),
@@ -47,6 +46,7 @@ module.exports = app => {
                 firstResult: db.first(),
                 lastResult: db.last(),
                 totalLines: db.size().toString(),
+                subCommand: subCommand
             }
             if (whoisResults) {
                 _.merge(result, {
@@ -79,42 +79,40 @@ module.exports = app => {
           Report the data back to IRC
         **/
         const reportToIrc = (to, data) => {
-                // Display data
                 const sayHelper = (header, content) => {
                         app.say(to, `${titleLine(rightPad(`${header}${header ? ':' : ' '}`, pad, ' '))} ${contentLine(content)}`);
-        };
+                };
+                const firstDateActive = Moment(data.firstResult.timestamp);
+                const lastDateActive = Moment(data.lastResult.timestamp);
+                const pad = 19;
+                const realName = data.realName ? `(${c.white.bgblack(data.realName)})` : '';
+                const primaryNick = data.primaryNick ? `${c.white.bgblack.bold('ACC: ')}${c.green.bgblack(data.primaryNick)}` : c.red.bgblack('-Unidentified-');
+                const city = data.city ? `City(${data.city}) ` : '';
+                const regionName = data.regionName ? `Region(${data.regionName}) ` : '';
+                const countryName = data.countryName ? `Country(${data.countryName}) ` : '';
+                const postal = data.postal ? `Postal(${data.postal}) ` : '';
+                const timeZone = data.timeZone ? `Time Zone(${data.timeZone}) ` : '';
+                const lat = data.lat ? `Lat(${data.lat}) ` : '';
+                const long = data.long ? `Long(${data.long}) ` : '';
 
-        const firstDateActive = Moment(data.firstResult.timestamp);
-        const lastDateActive = Moment(data.lastResult.timestamp);
-        const pad = 19;
-        const realName = data.realName ? `(${data.realName})` : '';
-        const primaryNick = data.primaryNick ? `${data.primaryNick}` : '-(Unidentified)-';
-        const seedText = '{Filling tubes....|Connecting To Gibsons...|Following white rabbit...|Articulaiting Splines}';
-        const city = data.city ? `City(${data.city}) ` : '';
-        const regionName = data.regionName ? `Region(${data.regionName}) ` : '';
-        const countryName = data.countryName ? `Country(${data.countryName}) ` : '';
-        const postal = data.postal ? `Postal(${data.postal}) ` : '';
-        const timeZone = data.timeZone ? `Time Zone(${data.timeZone}) ` : '';
-        const lat = data.lat ? `Lat(${data.lat}) ` : '';
-        const long = data.long ? `Long(${data.long}) ` : '';
+                app.say(to, `${c.underline.red.bgblack(rightPad(`Searching VIA ${data.subCommand}`, pad * 4, ' '))}`);
+                app.say(to, `${primaryNick} ${c.white.bgblack.bold('Current:')} ${c.white.bgblack(data.currentNick)}!${c.red.bgblack(data.currentIdent)}@${c.blue.bgblack.bold(data.currentHost)} ${realName}`);
 
-        app.say(to, `${c.underline.red.bgblack(rightPad('Hello Friend...', pad * 4, ' '))}`);
-        sayHelper(`${primaryNick}`, `${data.currentNick}!${data.currentIdent}@${data.currentHost} ${realName}`);
-        sayHelper('Nicks', data.nicks.join(' | '));
-        sayHelper('Past Channels', data.pastChannels.join(' | '));
-        sayHelper('Current Channels', data.currentChannels.join(' | '));
-        sayHelper('Hosts', data.hosts.join(' | '));
-        sayHelper('Idents', data.idents.join(' | '));
-        sayHelper('Server', `${data.currentServer} ` + (data.secureServer ? '(SSL)' : '(Plain Text)'));
-        sayHelper('First Active', `as ${data.firstResult.from} on ${firstDateActive.format('h:mma MMM Do')} (${firstDateActive.fromNow()}) On: ${data.firstResult.to}`);
-        sayHelper('First Message', data.firstResult.text);
-        sayHelper('Last Active', `as ${data.lastResult.from} on ${lastDateActive.format('h:mma MMM Do')} (${lastDateActive.fromNow()}) On: ${data.lastResult.to}`);
-        sayHelper('Last Message', data.lastResult.text);
+                sayHelper('Nicks', data.nicks.join(' | '));
+                sayHelper('Past Channels', data.pastChannels.join(' | '));
+                sayHelper('Current Channels', data.currentChannels.join(' | '));
+                sayHelper('Hosts', data.hosts.join(' | '));
+                sayHelper('Idents', data.idents.join(' | '));
+                sayHelper('Server', `${data.currentServer} ` + (data.secureServer ? '(SSL)' : '(Plain Text)'));
+                sayHelper('First Active', `as ${data.firstResult.from} on ${firstDateActive.format('h:mma MMM Do')} (${firstDateActive.fromNow()}) On: ${data.firstResult.to}`);
+                sayHelper('First Message', data.firstResult.text);
+                sayHelper('Last Active', `as ${data.lastResult.from} on ${lastDateActive.format('h:mma MMM Do')} (${lastDateActive.fromNow()}) On: ${data.lastResult.to}`);
+                sayHelper('Last Message', data.lastResult.text);
 
-        if(city || regionName || countryName || postal || timeZone || lat || long) {
-          sayHelper('Location Data', `${city}${regionName}${countryName}${postal}${timeZone}${lat}${long}`);
-        }
-        sayHelper('Total Lines', `${contentLine(data.totalLines)}`);
+                if (city || regionName || countryName || postal || timeZone || lat || long) {
+                    sayHelper('Location Data', `${city}${regionName}${countryName}${postal}${timeZone}${lat}${long}`);
+                }
+                sayHelper('Total Lines', `${contentLine(data.totalLines)}`);
     };
 
     // Handle info verbiage
@@ -141,6 +139,46 @@ module.exports = app => {
         qb.where(field, 'like', value);
     }).fetchAll();
 
+    // Get the location data
+    const getLocationData = (host) =>
+      new Promise((resolve, reject) =>
+        reqPromise({
+          method: 'GET',
+          uri: `http://freegeoip.net/json/${host}`,
+          json: true
+        })
+        .then(result => {
+          resolve(result);
+        })
+        .catch(err => {
+          resolve(false);
+        }));
+
+    const init = (to, nick, subCommand, processor) => {
+      // Send Whois Command
+      app._ircClient.whois(nick, whoisResults => {
+          // Verify Info object
+          if (!whoisResults || !Object.keys(whoisResults).length || !whoisResults.user || !whoisResults.host) {
+              app.say(to, `${nick} has evaded our tracking..`);
+              return;
+          }
+          getLocationData(whoisResults.host)
+          .then(locResults => {
+            queryBuilder(convertSubFrom(subCommand), whoisResults[convertSubInfo(subCommand)])
+              .then(dbResults => {
+                if(!dbResults.length) {
+                  app.say(to, `I am afraid I do not have enought data...`);
+                  return;
+                }
+                processor(to, renderData(nick, subCommand, dbResults.toJSON(), whoisResults, locResults));
+              });
+            })
+          .catch(err => {
+            console.log(err);
+          });
+      });
+    };
+
     /**
       Trigger command for advanced active tracking
     **/
@@ -165,42 +203,7 @@ module.exports = app => {
             return;
         }
 
-        const getLocationData = (host) =>
-          new Promise((resolve, reject) =>
-            reqPromise({
-              method: 'GET',
-              uri: `http://freegeoip.net/json/${host}`,
-              json: true
-            })
-            .then(result => {
-              resolve(result);
-            })
-            .catch(err => {
-              resolve(false);
-            }));
-
-        // Send Whois Command
-        app._ircClient.whois(nick, whoisResults => {
-            // Verify Info object
-            if (!whoisResults || !Object.keys(whoisResults).length || !whoisResults.user || !whoisResults.host) {
-                app.say(to, `${nick} has evaded our tracking..`);
-                return;
-            }
-            getLocationData(whoisResults.host)
-            .then(locResults => {
-              queryBuilder(convertSubFrom(subCommand), whoisResults[convertSubInfo(subCommand)])
-                .then(dbResults => {
-                  if(!dbResults.length) {
-                    app.say(to, `I am afraid I do not have enought data...`);
-                    return;
-                  }
-                  reportToIrc(to, renderData(nick, dbResults.toJSON(), whoisResults, locResults));
-                });
-              })
-            .catch(err => {
-              console.log(err);
-            });
-        });
+        init(to, nick, subCommand, reportToIrc);
     };
 
     app.Commands.set('aka-active', {

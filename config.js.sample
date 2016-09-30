@@ -119,7 +119,6 @@ module.exports = {
     // Feature Configuration
     features: {
         urls: {
-            googleShortIgnore: [],
             loggingIgnore: [],
             announceIgnore: [],
             titleMin: 35,
