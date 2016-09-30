@@ -19,22 +19,37 @@ module.exports = app => {
             timestamp
         });
     };
-    
+
     // Send Announcement Over IRC
     const irc = (to, from, text, message, timestamp) => {
         if (!app._ircClient || !app.channels.length) {
             return;
         }
         app.channels.forEach(channel => {
-            app.say(channel, `Announcement From ${from}: ${text}`);
+            app.say(channel,text);
         });
     };
 
+    const twitter = (to, from, text, message) => {
+        // Tweet a message
+        if (!text) {
+            app.say(to, 'Cannot tweet nothing champ...');
+            return;
+        }
+        app._twitterClient.post('statuses/update', {
+            status: text
+        }, (error, tweet, response) => {
+            if (error) {
+                conLogger('Twitter Error: ' + error, 'error');
+                return;
+            }
+        });
+    };
 
     // Handle IRC Command
     const handler = (to, from, text, message) => {
         const timestamp = Date.now();
-        [irc, pusher].forEach(chan => chan(to,from,text,message,timestamp));
+        [irc, pusher, twitter].forEach(chan => chan(to, from, text, message, timestamp));
     };
     // Terminate the bot and the proc watcher that keeps it up
     app.Commands.set('announce', {

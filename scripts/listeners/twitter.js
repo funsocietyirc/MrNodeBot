@@ -59,7 +59,14 @@ module.exports = app => {
         app._twitterClient.post('statuses/update', {
             status: text
         }, (error, tweet, response) => {
-          // TODO
+          if(error) {
+            conLogger('Twitter Error: ' + error,'error');
+            conLogger(tweet,'info');
+            conLogger(response,'info');
+            app.say(to,'Something is not quire right');
+            return;
+          };
+          app.say(to,`We just lit up the Twittersphere Bro!`);
         });
     };
 
