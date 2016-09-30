@@ -17,7 +17,7 @@ module.exports = app => {
     const say = (chan, tweet) => {
         // Announce to Channels
         app.Config.features.twitter.channels.forEach((chan) => {
-              app.say(chan, formatTweet(tweet));
+              app.say(chan, tweet);
         });
     };
 
@@ -28,7 +28,7 @@ module.exports = app => {
       }
       let timestamp = Date.now();
       app._pusher.trigger('public', 'tweets', {
-        tweet: formatTweet(tweet),
+        tweet,
         timestamp
       });
     };
@@ -39,7 +39,7 @@ module.exports = app => {
             },
             function(stream) {
                 stream.on('data', function(tweet) {
-                    [say,push].forEach(medium => medium(tweet));
+                    [say,push].forEach(medium => medium(formatTweet(tweet)));
                 });
                 stream.on('error', function(error) {
                     conLogger('Twitter Error: ' + error, 'error');
