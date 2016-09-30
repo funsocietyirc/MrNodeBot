@@ -71,16 +71,18 @@ module.exports = app => {
             if (!app.Config.pusher.enabled && !app._pusher) {
                 resolve(results);
             }
-            let channel = /\.(gif|jpg|jpeg|tiff|png)$/i.test(url) ? 'image' : 'public';
+            let channel = /\.(gif|jpg|jpeg|tiff|png)$/i.test(url) ? 'image' : 'url';
+            let timestamp = Date.now();
             app._pusher.trigger('public', channel, {
                 url,
                 to,
-                from
+                from,
+                timestamp
             });
             results.delivered.push({
                 protocol: 'pusher',
                 to: channel,
-                on: Date.now()
+                on: timestamp
             });
             resolve(results);
         });
