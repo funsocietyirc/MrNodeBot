@@ -14,7 +14,7 @@ module.exports = app => {
     console.log(app._twitterClient);
     const formatTweet = tweet => tweet ? `[Twitter] @${tweet.user.screen_name}: ${tweet.text}` : '';
 
-    const say = (chan, tweet) => {
+    const say = (tweet) => {
         // Announce to Channels
         app.Config.features.twitter.channels.forEach((chan) => {
               app.say(chan, tweet);
@@ -24,7 +24,7 @@ module.exports = app => {
     const push = (tweet) => {
       // Load in pusher if it is active
       if (!app.Config.pusher.enabled && !app._pusher) {
-          resolve(results);
+          return;
       }
       let timestamp = Date.now();
       app._pusher.trigger('public', 'tweets', {
