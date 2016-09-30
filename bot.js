@@ -6,7 +6,8 @@ process.setMaxListeners(0);
 const HashMap = require('hashmap');
 const storage = require('node-persist');
 const Pusher = require('pusher');
-const fs = require("fs");
+const fs = require('fs');
+const _ = require('lodash');
 const helpers = require('./helpers');
 const conLogger = require('./lib/consoleLogger');
 const RandomString = require('./lib/randomString');
@@ -514,6 +515,10 @@ class MrNodeBot {
     get nick() {
         return this._ircClient.nick;
     };
+
+    get channels() {
+      return _(this._ircClient.chans).keys().uniq().value();
+    }
 
     set nick(newNick) {
         newNick = newNick || this.Config.irc.nick;

@@ -21,10 +21,10 @@ module.exports = app => {
     };
     // Send Announcement Over IRC
     const irc = (to, from, text, message, timestamp) => {
-        if (!app._ircClient.channels || !app._.ircClient.channels.length) {
+        if (!app._ircClient || !app.channels.length) {
             return;
         }
-        app._ircClient.channels.forEach(channel => {
+        app.channels.forEach(channel => {
             app.say(channel, `Announcement From ${from}: ${text}`);
         });
     };
