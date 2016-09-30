@@ -11,26 +11,24 @@ module.exports = app => {
     if(!app._twitterClient) {
       return;
     }
-
-    const formatTweet = tweet => `[Twitter] @${tweet.user.screen_name}: ${tweet.text}`;
+    console.log(app._twitterClient);
+    const formatTweet = tweet => tweet ? `[Twitter] @${tweet.user.screen_name}: ${tweet.text}` : '';
 
     const say = (chan, tweet) => {
         // Announce to Channels
         app.Config.features.twitter.channels.forEach((chan) => {
-            if (helpers.IsSet(tweet.text)) {
-                app.say(chan, formatTweet(tweet));
-            }
+              app.say(chan, formatTweet(tweet));
         });
     };
 
-    const pusher = (chan, tweet) => {
+    const push = (tweet) => {
       // Load in pusher if it is active
       if (!app.Config.pusher.enabled && !app._pusher) {
           resolve(results);
       }
       let timestamp = Date.now();
       app._pusher.trigger('public', 'tweets', {
-        tweet,
+        tweet: formatTweet(tweet),
         timestamp
       });
     };
@@ -41,7 +39,7 @@ module.exports = app => {
             },
             function(stream) {
                 stream.on('data', function(tweet) {
-                    [say].forEach(medium => medium(chan, tweet));
+                    [say,push].forEach(medium => medium(tweet));
                 });
                 stream.on('error', function(error) {
                     conLogger('Twitter Error: ' + error, 'error');
