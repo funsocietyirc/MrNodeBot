@@ -11,13 +11,11 @@ module.exports = app => {
     if(!app._twitterClient) {
       return;
     }
-    console.log(app._twitterClient);
-    const formatTweet = tweet => `[Twitter] @${tweet.user.screen_name}: ${tweet.text}`;
 
     const say = (tweet) => {
         // Announce to Channels
         app.Config.features.twitter.channels.forEach((chan) => {
-              app.say(chan, tweet);
+              app.say(chan, `[Twitter] @${tweet.user.screen_name}: ${tweet.text}`);
         });
     };
 
@@ -39,7 +37,10 @@ module.exports = app => {
             },
             function(stream) {
                 stream.on('data', function(tweet) {
-                    [say,push].forEach(medium => medium(formatTweet(tweet)));
+                  console.log(tweet);
+                    if(tweet.user || tweet.text) {
+                      [say,push].forEach(medium => medium(tweet));
+                    }
                 });
                 stream.on('error', function(error) {
                     conLogger('Twitter Error: ' + error, 'error');
