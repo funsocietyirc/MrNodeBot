@@ -68,7 +68,7 @@ module.exports = app => {
 
                 // Select the appropriate fields
                 qb.select([
-                  'id','to','from','url','timestamp'
+                  'id','to','from','url','timestamp', 'title'
                 ]);
 
                 // If there is a channel in the query string

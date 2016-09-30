@@ -77,7 +77,8 @@ module.exports = app => {
                 url,
                 to,
                 from,
-                timestamp
+                timestamp,
+                title: results.title || ''
             });
             results.delivered.push({
                 protocol: 'pusher',
