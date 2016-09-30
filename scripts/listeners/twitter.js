@@ -12,7 +12,7 @@ module.exports = app => {
       return;
     }
     console.log(app._twitterClient);
-    const formatTweet = tweet => tweet ? `[Twitter] @${tweet.user.screen_name}: ${tweet.text}` : '';
+    const formatTweet = tweet => `[Twitter] @${tweet.user.screen_name}: ${tweet.text}`;
 
     const say = (tweet) => {
         // Announce to Channels
