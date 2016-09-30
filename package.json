@@ -1,6 +1,6 @@
 {
   "name": "MrNodeBot",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "FSocietys NodeJS IRC Bot",
   "main": "index.js",
   "scripts": {
@@ -37,7 +37,6 @@
     "lodash": "^4.14.*",
     "minimist": "^1.2.0",
     "moment": "^2.14.*",
-    "moment-countdown": "^0.0.3",
     "named-routes": "2.0.6",
     "node-persist": "^0.0.12",
     "node-schedule": "^1.1.1",

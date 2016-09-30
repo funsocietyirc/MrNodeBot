@@ -5,30 +5,32 @@ const scriptInfo = {
     createdBy: 'Dave Richer'
 };
 
+const _ = require('lodash');
 const helpers = require('../../helpers');
 const conLogger = require('../../lib/consoleLogger');
+
 module.exports = app => {
-    if(!app._twitterClient) {
-      return;
+    if (!app._twitterClient) {
+        return;
     }
 
     const say = (tweet) => {
         // Announce to Channels
         app.Config.features.twitter.channels.forEach((chan) => {
-              app.say(chan, `[Twitter] @${tweet.user.screen_name}: ${tweet.text}`);
+            app.say(chan, `[Twitter] @${tweet.user.screen_name}: ${tweet.text}`);
         });
     };
 
     const push = (tweet) => {
-      // Load in pusher if it is active
-      if (!app.Config.pusher.enabled && !app._pusher) {
-          return;
-      }
-      let timestamp = Date.now();
-      app._pusher.trigger('public', 'tweets', {
-        tweet,
-        timestamp
-      });
+        // Load in pusher if it is active
+        if (!app.Config.pusher.enabled && !app._pusher) {
+            return;
+        }
+        let timestamp = Date.now();
+        app._pusher.trigger('public', 'tweets', {
+            tweet,
+            timestamp
+        });
     };
 
     const watcher = () => {
@@ -37,9 +39,9 @@ module.exports = app => {
             },
             function(stream) {
                 stream.on('data', function(tweet) {
-                  console.log(tweet);
-                    if(tweet.user || tweet.text) {
-                      [say,push].forEach(medium => medium(tweet));
+                    // If we have enough information to report back
+                    if (tweet.user || tweet.text) {
+                        [say, push].forEach(medium => medium(tweet));
                     }
                 });
                 stream.on('error', function(error) {
@@ -48,10 +50,32 @@ module.exports = app => {
             });
     };
 
+    // Tweet a message
+    const tweet = (to, from, text, message) => {
+        if (!text) {
+            app.say(to, 'Cannot tweet nothing champ...');
+            return;
+        }
+        app._twitterClient.post('statuses/update', {
+            status: text
+        }, (error, tweet, response) => {
+          // TODO
+        });
+    };
+
+
+    // Register Listener
     app.Registered.set('watcher', {
         call: watcher,
         desc: 'Twitter watcher',
         name: 'TwitterWatcher'
+    });
+
+    // Register Tweet Command
+    app.Commands.set('tweet', {
+        desc: '[message] - Send a message to the Twittersphere',
+        access: app.Config.accessLevels.admin,
+        call: tweet
     });
 
     // Return the script info

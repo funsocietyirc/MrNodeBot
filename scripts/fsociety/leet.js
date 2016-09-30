@@ -5,12 +5,14 @@ const scriptInfo = {
     createdBy: 'Dave Richer'
 };
 
+
+const leetSpeak = require('../../helpers').leetSpeak;
+
 /*
     Send an elite message
     leet <nick> <message>
 */
 module.exports = app => {
-    const leetspeak = require('../../lib/leetspeak');
     const leet = (to, from, text, message) => {
         if (!text) {
             app.say(from, 'I need some more information...');
@@ -22,7 +24,7 @@ module.exports = app => {
             app.say(from, 'I need some more information...');
             return;
         }
-        let leetBody = leetspeak(body);
+        let leetBody = leetSpeak(body);
         app.say(nick, leetBody);
         app.say(from, 'I have told ' + nick + '  ' + leetBody);
     };
