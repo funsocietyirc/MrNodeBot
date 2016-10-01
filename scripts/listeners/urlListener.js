@@ -159,7 +159,7 @@ module.exports = app => {
         xray(url, 'title')((err, title) => {
             if (err) resolve(results);
             resolve(_.merge(results, {
-                title: title
+                title: title.replace(/(\n|\r)+$/, '').trim()
             }));
         });
     });
