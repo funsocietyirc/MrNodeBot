@@ -10,7 +10,7 @@ module.exports = app => {
     const pusher = (to, from, text, message, timestamp) => {
         // Load in pusher if it is active
         if (!app.Config.pusher.enabled && !app._pusher) {
-            resolve(results);
+            return(results);
         }
         app._pusher.trigger('public', 'announce', {
             to,
@@ -39,6 +39,7 @@ module.exports = app => {
         app._twitterClient.post('statuses/update', {
             status: text
         }, (error, tweet, response) => {
+          console.log(error,tweet,response);
             if (error) {
                 conLogger('Twitter Error: ' + error, 'error');
                 return;

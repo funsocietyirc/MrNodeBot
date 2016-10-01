@@ -51,7 +51,7 @@ module.exports = app => {
     };
 
     // Tweet a message
-    const tweet = (to, from, text, message) => {
+    const tweetCmd = (to, from, text, message) => {
         if (!text) {
             app.say(to, 'Cannot tweet nothing champ...');
             return;
@@ -82,7 +82,7 @@ module.exports = app => {
     app.Commands.set('tweet', {
         desc: '[message] - Send a message to the Twittersphere',
         access: app.Config.accessLevels.admin,
-        call: tweet
+        call: tweetCmd
     });
 
     // Return the script info
