@@ -514,19 +514,27 @@ class MrNodeBot {
     };
 
     // Properties
+
     get nick() {
         return this._ircClient.nick;
     };
-
-    get channels() {
-      return _(this._ircClient.chans).keys().uniq().value();
-    }
-
     set nick(newNick) {
         newNick = newNick || this.Config.irc.nick;
         this._ircClient.send('nick', newNick);
         this._ircClient.nick = newNick;
     };
+
+    get channels() {
+      return _(this._ircClient.chans).keys().uniq().value();
+    };
+
+    set channels(value) {
+      // Given an array
+      if (Array.isArray(value)) value.forEach(channel => this._ircClient.join(channel));
+      // We got a string
+      else if (String.isString(value)) value.split(' ').forEach(channel => this._ircClient.join(channel));
+    };
+
 }
 
 module.exports = callback => new MrNodeBot(callback);
