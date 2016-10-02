@@ -165,11 +165,11 @@ module.exports = app => {
         let titleString = c.bold('Title:');
         let output = '';
         if (payload.shortUrl && payload.url.length > app.Config.features.urls.titleMin) {
-            output = output + `${shortString} ${c.blue(payload.shortUrl)}`;
+            output = output + `${shortString} ${c.grey(payload.shortUrl)}`;
         }
         if (payload.title && payload.title != '') {
             let space = output == '' ? '' : ' ';
-            output = output + space + `${titleString} ${c.yellow(payload.title)}`;
+            output = output + space + `${titleString} ${c.olive(payload.title)}`;
         }
         if (output != '') {
             app.say(to, `(${from}) ` + output);
