@@ -70,6 +70,7 @@ module.exports = app => {
             // Load in pusher if it is active
             if (!app.Config.pusher.enabled && !app._pusher) {
                 resolve(results);
+                return;
             }
             let channel = /\.(gif|jpg|jpeg|tiff|png)$/i.test(url) ? 'image' : 'url';
             let timestamp = Date.now();
@@ -100,6 +101,7 @@ module.exports = app => {
         return new Promise((resolve, reject) => {
             if (!app.Database || !Models.Url || ignored) {
                 resolve(results);
+                return;
             }
             Models.Url.create({
                     url: url,
@@ -146,7 +148,10 @@ module.exports = app => {
             }));
         }
         googleUrl.shorten(url, (err, shortUrl) => {
-            if (err) resolve(results);
+            if (err) {
+              resolve(results);
+              return;
+            }
             urlCache.set(url, shortUrl);
             resolve(_.merge(results, {
                 shortUrl
@@ -157,9 +162,15 @@ module.exports = app => {
     // Get the title
     const getTitle = (url, results) => new Promise((resolve, reject) => {
         xray(url, 'title')((err, title) => {
-            if (err || !title || !String.isString(title)) resolve(results);
+            if (err || !title || !String.isString(title)) {
+              resolve(results);
+              return;
+            }
+            if(_.has(title,'replace')) {
+              title = title.replace(/(\n|\r)+$/, '').trim();
+            }
             resolve(_.merge(results, {
-                title: title.replace(/(\n|\r)+$/, '').trim()
+                title: title
             }));
         });
     });
