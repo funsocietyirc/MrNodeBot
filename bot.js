@@ -277,7 +277,6 @@ class MrNodeBot {
             this._clearCache('./config.js');
             this.Config = require('./config.js');
             this.Config.irc.autoConnect = false;
-
             this.AdmCallbacks.clear();
             this.NickChanges.clear();
             this.Registered.clear();
@@ -343,44 +342,44 @@ class MrNodeBot {
         }
         // Run events
         app.NickChanges.forEach((value, key) => {
-          try {
-            value.call(oldnick, newnick, channels, message);
-          } catch (e) {
-            conLogger(e,'error');
-          }
+            try {
+                value.call(oldnick, newnick, channels, message);
+            } catch (e) {
+                conLogger(e, 'error');
+            }
         });
     }
 
     // Handle On Joins
     _handleOnJoin(app, channel, nick, message) {
         app.OnJoin.forEach((value, key) => {
-          try {
-            value.call(channel, nick, message);
-          } catch (e) {
-            conLogger(e,'error');
-          }
+            try {
+                value.call(channel, nick, message);
+            } catch (e) {
+                conLogger(e, 'error');
+            }
         });
     }
 
     // Handle Topic changes
     _handleOnTopic(app, channel, topic, nick, message) {
         app.OnTopic.forEach((value, key) => {
-          try {
-            value.call(channel, topic, nick, message);
-          } catch (e) {
-            conLogger(e,'error');
-          }
+            try {
+                value.call(channel, topic, nick, message);
+            } catch (e) {
+                conLogger(e, 'error');
+            }
         });
     }
 
     // Fired when the bot connects to the network
     _handleRegistered(app) {
         app.Registered.forEach((value, key) => {
-          try {
-            value.call(app);
-          } catch (e) {
-            conLogger(e,'error');
-          }
+            try {
+                value.call(app);
+            } catch (e) {
+                conLogger(e, 'error');
+            }
         });
     }
 
@@ -405,11 +404,11 @@ class MrNodeBot {
         // Process the listeners
         if (!is.triggered && !is.ignored && !is.self) {
             app.Listeners.forEach((value, key) => {
-              try {
-                value.call(to, from, text, message, is);
-              } catch (e) {
-                conLogger(e,'error');
-              }
+                try {
+                    value.call(to, from, text, message, is);
+                } catch (e) {
+                    conLogger(e, 'error');
+                }
             });
         }
 
@@ -467,37 +466,22 @@ class MrNodeBot {
 
                 // Is Identified
                 if (admCall.is.identified) {
-                    // Determined if the function call should be made
-                    let call =
-                        (admCmd.access === app.Config.accessLevels.identified) ||
-                        (admCmd.access === app.Config.accessLevels.admin && app.Admins.contains(String(admCall.from).toLowerCase())) ||
-                        (admCmd.access === app.Config.accessLevels.owner);
-
-                    // Bail
-                    if (!call) {
-                        return;
-                    }
-
                     let unauthorized =
                         (admCmd.access == app.Config.accessLevels.owner && admCall.from !== app.Config.owner.nick) ||
                         (admCmd.access === app.Config.accessLevels.admin && !app.Admins.contains(String(admCall.from).toLowerCase()));
 
-                    // Alert user of failed administrative command attempts
-                    if (admCmd.access === app.Config.accessLevels.admin && !app.Admins.contains(String(admCall.from).toLowerCase())) {
-                        app.say(admCall.from, 'Failed Administrative command attempt logged');
-                        return;
-                    }
-
                     // Log to the console if a user without access a command they are not privy too
                     if (unauthorized) {
-                        conLogger(`${admCall.from} on ${admCall.to} tried to use the ${admCmd.access} command ${admCall.cmd}`, 'error');
+                        let group = helpers.accessString(admCall.cmd);
+                        app.say(admCall.from, `You are not a memember of the ${group} access list.`);
+                        conLogger(`${admCall.from} on ${admCall.to} tried to use the ${group} command ${admCall.cmd}`, 'error');
                         return;
                     }
 
                     try {
-                      app.Commands.get(admCall.cmd).call(admCall.to, admCall.from, output, admCall.message, admCall.is);
+                        app.Commands.get(admCall.cmd).call(admCall.to, admCall.from, output, admCall.message, admCall.is);
                     } catch (e) {
-                      conLogger(e,'error');
+                        conLogger(e, 'error');
                     }
                 }
                 // Is not identified
@@ -550,15 +534,15 @@ class MrNodeBot {
     };
 
     get channels() {
-      return _(this._ircClient.chans).keys().uniq().value();
+        return _(this._ircClient.chans).keys().uniq().value();
     };
 
     set channels(value) {
-      // Given an array
-      if (Array.isArray(value)) value.forEach(channel => this._ircClient.join(channel));
-      else {
-        value.split(' ').forEach(channel => this._ircClient.join(channel));
-      }
+        // Given an array
+        if (Array.isArray(value)) value.forEach(channel => this._ircClient.join(channel));
+        else {
+            value.split(' ').forEach(channel => this._ircClient.join(channel));
+        }
     };
 
 }

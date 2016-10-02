@@ -11,7 +11,7 @@ const args = require('minimist')(process.argv.slice(2));
 if (args.config) {
     fs.access(args.config, fs.F_OK, err => {
         if (err) {
-            conLogger('The config file you specified does not exist, defaulting to config.js','danger');
+            conLogger('The config file you specified does not exist, defaulting to config.js', 'danger');
             return;
         }
     });
@@ -19,16 +19,16 @@ if (args.config) {
 
 const MrNodeBot = require('./bot')((app) => {
     // Code here will be executed after the bot is finished connecting
-    if(process.stdin.setRawMode) {
-      process.stdin.setRawMode(true);
+    if (process.stdin.setRawMode) {
+        process.stdin.setRawMode(true);
     }
-    process.stdin.on('data', function(b) {
+    process.stdin.on('data', (b) => {
         if (b[0] === 3) {
             app._ircClient.disconnect('I have been terminated from the Console. Goodbye cruel world...', () => {
-              if(process.stdin.setRawMode) {
-                process.stdin.setRawMode(false)                
-              }
-              process.exit()
+                if (process.stdin.setRawMode) {
+                    process.stdin.setRawMode(false);
+                }
+                process.exit();
             });
         }
     });
