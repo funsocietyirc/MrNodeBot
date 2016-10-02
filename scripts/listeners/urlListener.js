@@ -44,23 +44,6 @@ module.exports = app => {
         key: app.Config.apiKeys.google
     });
 
-    // Formatting Helper
-    const shortSay = (to, from, payload) => {
-        let shortString = c.bold('Short:');
-        let titleString = c.bold('Title:');
-        let output = '';
-        if (payload.shortUrl && payload.url.length > app.Config.features.urls.titleMin) {
-            output = output + `${shortString} ${c.blue(payload.shortUrl)}`;
-        }
-        if (payload.title != '') {
-            let space = output == '' ? '' : ' ';
-            output = output + space + `${titleString} ${c.yellow(payload.title)}`;
-        }
-        if (output != '') {
-            app.say(to, `(${from}) ` + output);
-        }
-    };
-
     // Cache URLS to prevent unnecessary API calls
     const urlCache = new HashMap();
 
@@ -175,6 +158,23 @@ module.exports = app => {
             }));
         });
     });
+
+    // Formatting Helper
+    const shortSay = (to, from, payload) => {
+        let shortString = c.bold('Short:');
+        let titleString = c.bold('Title:');
+        let output = '';
+        if (payload.shortUrl && payload.url.length > app.Config.features.urls.titleMin) {
+            output = output + `${shortString} ${c.blue(payload.shortUrl)}`;
+        }
+        if (payload.title && payload.title != '') {
+            let space = output == '' ? '' : ' ';
+            output = output + space + `${titleString} ${c.yellow(payload.title)}`;
+        }
+        if (output != '') {
+            app.say(to, `(${from}) ` + output);
+        }
+    };
 
     // Report back to IRC
     const say = (to, from, results) =>
