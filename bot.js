@@ -492,7 +492,7 @@ class MrNodeBot {
                         conLogger(`${admCall.from} on ${admCall.to} tried to use the ${admCmd.access} command ${admCall.cmd}`, 'error');
                         return;
                     }
-                    
+
                     try {
                       app.Commands.get(admCall.cmd).call(admCall.to, admCall.from, output, admCall.message, admCall.is);
                     } catch (e) {
@@ -555,8 +555,9 @@ class MrNodeBot {
     set channels(value) {
       // Given an array
       if (Array.isArray(value)) value.forEach(channel => this._ircClient.join(channel));
-      // We got a string
-      else if (String.isString(value)) value.split(' ').forEach(channel => this._ircClient.join(channel));
+      else {
+        value.split(' ').forEach(channel => this._ircClient.join(channel));        
+      }
     };
 
 }
