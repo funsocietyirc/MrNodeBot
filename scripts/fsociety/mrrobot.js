@@ -6,9 +6,16 @@ const scriptInfo = {
 };
 
 const _ = require('lodash');
-const model = require('bookshelf-model-loader').MrRobotQuotes;
+const Models = require('bookshelf-model-loader');
+const conLogger = require('../../lib/consoleLogger');
 
 module.exports = app => {
+    // Do not load module if we have no database
+    if (!app.Database || !Models.MrRobotQuotes) {
+        return;
+    }
+    let quoteModel = Models.MrRobotQuotes;
+
     const includeExceptions = [
         'i am Mr. Robot (~mrrobot@unaffiliated/kl4200/bot/mrrobot)',
         'Error:',
@@ -18,30 +25,39 @@ module.exports = app => {
         'Quote #'
     ];
 
-    // Handler
-    const loggingCmd = (to, from, text, message) => {
-        if (!text || to != '#MrRobot' || from != 'MrRobot' || _.includes(includeExceptions, text) || text.split(' ').length < 3) {
+    const mrRobotQuoteLogging = (to, from, text, message) => {
+        if (!text || to != '#MrRobot' || from != 'MrRobot' ||  _.includes(includeExceptions, text) || text.split(' ').length < 3) {
             return;
         }
-        model.query(qb => {
-            qb.where('quote', 'like', text)
-                .count().then(count => {
-                    if (!count) {
-                        return;
-                    }
-                    qb.insert({
-                            quote: text
-                        })
-                        .then(result => {
-                            // TODO Do something like pusher
-                        })
-                        .catch(err => console.log(err));
-                });
+        quoteModel.query(qb => {
+           qb
+           .select(['quote'])
+           .where('quote', 'like', text)
+           .limit(1);
+
+        })
+        .fetch()
+        .then(result => {
+          if(result) {
+            return;
+          }
+          quoteModel
+            .insert({quote:text})
+            .then(result => {
+            })
+            .catch(err => {
+              conLogger('Error saving result from DB in MrRobotQuote','error');
+              conLogger(err, 'error');
+            });
+        })
+        .catch(err => {
+          conLogger('Error getting result from DB in MrRobotQuote','error');
+          conLogger(err, 'error');
         });
     };
 
     const mrrobot = (to, from, text, message) => {
-        model.query(qb => {
+        quoteModel.query(qb => {
                 qb.select('quote').orderByRaw('rand()').limit(1);
                 if (text) {
                     qb.andWhere('quote', 'like', text);
@@ -66,7 +82,7 @@ module.exports = app => {
     // Listen and Log
     app.Listeners.set('mrrobotquotes', {
         desc: 'Log quotes from #MrRobot',
-        call: loggingCmd
+        call: mrRobotQuoteLogging
     });
 
     return scriptInfo;

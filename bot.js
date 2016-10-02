@@ -3,6 +3,7 @@
 // Extend the max
 process.setMaxListeners(0);
 
+
 const HashMap = require('hashmap');
 const storage = require('node-persist');
 const Pusher = require('pusher');
@@ -556,7 +557,7 @@ class MrNodeBot {
       // Given an array
       if (Array.isArray(value)) value.forEach(channel => this._ircClient.join(channel));
       else {
-        value.split(' ').forEach(channel => this._ircClient.join(channel));        
+        value.split(' ').forEach(channel => this._ircClient.join(channel));
       }
     };
 

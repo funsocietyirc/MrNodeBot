@@ -19,4 +19,14 @@ if (args.config) {
 
 const MrNodeBot = require('./bot')((app) => {
     // Code here will be executed after the bot is finished connecting
+
+    process.stdin.setRawMode(true);
+    process.stdin.on('data', function(b) {
+        if (b[0] === 3) {
+            app._ircClient.disconnect('I have been terminated from the Console. Goodbye cruel world...', () => {
+              process.stdin.setRawMode(false)
+              process.exit()
+            });
+        }
+    });
 }, args.config);
