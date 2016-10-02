@@ -4,6 +4,7 @@ const scriptInfo = {
     file: 'announce.js',
     createdBy: 'Dave Richer'
 };
+
 const conLogger = require('../../lib/consoleLogger');
 
 module.exports = app => {

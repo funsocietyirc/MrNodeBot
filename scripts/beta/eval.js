@@ -3,5 +3,8 @@ module.exports = app => {
     eval(text);
   };
   app.Commands.set('eval', {
+    desc: '[valid js] Evaluate for easier testing, should not be used in production',
+    access: app.Config.accessLevels.owner,
+    call: evaluate
   })
 };

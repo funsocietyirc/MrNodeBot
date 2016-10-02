@@ -157,7 +157,7 @@ module.exports = app => {
     // Get the title
     const getTitle = (url, results) => new Promise((resolve, reject) => {
         xray(url, 'title')((err, title) => {
-            if (err) resolve(results);
+            if (err || !title || !String.isString(title)) resolve(results);
             resolve(_.merge(results, {
                 title: title.replace(/(\n|\r)+$/, '').trim()
             }));
