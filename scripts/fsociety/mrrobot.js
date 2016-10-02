@@ -30,12 +30,12 @@ module.exports = app => {
                         return;
                     }
                     qb.insert({
-                        quote: text
-                    })
-                    .then(result => {
-                      console.log(text);
-                    })
-                    .catch(err => console.log(err));
+                            quote: text
+                        })
+                        .then(result => {
+                            // TODO Do something like pusher
+                        })
+                        .catch(err => console.log(err));
                 });
         });
     };
@@ -50,7 +50,7 @@ module.exports = app => {
             .fetch()
             .then(result => {
                 if (!result) {
-                    app.say(to, `There is no quote data yet. Ask your dude to run the Seed.`);
+                    app.say(to, `I have not yet encountered anything like that.`);
                     return;
                 }
                 app.say(to, `${result.get('quote')} -- Powered By #MrRobot`);
