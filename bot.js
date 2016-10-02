@@ -342,28 +342,44 @@ class MrNodeBot {
         }
         // Run events
         app.NickChanges.forEach((value, key) => {
+          try {
             value.call(oldnick, newnick, channels, message);
+          } catch (e) {
+            conLogger(e,'error');
+          }
         });
     }
 
     // Handle On Joins
     _handleOnJoin(app, channel, nick, message) {
         app.OnJoin.forEach((value, key) => {
+          try {
             value.call(channel, nick, message);
+          } catch (e) {
+            conLogger(e,'error');
+          }
         });
     }
 
     // Handle Topic changes
     _handleOnTopic(app, channel, topic, nick, message) {
         app.OnTopic.forEach((value, key) => {
+          try {
             value.call(channel, topic, nick, message);
+          } catch (e) {
+            conLogger(e,'error');
+          }
         });
     }
 
     // Fired when the bot connects to the network
     _handleRegistered(app) {
         app.Registered.forEach((value, key) => {
+          try {
             value.call(app);
+          } catch (e) {
+            conLogger(e,'error');
+          }
         });
     }
 
@@ -388,7 +404,11 @@ class MrNodeBot {
         // Process the listeners
         if (!is.triggered && !is.ignored && !is.self) {
             app.Listeners.forEach((value, key) => {
+              try {
                 value.call(to, from, text, message, is);
+              } catch (e) {
+                conLogger(e,'error');
+              }
             });
         }
 
@@ -472,8 +492,12 @@ class MrNodeBot {
                         conLogger(`${admCall.from} on ${admCall.to} tried to use the ${admCmd.access} command ${admCall.cmd}`, 'error');
                         return;
                     }
-
-                    app.Commands.get(admCall.cmd).call(admCall.to, admCall.from, output, admCall.message, admCall.is);
+                    
+                    try {
+                      app.Commands.get(admCall.cmd).call(admCall.to, admCall.from, output, admCall.message, admCall.is);
+                    } catch (e) {
+                      conLogger(e,'error');
+                    }
                 }
                 // Is not identified
                 else {

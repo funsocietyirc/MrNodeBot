@@ -54,7 +54,7 @@ module.exports = app => {
         }
         if (payload.title != '') {
             let space = output == '' ? '' : ' ';
-            output = output + space + `${titleString} ${c.yellow(payload.title.trim())}`;
+            output = output + space + `${titleString} ${c.yellow(payload.title)}`;
         }
         if (output != '') {
             app.say(to, `(${from}) ` + output);
@@ -128,6 +128,7 @@ module.exports = app => {
             reject({
                 message: 'A URL is required'
             });
+            return;
         }
         resolve({
             url,
@@ -141,11 +142,13 @@ module.exports = app => {
         // Check input / Gate
         if (url.startsWith('http://goo.gl/') || url.startsWith('https://goo.gl/')) {
             resolve(results);
+            return;
         }
         if (urlCache.has(url)) {
             resolve(_.merge(results, {
                 shortUrl: urlCache.get(url)
             }));
+            return;
         }
         googleUrl.shorten(url, (err, shortUrl) => {
             if (err) {
@@ -162,13 +165,11 @@ module.exports = app => {
     // Get the title
     const getTitle = (url, results) => new Promise((resolve, reject) => {
         xray(url, 'title')((err, title) => {
-            if (err || !title || !String.isString(title)) {
+            if (err || !title) {
               resolve(results);
               return;
             }
-            if(_.has(title,'replace')) {
-              title = title.replace(/(\n|\r)+$/, '').trim();
-            }
+            title = _.trim(title)
             resolve(_.merge(results, {
                 title: title
             }));

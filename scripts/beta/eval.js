@@ -1,6 +1,10 @@
 module.exports = app => {
   const evaluate = (to, from, text, message) => {
-    eval(text);
+    try {
+      eval(text);
+    } catch (e) {
+      console.log(e);
+    }
   };
   app.Commands.set('eval', {
     desc: '[valid js] Evaluate for easier testing, should not be used in production',
