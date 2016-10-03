@@ -37,7 +37,7 @@ module.exports = app => {
     const sourcesHandler = (req, res) => {
         Models.Url.query(qb => {
                 qb.where('url', 'like', '%.jpeg')
-                    .select(['to','from','id']);
+                    .select(['to','from','id'])
                     .orWhere('url', 'like', '%.jpg')
                     .orWhere('url', 'like', '%.gif')
                     .orWhere('url', 'like', '%.png')
