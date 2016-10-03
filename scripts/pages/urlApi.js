@@ -110,7 +110,7 @@ module.exports = app => {
             .then(results => {
                 res.json({
                     rowCount: results.pagination.rowCount,
-                    pageCount: Math.round(results.pagination.pageSize / results.pagination.rowCount) || 1 ,
+                    pageCount: results.pagination.pageCount ,
                     page: results.pagination.page,
                     pageSize: results.pagination.pageSize,
                     status: 'success',
