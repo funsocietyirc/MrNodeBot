@@ -9,6 +9,7 @@ const _ = require('lodash');
 const helpers = require('../../helpers');
 const fileType = require('file-type');
 const checkUrl = require('../../lib/checkUrl');
+const conLogger = require('../../lib/consoleLogger');
 const Models = require('bookshelf-model-loader');
 
 // Display a list of images in the Web Front end
@@ -39,6 +40,7 @@ module.exports = app => {
                     checkUrl(url, good => {
                         if (!good) {
                             // If not delete url
+                            conLogger(`Removing dead link ${url} from Url table`,'info');
                             urlModel.where('url', url).destroy();
                             return;
                         }
@@ -56,9 +58,9 @@ module.exports = app => {
                                     return;
                                 }
                                 // Remove from database
+                                conLogger(`Removing non image link ${url} from Url table`,'info');
                                 urlModel.where('url', url).destroy();
                             });
-
                         });
                     });
                 });

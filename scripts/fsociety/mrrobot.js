@@ -46,7 +46,9 @@ module.exports = app => {
                     .insert({
                         quote: text
                     })
-                    .then(result => {})
+                    .then(result => {
+                      conLogger(`Added New MrRobot show quote: ${text}`,'info');
+                    })
                     .catch(err => {
                         conLogger('Error saving result from DB in MrRobotQuote', 'error');
                         conLogger(err, 'error');
@@ -57,6 +59,11 @@ module.exports = app => {
                 conLogger(err, 'error');
             });
     };
+    // Listen and Log
+    app.Listeners.set('mrrobotquotes', {
+        desc: 'Log quotes from #MrRobot',
+        call: mrRobotQuoteLogging
+    });
 
     const cleanQuotes = (to, from, text, mesasage) => {
         quoteModel.query(qb => {
@@ -65,7 +72,8 @@ module.exports = app => {
             })
             .fetchAll()
             .then(results => {
-                if (!results.count()) {
+                if (!results.length) {
+                    conLogger('Runnig MrRobot Quote clean up job, nothing to clean up...','info');
                     return;
                 }
                 results.forEach(result => {
@@ -73,13 +81,23 @@ module.exports = app => {
                         .where('id', result.attributes.id + 1)
                         .fetch()
                         .then(secondLine => {
-                            result.attributes.quote = `${result.attributes.quote.replace('(1 more message)','')} ${secondLine.attributes.quote}`;
-                            result.save();
-                            secondLine.destroy();
-                        })
-                })
+                            result.set('quote',`${result.get('quote').replace('(1 more message)','')} ${secondLine.get('quote')}`).save().then(() => {
+                              conLogger(`Cleaned up MrRobot show quotes, merged quote ${result.get('id')} and ${secondLine.get('id')}`, 'info');
+                              secondLine.destroy();
+                            });
+                        });
+                });
             });
     };
+    app.Commands.set('mrrobot-clean', {
+        desc: 'Clean multi-line quotes',
+        access: app.Config.accessLevels.owner,
+        call: cleanQuotes
+    });
+    // Schedule Job every hour to verify images still exist
+    app.Scheduler.scheduleJob({
+        hour: 23
+    }, cleanQuotes);
 
     const mrrobot = (to, from, text, message) => {
         quoteModel.query(qb => {
@@ -97,30 +115,10 @@ module.exports = app => {
                 app.say(to, `${result.get('quote')} -- Powered By #MrRobot`);
             });
     };
-
-
-    app.Commands.set('mrrobot-clean', {
-        desc: 'Clean multi-line quotes',
-        access: app.Config.accessLevels.owner,
-        call: cleanQuotes
-    });
-
-    // Schedule Job every hour to verify images still exist
-    app.Scheduler.scheduleJob({
-        hour: 23
-    }, cleanQuotes);
-
-
     app.Commands.set('mrrobot', {
         desc: '[Search Text] Mr Robot quotes powered by #MrRobot',
         access: app.Config.accessLevels.identified,
         call: mrrobot
-    });
-
-    // Listen and Log
-    app.Listeners.set('mrrobotquotes', {
-        desc: 'Log quotes from #MrRobot',
-        call: mrRobotQuoteLogging
     });
 
     return scriptInfo;
