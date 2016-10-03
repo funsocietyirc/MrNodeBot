@@ -46,7 +46,7 @@ module.exports = app => {
             .fetchAll()
             .then(results => {
                 let channels = _(results.pluck('to')).uniq().reverse().value();
-                let nicks = _(results.pluck('to')).uniq().reverse().value();
+                let nicks = _(results.pluck('from')).uniq().reverse().value();
                 res.json({
                     status: 'success',
                     results: {
