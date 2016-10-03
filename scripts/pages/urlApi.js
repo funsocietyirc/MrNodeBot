@@ -37,22 +37,21 @@ module.exports = app => {
     const sourcesHandler = (req, res) => {
         Models.Url.query(qb => {
                 qb.where('url', 'like', '%.jpeg')
+                    .select(['to','from','id']);
                     .orWhere('url', 'like', '%.jpg')
                     .orWhere('url', 'like', '%.gif')
                     .orWhere('url', 'like', '%.png')
-                    .distinct('to', 'from')
-                    .select(['to', 'from']);
+                    .orderBy('id','desc');
             })
             .fetchAll()
             .then(results => {
-                let channels = _(results.pluck('to')).uniq().reverse().value();
-                let nicks = _(results.pluck('from')).uniq().reverse().value();
+                let channels = _(results.pluck('to')).uniq().value();
+                let nicks = _(results.pluck('from')).uniq().value();
                 res.json({
                     status: 'success',
                     results: {
                         channels,
-                        nicks,
-                        count: channels.length + nicks.length
+                        nicks
                     }
                 });
             });
