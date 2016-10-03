@@ -56,6 +56,29 @@ module.exports = app => {
         });
     };
 
+    const cleanQuotes = (to, from, text, mesasage) => {
+      quoteModel.query(qb => {
+        qb.where('quote', 'like', '%1 more message%')
+          .select(['id', 'quote']);
+      })
+      .fetchAll()
+      .then(results => {
+        if(!results.count()) {
+          return;
+        }
+        results.forEach(result => {
+          quoteModel
+            .where('id',result.attributes.id + 1)
+            .fetch()
+            .then(secondLine => {
+              result.attributes.quote = `${result.attributes.quote.replace('(1 more message)','')} ${secondLine.attributes.quote}`;
+              result.save();
+              secondLine.destroy();
+            })
+        })
+      });
+    };
+
     const mrrobot = (to, from, text, message) => {
         quoteModel.query(qb => {
                 qb.select('quote').orderByRaw('rand()').limit(1);
@@ -72,6 +95,13 @@ module.exports = app => {
                 app.say(to, `${result.get('quote')} -- Powered By #MrRobot`);
             });
     };
+
+
+    app.Commands.set('mrrobot-clean', {
+        desc: 'Clean multi-line quotes',
+        access: app.Config.accessLevels.owner,
+        call: cleanQuotes
+    });
 
     app.Commands.set('mrrobot', {
         desc: '[Search Text] Mr Robot quotes powered by #MrRobot',
