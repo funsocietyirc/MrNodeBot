@@ -65,7 +65,7 @@ module.exports = app => {
 
     const onJoin = (channel, nick, message) => {
         // Make sure we are not reporting ourselves
-        if (nick !== app._ircClient.nick && channel === app.Config.features.fsociety.mainChannel) {
+        if (nick !== app.nick && channel === app.Config.features.fsociety.mainChannel) {
             checkChannel(channel, nick, () => {
                 setTimeout(() => {
                     app.say(nick, `{${salutations}} ${nick},{${appends}}.`);

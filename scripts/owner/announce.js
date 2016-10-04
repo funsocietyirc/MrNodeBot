@@ -28,6 +28,10 @@ module.exports = app => {
             return;
         }
         app.channels.forEach(channel => {
+            if (channel === from) {
+              app.say(channel, 'Your announcement has been made successfully.');
+              return;
+            };
             app.say(channel, text);
         });
     };
