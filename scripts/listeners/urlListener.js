@@ -19,6 +19,8 @@ const Models = require('bookshelf-model-loader');
 const helpers = require('../../helpers');
 const pattern = /\b((?:[a-z][\w-]+:(?:\/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))/ig;
 
+const conLogger = require('../../lib/consoleLogger');
+
 /**
   Translate urls into Google short URLS
   Listeners: shorten
@@ -29,6 +31,8 @@ module.exports = app => {
     if (!app.Config.apiKeys.google) {
         return;
     }
+
+    const cronTime = '00 01 * * *';
 
     // Ignore the users entirely
     const userIgnore = app.Config.features.urls.userIgnore || [];
@@ -235,9 +239,11 @@ module.exports = app => {
     });
 
     // Clear cache every hour
-    app.Scheduler.scheduleJob(app.Config.features.urls.cacheCleanup, () => {
-        urlCache.clear();
+    app.schedule('cleanUrls', cronTime, () => {
+      conLogger('Clearing Google Short URL Cache','info');
+      urlCache.clear();
     });
+
 
     // Return the script info
     return scriptInfo;

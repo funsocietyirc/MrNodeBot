@@ -20,6 +20,7 @@ module.exports = app => {
     }
 
     const urlModel = Models.Url;
+    const cronTime = '01 * * * *';
 
     // Clean the DB of broken URLS
     const cleanUrls = () => {
@@ -53,6 +54,7 @@ module.exports = app => {
                                 if (type && type.ext) {
                                     ext = type.ext;
                                 }
+                                conLogger('Running Clean URL Script to remove dead URLS','info');
                                 // If Valid image extension bailout
                                 if (ext === 'png' || ext === 'gif' || ext === 'jpg' || ext === 'jpeg') {
                                     return;
@@ -123,10 +125,7 @@ module.exports = app => {
         access: app.Config.accessLevels.owner,
         call: cleanUrls
     });
-    // Schedule Job every hour to verify images still exist
-    app.Scheduler.scheduleJob({
-        hour: 23
-    }, cleanUrls);
+    app.schedule('cleanImages',cronTime, cleanUrls);
 
     // Return the script info
     return scriptInfo;

@@ -36,6 +36,7 @@ class MrNodeBot {
 
         // Start pusher, or assign it to false
         this._pusher = this.Config.pusher.enabled ? new Pusher(this.Config.pusher.config) : false;
+
         // TwitterClient
         this._twitterClient = require('./lib/twitterClient');
 
@@ -53,9 +54,10 @@ class MrNodeBot {
         // Lists
         this.Ignore = [];
         this.Admins = [];
+        this.SystemJobs = [];
 
         // Assign scheduler
-        this.Scheduler = require('node-schedule');
+        this._scheduler = require('node-schedule');
 
         // Track root path
         this.AppRoot = require('app-root-path').toString();
@@ -110,7 +112,7 @@ class MrNodeBot {
                 this._ircClient.say(nickserv, `identify ${this.Config.nickserv.password}`);
             }
 
-            this._loadDynamicAssets();
+            this._loadDynamicAssets(false);
 
             // Run The callback
             if (this._callback) {
@@ -202,7 +204,7 @@ class MrNodeBot {
     // Extensions Loader
     // Read all JS files in the scripts directory and evaluate them
     // During the update process this updates the script portions of the code
-    _loadScriptsFromDir(dir) {
+    _loadScriptsFromDir(dir, clearCache) {
         let path = require('path');
         let normalizedPath = path.join(__dirname, dir);
         let loadedScripts = [];
@@ -215,8 +217,10 @@ class MrNodeBot {
             let fullPath = `${normalizedPath}${path.sep}${file}`;
             // Attempt to Load the module
             try {
-                this._clearCache(fullPath);
                 conLogger(`Loading Script: ${file} `, 'success');
+                if(clearCache === true) {
+                  this._clearCache(fullPath);
+                }
                 loadedScripts.push({
                     fullPath: fullPath,
                     info: require(`./${dir}/${file}`)(this)
@@ -276,6 +280,14 @@ class MrNodeBot {
             // Reload the Configuration
             this._clearCache('./config.js');
             this.Config = require('./config.js');
+
+            // Clear all existing jobs
+            _.forEach(this._scheduler.scheduledJobs, job => {
+              if(!_.includes(job.name)) {
+                job.cancel();
+              }
+            });
+
             this.Config.irc.autoConnect = false;
             this.AdmCallbacks.clear();
             this.NickChanges.clear();
@@ -291,7 +303,7 @@ class MrNodeBot {
         // Load in the Scripts
         if (!this.Config.bot.disableScripts) {
             this._scriptDirectories.forEach(script => {
-                this._loadedScripts = this._loadScriptsFromDir(script);
+                this._loadedScripts = this._loadScriptsFromDir(script,true);
             });
 
             // Read in command rebindings
@@ -520,6 +532,14 @@ class MrNodeBot {
     // Send notice to the target
     notice(target, message) {
         this._ircClient.notice(target, this._filterMessage(message));
+    };
+
+    schedule(name, time, callback, system) {
+      if (_.includes(this.Jobs, name)) {
+        conLogger(`Duplicate job ${name} for time ${time} not loaded`);
+      }
+      this._scheduler.scheduleJob(name, time, callback);
+      this.SystemJobs.push(name);
     };
 
     // Properties

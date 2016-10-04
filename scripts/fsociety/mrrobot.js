@@ -14,8 +14,9 @@ module.exports = app => {
     if (!app.Database || !Models.MrRobotQuotes) {
         return;
     }
-    let quoteModel = Models.MrRobotQuotes;
 
+    const quoteModel = Models.MrRobotQuotes;
+    const cronTime = '00 00 * * *';
     const includeExceptions = [
         'i am Mr. Robot (~mrrobot@unaffiliated/kl4200/bot/mrrobot)',
         'Error:',
@@ -94,10 +95,8 @@ module.exports = app => {
         access: app.Config.accessLevels.owner,
         call: cleanQuotes
     });
-    // Schedule Job every hour to verify images still exist
-    app.Scheduler.scheduleJob({
-        hour: 23
-    }, cleanQuotes);
+    // Schedule job
+    app.schedule('cleanMrRobotQuotes', cronTime, cleanQuotes);
 
     const mrrobot = (to, from, text, message) => {
         quoteModel.query(qb => {
