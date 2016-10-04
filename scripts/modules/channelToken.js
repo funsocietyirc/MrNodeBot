@@ -18,7 +18,7 @@ module.exports = app => {
     const getNickByTokenApi = (req, res) => {
       let error = {
           status: 'error',
-          user: null
+          result: null
       };
       let token = req.body.token;
       if(!token) {
@@ -30,13 +30,13 @@ module.exports = app => {
         .select(['user','channel','timestamp']);
       })
       .fetch()
-      .then(user => {
-        if(!user) {
+      .then(result => {
+        if(!result) {
           return res.json(error);
         }
         res.json({
             status: 'success',
-            user
+            result: user
         });
       });
     };

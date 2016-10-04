@@ -72,8 +72,8 @@ module.exports = app => {
             if (results.id) {
                 output.id = results.id;
             }
-            if(results.shortUrl) {
-              output.shortUrl = results.shortUrl;
+            if (results.shortUrl) {
+                output.shortUrl = results.shortUrl;
             }
             app._pusher.trigger('public', channel, output);
             results.delivered.push({
