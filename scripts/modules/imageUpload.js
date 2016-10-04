@@ -8,64 +8,15 @@ const scriptInfo = {
 };
 
 const path = require('path');
-const randToken = require('rand-token');
 const Models = require('bookshelf-model-loader');
+const randToken = require('rand-token');
+const tokenModel = Models.Token;
 
 module.exports = app => {
     // Log nick changes in the alias table
     if (!app.Database && !Models.Token) {
         return;
     }
-
-    const tokenModel = Models.Token;
-
-    // Register a user to a token
-    const registerToken = (to, from, text, message) => {
-        // Only accept messages from channel
-        if (to === from) {
-            app.say(to, 'You must be in a channel to request a token');
-            return;
-        }
-
-        let token = randToken.generate(8);
-
-        tokenModel
-            .query(qb => {
-                qb
-                    .where('user', from)
-                    .where('channel', to);
-            })
-            .fetch()
-            .then(result => {
-                // If no previous tokens exist
-                if (!result) {
-                    tokenModel.create({
-                            user: from,
-                            channel: to,
-                            token: token
-                        })
-                        .then(() => {
-                            app.say(from, `Your new token for ${to} is ${token}`);
-                        });
-                }
-                // If previous token exists
-                else {
-                    tokenModel
-                        .where({
-                            user: from,
-                            channel: to
-                        })
-                        .save({
-                            token: token
-                        }, {
-                            patch: true
-                        })
-                        .then(() => {
-                            app.say(from, `Your new token for ${to} is ${token}`);
-                        });
-                }
-            });
-    };
 
     // Show the form upload
     const uploadForm = (req, res) => {
@@ -151,13 +102,6 @@ module.exports = app => {
         path: '/upload',
         name: 'upload',
         verb: 'post'
-    });
-
-    // Register token
-    app.Commands.set('upload-token', {
-        desc: 'Get a unique token for uploading images to file',
-        access: app.Config.accessLevels.identified,
-        call: registerToken
     });
 
     app.Commands.set('images', {

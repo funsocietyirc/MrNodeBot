@@ -55,6 +55,22 @@ module.exports = {
         encoding: 'utf8',
 	      autoConnect: false, // DO NOT ADJUST THIS
     },
+    // Command aliasinging
+    commandBindings: [{
+        command: 'update',
+        alias: 'upgrayeddd'
+    }, {
+        command: 'reload',
+        alias: 'refresh',
+    },{
+      command: 'token',
+      alias: 'upload-token'
+    }],
+    // User Manager configuration
+    userManager: {
+        salt: 'hellofriends',
+        keyLength: 64
+    },
     // Knex configuration http://knexjs.org/#Installation-client
     knex: {
         enabled: true,
