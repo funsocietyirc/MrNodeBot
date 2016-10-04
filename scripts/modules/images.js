@@ -54,7 +54,6 @@ module.exports = app => {
                                 if (type && type.ext) {
                                     ext = type.ext;
                                 }
-                                conLogger('Running Clean URL Script to remove dead URLS','info');
                                 // If Valid image extension bailout
                                 if (ext === 'png' || ext === 'gif' || ext === 'jpg' || ext === 'jpeg') {
                                     return;
@@ -125,7 +124,10 @@ module.exports = app => {
         access: app.Config.accessLevels.owner,
         call: cleanUrls
     });
-    app.schedule('cleanImages',cronTime, cleanUrls);
+    app.schedule('cleanImages',cronTime, () => {
+        conLogger('Running Clean URL Script to remove unreachable hosts','info');
+        cleanUrls();
+    });
 
     // Return the script info
     return scriptInfo;
