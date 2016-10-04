@@ -46,7 +46,6 @@
     "random-js": "^1.0.4",
     "request": "^2.75.0",
     "request-promise-native": "^1.0.3",
-    "right-pad": "^1.0.1",
     "scrypt": "^6.0.3",
     "serve-favicon": "^2.3.0",
     "shelljs": "^0.7.3",

@@ -9,7 +9,6 @@ const Models = require('bookshelf-model-loader');
 const Moment = require('moment');
 const _ = require('lodash');
 const c = require('irc-colors');
-const rightPad = require('right-pad');
 const reqPromise = require('request-promise-native');
 module.exports = app => {
         // No Database Data available...
@@ -80,22 +79,23 @@ module.exports = app => {
         **/
         const reportToIrc = (to, data) => {
                 const sayHelper = (header, content) => {
-                        app.say(to, `${titleLine(rightPad(`${header}${header ? ':' : ' '}`, pad, ' '))} ${contentLine(content)}`);
+                        let paddedResult = _.padStart(`${header}${header ? ':' : ' '}`, pad, ' ');
+                        app.say(to, `${titleLine(paddedResult)} ${contentLine(content)}`);
                 };
-                const firstDateActive = Moment(data.firstResult.timestamp);
-                const lastDateActive = Moment(data.lastResult.timestamp);
-                const pad = 19;
-                const realName = data.realName ? `(${c.white.bgblack(data.realName)})` : '';
-                const primaryNick = data.primaryNick ? `${c.white.bgblack.bold('ACC: ')}${c.green.bgblack(data.primaryNick)}` : c.red.bgblack('-Unidentified-');
-                const city = data.city ? `City(${data.city}) ` : '';
-                const regionName = data.regionName ? `Region(${data.regionName}) ` : '';
-                const countryName = data.countryName ? `Country(${data.countryName}) ` : '';
-                const postal = data.postal ? `Postal(${data.postal}) ` : '';
-                const timeZone = data.timeZone ? `Time Zone(${data.timeZone}) ` : '';
-                const lat = data.lat ? `Lat(${data.lat}) ` : '';
-                const long = data.long ? `Long(${data.long}) ` : '';
-
-                app.say(to, `${c.underline.red.bgblack(rightPad(`Searching VIA ${data.subCommand}`, pad * 4, ' '))}`);
+                let firstDateActive = Moment(data.firstResult.timestamp);
+                let lastDateActive = Moment(data.lastResult.timestamp);
+                let pad = 19;
+                let realName = data.realName ? `(${c.white.bgblack(data.realName)})` : '';
+                let primaryNick = data.primaryNick ? `${c.white.bgblack.bold('ACC: ')}${c.green.bgblack(data.primaryNick)}` : c.red.bgblack('-Unidentified-');
+                let city = data.city ? `City(${data.city}) ` : '';
+                let regionName = data.regionName ? `Region(${data.regionName}) ` : '';
+                let countryName = data.countryName ? `Country(${data.countryName}) ` : '';
+                let postal = data.postal ? `Postal(${data.postal}) ` : '';
+                let timeZone = data.timeZone ? `Time Zone(${data.timeZone}) ` : '';
+                let lat = data.lat ? `Lat(${data.lat}) ` : '';
+                let long = data.long ? `Long(${data.long}) ` : '';
+                let paddedResult = _.padStart(`Searching VIA ${data.subCommand}`, pad * 4, ' ');
+                app.say(to, `${c.underline.red.bgblack(paddedResult)}`);
                 app.say(to, `${primaryNick} ${c.white.bgblack.bold('Current:')} ${c.white.bgblack(data.currentNick)}!${c.red.bgblack(data.currentIdent)}@${c.blue.bgblack.bold(data.currentHost)} ${realName}`);
 
                 sayHelper('Nicks', data.nicks.join(' | '));
@@ -167,7 +167,7 @@ module.exports = app => {
             queryBuilder(convertSubFrom(subCommand), whoisResults[convertSubInfo(subCommand)])
               .then(dbResults => {
                 if(!dbResults.length) {
-                  app.say(to, `I am afraid I do not have enought data...`);
+                  app.say(to, `I am afraid I do not have enough data...`);
                   return;
                 }
                 processor(to, renderData(nick, subCommand, dbResults.toJSON(), whoisResults, locResults));
