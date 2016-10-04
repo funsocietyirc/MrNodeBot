@@ -25,6 +25,7 @@ module.exports = app => {
         }
         text = _.replace(text, replacement, '');
         replacement = replacement.substr(1);
+        replacement = _replace(replacement, 'ᴥ', '//');
         text = _.replace(text, 'ᴥ', '//');
         if (!text || !replacement) {
             return;
