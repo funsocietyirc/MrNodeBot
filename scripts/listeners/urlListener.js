@@ -61,13 +61,21 @@ module.exports = app => {
             }
             let channel = /\.(gif|jpg|jpeg|tiff|png)$/i.test(url) ? 'image' : 'url';
             let timestamp = Date.now();
-            app._pusher.trigger('public', channel, {
+            let output = {
                 url,
                 to,
                 from,
                 timestamp,
                 title: results.title || ''
-            });
+            };
+            // Append an ID if we have one
+            if (results.id) {
+                output.id = results.id;
+            }
+            if(results.shortUrl) {
+              output.shortUrl = results.shortUrl;
+            }
+            app._pusher.trigger('public', channel, output);
             results.delivered.push({
                 protocol: 'pusher',
                 to: channel,
@@ -97,6 +105,7 @@ module.exports = app => {
                     title: results.title
                 })
                 .then(record => {
+                    results.id = record.id;
                     results.delivered.push({
                         protocol: 'database',
                         on: Date.now()
@@ -139,8 +148,8 @@ module.exports = app => {
         }
         googleUrl.shorten(url, (err, shortUrl) => {
             if (err) {
-              resolve(results);
-              return;
+                resolve(results);
+                return;
             }
             urlCache.set(url, shortUrl);
             resolve(_.merge(results, {
@@ -153,8 +162,8 @@ module.exports = app => {
     const getTitle = (url, results) => new Promise((resolve, reject) => {
         xray(url, 'title')((err, title) => {
             if (err || !title) {
-              resolve(results);
-              return;
+                resolve(results);
+                return;
             }
             title = _.trim(title)
             resolve(_.merge(results, {
@@ -223,8 +232,8 @@ module.exports = app => {
                 .then(results => getTitle(url, results))
                 .then(results => say(to, from, results))
                 // Report
-                .then(results => pusher(url, to, from, results))
                 .then(results => logInDb(url, to, from, results))
+                .then(results => pusher(url, to, from, results))
                 .catch(err => handleErrors(err));
         });
     };
@@ -240,8 +249,8 @@ module.exports = app => {
 
     // Clear cache every hour
     app.schedule('cleanUrls', cronTime, () => {
-      conLogger('Clearing Google Short URL Cache','info');
-      urlCache.clear();
+        conLogger('Clearing Google Short URL Cache', 'info');
+        urlCache.clear();
     });
 
 
