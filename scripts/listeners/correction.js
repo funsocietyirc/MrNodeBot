@@ -53,7 +53,7 @@ module.exports = app => {
                     if (!finalReplacement) {
                         return;
                     }
-                    app.say(to, `[${results.get('from')}]: ${finalReplacement}`);
+                    app.say(to, `[${result.get('from')}]: ${finalReplacement}`);
                 });
             });
     };
