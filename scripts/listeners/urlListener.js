@@ -226,6 +226,9 @@ module.exports = app => {
 
         // Shorten and output
         urls.forEach(url => {
+          if(_.startsWith(url, 'ftp')) {
+            return;
+          }
             startChain(url)
                 // Process
                 .then(results => shorten(url, results))
