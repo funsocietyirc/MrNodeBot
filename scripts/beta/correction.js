@@ -18,15 +18,15 @@ module.exports = app => {
         if (!_.startsWith(text, 's/')) {
             return;
         }
-        text = _.replace(text, 's/', '').replace('//', 'ᴥ');
+        text = _.replace(text, 's/', '').replaceAll('//', 'ᴥ');
+        console.log(text);
         let replacement = text.slice(text.lastIndexOf('/'));
         if (!replacement) {
             return;
         }
         text = _.replace(text, replacement, '');
-        replacement = replacement.substr(1);
-        replacement = _.replace(replacement, 'ᴥ', '//');
-        text = _.replace(text, 'ᴥ', '//');
+        replacement = replacement.substr(1).replaceAll('ᴥ', '//');
+        text = text.replaceAll('ᴥ', '//');
         if (!text || !replacement) {
             return;
         }
