@@ -1,7 +1,7 @@
 'use strict';
 const scriptInfo = {
-    name: 'messageCounter',
-    file: 'messageCounter.js',
+    name: 'lastActive',
+    file: 'lastActive.js',
     createdBy: 'Dave Richer'
 };
 

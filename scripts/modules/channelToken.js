@@ -1,3 +1,4 @@
+'use strict';
 const scriptInfo = {
   name: 'Channel Token',
   file: 'channelToken.js',
@@ -40,6 +41,7 @@ module.exports = app => {
         });
       });
     };
+
     // Register upload Handler
     app.WebRoutes.set('getNickByToken', {
         handler: getNickByTokenApi,
@@ -75,6 +77,7 @@ module.exports = app => {
                             token: token
                         })
                         .then(() => {
+                            app.say(to, `Your token has been safely private messaged to you ${from}`);
                             app.say(from, `Your new token for ${to} is ${token}`);
                         });
                 }

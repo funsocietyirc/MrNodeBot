@@ -28,7 +28,7 @@ module.exports = app => {
             return;
         }
         app.channels.forEach(channel => {
-            if (channel === from) {
+            if (channel === to) {
               app.say(channel, 'Your announcement has been made successfully.');
               return;
             };

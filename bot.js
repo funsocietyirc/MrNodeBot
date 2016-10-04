@@ -91,13 +91,13 @@ class MrNodeBot {
         // Add the listeners
         this._initListeners();
 
-    }
+    };
 
     _initWebServer() {
         conLogger('Starting Web Server...', 'info');
         this.WebServer = require('./lib/webServer')(this);
         conLogger(`Web Server started on port ${this.Config.express.port}`, 'success');
-    }
+    };
 
     _initIrc() {
         conLogger('Connecting to IRC', 'info');
@@ -119,7 +119,7 @@ class MrNodeBot {
                 this._callback(this);
             }
         });
-    }
+    };
 
     _initDbSubSystem() {
         if (this.Config.knex.enabled) {
@@ -130,7 +130,7 @@ class MrNodeBot {
             conLogger('No Database system found, features limited', 'error');
             this.Database = false;
         }
-    }
+    };
 
     _initListeners() {
         conLogger('Initializing Listeners', 'info');
@@ -184,7 +184,7 @@ class MrNodeBot {
         });
 
         conLogger('Listeners Initialized', 'success');
-    }
+    };
 
     _initUserManager() {
         if (!this.Database) {
@@ -194,12 +194,12 @@ class MrNodeBot {
 
         let UserManager = require('./lib/userManager');
         this._userManager = new UserManager();
-    }
+    };
 
     //noinspection JSMethodCanBeStatic
     _clearCache(fullPath) {
         require.uncache(require.resolve(fullPath));
-    }
+    };
 
     // Extensions Loader
     // Read all JS files in the scripts directory and evaluate them
@@ -218,8 +218,8 @@ class MrNodeBot {
             // Attempt to Load the module
             try {
                 conLogger(`Loading Script: ${file} `, 'success');
-                if(clearCache === true) {
-                  this._clearCache(fullPath);
+                if (clearCache === true) {
+                    this._clearCache(fullPath);
                 }
                 loadedScripts.push({
                     fullPath: fullPath,
@@ -231,7 +231,7 @@ class MrNodeBot {
         });
 
         return loadedScripts;
-    }
+    };
 
     // Application Setup
     _initRandomSubSystem() {
@@ -244,7 +244,7 @@ class MrNodeBot {
 
         // Auto Seed the random engine
         this.randomEngine.autoSeed();
-    }
+    };
 
     // Node Persist storage
     _initStorageSubSystem() {
@@ -272,7 +272,7 @@ class MrNodeBot {
         });
 
         conLogger('Application State Initialized', 'success');
-    }
+    };
 
     _loadDynamicAssets(clearCache) {
         // Clear dynamic assets
@@ -283,9 +283,9 @@ class MrNodeBot {
 
             // Clear all existing jobs
             _.forEach(this._scheduler.scheduledJobs, job => {
-              if(!_.includes(job.name)) {
-                job.cancel();
-              }
+                if (!_.includes(job.name)) {
+                    job.cancel();
+                }
             });
 
             this.Config.irc.autoConnect = false;
@@ -303,7 +303,7 @@ class MrNodeBot {
         // Load in the Scripts
         if (!this.Config.bot.disableScripts) {
             this._scriptDirectories.forEach(script => {
-                this._loadedScripts = this._loadScriptsFromDir(script,true);
+                this._loadedScripts = this._loadScriptsFromDir(script, true);
             });
 
             // Read in command rebindings
@@ -331,7 +331,7 @@ class MrNodeBot {
             // Dynamically register the WebRoutes objects with express
             this.WebServer[route.verb || 'get'](route.path, route.name, route.handler);
         });
-    }
+    };
 
     // Application Bootstrap
     Bootstrap(hard) {
@@ -344,7 +344,7 @@ class MrNodeBot {
             conLogger('Reloading...', 'info');
             this._loadDynamicAssets(true);
         }
-    }
+    };
 
     // Handle Nick changes
     _handleNickChanges(app, oldnick, newnick, channels, message) {
@@ -360,7 +360,7 @@ class MrNodeBot {
                 conLogger(e, 'error');
             }
         });
-    }
+    };
 
     // Handle On Joins
     _handleOnJoin(app, channel, nick, message) {
@@ -371,7 +371,7 @@ class MrNodeBot {
                 conLogger(e, 'error');
             }
         });
-    }
+    };
 
     // Handle Topic changes
     _handleOnTopic(app, channel, topic, nick, message) {
@@ -382,7 +382,7 @@ class MrNodeBot {
                 conLogger(e, 'error');
             }
         });
-    }
+    };
 
     // Fired when the bot connects to the network
     _handleRegistered(app) {
@@ -393,7 +393,7 @@ class MrNodeBot {
                 conLogger(e, 'error');
             }
         });
-    }
+    };
 
     // Process the commands
     _handleCommands(app, from, to, text, message) {
@@ -450,7 +450,7 @@ class MrNodeBot {
                 }
             }
         }
-    }
+    };
 
     //noinspection JSMethodCanBeStatic
     _handleAuthenticatedCommands(app, nick, to, text, message) {
@@ -484,7 +484,7 @@ class MrNodeBot {
 
                     // Log to the console if a user without access a command they are not privy too
                     if (unauthorized) {
-                        let group = helpers.accessString(admCall.cmd);
+                        let group = helpers.accessString(admCall.access);
                         app.say(admCall.from, `You are not a memember of the ${group} access list.`);
                         conLogger(`${admCall.from} on ${admCall.to} tried to use the ${group} command ${admCall.cmd}`, 'error');
                         return;
@@ -505,7 +505,7 @@ class MrNodeBot {
                 app.AdmCallbacks.remove(user);
             }
         }
-    }
+    };
 
     // Handle CTCP commands
     //noinspection JSMethodCanBeStatic
@@ -535,11 +535,11 @@ class MrNodeBot {
     };
 
     schedule(name, time, callback, system) {
-      if (_.includes(this.Jobs, name)) {
-        conLogger(`Duplicate job ${name} for time ${time} not loaded`);
-      }
-      this._scheduler.scheduleJob(name, time, callback);
-      this.SystemJobs.push(name);
+        if (_.includes(this.Jobs, name)) {
+            conLogger(`Duplicate job ${name} for time ${time} not loaded`);
+        }
+        this._scheduler.scheduleJob(name, time, callback);
+        this.SystemJobs.push(name);
     };
 
     // Properties
