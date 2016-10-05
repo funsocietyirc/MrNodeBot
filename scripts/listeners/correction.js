@@ -104,7 +104,7 @@ module.exports = app => {
                         result.save();
                     }
                     // Report back to IRC
-                    let headerText = isSamePerson ? `${from} corrected themself:` : `${from} corrected ${resultFrom}`;
+                    let headerText = isSamePerson ? `${from} corrected themself` : `${from} corrected ${resultFrom}`;
                     app.say(to, `${headerText}: ${finalReplacement}`);
                 });
             });
