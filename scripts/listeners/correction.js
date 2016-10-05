@@ -16,7 +16,6 @@ module.exports = app => {
     const loggingModel = Models.Logging;
     const correct = (to, from, text, message) => {
         text = _.trim(text);
-
         if (!text || !_.startsWith(text, 's/') || _.includes(text,'ᴥ')) {
             return;
         }
@@ -61,6 +60,10 @@ module.exports = app => {
                     let finalReplacement = _.replace(resultText, text, replacement);
                     if (!finalReplacement) {
                         return;
+                    }
+                    if(result.get('from') === from && result.get('to') === to) {
+                      result.set('text', finalReplacement);
+                      result.save();
                     }
                     app.say(to, `[${result.get('from')}]: ${finalReplacement}`);
                 });
