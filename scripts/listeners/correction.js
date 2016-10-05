@@ -108,10 +108,10 @@ module.exports = app => {
                         result.save();
                     }
                     // Report back to IRC
-                    let colorDelim = c.grey.bold('|');
+                    let colorDelim = c.grey.bold('/');
                     let colorResultFrom = isSamePerson ? c.bold(resultFrom) : resultFrom;
-                    let headerText = `${from} ${colorDelim} ${colorResultFrom}`;
-                    app.say(to, `${c.grey.bold('<')} ${c.red('SED')} ${c.grey.bold('--')} ${headerText} ${c.grey.bold('-->')} ${finalReplacement}`);
+                    let headerText = `${from}${colorDelim}${colorResultFrom}`;
+                    app.say(to, `${c.grey.bold('<-')}${c.red('SED')}${c.grey.bold('-')}${headerText} ${c.grey.bold('->')} ${finalReplacement}`);
                 });
             });
     };
