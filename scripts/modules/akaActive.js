@@ -79,7 +79,7 @@ module.exports = app => {
         **/
         const reportToIrc = (to, data) => {
                 const sayHelper = (header, content) => {
-                        let paddedResult = _.padStart(`${header}${header ? ':' : ' '}`, pad, ' ');
+                        let paddedResult = _.padEnd(`${header}${header ? ':' : ' '}`, pad, ' ');
                         app.say(to, `${titleLine(paddedResult)} ${contentLine(content)}`);
                 };
                 let firstDateActive = Moment(data.firstResult.timestamp);

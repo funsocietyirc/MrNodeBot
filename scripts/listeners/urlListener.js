@@ -232,7 +232,10 @@ module.exports = app => {
             startChain(url)
                 // Process
                 .then(results => shorten(url, results))
-                .then(results => getTitle(url, results))
+                .then(results => {
+                  // TODO Check for youtbe URL
+                  return getTitle(url, results)
+                })
                 .then(results => say(to, from, results))
                 // Report
                 .then(results => logInDb(url, to, from, results))

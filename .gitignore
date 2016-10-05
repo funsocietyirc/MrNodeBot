@@ -1,5 +1,6 @@
 node_modules
 persist
+.node-persist
 *.log
 .idea
 config.js

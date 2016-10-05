@@ -15,17 +15,26 @@ module.exports = app => {
     // Logging Model
     const loggingModel = Models.Logging;
     const correct = (to, from, text, message) => {
-        if (!_.startsWith(text, 's/')) {
+        text = _.trim(text);
+
+        if (!text || !_.startsWith(text, 's/') || _.includes(text,'ᴥ')) {
             return;
         }
+
+        if(text[text.length - 1] === '/') {
+          text = text.slice(0,-1);
+        }
+
         text = _.replace(text, 's/', '').replaceAll('//', 'ᴥ');
         let replacement = text.slice(text.lastIndexOf('/'));
         if (!replacement) {
             return;
         }
-        text = _.replace(text, replacement, '');
-        replacement = replacement.substr(1).replaceAll('ᴥ','//');
-        text = text.replaceAll('ᴥ', '//');
+        text = _.replace(text, replacement, '').trim();
+
+        replacement = replacement.substr(1).replaceAll('ᴥ','//').trim();
+        text = text.replaceAll('ᴥ', '//').trim();
+
         if (!text || !replacement) {
             return;
         }
