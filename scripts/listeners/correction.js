@@ -110,7 +110,7 @@ module.exports = app => {
                     // Report back to IRC
                     let colorDelim = c.grey.bold('/');
                     let colorResultFrom = isSamePerson ? c.bold(resultFrom) : resultFrom;
-                    let headerText = `${from}${colorDelim}${colorResultFrom}`;
+                    let headerText = isSamePerson ? resultFrom : `${from}${colorDelim}${resultFrom}`;
                     app.say(to, `${c.grey.bold('<')}${c.red('SED')} ${headerText}${c.grey.bold('>')} ${finalReplacement}`);
                 });
             });
