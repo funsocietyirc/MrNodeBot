@@ -7,6 +7,7 @@ const scriptInfo = {
 
 const Models = require('bookshelf-model-loader');
 const _ = require('lodash');
+const c = require('irc-colors');
 
 module.exports = app => {
     // Assure the database and logging table exists
@@ -68,8 +69,11 @@ module.exports = app => {
         Models.Logging.query(qb => {
                 qb
                     .select(['id', 'to', 'from', 'text'])
+                    // Where the same channel the message is recieved from
                     .where('to', to)
+                    // Where the text is not another correction line
                     .andWhere('text', 'not like', 's/%')
+                    // Order desc and limit
                     .orderBy('id', 'desc')
                     .limit(totalDbResults)
             })
@@ -104,8 +108,10 @@ module.exports = app => {
                         result.save();
                     }
                     // Report back to IRC
-                    let headerText = isSamePerson ? `${from} corrected themself` : `${from} corrected ${resultFrom}`;
-                    app.say(to, `${headerText}: ${finalReplacement}`);
+                    let colorDelim = c.grey.bold('|');
+                    let colorResultFrom = isSamePerson ? c.bold(resultFrom) : resultFrom;
+                    let headerText = `${from} ${colorDelim} ${colorResultFrom}`;
+                    app.say(to, `${c.red('SED')} ${c.grey.bold('[')} ${headerText} ${c.grey.bold(']')} ${finalReplacement}`);
                 });
             });
     };
