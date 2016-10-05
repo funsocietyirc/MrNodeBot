@@ -35,10 +35,10 @@ module.exports = app => {
         text = _.trim(text);
 
         // Bail if we do not have input, we are not triggered, we include the special char
-        if (!text || !_.startsWith(text, trigger) || _.includes(text,specialChar)) return;
+        if (!text || !_.startsWith(text, trigger) || _.includes(text, specialChar)) return;
 
         // Remove any trailing delimiters
-        if(text[text.length - 1] == delimiter) text = text.slice(0,-1);
+        if (text[text.length - 1] == delimiter) text = text.slice(0, -1);
 
         // Remove the trigger, and escape double delimiters with special char
         text = _.replace(text, trigger, '').replaceAll(doubleDelimiter, specialChar);
@@ -52,7 +52,7 @@ module.exports = app => {
         text = _.replace(text, replacement, '').trim();
 
         // Remove the leading delimiter, and unescape special char, then trim the replacement
-        replacement = replacement.substr(1).replaceAll(specialChar,doubleDelimiter).trim();
+        replacement = replacement.substr(1).replaceAll(specialChar, doubleDelimiter).trim();
 
         // Unescape and trim the text
         text = text.replaceAll(specialChar, doubleDelimiter).trim();
@@ -69,7 +69,7 @@ module.exports = app => {
                 qb
                     .select(['id', 'to', 'from', 'text'])
                     .where('to', to)
-                    .andWhere('text','not like','s/%')
+                    .andWhere('text', 'not like', 's/%')
                     .orderBy('id', 'desc')
                     .limit(totalDbResults)
             })
@@ -90,17 +90,22 @@ module.exports = app => {
                     if (found || !resultText || !resultFrom || !resultTo || !_.includes(resultText, text)) return;
                     // Set the found flag
                     found = true;
+
+                    // Is the corector the correctee
+                    let isSamePerson = resultFrom === from && resultTo === to;
+
                     // Make final replacement, and bail if it ends up an empty string
                     let finalReplacement = _.replace(resultText, text, replacement);
                     if (!finalReplacement) return;
                     // The correctee and the corrector are the same person, modify the database
                     // This will allow for chaning
-                    if(resultFrom === from && resultTo === to) {
-                      result.set('text', finalReplacement);
-                      result.save();
+                    if (isSamePerson) {
+                        result.set('text', finalReplacement);
+                        result.save();
                     }
                     // Report back to IRC
-                    app.say(to, `[${resultFrom}]: ${finalReplacement}`);
+                    let headerText = isSamePerson ? `${from} corrected themself:` : `${from} corrected ${resultFrom}`;
+                    app.say(to, `${headerText}: ${finalReplacement}`);
                 });
             });
     };
