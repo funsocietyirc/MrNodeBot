@@ -111,7 +111,7 @@ module.exports = app => {
                     let colorDelim = c.grey.bold('/');
                     let colorResultFrom = isSamePerson ? c.bold(resultFrom) : resultFrom;
                     let headerText = `${from}${colorDelim}${colorResultFrom}`;
-                    app.say(to, `${c.grey.bold('<-')}${c.red('SED')}${c.grey.bold('-')}${headerText} ${c.grey.bold('->')} ${finalReplacement}`);
+                    app.say(to, `${c.grey.bold('<')}${c.red('SED')} ${headerText}${c.grey.bold('>')} ${finalReplacement}`);
                 });
             });
     };
