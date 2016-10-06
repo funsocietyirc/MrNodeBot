@@ -36,8 +36,9 @@ module.exports = app => {
     **/
     const sourcesHandler = (req, res) => {
         Models.Url.query(qb => {
-                qb.where('url', 'like', '%.jpeg')
+                qb
                     .select(['to','from','id'])
+                    .where('url', 'like', '%.jpeg')
                     .orWhere('url', 'like', '%.jpg')
                     .orWhere('url', 'like', '%.gif')
                     .orWhere('url', 'like', '%.png')
@@ -84,6 +85,7 @@ module.exports = app => {
                 // Search for images only
                 if (req.query.type) {
                     switch (req.query.type) {
+                        case 'image':
                         case 'images':
                             qb[getWhere()](function() {
                                 this
