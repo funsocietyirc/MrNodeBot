@@ -28,7 +28,6 @@ module.exports = app => {
     } catch (e) {
       conLogger('Cval command failed:','error');
       conLogger(e, 'error');
-
     }
   };
   app.Commands.set('cval', {

@@ -7,19 +7,20 @@ const scriptInfo = {
 
 
 const leetSpeak = require('../../helpers').leetSpeak;
-
+const _ = require('lodash');
 /*
     Send an elite message
     leet <nick> <message>
 */
 module.exports = app => {
     const leet = (to, from, text, message) => {
-        if (!text) {
+      let textArray = text.split(' ');
+        if (!textArray.length) {
             app.say(from, 'I need some more information...');
             return;
         }
-        let nick = text.getFirst();
-        let body = text.stripFirst();
+        let [nick] = textArray;
+        let body = _.without(textArray,nick).join(' ');
         if (!nick || !body) {
             app.say(from, 'I need some more information...');
             return;

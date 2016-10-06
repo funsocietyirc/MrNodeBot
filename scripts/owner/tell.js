@@ -5,18 +5,21 @@ const scriptInfo = {
     createdBy: 'Dave Richer'
 };
 
+const _ = require('lodash');
+
 /*
     Send a message
     tell <nick> <message>
 */
 module.exports = app => {
     const tell = (to, from, text, message) => {
-        if (!text) {
+        let textArray = text.split(' ');
+        if (!textArray.length) {
             app.say(to, 'I need some more information...');
             return;
         }
-        let nick = text.getFirst();
-        let body = text.stripFirst();
+        let [nick] = textArray;
+        let body = _.without(textArray, nick);
         if (!nick || !body) {
             app.say(to, 'I need some more information...');
             return;

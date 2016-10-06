@@ -192,7 +192,7 @@ module.exports = app => {
     // Report back to IRC
     const say = (to, from, results) =>
         new Promise((resolve, reject) => {
-            if (!announceIgnore.contains(to)) {
+            if (!_.includes(announceIgnore, to)) {
                 shortSay(to, from, results);
                 results.delivered.push({
                     protocol: 'irc',
@@ -216,7 +216,7 @@ module.exports = app => {
     // Handler
     const listener = (to, from, text) => {
         // Check to see if the user is ignored from url listening, good for bots that repete
-        if (userIgnore.contains(from)) return;
+        if (_.includes(userIgnore, from)) return;
 
         // Get Urls
         let urls = extractUrls(text);
@@ -229,11 +229,13 @@ module.exports = app => {
             if (url.startsWith('ftp')) {
                 return;
             }
+
             startChain(url)
                 // Process
                 .then(results => shorten(url, results))
                 .then(results => {
                   // TODO Check for youtbe URL
+                  // TODO Check for github URL
                   return getTitle(url, results)
                 })
                 .then(results => say(to, from, results))

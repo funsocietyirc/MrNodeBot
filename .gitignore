@@ -4,5 +4,6 @@ persist
 *.log
 .idea
 config.js
+*.back
 data.sqlite
 .tags

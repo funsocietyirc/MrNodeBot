@@ -6,6 +6,7 @@ const scriptInfo = {
 };
 
 const shell = require('shelljs');
+const _ = require('lodash');
 
 /**
   Handle real time upgrades, updates, and restarts
@@ -13,7 +14,10 @@ const shell = require('shelljs');
 **/
 module.exports = app => {
     const upgrade = (to, from, text, message) => {
-        let target = text.getFirst() || 'soft'; // Default to soft update
+        let textArray = text.split(' ');
+        let [target] = textArray;
+        target = target || 'soft'; // Defult to soft update
+
         // Die if there is no git available
         if (!shell.which('git')) {
             app.say(to, 'Can not update, Git is not available on the host');

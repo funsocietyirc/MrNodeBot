@@ -75,11 +75,12 @@ module.exports = app => {
     };
 
     const cleanGreetDb = (to, from, text, message) => {
-        if (!text) {
+        let textArray = text.split(' ');
+        if (!textyArray.length) {
             app.say(from, 'You must specify a channel when clearing the greeter cache');
             return;
         }
-        let channel = text.getFirst();
+        let [channel] = textArray;
         greetModel
             .where('channel', 'like', channel)
             .destroy()
@@ -93,11 +94,12 @@ module.exports = app => {
     };
 
     const getTotalGreetedByChannel = (to, from, text, message) => {
-        if (!text) {
+        let textArray = text.split(' ');
+        if (!textArray.length) {
             app.say(from, 'You must specify a channel when clearing the greeter cache');
             return;
         }
-        let channel = text.getFirst();
+        let [channel] = textArray;
         greetModel
             .where('channel', 'like', channel)
             .count()

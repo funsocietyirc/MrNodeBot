@@ -6,6 +6,7 @@ const scriptInfo = {
 };
 
 const color = require('irc-colors');
+const _ = require('lodash');
 
 /**
   Allow the bot to talk to a channel/privmesg in technocolor
@@ -14,20 +15,18 @@ const color = require('irc-colors');
 module.exports = app => {
     // Handler
     const stylize = (to, from, text, message) => {
-        let txtArray = text.split(' '),
-            chan = txtArray[0],
-            style = txtArray[1];
-        txtArray.splice(0, 2);
-        let output = txtArray.join(' ');
-
+        let txtArray = text.split(' ');
+        let [chan, style] = txtArray;
         // Quit if no argument
-        if (chan.isEmpty() || style.isEmpty()) {
+        if (!chan || !style) {
             app.say(to, "You must specify a channel name as the first argument and a style as the second");
             return;
         }
 
+        let output = _.without(txtArray, chan, style).join(' ');
+
         // Quit if not on the channel
-        if (!app._ircClient.chans[chan]) {
+        if (!app.isInChannel(chan)) {
             app.say(to, `I am not on channel ${chan}`);
             return;
         }

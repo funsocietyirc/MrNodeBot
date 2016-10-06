@@ -39,7 +39,7 @@ module.exports = app => {
         if (!text || !_.startsWith(text, trigger) || _.includes(text, specialChar)) return;
 
         // Remove any trailing delimiters
-        if (text[text.length - 1] == delimiter) text = text.slice(0, -1);
+        if (text[text.length - 1] == delimiter) text = _.slice(text, 0, -1);
 
         // Remove the trigger, and escape double delimiters with special char
         text = _.replace(text, trigger, '').replaceAll(doubleDelimiter, specialChar);
@@ -111,7 +111,7 @@ module.exports = app => {
                     let colorDelim = c.grey.bold('/');
                     let colorResultFrom = isSamePerson ? c.bold(resultFrom) : resultFrom;
                     let headerText = isSamePerson ? resultFrom : `${from}${colorDelim}${resultFrom}`;
-                    app.say(to, `${c.grey.bold('<')}${c.red('SED')} ${headerText}${c.grey.bold('>')} ${finalReplacement}`);
+                    app.say(to, `${c.grey.bold('[')}${c.red('SED')} ${headerText}${c.grey.bold(']')} ${finalReplacement}`);
                 });
             });
     };

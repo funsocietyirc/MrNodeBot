@@ -27,7 +27,7 @@ module.exports = app => {
     };
 
     const help = (to, from, text, message) => {
-        if (text.isEmpty()) {
+        if (_.isEmpty(text)) {
             app.say(from, color.white.bggray.bold(`${app._ircClient.nick} has the following commands available.`));
             let keys = [];
             app.Commands.forEach((value, key) => {
@@ -39,7 +39,8 @@ module.exports = app => {
             if (to !== from)
                 app.say(to, `${from} I have messaged you my instructions. Be gentle.`);
         } else {
-            let cmd = text.getFirst();
+            let textArray = text.split(' ');
+            let [cmd] = textArray;
             if (app.Commands.has(cmd)) {
                 let cmdObj = app.Commands.get(cmd);
                 if (!cmdObj[2])

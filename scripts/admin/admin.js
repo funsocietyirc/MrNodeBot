@@ -5,6 +5,7 @@ const scriptInfo = {
     createdBy: 'Dave Richer'
 };
 
+const _ = require('lodash');
 const color = require('irc-colors');
 const storage = require('node-persist');
 const helpers = require('../../helpers');
@@ -15,9 +16,15 @@ const helpers = require('../../helpers');
 **/
 module.exports = app => {
     const admin = (to, from, text, message) => {
-        let txtArray = text.split(' ');
-        let cmd = txtArray[0] || 'help';
-        let user = txtArray[1] || false;
+        let textArray = text.split(' ');
+        let [cmd, user] = textArray;
+        cmd = cmd || 'help';
+        user = _.toLower(user) || false;
+
+        if((cmd === 'add' || cmd === 'del') && !user) {
+          app.say(from, 'You need to specify a user');
+          return;
+        }
 
         switch (cmd) {
             // List administrators
@@ -38,12 +45,8 @@ module.exports = app => {
                 });
                 break;
             case 'add':
-                if (!user) {
-                    app.say(from, 'You need to specify a user');
-                    return;
-                }
                 // Exit if already an administrator
-                if (app.Admins.contains(user)) {
+                if (_.includes(app.Admins, user)) {
                     app.say(from, `${user} is already an Administrator`);
                     return;
                 }
@@ -53,23 +56,20 @@ module.exports = app => {
                 app.say(user, helpers.ColorHelpArgs('Hey there, you are now an Administrator. use [admin help] to get commands'));
                 break;
             case 'del':
-                if (!user) {
-                    app.say(from, 'You need to specify a user');
-                    return;
-                }
+                let cappedUser = _.capFirst(user);
                 // Exit if already an administrator
-                if (!app.Admins.contains(user)) {
-                    app.say(from, `${user} is not currently an Administrator`);
+                if (!_.includes(app.Admins, user)) {
+                    app.say(from, `${cappedUser} is not currently an Administrator`);
                     return;
                 }
                 // Exit if trying to remove owner
-                if (String(user).toLowerCase() == String(app.Config.owner.nick).toLocaleLowerCase()) {
-                    app.say(from, `You cannot remove ${user} because ${user} owns me..`);
+                if (user == _.toLower(app.Config.owner.nick)) {
+                    app.say(from, `You cannot remove ${cappedUser} because ${cappedUser} owns me..`);
                     return;
                 }
 
                 // Everything checked out
-                app.Admins.splice(app.Admins.indexOf(user));
+                app.Admins = _.without(app.Admins, user);
                 storage.setItemSync('admins', app.Admins);
                 app.say(from, `${user} is no longer an Administrator`);
                 break;

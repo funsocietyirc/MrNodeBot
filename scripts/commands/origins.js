@@ -25,36 +25,19 @@ module.exports = app => {
             }
         };
 
-        let out = 'I am {0}, I am currently running at version {1}. ' +
-            '{2} is my master{3} ' +
-            '{4}' + 'My body is {5}, but my mind is {6}. This iteration of myself has been alive for {7}. ' +
-            'I am open source and if you know JavaScript and NodeJS you should totally help make me better ' +
-            'you can learn all about me at {8}, or better yet contact me directly at {9} ';
+        let additionalAdmins = app.Admins.length > 1 ?
+            ` but I also listen to ${app.Admins.length -1} ${helpers.Plural('other', app.Admins.length)}` : '.';
+        let ignoreList = app.Ignore.length ?
+            `I also ignore ${app.Ignore.length} ${helpers.Plural('moron', app.Ignore.length)} but that is a different story.` : '';
+        let uptimeText = `${procUptime.toFixed(2)} ${procText()}`;
 
-        // Format and sub
-        out = out.format(
-            app._ircClient.nick, // 0
-            app.Config.project.version, // 1
-            app.Config.owner.nick, // 2
-            app.Admins.length > 1 ? ' but I also listen to {0} {1}.'.format( // 3
-                app.Admins.length - 1,
-                'other'.plural(app.Admins.length - 1)
-            ) : '.',
-            app.Ignore.length ? 'I also ignore {0} {1} but that\'s a different story. '.format( // 4
-                app.Ignore.length ? app.Ignore.length : '',
-                app.Ignore.length ? 'moron'.plural(app.Ignore.length) : ''
-            ) : '',
-            process.arch, // 5
-            process.platform, // 6
-            '{0} {1}'.format( // 7
-                procUptime.toFixed(2),
-                procText()
-            ),
-            app.Config.project.repository.url, // 8
-            app.Config.project.author // 9
-        );
+        let out = `I am ${app._ircClient.nick}, I am currently running at version ${app.Config.project.version}. ` +
+            `${app.Config.owner.nick} is my master${additionalAdmins} ` +
+            `${ignoreList}My body is ${process.arch}, but my mind is ${process.platform}. This iteration of myself has been alive for ${uptimeText}. ` +
+            `I am open source and if you know JavaScript and NodeJS you should totally help make me better ` +
+            `you can learn all about me at ${app.Config.project.repository.url}, or better yet contact me directly at ${app.Config.project.author} `;
 
-        app.say(to, out);
+        app.say(from, out);
     };
 
     app.Commands.set('origins', {

@@ -22,7 +22,7 @@ require('./lib/uncache')(require);
 class MrNodeBot {
     constructor(callback, configPath) {
         // Assign and normalize callback
-        this._callback = callback instanceof Function ? callback : false;
+        this._callback = _.isFunction(callback) ? callback : false;
 
         // Configuration Object
         this.Config = require(configPath || './config');
@@ -399,7 +399,7 @@ class MrNodeBot {
     _handleCommands(app, from, to, text, message) {
         // Build the is object to pass along to the command router
         let is = {
-            ignored: app.Ignore.contains(from.toLowerCase()),
+            ignored: _.includes(this.Ignore, _.toLower(from)),
             self: from === app._ircClient.nick,
             privateMsg: to === from
         };
@@ -480,7 +480,7 @@ class MrNodeBot {
                 if (admCall.is.identified) {
                     let unauthorized =
                         (admCmd.access == app.Config.accessLevels.owner && admCall.from !== app.Config.owner.nick) ||
-                        (admCmd.access === app.Config.accessLevels.admin && !app.Admins.contains(String(admCall.from).toLowerCase()));
+                        (admCmd.access === app.Config.accessLevels.admin && !_.includes(app.Admins, _.toLower(admCall.from)));
 
                     // Log to the console if a user without access a command they are not privy too
                     if (unauthorized) {
@@ -542,6 +542,9 @@ class MrNodeBot {
         this.SystemJobs.push(name);
     };
 
+    isInChannel(channel, nick) {
+      return this._ircClient.isInChannel(channel, nick);
+    }
     // Properties
 
     get nick() {

@@ -5,6 +5,8 @@ const scriptInfo = {
     createdBy: 'Dave Richer'
 };
 
+const _ = require('lodash');
+
 const chatBot = (function() {
     var botObj = botObj || require('../../node_modules/bot/lib/bot.js'),
         botDb = botDb || require('../../node_modules/bot/lib/db.js'),
@@ -20,6 +22,8 @@ const chatBot = (function() {
 module.exports = app => {
     // See if we are conversational or not
     let conversational = app.Config.features.conversational.enabled;
+    let ignoredChans = app.Config.features.conversational.ignoredChans;
+    let randomChance = app.Config.features.conversational.randomChance;
 
     const converse = (to, from, text, message) => {
         conversational = !conversational;
@@ -28,7 +32,7 @@ module.exports = app => {
     };
 
     const listen = (to, from, text, message, is) => {
-        if (!app.Config.features.conversational.ignoredChans.contains(to) && conversational && !is.triggered && app.random.bool(1, is.privateMsg ? 1 : app.Config.features.conversational.randomChance)(app.randomEngine)) {
+        if (conversational && !_.includes(ignoredChans, to) && !is.triggered && app.random.bool(1, is.privateMsg ? 1 : randomChance)(app.randomEngine)) {
             var replyText = chatBot.answer(text).replaceAll('<br>', '');
             app.say(to, `${from}, ${replyText}`);
         }

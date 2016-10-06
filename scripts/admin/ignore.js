@@ -6,6 +6,7 @@ const scriptInfo = {
 };
 
 const storage = require("node-persist");
+const _ = require('lodash');
 
 /**
   Manipulation of the Ignore list.
@@ -14,35 +15,44 @@ const storage = require("node-persist");
 **/
 module.exports = app => {
     const mute = (to, from, text, message) => {
+        if (!text) {
+            app.say(from, `You should probably specify who it is you would like to mute`);
+            return;
+        }
         let textArray = text.split(' ');
-        if (!Admins.contains(textArray[0].toLowerCase()) && !app.Ignore.contains(textArray[0].toLowerCase())) {
-            app.say(to, `${textArray[0]} has been muted. May there be peace.`);
-            app.Ignore.push(textArray[0].toLowerCase());
+
+        let [nick] = textArray;
+        let lowerCaseNick = _.toLower(nick);
+        if (!_.includes(app.Admins, lowerCaseNick) && !_.includes(app.Ignore, lowerCaseNick)) {
+            app.say(to, `${nick} has been muted. May there be peace.`);
+            app.Ignore.push(lowerCaseNick);
             storage.setItemSync('ignore', app.Ignore);
         } else {
-            app.say(to, `${textArray[0].capFirst()} has either already been muted, or is an Administrator and is beyond my control`);
+            app.say(to, `${nick} has either already been muted, or is an Administrator and is beyond my control`);
         }
     };
 
     const unmute = (to, from, text, message) => {
-        let textArray = text.split(' ');
-        if (!textArray[0]) {
+        if (!text) {
             app.say(to, 'You need to specify a user');
+            return;
+        }
+        let textArray = text.split(' ');
+        let [nick] = textArray;
+        let lowerCaseNick = _.toLower(nick);
+        if (_.includes(app.Ignore, lowerCaseNick)) {
+            app.say(to, `${nick} has been unmuted`);
+            app.Ignore = _.without(app.Ignore, lowerCaseNick);
+            storage.setItemSync('ignore', app.Ignore);
         } else {
-            if (app.Ignore.contains(textArray[0].toLowerCase())) {
-                app.say(to, `${textArray[0]} has been unmuted`);
-                app.Ignore.splice(textArray.indexOf(textArray[0]));
-                storage.setItemSync('ignore', app.Ignore);
-            } else {
-                app.say(to, `${textArray[0].capFirst()} is not on the mute list`);
-            }
+            app.say(to, `${nick} is not on the mute list`);
         }
     };
 
     const ignored = (to, from, text, message) => {
         app.say(to, '--- Ignore list ---');
         app.Ignore.forEach(function(user) {
-            app.say(to, user.capFirst());
+            app.say(to, _.upperFirst(user));
         });
         app.say(to, `For a total of: ${app.Ignore.length}`);
     };

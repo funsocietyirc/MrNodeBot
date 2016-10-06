@@ -10,10 +10,11 @@ const scriptInfo = {
 };
 
 const conLogger = require('../../lib/consoleLogger');
+const _ = require('lodash');
 
 module.exports = app => {
     // Check to see if a main channel has been Set, if not bail out
-    if (app.Config.features.fsociety.mainChannel === '') {
+    if (_.isEmpty(app.Config.features.fsociety.mainChannel)) {
         return;
     }
 
@@ -46,7 +47,7 @@ module.exports = app => {
     // Report back if anyone joins them (to owner)
     // will be turned on if process.env.darkArmReport is set to true
     const onJoin = (channel, nick, message) => {
-        if (nick != app._ircClient.nick && darkChannels.indexOf(channel) > -1) {
+        if (nick != app._ircClient.nick && _.includes(darkChannels, channel)) {
             if (app.Config.features.fsociety.report) {
                 app.say(app.Config.owner.nick, `${nick} joined the Dark Army Channel:  ${channel}`);
             }
@@ -63,8 +64,8 @@ module.exports = app => {
 
     // Topic lock if possible
     const topicLock = (channel, topic, nick, message) => {
-        if (darkChannels.indexOf(channel) > -1 && !app._ircClient.isTopicLocked(channel)) {
-            if (topic.indexOf(app.Config.features.fsociety.mainChannel) == -1 || topic == '') {
+        if (_.includes(darkChannels, channel) && !app._ircClient.isTopicLocked(channel)) {
+            if (!_.includes(topic, app.Config.features.fsociety.mainChannel) || topic == '') {
                 app._ircClient.send('topic', channel, `${topic} | ${app.Config.features.fsociety.mainChannel}`);
             }
         }

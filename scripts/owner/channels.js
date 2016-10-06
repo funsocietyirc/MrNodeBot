@@ -13,18 +13,17 @@ module.exports = app => {
 
     // Part Channel
     const part = (to, fro, text, message) => {
-      if (!text) {
+      let textArray = text.split(' ');
+      if (!textArray.length) {
           app.say(from, 'I need some more information...');
           return;
       }
-      let channel = text.getFirst();
-      if (!channel) {
-          app.say(from, 'I need some more information...');
-          return;
+      let [channel] = textArray;
+      if(!app.isInChannel(channel)) {
+        app.say(from, `I am not in the channel ${channel}`);
+        return
       }
-
       // Part the channel
-      // TODO Check if in channel
       app._ircClient.part(channel, () => {
           app.say(from, `I have parted ${channel}`);
       });
@@ -37,15 +36,12 @@ module.exports = app => {
 
     // Join Channel
     const join = (to, from, text, message) => {
-        if (!text) {
+        let textArray = text.split(' ');
+        if (!textArray.length) {
             app.say(from, 'I need some more information...');
             return;
         }
-        let channel = text.getFirst();
-        if (!channel) {
-            app.say(from, 'I need some more information...');
-            return;
-        }
+        let [channel] = textArray;
 
         // Join the channel
         app._ircClient.join(channel, () => {
@@ -61,19 +57,18 @@ module.exports = app => {
 
     // OP Someone
     const op = (to, from, text, message) => {
-        if (!text) {
-            app.say(to, 'I need some more information...');
+        let textArray = text.split(' ');
+        if (!textArray.length < 2) {
+            app.say(from, 'I need some more information...');
             return;
         }
-        let txtArray = text.split(' ');
-        let channel = txtArray[0];
-        let nick = txtArray[1];
-        if (!channel || !nick) {
-            app.say(to, 'I need some more information...');
-            return;
+        let [channel, nick] = textArray;
+        if(!app.isInChannel(channel) || !app.isInChannel(channel, nick)) {
+          app.say(from, `Either I or ${nick} am not in ${channel}, so no one is getting ops..`);
+          return;
         }
         app._ircClient.send('mode', channel, '+o', nick);
-        app.say(to, 'I have given all the power to ' + nick + ' on ' + channel);
+        app.say(from, 'I have given all the power to ' + nick + ' on ' + channel);
     };
     // Terminate the bot and the proc watcher that keeps it up
     app.Commands.set('op', {

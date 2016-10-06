@@ -10,6 +10,7 @@ const Moment = require('moment');
 const color = require('irc-colors');
 const storage = require('node-persist');
 const consoleLogger = require('../../lib/consoleLogger');
+const _ = require('lodash');
 
 /**
   Keep Track of quotes
@@ -29,7 +30,7 @@ module.exports = app => {
 
     const addQuote = (to, from, text, message) => {
         // No Quote provided
-        if (!text || text.isEmpty()) {
+        if (_.isEmpty(text)) {
             app.say(to, 'No quote specified');
             return;
         }
@@ -53,7 +54,7 @@ module.exports = app => {
 
     const delQuote = (to, from, text, message) => {
         // No Quote provided
-        if (!text || text.isEmpty()) {
+        if (_.isEmpty(text)) {
             app.say(to, 'Invalid quote sepcified');
             return;
         }
