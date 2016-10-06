@@ -14,8 +14,19 @@ module.exports = app => {
 
     const extractUrls = text => text.toString().match(pattern);
 
+    const destroyImages = (to, from, text, message) => {
+      Models.Url.query(qb => {
+        qb
+            .select(['to','from','id'])
+            .where('url', 'like', '%.jpeg')
+            .orWhere('url', 'like', '%.jpg')
+            .orWhere('url', 'like', '%.gif')
+            .orWhere('url', 'like', '%.png')
+            .orderBy('id','desc');
+      }).destroy();
+    };
 
-    const fix = (to, from, text, message) => {
+    const buildImages = (to, from, text, message) => {
         Models.Logging.query(qb => {
                 qb
                     .where('text', 'like', '%.jpeg%')
@@ -32,6 +43,7 @@ module.exports = app => {
                     let timestamp = logResult.get('timestamp');
                     let urls = extractUrls(text);
                     if (!urls) return;
+                    urls = _.reverse(urls);
                     urls.forEach(url => {
                         if (!url.startsWith('http')) {
                             return;
@@ -50,10 +62,16 @@ module.exports = app => {
     };
 
     // Register Tweet Command
-    app.Commands.set('fix-images', {
+    app.Commands.set('build-images', {
         desc: '',
         access: app.Config.accessLevels.owner,
-        call: fix
+        call: buildImages
+    });
+    // Register Tweet Command
+    app.Commands.set('destroy-images', {
+        desc: '',
+        access: app.Config.accessLevels.owner,
+        call: destroyImages
     });
 
     return scriptInfo;
