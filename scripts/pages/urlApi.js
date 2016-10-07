@@ -37,12 +37,12 @@ module.exports = app => {
     const sourcesHandler = (req, res) => {
         Models.Url.query(qb => {
                 qb
-                    .select(['to','from','id'])
+                    .select(['to','from','id','timestamp'])
                     .where('url', 'like', '%.jpeg')
                     .orWhere('url', 'like', '%.jpg')
                     .orWhere('url', 'like', '%.gif')
                     .orWhere('url', 'like', '%.png')
-                    .orderBy('id','desc');
+                    .orderBy('timestamp','desc');
             })
             .fetchAll()
             .then(results => {

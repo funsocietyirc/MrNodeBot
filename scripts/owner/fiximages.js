@@ -17,12 +17,10 @@ module.exports = app => {
     const destroyImages = (to, from, text, message) => {
       Models.Url.query(qb => {
         qb
-            .select(['to','from','id'])
             .where('url', 'like', '%.jpeg')
             .orWhere('url', 'like', '%.jpg')
             .orWhere('url', 'like', '%.gif')
             .orWhere('url', 'like', '%.png')
-            .orderBy('id','desc');
       }).destroy();
     };
 
@@ -49,14 +47,17 @@ module.exports = app => {
                             return;
                         }
                         console.log(url);
+                        let originalTimestamps = Models.Url.hasTimestamps;
+                        Models.Url.hasTimestamps = [];
                         Models.Url.create({
                             url: url,
                             to: to,
                             from: from,
                             timestamp: timestamp
+                        }).then(() => {
+                          Models.Url.hasTimestamps = originalTimestamps;
                         });
-                    })
-
+                    });
                 });
             });
     };

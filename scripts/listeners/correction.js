@@ -88,8 +88,8 @@ module.exports = app => {
                     let resultFrom = result.get('from');
                     let resultTo = result.get('to');
 
-                    // Bail if we have previously found a math or
-                    // if there are missing fiends in the database response or
+                    // Bail if we have previously found a match or
+                    // if there are missing fields in the database response or
                     // if the result text does not include the correction text
                     if (found || !resultText || !resultFrom || !resultTo || !_.includes(resultText, text)) return;
                     // Set the found flag
