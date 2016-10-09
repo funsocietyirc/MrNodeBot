@@ -69,6 +69,6 @@ const RedSlashes = exports.RedSlashes = text => text.replaceAll('/', c.red.bold(
 const TitleLine = exports.TitleLine = text => c.white.bold.bgblack(text);
 
 // Basical pluralization
-const Plural = exports.plural = (text, number) => {
+const Plural = exports.Plural = (text, number) => {
     return number > 1 || number === 0 ? text + 's' : text;
 }
