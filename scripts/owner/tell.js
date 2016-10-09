@@ -14,12 +14,8 @@ const _ = require('lodash');
 module.exports = app => {
     const tell = (to, from, text, message) => {
         let textArray = text.split(' ');
-        if (!textArray.length) {
-            app.say(to, 'I need some more information...');
-            return;
-        }
         let [nick] = textArray;
-        let body = _.without(textArray, nick);
+        let body = _.without(textArray, nick).join(' ');
         if (!nick || !body) {
             app.say(to, 'I need some more information...');
             return;
