@@ -454,11 +454,8 @@ class MrNodeBot {
 
     //noinspection JSMethodCanBeStatic
     _handleAuthenticatedCommands(app, nick, to, text, message) {
-        if (String(nick).toLowerCase() === String(app.Config.nickserv.nick).toLowerCase()) {
-            let textArray = text.split(' '),
-                user = textArray[0],
-                acc = textArray[1],
-                code = textArray[2];
+        if (_.toLower(nick) === _.toLower(app.Config.nickserv.nick)) {
+            let [user, acc, code] = text.split(' ');
 
             // Halt function if things do not check out
             if (!user || !acc || !code || acc !== 'ACC') return;
@@ -534,32 +531,43 @@ class MrNodeBot {
         this._ircClient.notice(target, this._filterMessage(message));
     };
 
+    // Schedule a job using the cron scheduler
     schedule(name, time, callback, system) {
-        if (_.includes(this.Jobs, name)) {
+        // Job already exists
+        if (_.includes(this._scheduler.scheduledJobs, name)) {
             conLogger(`Duplicate job ${name} for time ${time} not loaded`);
+            return;
         }
+        // If this is a system job, keep track so we do not purge during reload
+        if (system === true) {
+            this.SystemJobs.push(name);
+        }
+        // Pas the new job to the scheulder
         this._scheduler.scheduleJob(name, time, callback);
-        this.SystemJobs.push(name);
+
     };
 
     isInChannel(channel, nick) {
-      return this._ircClient.isInChannel(channel, nick);
-    }
+        return this._ircClient.isInChannel(channel, nick);
+    };
+
     // Properties
 
+    // Bots IRC Nickname
     get nick() {
         return this._ircClient.nick;
     };
     set nick(newNick) {
+        // If we do not have a provided nick, use the settings default
         newNick = newNick || this.Config.irc.nick;
         this._ircClient.send('nick', newNick);
         this._ircClient.nick = newNick;
     };
 
+    // Bots IRC Channels
     get channels() {
         return _(this._ircClient.chans).keys().uniq().value();
     };
-
     set channels(value) {
         // Given an array
         if (Array.isArray(value)) value.forEach(channel => this._ircClient.join(channel));

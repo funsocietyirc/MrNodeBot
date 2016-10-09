@@ -46,6 +46,7 @@ module.exports = app => {
                 });
                 stream.on('error', function(error) {
                     conLogger('Twitter Error: ' + error, 'error');
+                    //console.log(error.toString());
                 });
             });
     };
@@ -53,20 +54,22 @@ module.exports = app => {
     // Tweet a message
     const tweetCmd = (to, from, text, message) => {
         if (!text) {
-            app.say(to, 'Cannot tweet nothing champ...');
+            app.say(from, 'Cannot tweet nothing champ...');
             return;
         }
         app._twitterClient.post('statuses/update', {
             status: text
         }, (error, tweet, response) => {
-          if(error) {
-            conLogger('Twitter Error: ' + error,'error');
-            conLogger(tweet,'info');
-            conLogger(response,'info');
-            app.say(to,'Something is not quire right');
-            return;
-          };
-          app.say(to,`We just lit up the Twittersphere Bro!`);
+            if (error) {
+                switch (error.code) {
+                    default:
+                        conLogger('Twitter Error: ' + error, 'error');
+                        app.say(from, 'Something is not quite right');
+                        break;
+                }
+                return;
+            };
+            app.say(from, `We just lit up the Twittersphere Bro!`);
         });
     };
 

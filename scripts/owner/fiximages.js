@@ -15,13 +15,15 @@ module.exports = app => {
     const extractUrls = text => text.toString().match(pattern);
 
     const destroyImages = (to, from, text, message) => {
-      Models.Url.query(qb => {
-        qb
-            .where('url', 'like', '%.jpeg')
-            .orWhere('url', 'like', '%.jpg')
-            .orWhere('url', 'like', '%.gif')
-            .orWhere('url', 'like', '%.png')
-      }).destroy();
+        Models.Url.query(qb => {
+            qb
+                .where('url', 'like', '%.jpeg')
+                .orWhere('url', 'like', '%.jpg')
+                .orWhere('url', 'like', '%.gif')
+                .orWhere('url', 'like', '%.png')
+        }).destroy().then(results => {
+            app.say(from, 'The images from the URL Database have been successfully purged');
+        });
     };
 
     const buildImages = (to, from, text, message) => {
@@ -30,35 +32,32 @@ module.exports = app => {
                     .where('text', 'like', '%.jpeg%')
                     .orWhere('text', 'like', '%.jpg%')
                     .orWhere('text', 'like', '%.gif%')
-                    .orWhere('text', 'like', '%.png%');
+                    .orWhere('text', 'like', '%.png%')
+                    .orderBy('timestamp', 'desc');
             })
             .fetchAll()
             .then(logResults => {
                 logResults.forEach(logResult => {
-                    let text = logResult.get('text');
-                    let from = logResult.get('from');
-                    let to = logResult.get('to');
-                    let timestamp = logResult.get('timestamp');
-                    let urls = extractUrls(text);
+                    let resultText = logResult.get('text');
+                    let resultFrom = logResult.get('from');
+                    let resultTo = logResult.get('to');
+                    let resultTimestamp = logResult.get('timestamp');
+                    let urls = extractUrls(resultText);
                     if (!urls) return;
-                    urls = _.reverse(urls);
                     urls.forEach(url => {
                         if (!url.startsWith('http')) {
                             return;
                         }
-                        console.log(url);
-                        let originalTimestamps = Models.Url.hasTimestamps;
-                        Models.Url.hasTimestamps = [];
                         Models.Url.create({
                             url: url,
-                            to: to,
-                            from: from,
-                            timestamp: timestamp
-                        }).then(() => {
-                          Models.Url.hasTimestamps = originalTimestamps;
+                            to: resultTo,
+                            from: resultFrom,
+                            timestamp: resultTimestamp
                         });
                     });
                 });
+
+                app.say(from, 'The Images have been succesfully rebuilt');
             });
     };
 
