@@ -77,7 +77,7 @@ module.exports = app => {
     };
 
     app.Commands.set('admin', {
-        desc: '[command] list add del help',
+        desc: '[command] [user?] list add del help',
         access: app.Config.accessLevels.admin,
         call: admin
     });

@@ -4,14 +4,14 @@ const c = require('irc-colors');
 const startTime = moment();
 
 const smartHttp = exports.smartHttp = (function() {
-  var url = require('url'),
-    adapters = {
-      'http:': require('http'),
-      'https:': require('https'),
-    };
-  return function(inputUrl) {
-    return adapters[url.parse(inputUrl).protocol]
-  }
+    var url = require('url'),
+        adapters = {
+            'http:': require('http'),
+            'https:': require('https'),
+        };
+    return function(inputUrl) {
+        return adapters[url.parse(inputUrl).protocol]
+    }
 }());
 
 const leetSpeak = exports.leetSpeak = text => text.replace(/l|i/gi, '1').replace(/z/gi, '2').replace(/e/gi, '3').replace(/a/gi, '4').replace(/s/gi, '5').replace(/G/g, '6').replace(/t/gi, '7').replace(/b/gi, '8').replace(/g/g, '9').replace(/o/gi, '0');
@@ -62,13 +62,17 @@ const UpTime = exports.Uptime = () => startTime.toString();
  */
 const IsSet = exports.IsSet = x => !!(x != undefined && x != null && x != '');
 
-
 /* Color stuffs */
 const ColorHelpArgs = exports.ColorHelpArgs = text => text.replaceAll('[', c.red.bold('[')).replaceAll(']', c.red.bold(']'));
 const RedSlashes = exports.RedSlashes = text => text.replaceAll('/', c.red.bold('/'));
 const TitleLine = exports.TitleLine = text => c.white.bold.bgblack(text);
 
 // Basical pluralization
-const Plural = exports.Plural = (text, number) => {
-    return number > 1 || number === 0 ? text + 's' : text;
-}
+const Plural = exports.Plural = (text, number) => number > 1 || number === 0 ? text + 's' : text;
+
+
+const StripNewLine = text => str = str.replace(/(?:\r\n|\r|\n)/g, ' ');
+
+
+// Extract URLS From text
+const ExtractUrls = exports.ExtractUrls = text => text.toString().match(/\b((?:[a-z][\w-]+:(?:\/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))/ig);

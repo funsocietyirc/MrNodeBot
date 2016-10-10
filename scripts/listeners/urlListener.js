@@ -12,13 +12,9 @@ const c = require('irc-colors');
 const _ = require('lodash');
 const xray = require('x-ray')();
 const GoogleUrl = require('google-url');
-
 const HashMap = require('hashmap');
 const Models = require('bookshelf-model-loader');
-
 const helpers = require('../../helpers');
-const pattern = /\b((?:[a-z][\w-]+:(?:\/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))/ig;
-
 const conLogger = require('../../lib/consoleLogger');
 
 /**
@@ -87,9 +83,8 @@ module.exports = app => {
 
     // Log Urls to the Database
     const logInDb = (url, to, from, results) => {
-        // Make sure we have DB Connectivity
         let ignored = urlLoggerIgnore.some(hash => {
-            if (_.includes(hash, to.toLowerCase())) {
+            if (_.includes(hash, _.toLower(to))) {
                 return true;
             }
         });
@@ -165,9 +160,8 @@ module.exports = app => {
                 resolve(results);
                 return;
             }
-            title = _.trim(title)
             resolve(_.merge(results, {
-                title: title
+                title: helpers.StripNewLine(_.trim(title))  
             }));
         });
     });
@@ -210,40 +204,34 @@ module.exports = app => {
         }
     };
 
-    // Extract URLS
-    const extractUrls = text => text.toString().match(pattern);
-
     // Handler
     const listener = (to, from, text) => {
         // Check to see if the user is ignored from url listening, good for bots that repete
         if (_.includes(userIgnore, from)) return;
 
         // Get Urls
-        let urls = extractUrls(text);
+        let urls = helpers.ExtractUrls(text);
 
         // Input does not contain urls
         if (!urls) return;
 
-        // Shorten and output
-        urls.forEach(url => {
-            if (url.startsWith('ftp')) {
-                return;
-            }
-
-            startChain(url)
+        _(urls)
+            .filter(url => !url.startsWith('ftp'))
+            .each(url =>
+                startChain(url)
                 // Process
                 .then(results => shorten(url, results))
                 .then(results => {
-                  // TODO Check for youtbe URL
-                  // TODO Check for github URL
-                  return getTitle(url, results)
+                    // TODO Check for youtbe URL
+                    // TODO Check for github URL
+                    return getTitle(url, results)
                 })
                 .then(results => say(to, from, results))
                 // Report
                 .then(results => logInDb(url, to, from, results))
                 .then(results => pusher(url, to, from, results))
-                .catch(err => handleErrors(err));
-        });
+                .catch(handleErrors)
+            );
     };
 
     // URL Info

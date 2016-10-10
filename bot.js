@@ -1,8 +1,8 @@
 /** MrNodeBot IRC Bot By IronY */
 'use strict';
-// Extend the max
-process.setMaxListeners(0);
 
+// Extend the max socket listeners
+process.setMaxListeners(0);
 
 const HashMap = require('hashmap');
 const storage = require('node-persist');
@@ -265,7 +265,7 @@ class MrNodeBot {
             }
             // Default to owner nick if no admin list exists
             else {
-                this.Admins = [String(this.Config.owner.nick).toLocaleLowerCase()];
+                this.Admins = [_.toLower(this.Config.owner.nick)];
                 storage.setItemSync('admins', this.Admins);
             }
             conLogger(`Total Administrators: ${this.Admins.length}`, 'info');
@@ -307,7 +307,7 @@ class MrNodeBot {
             });
 
             // Read in command rebindings
-            if (this.Config.commandBindings && this.Config.commandBindings.constructor === Array) {
+            if (this.Config.commandBindings && _.isArray(this.Config.commandBindings)) {
                 this.Config.commandBindings.forEach(commandBinding => {
                     if (!commandBinding.alias || !commandBinding.command) {
                         conLogger(`Improper structure in config.js for commandBindings`, 'error');
@@ -475,9 +475,10 @@ class MrNodeBot {
 
                 // Is Identified
                 if (admCall.is.identified) {
+                    let admFromLower = _.toLower(admCall.from);
                     let unauthorized =
-                        (admCmd.access == app.Config.accessLevels.owner && admCall.from !== app.Config.owner.nick) ||
-                        (admCmd.access === app.Config.accessLevels.admin && !_.includes(app.Admins, _.toLower(admCall.from)));
+                        (admCmd.access == app.Config.accessLevels.owner && admFromLower !== _.toLower(app.Config.owner.nick)) ||
+                        (admCmd.access === app.Config.accessLevels.admin && !_.includes(app.Admins, admFromLower));
 
                     // Log to the console if a user without access a command they are not privy too
                     if (unauthorized) {
@@ -570,7 +571,7 @@ class MrNodeBot {
     };
     set channels(value) {
         // Given an array
-        if (Array.isArray(value)) value.forEach(channel => this._ircClient.join(channel));
+        if (_.isArray(value)) value.forEach(channel => this._ircClient.join(channel));
         else {
             value.split(' ').forEach(channel => this._ircClient.join(channel));
         }
