@@ -19,7 +19,7 @@ module.exports = app => {
       res.status(503).send({status:503, message: 'unauthorized', type:'unauthorized'});
       return;
     }
-    app.say(from, `${ip} is currently logging this channel.`);
+    app.say(tokens.get(token), `${ip} is currently logging this channel.`);
     res.status(404).send({status:404, message: 'Not Found', type:'notfound'});
     return;
   };
