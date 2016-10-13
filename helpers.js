@@ -70,8 +70,8 @@ const TitleLine = exports.TitleLine = text => c.white.bold.bgblack(text);
 // Basical pluralization
 const Plural = exports.Plural = (text, number) => number > 1 || number === 0 ? text + 's' : text;
 
-
-const StripNewLine = text => str = str.replace(/(?:\r\n|\r|\n)/g, ' ');
+// Strip new lines
+const StripNewLine = text => text.replace(/(?:\r\n|\r|\n)/g, ' ');
 
 
 // Extract URLS From text

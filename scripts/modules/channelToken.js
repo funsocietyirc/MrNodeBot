@@ -37,7 +37,7 @@ module.exports = app => {
         }
         res.json({
             status: 'success',
-            result: user
+            result: result
         });
       });
     };

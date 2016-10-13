@@ -23,59 +23,45 @@ module.exports = app => {
 
     // Where image helpers
     const whereImages = (clause, field) => {
-      // Default to the URL field if none specified
-      field = field || 'url';
-      return clause
-          .where(field, 'like', '%.jpeg%')
-          .orWhere(field, 'like', '%.jpg%')
-          .orWhere(field, 'like', '%.gif%')
-          .orWhere(field, 'like', '%.png%');
+        // Default to the URL field if none specified
+        field = field || 'url';
+        return clause
+            .where(field, 'like', '%.jpeg%')
+            .orWhere(field, 'like', '%.jpg%')
+            .orWhere(field, 'like', '%.gif%')
+            .orWhere(field, 'like', '%.png%');
     };
 
     // Rebuild all images inside the URL table from the Logging table resource
     const buildImages = (to, from, text, message) => {
         Models.Logging.query(qb => {
                 qb
-                  .where(clause => whereImages(clause, 'text'))
-                  .orderBy('timestamp', 'desc');
+                    .where(clause => whereImages(clause, 'text'))
+                    .orderBy('timestamp', 'desc');
             })
             .fetchAll()
             .then(logResults => {
+                // Grab the URLS from the line, make sure they are images again
+                // This needs to be done incase a image link and a non image link were included
+                // On the same line
                 logResults.forEach(logResult => {
-                    // Grab the URLS from the line, make sure they are images again
-                    // This needs to be done incase a image link and a non image link were included
-                    // On the same line
-                    let urls = _.filter(helpers.ExtractUrls(logResult.get('text')), urlResult =>
-                        _.includes(urlResult, '.jpeg') ||
-                        _.includes(urlResult, '.jpg') ||
-                        _.includes(urlResult, '.gif') ||
-                        _.includes(urlResult, '.png')
-                    );
-
-                    // Bail if we have no URLS
-                    if (!urls) return;
-
-                    let resultFrom = logResult.get('from');
-                    let resultTo = logResult.get('to');
-                    let resultTimestamp = logResult.get('timestamp');
-
-                    _(urls)
-                        .filter(url => url.startsWith('http'))
+                    _(helpers.ExtractUrls(logResult.get('text')))
+                        .filter(url => (_.includes(url, '.jpeg') || _.includes(url, '.jpg') || _.includes(url, '.gif') || _.includes(url, '.png')) && url.startsWith('http'))
                         .each(url => {
                             Models.Url.create({
                                 url: url,
-                                to: resultTo,
-                                from: resultFrom,
-                                timestamp: resultTimestamp
+                                to: logResult.get('to'),
+                                from: logResult.get('from'),
+                                timestamp: logResult.get('timestamp')
                             });
                         });
                 });
-                app.say(from, 'The Images have been succesfully rebuilt');
             })
             .then(() => {
                 // Clean up when done
                 cleanImages(to, from, text, message);
-            });
+                app.say(from, 'The Image URL enteries have been successfully rebuilt');
+            })
     };
 
 
@@ -195,10 +181,10 @@ module.exports = app => {
     });
 
     // Scheduler automatic cleanup
-    app.schedule('cleanImages', cronTime, () => {
-        conLogger('Running Clean URL Script to remove unreachable hosts', 'info');
-        cleanImages();
-    });
+    // app.schedule('cleanImages', cronTime, () => {
+    //     conLogger('Running Clean URL Script to remove unreachable hosts', 'info');
+    //     cleanImages();
+    // });
 
     // Return the script info
     return scriptInfo;

@@ -29,20 +29,23 @@ module.exports = app => {
         return;
     }
 
+    // Where clause to filter for images
+    const whereClause = clause => clause
+        .where('url', 'like', '%.jpeg')
+        .orWhere('url', 'like', '%.jpg')
+        .orWhere('url', 'like', '%.gif')
+        .orWhere('url', 'like', '%.png');
 
     /**
       Get the available sources.
       Returns a unique list of combined nicks and channels
     **/
-    const sourcesHandler = (req, res) => {
+    const imageSourceHandler = (req, res) => {
         Models.Url.query(qb => {
                 qb
-                    .select(['to','from','id','timestamp'])
-                    .where('url', 'like', '%.jpeg')
-                    .orWhere('url', 'like', '%.jpg')
-                    .orWhere('url', 'like', '%.gif')
-                    .orWhere('url', 'like', '%.png')
-                    .orderBy('timestamp','desc');
+                    .select(['to', 'from', 'id', 'timestamp'])
+                    .where(whereClause)
+                    .orderBy('timestamp', 'desc');
             })
             .fetchAll()
             .then(results => {
@@ -68,7 +71,7 @@ module.exports = app => {
 
                 // Select the appropriate fields
                 qb.select([
-                  'id','to','from','url','timestamp', 'title'
+                    'id', 'to', 'from', 'url', 'timestamp', 'title'
                 ]);
 
                 // If there is a channel in the query string
@@ -87,13 +90,7 @@ module.exports = app => {
                     switch (req.query.type) {
                         case 'image':
                         case 'images':
-                            qb[getWhere()](function() {
-                                this
-                                    .where('url', 'like', '%.jpeg')
-                                    .orWhere('url', 'like', '%.jpg')
-                                    .orWhere('url', 'like', '%.gif')
-                                    .orWhere('url', 'like', '%.png');
-                            });
+                            qb[getWhere()](whereClause);
                             init = true;
                             break;
                         default:
@@ -102,7 +99,7 @@ module.exports = app => {
 
                 // Build Up Query
                 qb
-                  .orderBy('timestamp', req.query.sort || 'desc');
+                    .orderBy('timestamp', req.query.sort || 'desc');
             })
             .fetchPage({
                 pageSize: req.query.pageSize || 25,
@@ -111,7 +108,7 @@ module.exports = app => {
             .then(results => {
                 res.json({
                     rowCount: results.pagination.rowCount,
-                    pageCount: results.pagination.pageCount ,
+                    pageCount: results.pagination.pageCount,
                     page: results.pagination.page,
                     pageSize: results.pagination.pageSize,
                     status: 'success',
@@ -127,8 +124,9 @@ module.exports = app => {
         name: 'api.urls',
         verb: 'get'
     });
+    
     app.WebRoutes.set('api.sources', {
-        handler: sourcesHandler,
+        handler: imageSourceHandler,
         desc: 'Get the available sources',
         path: '/api/sources',
         name: 'api.sources',

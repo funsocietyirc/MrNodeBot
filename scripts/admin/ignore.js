@@ -19,8 +19,8 @@ module.exports = app => {
             app.say(from, `You should probably specify who it is you would like to mute`);
             return;
         }
+        
         let textArray = text.split(' ');
-
         let [nick] = textArray;
         let lowerCaseNick = _.toLower(nick);
         if (!_.includes(app.Admins, lowerCaseNick) && !_.includes(app.Ignore, lowerCaseNick)) {
