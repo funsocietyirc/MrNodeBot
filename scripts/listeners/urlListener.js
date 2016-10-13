@@ -159,10 +159,7 @@ module.exports = app => {
             if (err || !title) {
                 resolve(results);
                 return;
-            }
-            console.log(title);
-            console.log(helpers.StripNewLine(title));
-            
+            }            
             resolve(_.merge(results, {
                 title: helpers.StripNewLine(_.trim(title))
             }));
