@@ -161,6 +161,8 @@ module.exports = app => {
                 return;
             }
             console.log(title);
+            console.log(helpers.StripNewLine(title));
+            
             resolve(_.merge(results, {
                 title: helpers.StripNewLine(_.trim(title))
             }));
