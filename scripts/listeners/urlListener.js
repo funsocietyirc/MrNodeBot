@@ -160,8 +160,9 @@ module.exports = app => {
                 resolve(results);
                 return;
             }
+            console.log(title);
             resolve(_.merge(results, {
-                title: helpers.StripNewLine(_.trim(title))  
+                title: helpers.StripNewLine(_.trim(title))
             }));
         });
     });
