@@ -55,13 +55,6 @@ const timeDiff = exports.timeDiff = time => moment.duration(moment(time, 'DD/MM/
 /* Get the current uptime */
 const UpTime = exports.Uptime = () => startTime.toString();
 
-/**
- * @returns {boolean}
- * @param x
- * @constructor
- */
-const IsSet = exports.IsSet = x => !!(x != undefined && x != null && x != '');
-
 /* Color stuffs */
 const ColorHelpArgs = exports.ColorHelpArgs = text => text.replaceAll('[', c.red.bold('[')).replaceAll(']', c.red.bold(']'));
 const RedSlashes = exports.RedSlashes = text => text.replaceAll('/', c.red.bold('/'));

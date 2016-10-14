@@ -8,6 +8,7 @@ const scriptInfo = {
 const _ = require('lodash');
 const helpers = require('../../helpers');
 const conLogger = require('../../lib/consoleLogger');
+let currentStream = null;
 
 module.exports = app => {
     if (!app._twitterClient) {
@@ -33,22 +34,31 @@ module.exports = app => {
         });
     };
 
+    const onTweetData = tweet => {
+        // If we have enough information to report back
+        if (tweet.user || tweet.text) {
+            [say, push].forEach(medium => medium(tweet));
+        }
+    };
+
+    const onTweetError = error => {
+        conLogger('Twitter Error: ' + error, 'error');
+    };
+
+    // the Main twitter watcher
     const watcher = () => {
-        app._twitterClient.stream('user', {
-                with: app.Config.features.twitter.followers
-            },
-            function(stream) {
-                stream.on('data', function(tweet) {
-                    // If we have enough information to report back
-                    if (tweet.user || tweet.text) {
-                        [say, push].forEach(medium => medium(tweet));
-                    }
-                });
-                stream.on('error', function(error) {
-                    conLogger('Twitter Error: ' + error, 'error');
-                    //console.log(error.toString());
-                });
-            });
+        let newStream = app._twitterClient.stream('user', {
+            with: app.Config.features.twitter.followers
+        });
+
+        newStream.once('connected', function(res) {
+            if (currentStream) {
+                currentStream.stop();
+            }
+            newStream.on('tweet', onTweetData);
+            newStream.on('error', onTweetError);
+            currentStream = newStream;
+        });
     };
 
     // Tweet a message
@@ -57,16 +67,15 @@ module.exports = app => {
             app.say(from, 'Cannot tweet nothing champ...');
             return;
         }
-        app._twitterClient.post('statuses/update', {
+
+        let twitConfig = {
             status: text
-        }, (error, tweet, response) => {
+        };
+
+        app._twitterClient.post('statuses/update', twitConfig, (error, tweet, response) => {
             if (error) {
-                switch (error.code) {
-                    default:
-                        conLogger('Twitter Error: ' + error, 'error');
-                        app.say(from, 'Something is not quite right');
-                        break;
-                }
+                conLogger('Twitter Error: ' + error, 'error');
+                app.say(from, 'Something is not quite right with your tweet');
                 return;
             };
             app.say(from, `We just lit up the Twittersphere Bro!`);

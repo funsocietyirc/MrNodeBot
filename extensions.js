@@ -11,7 +11,6 @@ exports = function() {
             return this.indexOf(searchString, position) === position;
         };
     }
-
     // Replace all instances of a string with another string
     // Third optional argument for ignore
     if (!String.prototype.replaceAll) {
@@ -19,5 +18,4 @@ exports = function() {
             return this.replace(new RegExp(str1.replace(/([\/\,\!\\\^\$\{\}\[\]\(\)\.\*\+\?\|\<\>\-\&])/g, '\\$&'), (ignore ? 'gi' : 'g')), (typeof(str2) == "string") ? str2.replace(/\$/g, '$$$$') : str2);
         };
     }
-
 }();
