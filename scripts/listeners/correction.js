@@ -39,8 +39,8 @@ module.exports = app => {
         if (!text || !_.startsWith(text, trigger) || _.includes(text, specialChar)) return;
 
         // Remove any trailing delimiters
-        if (text[text.length - 1] == delimiter) text = _.slice(text, 0, -1).join('');
-        console.log(text);
+        if (text[text.length - 1] == delimiter) text = text.slice(0, -1);
+
         // Remove the trigger, and escape double delimiters with special char
         text = _.replace(text, trigger, '').replaceAll(doubleDelimiter, specialChar);
 
