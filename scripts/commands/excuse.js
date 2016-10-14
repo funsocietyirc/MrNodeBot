@@ -14,7 +14,7 @@ module.exports = app => {
         desc: '[Channel?] Send a BOFH excuse',
         access: app.Config.accessLevels.identified,
         call: (to, from, text, message) => {
-            let chan = _.first(text);
+            let chan = _.first(text.split(' '));
             app.say(chan || to, excuse());
         }
     });
