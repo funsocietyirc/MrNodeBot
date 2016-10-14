@@ -99,6 +99,8 @@ module.exports = app => {
     app.schedule('cleanMrRobotQuotes', cronTime, cleanQuotes);
 
     const mrrobot = (to, from, text, message) => {
+        let chan = _.first(text.split(' '));
+
         quoteModel.query(qb => {
                 qb.select('quote').orderByRaw('rand()').limit(1);
                 if (text) {
@@ -108,10 +110,10 @@ module.exports = app => {
             .fetch()
             .then(result => {
                 if (!result) {
-                    app.say(to, `I have not yet encountered anything like that.`);
+                    app.say(chan || to, `I have not yet encountered anything like that.`);
                     return;
                 }
-                app.say(to, `${result.get('quote')} -- Powered By #MrRobot`);
+                app.say(chan || to, `${result.get('quote')} -- Powered By #MrRobot`);
             });
     };
     app.Commands.set('mrrobot', {
