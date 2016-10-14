@@ -103,7 +103,7 @@ module.exports = app => {
 
         quoteModel.query(qb => {
                 qb.select('quote').orderByRaw('rand()').limit(1);
-                if (text) {
+                if (text && !chan) {
                     qb.andWhere('quote', 'like', text);
                 }
             })
