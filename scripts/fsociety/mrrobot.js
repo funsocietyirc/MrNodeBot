@@ -99,7 +99,7 @@ module.exports = app => {
     app.schedule('cleanMrRobotQuotes', cronTime, cleanQuotes);
 
     const mrrobot = (to, from, text, message) => {
-        let chan = _.first(text.split(' '));
+        let chan = text[0] === '#' ?  _.first(text.split(' ')) : false;
 
         quoteModel.query(qb => {
                 qb.select('quote').orderByRaw('rand()').limit(1);
