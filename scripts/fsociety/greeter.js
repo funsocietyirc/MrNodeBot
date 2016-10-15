@@ -74,11 +74,10 @@ module.exports = app => {
             });
     };
 
-    const mainChannel = _.lowerCase(app.Config.features.fsociety.mainChannel);
+    const mainChannel = app.Config.features.fsociety.mainChannel.toLowerCase();
 
     const onJoin = (channel, nick, message) => {
-        let lowerCaseChannel = _.lowerCase(channel);
-
+        let lowerCaseChannel = channel.toLowerCase();
         // Make sure we are not reporting ourselves
         if (
           nick != app.nick &&
