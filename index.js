@@ -18,6 +18,7 @@ if (args.config) {
 }
 
 const MrNodeBot = require('./bot')((app) => {
+  console.log(require('util').inspect(app, null, 10));
     // Code here will be executed after the bot is finished connecting
     if (process.stdin.setRawMode) {
         process.stdin.setRawMode(true);

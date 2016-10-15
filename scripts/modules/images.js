@@ -26,10 +26,11 @@ module.exports = app => {
         // Default to the URL field if none specified
         field = field || 'url';
         return clause
-            .where(field, 'like', '%.jpeg%')
-            .orWhere(field, 'like', '%.jpg%')
-            .orWhere(field, 'like', '%.gif%')
-            .orWhere(field, 'like', '%.png%');
+            // TODO Readd the leading % 
+            .where(field, 'like', '%.jpeg')
+            .orWhere(field, 'like', '%.jpg')
+            .orWhere(field, 'like', '%.gif')
+            .orWhere(field, 'like', '%.png');
     };
 
     // Rebuild all images inside the URL table from the Logging table resource
