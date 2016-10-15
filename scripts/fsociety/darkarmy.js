@@ -44,24 +44,6 @@ module.exports = app => {
         }
     };
 
-    // Report back if anyone joins them (to owner)
-    // will be turned on if process.env.darkArmReport is set to true
-    const onJoin = (channel, nick, message) => {
-        if (nick != app._ircClient.nick && _.includes(darkChannels, channel)) {
-            if (app.Config.features.fsociety.report) {
-                app.say(app.Config.owner.nick, `${nick} joined the Dark Army Channel:  ${channel}`);
-            }
-            // Defer for twenty seconds in the event the join order is out of whack
-            setTimeout(() => {
-                // Check to see if they are in channel
-                if (!app._ircClient.isInChannel('#fsociety', nick)) {
-                    app.say(nick, 'The time is now, #Fsociety needs your help. Joins us.');
-                    app._ircClient.send('invite', nick, app.Config.features.fsociety.mainChannel);
-                }
-            }, app.Config.features.fsociety.greeterDealy * 1000);
-        }
-    };
-
     // Topic lock if possible
     const topicLock = (channel, topic, nick, message) => {
         if (_.includes(darkChannels, channel) && !app._ircClient.isTopicLocked(channel)) {
@@ -80,12 +62,6 @@ module.exports = app => {
     app.Registered.set('darkarmy', {
         call: joinChannels,
         desc: 'Join Fsociety channels',
-        name: 'DarkArmy'
-    });
-
-    // Provide a onjoin handler
-    app.OnJoin.set('darkarmy', {
-        call: onJoin,
         name: 'DarkArmy'
     });
 

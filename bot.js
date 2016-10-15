@@ -283,7 +283,7 @@ class MrNodeBot {
 
             // Clear all existing jobs
             _.forEach(this._scheduler.scheduledJobs, job => {
-                if (!_.includes(job.name)) {
+                if (!_.includes(this.SystemJobs, job.name)) {
                     job.cancel();
                 }
             });
@@ -482,7 +482,7 @@ class MrNodeBot {
 
                     // Log to the console if a user without access a command they are not privy too
                     if (unauthorized) {
-                        let group = helpers.accessString(admCall.access);
+                        let group = helpers.AccessString(admCall.access);
                         app.say(admCall.from, `You are not a memember of the ${group} access list.`);
                         conLogger(`${admCall.from} on ${admCall.to} tried to use the ${group} command ${admCall.cmd}`, 'error');
                         return;

@@ -1,7 +1,10 @@
 'use strict';
 const moment = require('moment');
 const c = require('irc-colors');
+const _ = require('lodash');
 const startTime = moment();
+const excuses = require('./lib/bofhExcuses');
+
 
 const smartHttp = exports.smartHttp = (function() {
     var url = require('url'),
@@ -15,7 +18,6 @@ const smartHttp = exports.smartHttp = (function() {
 }());
 
 const leetSpeak = exports.leetSpeak = text => text.replace(/l|i/gi, '1').replace(/z/gi, '2').replace(/e/gi, '3').replace(/a/gi, '4').replace(/s/gi, '5').replace(/G/g, '6').replace(/t/gi, '7').replace(/b/gi, '8').replace(/g/g, '9').replace(/o/gi, '0');
-
 
 const timeFormat = exports.timeFormat = d => {
     var months = d.get('months'),
@@ -36,7 +38,7 @@ const timeFormat = exports.timeFormat = d => {
 };
 
 // String representation of access level
-const accessString = exports.accessString = str => {
+const AccessString = exports.AccessString = str => {
     switch (str) {
         case 0:
             return 'Guest';
@@ -45,12 +47,17 @@ const accessString = exports.accessString = str => {
         case 2:
             return 'Administrator';
         case 3:
-            return 'Owner'
+            return 'Owner';
+        default:
+            return 'Unknown';
     }
 };
 
+/* Get a BOFH Excuse */
+const Excuse = exports.Excuse = () => _.sample(excuses);
+
 /* Get the difference between now and the current time */
-const timeDiff = exports.timeDiff = time => moment.duration(moment(time, 'DD/MM/YYYY').diff(moment()));
+const TimeDiff = exports.TimeDiff = time => moment.duration(moment(time, 'DD/MM/YYYY').diff(moment()));
 
 /* Get the current uptime */
 const UpTime = exports.Uptime = () => startTime.toString();

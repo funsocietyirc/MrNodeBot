@@ -99,7 +99,7 @@ module.exports = app => {
     app.schedule('cleanMrRobotQuotes', cronTime, cleanQuotes);
 
     const mrrobot = (to, from, text, message) => {
-        let chan = text[0] === '#' ?  _.first(text.split(' ')) : false;
+        let chan = _.first(text) === '#' ?  _.first(text.split(' ')) : false;
 
         quoteModel.query(qb => {
                 qb.select('quote').orderByRaw('rand()').limit(1);
@@ -117,7 +117,7 @@ module.exports = app => {
             });
     };
     app.Commands.set('mrrobot', {
-        desc: '[Search Text] Mr Robot quotes powered by #MrRobot',
+        desc: '[Channel / Search Text] Mr Robot quotes powered by #MrRobot',
         access: app.Config.accessLevels.identified,
         call: mrrobot
     });

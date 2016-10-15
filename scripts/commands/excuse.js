@@ -5,7 +5,7 @@ const scriptInfo = {
     createdBy: 'Dave Richer'
 };
 
-const excuse = require('../../lib/bofhExcuses');
+const excuse = require('../../helpers').Excuse;
 const _ = require('lodash');
 
 module.exports = app => {
