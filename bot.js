@@ -38,7 +38,16 @@ class MrNodeBot {
         this._pusher = this.Config.pusher.enabled ? new Pusher(this.Config.pusher.config) : false;
 
         // TwitterClient
-        this._twitterClient = require('./lib/twitterClient');
+        // Check to see if you have API keys configured to properly load the TwitterClient
+        if (!this.Config.apiKeys.twitter.consumerKey ||
+            !this.Config.apiKeys.twitter.consumerSecret ||
+            !this.Config.apiKeys.twitter.tokenKey ||
+            !this.Config.apiKeys.twitter.tokenSecret) {
+            conLogger('Twitter API keys not configured in config.js: bypassing TwitterClient', 'error');
+        } 
+        else {
+            this._twitterClient = require('./lib/twitterClient');
+        }
 
         // A list of collections used
         this.AdmCallbacks = new HashMap();
