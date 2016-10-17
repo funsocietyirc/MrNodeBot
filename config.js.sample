@@ -3,7 +3,7 @@ module.exports = {
     project: require('./package.json'),
     // Bot specific
     bot: {
-        debug: false,
+        debug: true,
         disableScripts: false,
         // Script Directories
         scripts: [
@@ -14,6 +14,7 @@ module.exports = {
             '/scripts/listeners',
             '/scripts/modules',
             '/scripts/fsociety',
+            '/scripts/beta', // Only load in development
         ],
         // Model Directories
         models: [
@@ -22,16 +23,33 @@ module.exports = {
         // Currently running Environment
         env: 'devel'
     },
+    // User Manager configuration
+    userManager: {
+        salt: 'hellofriends',
+        keyLength: 64
+    },
+    // Command aliasinging
+    commandBindings: [{
+        command: 'update',
+        alias: 'upgrayeddd'
+    }, {
+        command: 'reload',
+        alias: 'refresh'
+    }, {
+        command: 'token',
+        alias: 'upload-token'
+    }],
     // Owner configuration
     owner: {
         nick: 'IronY',
-        host: ''
+        host: 'unaffiliated/irony'
     },
     // Irc Client Configuration see https://node-irc.readthedocs.io/en/latest/API.html#client
     irc: {
         nick: 'MrNodeBot',
         server: 'irc.freenode.net',
-	      userName: 'MrNodeBot',
+        //server: 'irc.dal.net',
+        userName: 'MrNodeBot',
         realName: 'MrNodeBot',
         port: 6665,
         localAddress: null,
@@ -44,32 +62,15 @@ module.exports = {
         secure: false,
         selfSigned: false,
         certExpired: false,
-        floodProtection: false,
-        floodProtectionDelay: 1000,
+        floodProtection: true,
+        floodProtectionDelay: 2000,
         sasl: false,
-        retryCount: 0,
+        retryCount: 100,
         retryDelay: 2000,
         stripColors: false,
         channelPrefixes: '&#',
         messageSplit: '512',
-        encoding: 'utf8',
-	      autoConnect: false, // DO NOT ADJUST THIS
-    },
-    // Command aliasinging
-    commandBindings: [{
-        command: 'update',
-        alias: 'upgrayeddd'
-    }, {
-        command: 'reload',
-        alias: 'refresh',
-    },{
-      command: 'token',
-      alias: 'upload-token'
-    }],
-    // User Manager configuration
-    userManager: {
-        salt: 'hellofriends',
-        keyLength: 64
+        encoding: 'UTF-8',
     },
     // Knex configuration http://knexjs.org/#Installation-client
     knex: {
@@ -91,6 +92,14 @@ module.exports = {
             }
         }
     },
+    pusher: {
+        enabled: true,
+        config: {
+            appId: '',
+            key: '',
+            secret: ''
+        }
+    },
     // Nickserv configuration options
     nickserv: {
         password: '',
@@ -101,7 +110,6 @@ module.exports = {
     // API Keys
     apiKeys: {
         google: '',
-        mashable: '',
         twitter: {
             consumerKey: '',
             consumerSecret: '',
@@ -143,18 +151,20 @@ module.exports = {
             }
         },
         fsociety: {
-            mainChannel: '',
+            mainChannel: '#mrnodebot',
             totalChannels: 0,
             report: false,
             delay: 5, // In seconds,
-            additionalChannels: [],
+            additionalChannels: [
+                '#mrnodebot2'
+            ],
+            greetIgnore: [],
             greeterDealy: 20,
-            idleChat: 5// Mins
+            idleChat: 5 // Mins
         },
         twitter: {
-            followers: 'davericher, funsocietyirc',
-            channels: [
-            ]
+            followers: 'whoismrrobot, samesmail, mrrobotquotes',
+            channels: ['#mrnodebot']
         },
         conversational: {
             randomChange: 5000,

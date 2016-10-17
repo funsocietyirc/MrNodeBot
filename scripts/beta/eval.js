@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const util = require('util');
 const conLogger = require('../../lib/consoleLogger.js');
 
 module.exports = app => {
@@ -20,7 +21,7 @@ module.exports = app => {
   const convaluate = (to, from, text, message) => {
     try {
       let result = eval(text);
-      let resultText = _.toString(result);
+      let resultText = util.inspect(result, null, 4);
       conLogger(`Cval result: ${resultText}`,'success');
       if(resultText) {
         app.say(from, `CVAL Result: ${resultText}`);
