@@ -111,7 +111,7 @@ module.exports = {
     apiKeys: {
         google: '',
         twitter: {
-            consumerKey: '',
+            consumerKey: '', // Fill these in from https://apps.twitter.com/
             consumerSecret: '',
             tokenKey: '',
             tokenSecret: ''
@@ -163,6 +163,7 @@ module.exports = {
             idleChat: 5 // Mins
         },
         twitter: {
+            enabled: true,
             followers: 'whoismrrobot, samesmail, mrrobotquotes',
             channels: ['#mrnodebot']
         },
