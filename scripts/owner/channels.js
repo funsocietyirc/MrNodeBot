@@ -5,10 +5,6 @@ const scriptInfo = {
     createdBy: 'Dave Richer'
 };
 
-/*
-    Join a channel
-    join <channel>
-*/
 module.exports = app => {
 
     // Part Channel

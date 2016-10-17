@@ -7,7 +7,6 @@ const scriptInfo = {
 
 const Models = require('bookshelf-model-loader');
 const Moment = require('moment');
-
 const _ = require('lodash');
 
 module.exports = app => {
@@ -16,24 +15,9 @@ module.exports = app => {
         return;
     }
 
-    // Grab Model
-    const aliasModel = Models.Alias;
-
-    // Handler
-    const nickChange = (oldnick, newnick, channels, message) => {
-        // If we have a database connection, log
-        aliasModel.create({
-                oldnick: oldnick,
-                newnick: newnick
-            })
-            .catch(err => {
-                console.log(err.message);
-            });
-    };
-
     // Web front end
     const frontEnd = (req, res) => {
-        aliasModel.fetchAll().then(results => {
+        Models.Alias.fetchAll().then(results => {
             res.render('nickchanges', {
                 results: results.toJSON(),
                 moment: Moment
@@ -69,12 +53,6 @@ module.exports = app => {
         desc: '[alias] get known aliases',
         access: app.Config.accessLevels.identified,
         call: aka
-    });
-
-    // Listen and Log
-    app.NickChanges.set('databaseLogging', {
-        desc: 'Log Nick changes to the alias table',
-        call: nickChange
     });
 
     // Web Front End

@@ -26,7 +26,7 @@ module.exports = app => {
         // Default to the URL field if none specified
         field = field || 'url';
         return clause
-            // TODO Readd the leading % 
+            // TODO Readd the leading %
             .where(field, 'like', '%.jpeg')
             .orWhere(field, 'like', '%.jpg')
             .orWhere(field, 'like', '%.gif')
@@ -182,10 +182,10 @@ module.exports = app => {
     });
 
     // Scheduler automatic cleanup
-    // app.schedule('cleanImages', cronTime, () => {
-    //     conLogger('Running Clean URL Script to remove unreachable hosts', 'info');
-    //     cleanImages();
-    // });
+    app.schedule('cleanImages', cronTime, () => {
+        conLogger('Running Clean URL Script to remove unreachable hosts', 'info');
+        cleanImages();
+    });
 
     // Return the script info
     return scriptInfo;
