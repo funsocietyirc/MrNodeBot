@@ -40,7 +40,7 @@ class MrNodeBot {
         // TwitterClient
         // Check to see if twitter is enabled in the config, but only if that key is available, 
         // since legacy versions didn't expect it.
-        if (_.isEmpty(this.Config.features.twitter.enabled) || !this.Config.features.twitter.enabled) {
+        if (_.isUndefined(this.Config.features.twitter.enabled) || this.Config.features.twitter.enabled) {
             // Check to see if you have API keys configured to properly load the TwitterClient
             if (!this.Config.apiKeys.twitter.consumerKey ||
                 !this.Config.apiKeys.twitter.consumerSecret ||
