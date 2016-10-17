@@ -30,7 +30,7 @@ module.exports = app => {
                 ident: message.user,
                 host: message.host
             })
-            .catch(_handleError);
+            .catch(e => _handleError(e));
     };
     app.Listeners.set('messageLogging', {
         name: 'messageLogging',
@@ -48,7 +48,7 @@ module.exports = app => {
                 user: message.user,
                 host: message.host
             })
-            .catch(_handleError);
+            .catch(e => _handleError(e));
     };
     app.OnJoin.set('joinLogger', {
         call: joinCmd,
@@ -67,7 +67,7 @@ module.exports = app => {
                 user: message.user,
                 host: message.host
             })
-            .catch(_handleError);
+            .catch(e => _handleError(e));
     };
     app.OnPart.set('partLogger', {
         call: partCmd,
@@ -87,7 +87,7 @@ module.exports = app => {
                 user: message.user,
                 host: message.host
             })
-            .catch(_handleError);
+            .catch(e => _handleError(e));
     };
     app.OnKick.set('kickLogger', {
         call: kickCmd,
@@ -107,7 +107,7 @@ module.exports = app => {
                 user: message.user,
                 host: message.host
             })
-            .catch(_handleError);
+            .catch(e => _handleError(e));
     };
     app.OnQuit.set('quitLogger', {
         call: quitCmd,
@@ -127,10 +127,10 @@ module.exports = app => {
                 user: message.user,
                 host: message.host
             })
-            .catch(_handleError);
+            .catch(e => _handleError(e));
     };
     app.NickChanges.set('nickLogger', {
-        name: 'nickLogger'
+        name: 'nickLogger',
         call: nickCmd
     });
 
@@ -156,7 +156,7 @@ module.exports = app => {
                         nick: nick
                     });
             })
-            .catch(_handleError);
+            .catch(e => _handleError(e));
     };
     app.OnTopic.set('topicLogger', {
         call: topicCmd,
