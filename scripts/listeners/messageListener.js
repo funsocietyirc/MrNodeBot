@@ -1,7 +1,7 @@
 'use strict';
 const scriptInfo = {
-    name: 'mesgDbListener',
-    file: 'msgDbListener.js',
+    name: 'messageListener',
+    file: 'messageListener.js',
     createdBy: 'Dave Richer'
 };
 

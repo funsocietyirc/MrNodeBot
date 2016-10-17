@@ -49,6 +49,9 @@ class MrNodeBot {
         this.Commands = new HashMap();
         this.Stats = new HashMap();
         this.OnJoin = new HashMap();
+        this.OnKick = new HashMap();
+        this.OnPart = new HashMap();
+        this.OnQuit = new HashMap();
         this.OnTopic = new HashMap();
 
         // Lists
@@ -171,6 +174,21 @@ class MrNodeBot {
         // Handle On Joins
         this._ircClient.addListener('join', (channel, nick, message) => {
             this._handleOnJoin(self, channel, nick, message);
+        });
+
+        // Handle On Parts
+        this._ircClient.addListener('part', (channel, nick, reason, message) => {
+            this._handleOnPart(self, channel, nick, reason, message);
+        });
+
+        // Handle On Kick
+        this._ircClient.addListener('kick', (channel, nick, by, reason, message) => {
+            this._handleOnKick(self, channel, nick, by, reason, message);
+        });
+
+        // Handle On Quit
+        this._ircClient.addListener('quit', (nick, reason, channels, message) => {
+            this._handleOnQuit(self, nick, reason, channels, message);
         });
 
         // Handle Topic changes
@@ -297,6 +315,9 @@ class MrNodeBot {
             this.Commands.clear();
             this.Stats.clear();
             this.OnJoin.clear();
+            this.OnPart.clear();
+            this.OnKick.clear();
+            this.OnQuit.clear();
             this.OnTopic.clear();
         }
 
@@ -367,6 +388,39 @@ class MrNodeBot {
         app.OnJoin.forEach((value, key) => {
             try {
                 value.call(channel, nick, message);
+            } catch (e) {
+                conLogger(e, 'error');
+            }
+        });
+    };
+
+    // Handle On Part
+    _handleOnPart(app, channel, nick, reason, message) {
+        app.OnPart.forEach((value, key) => {
+            try {
+                value.call(channel, nick, reason, message);
+            } catch (e) {
+                conLogger(e, 'error');
+            }
+        });
+    };
+
+    // Handle On Kick
+    _handleOnKick(app, channel, nick, by, reason, message) {
+        app.OnKick.forEach((value, key) => {
+            try {
+                value.call(channel, nick, by, reason, message);
+            } catch (e) {
+                conLogger(e, 'error');
+            }
+        });
+    };
+
+    // Handle On Quit
+    _handleOnQuit(app, nick, reason, channels, message) {
+        app.OnQuit.forEach((value, key) => {
+            try {
+                value.call(nick, reason, channels, message);
             } catch (e) {
                 conLogger(e, 'error');
             }

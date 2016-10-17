@@ -11,46 +11,15 @@ const Models = require('bookshelf-model-loader');
 const divider = ' | ';
 
 module.exports = app => {
-    const topicsModel = Models.Topics;
-
     // Bailout if we do not have database
-    if (!app.Database || !topicsModel) {
+    if (!app.Database || !Models.Topics) {
         return;
     }
-
-    // Toppic logging handler
-    const loggingCmd = (channel, topic, nick, message) => {
-        topicsModel.query(qb => {
-                qb.where('channel', 'like', channel)
-                    .orderBy('id', 'desc')
-                    .limit(1)
-                    .select(['topic']);
-            })
-            .fetch()
-            .then(lastTopic => {
-                if (lastTopic && topic === lastTopic.attributes.topic) {
-                    return;
-                }
-                topicsModel.create({
-                        channel: channel,
-                        topic: topic,
-                        nick: nick
-                    })
-                    .catch(err => {
-                        console.log(err.message);
-                    });
-            });
-    };
-    app.OnTopic.set('topicDbLogger', {
-        call: loggingCmd,
-        desc: 'Log Topics',
-        name: 'topicDbLogger'
-    });
 
     // Get the last 5 topics
     const topics = (to, from, text, message) => {
         let channel = text || to;
-        topicsModel.query(qb => {
+        Models.Topics.query(qb => {
                 qb
                     .where('channel', 'like', channel)
                     .orderBy('timestamp', 'desc')
@@ -78,7 +47,7 @@ module.exports = app => {
     });
 
     // Helper function to get a the a promise on the channels topics
-    const getTopics = (channel, limit) => topicsModel.query(qb => {
+    const getTopics = (channel, limit) => Models.Topics.query(qb => {
         qb.where('channel', channel).orderBy('timestamp', 'desc');
         if (limit) {
             qb.limit(limit);
