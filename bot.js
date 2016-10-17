@@ -43,7 +43,7 @@ class MrNodeBot {
             !this.Config.apiKeys.twitter.consumerSecret ||
             !this.Config.apiKeys.twitter.tokenKey ||
             !this.Config.apiKeys.twitter.tokenSecret) {
-            conLogger('Twitter API keys not configured in config.js: bypassing TwitterClient', 'error');
+            conLogger('Twitter API keys not configured in config.js: bypassing TwitterClient', 'danger');
         } 
         else {
             this._twitterClient = require('./lib/twitterClient');
