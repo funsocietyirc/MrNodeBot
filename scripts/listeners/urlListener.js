@@ -55,45 +55,56 @@ module.exports = app => {
                 resolve(results);
                 return;
             }
+            // Decide which pusher channel to push over
             let channel = /\.(gif|jpg|jpeg|tiff|png)$/i.test(url) ? 'image' : 'url';
+            // Grab a timestamp
             let timestamp = Date.now();
+            // Prepare Output
             let output = {
                 url,
                 to,
                 from,
                 timestamp,
-                title: results.title || ''
+                // If this is a youtube video, use the vide title rather then the title
+                title: (results.youTube && results.youTube.videoTitle) ? results.youTube.videoTitle : results.title || ''
             };
-            // Append an ID if we have one
+            // Include an ID if we have one
             if (results.id) {
                 output.id = results.id;
             }
+            // Include a ShortUrl if we have one
             if (results.shortUrl) {
                 output.shortUrl = results.shortUrl;
             }
+
+            // Set output to Pusher
             app._pusher.trigger('public', channel, output);
+
+            // Append results
             results.delivered.push({
                 protocol: 'pusher',
                 to: channel,
                 on: timestamp
             });
+
             resolve(results);
         });
     };
 
     // Log Urls to the Database
-    const logInDb = (url, to, from, results) => {
+    const logInDb = (url, to, from, message, results) => {
         let ignored = urlLoggerIgnore.some(hash => {
             if (_.includes(hash, _.toLower(to))) {
                 return true;
             }
         });
+        if (!app.Database || !Models.Url || ignored) {
+            resolve(results);
+            return;
+        }
         return new Promise((resolve, reject) => {
-            if (!app.Database || !Models.Url || ignored) {
-                resolve(results);
-                return;
-            }
-            Models.Url.create({
+            // Log the URL
+            return Models.Url.create({
                     url: url,
                     to: to,
                     from: from,
@@ -102,7 +113,7 @@ module.exports = app => {
                 .then(record => {
                     results.id = record.id;
                     results.delivered.push({
-                        protocol: 'database',
+                        protocol: 'urlDatabase',
                         on: Date.now()
                     });
                     resolve(results);
@@ -110,6 +121,30 @@ module.exports = app => {
                 .catch((err) => {
                     resolve(results);
                 });
+        })
+        .then(results => {
+          console.log(results);
+          // Log Youtube Url
+          if(results.youTube) {
+            return Models.YouTubeLink.create({
+              url: url,
+              to: to,
+              from: from,
+              title: results.youTube.videoTitle,
+              user: message.user,
+              host: message.host
+            })
+            .then(record => {
+              results.delivered.push({
+                  protocol: 'youTubeDatabase',
+                  on: Date.now()
+              });
+              resolve(results);
+            })
+            .catch((err) => {
+                resolve(results);
+            });
+          }
         });
     };
 
@@ -225,7 +260,7 @@ module.exports = app => {
         if (payload.youTube) {
             let yr = payload.youTube;
             output = output + space() + `${c.grey.bold('You')}${c.red.bold('Tube')} ${c.bold('Title:')} "${c.olive(yr.videoTitle)}" ${c.bold('Views:')} ` +
-                `${c.olive(yr.viewCount)} ${c.bold('Likes:')} ${c.olive(yr.likeCount)} ${c.bold('Dislikes:')} ${c.olive(yr.dislikeCount)}` +
+                `${c.olive(yr.viewCount)} ${c.green.bold('↑')} ${c.olive(yr.likeCount)} ${c.red.bold('↓')} ${c.olive(yr.dislikeCount)}` +
                 ` ${c.bold('Comments:')} ${c.olive(yr.commentCount)}`;
         }
         if (output != '') {
@@ -255,7 +290,7 @@ module.exports = app => {
     };
 
     // Handler
-    const listener = (to, from, text) => {
+    const listener = (to, from, text, message) => {
         // Check to see if the user is ignored from url listening, good for bots that repete
         if (_.includes(userIgnore, from)) return;
 
@@ -279,13 +314,11 @@ module.exports = app => {
                         return getYoutube(url, match[2], results);
                     }
                     // If we have a regular link
-                    else {
-                        return getTitle(url, results)
-                    }
+                    return getTitle(url, results)
                 })
                 .then(results => say(to, from, results))
                 // Report
-                .then(results => logInDb(url, to, from, results))
+                .then(results => logInDb(url, to, from, message, results))
                 .then(results => pusher(url, to, from, results))
                 .catch(handleErrors)
             );
