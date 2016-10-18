@@ -341,7 +341,7 @@ module.exports = app => {
                     let gh = payload.gitHub;
                     let lastUpdate = '~ ' + moment(gh.lastPush).fromNow();
                     output = output + space() + `${logos.gitHub} ${icons.sideArrow} ${gh.owner} ${icons.sideArrow} ${gh.name} ${icons.sideArrow} ${gh.desc} ${gh.isFork ? '*fork*' : ''} ${icons.sideArrow} ${c.bold('Updated:')} ${lastUpdate} ${icons.sideArrow} ${gh.language} ${icons.sideArrow} ${icons.star} ${c.yellow(gh.stars)} ` +
-                        `${icons.views} ${c.navy.bold(gh.watchers)} ${gh.forks ? c.bold(`Forks:) ` + gh.forks : ''}${icons.sad} ${c.red(gh.issues)}`;
+                        `${icons.views} ${c.navy.bold(gh.watchers)} ${gh.forks ? c.bold(`Forks: `)  + gh.forks : ''}${icons.sad} ${c.red(gh.issues)}`;
         }
 
         if (output != '') {
