@@ -186,7 +186,7 @@ module.exports = app => {
             .then(result => {
                 let data = JSON.parse(result).items[0];
                 // We have no data, default back to the original title grabber
-                if(!data) {
+                if (!data) {
                     return getTitle(url, results)
                 }
                 let videoTitle = data.snippet.title || '';
@@ -196,7 +196,11 @@ module.exports = app => {
                 let commentCount = data.statistics.commentCount || 0;
                 resolve(_.merge(results, {
                     youTube: {
-                      videoTitle, viewCount, likeCount, dislikeCount, commentCount
+                        videoTitle,
+                        viewCount,
+                        likeCount,
+                        dislikeCount,
+                        commentCount
                     }
                 }));
             });
@@ -218,9 +222,11 @@ module.exports = app => {
             output = output + space() + `${titleString} ${c.olive(payload.title)}`;
         }
         // We have a YouTube video response
-        if(payload.youTube) {
-          let yr = payload.youTube;
-          output = output + space() + `Title: "${c.olive(yr.videoTitle)}" Views: ${c.olive(yr.viewCount)} Likes: ${c.olive(yr.likeCount)} Dislikes: ${c.olive(yr.dislikeCount)} Comments: ${c.olive(yr.commentCount)}`;
+        if (payload.youTube) {
+            let yr = payload.youTube;
+            output = output + space() + `${c.bold('Title:')} "${c.olive(yr.videoTitle)}" ${c.bold('Views:')} ` +
+                `${c.olive(yr.viewCount)} ${c.bold('Likes:')} ${c.olive(yr.likeCount)} ${c.bold('Dislikes:')} ${c.olive(yr.dislikeCount)}` +
+                ` ${c.bold('Comments:')} ${c.olive(yr.commentCount)}`;
         }
         if (output != '') {
             app.say(to, `(${from}) ` + output);
