@@ -2,13 +2,10 @@
 const scriptInfo = {
     name: 'rename',
     file: 'rename.js',
+    desc: 'Change the Bots nick',
     createdBy: 'Dave Richer'
 };
 
-/*
-    Op Someone
-    op <channel> <nick>
-*/
 module.exports = app => {
     const rename = (to, from, text, message) => {
       let oldNick = app.nick;
@@ -17,7 +14,6 @@ module.exports = app => {
 
     };
 
-    // Terminate the bot and the proc watcher that keeps it up
     app.Commands.set('rename', {
         desc: '[nick] Rename the Bot',
         access: app.Config.accessLevels.owner,

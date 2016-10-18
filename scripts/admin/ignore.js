@@ -2,6 +2,8 @@
 const scriptInfo = {
     name: 'ignore',
     file: 'ignore.js',
+    desc: 'Private mute, unmute, and ignored commands. Prevents the bot from seeing messages from ' +
+          'specified IRC users',
     createdBy: 'Dave Richer'
 };
 
@@ -19,7 +21,7 @@ module.exports = app => {
             app.say(from, `You should probably specify who it is you would like to mute`);
             return;
         }
-        
+
         let textArray = text.split(' ');
         let [nick] = textArray;
         let lowerCaseNick = _.toLower(nick);

@@ -1,3 +1,12 @@
+'use strict';
+
+const scriptInfo = {
+    name: 'Evaluate',
+    file: 'eval.js',
+    desc: 'Allow for inline JS Evaluation via IRC for easier debugging',
+    createdBy: 'Dave Richer'
+};
+
 const _ = require('lodash');
 const util = require('util');
 const conLogger = require('../../lib/consoleLogger.js');
@@ -20,5 +29,5 @@ module.exports = app => {
     call: evaluate
   });
 
-
+  return scriptInfo;
 };

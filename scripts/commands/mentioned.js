@@ -2,6 +2,8 @@
 const scriptInfo = {
     name: 'mentioned',
     file: 'mentioned.js',
+    desc: 'Provides some interaction with the message logging model, such has total messages, random line' +
+          'and last mentioned',
     createdBy: 'Dave Richer'
 };
 
@@ -96,7 +98,7 @@ module.exports = app => {
 
     // random-line command
     app.Commands.set('random-line', {
-        desc: 'Get a random line from the channel, accepts argument as search string',
+        desc: '[Search Text?] Get a random line from the channel, accepts argument as search string',
         access: app.Config.accessLevels.identified,
         call: randomLine
     });

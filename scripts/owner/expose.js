@@ -2,6 +2,8 @@
 const scriptInfo = {
     name: 'Expose',
     file: 'expose.js',
+    desc: 'Open a web server and advertise it in a channel for a specified period of time. ' +
+          'Any IRC client that is auto pulling websites will get their IP posted back',
     createdBy: 'Dave Richer'
 };
 

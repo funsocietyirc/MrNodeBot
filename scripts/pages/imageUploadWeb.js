@@ -1,9 +1,9 @@
-// TODO make sure the file sizes are random using rand-token
-
 'use strict';
+
 const scriptInfo = {
-    name: 'upload',
-    file: 'upload.js',
+    name: 'Image Upload Web Front End',
+    file: 'imageUploadWeb.js',
+    desc: 'Provides a PUG form for uploading photos',
     createdBy: 'Dave Richer'
 };
 
@@ -79,13 +79,6 @@ module.exports = app => {
             });
     };
 
-    const showImageLink = (to, from, text, message) => {
-        let path = app.WebServer.namedRoutes.build('urls', {
-            channel: to
-        });
-        app.say(to, `You can view all images from ${to} at ${ app.Config.express.address}${path}`);
-    };
-
     // Register upload Form
     app.WebRoutes.set('uploadForm', {
         handler: uploadForm,
@@ -102,12 +95,6 @@ module.exports = app => {
         path: '/upload',
         name: 'upload',
         verb: 'post'
-    });
-
-    app.Commands.set('images', {
-        desc: 'Show users the link to images',
-        access: app.Config.accessLevels.identified,
-        call: showImageLink
     });
 
     // Return the script info

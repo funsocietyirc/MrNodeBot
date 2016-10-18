@@ -2,6 +2,7 @@
 const scriptInfo = {
     name: 'tell',
     file: 'tell.js',
+    desc: 'Have the Bot give a channel or user a message',
     createdBy: 'Dave Richer'
 };
 
@@ -26,7 +27,7 @@ module.exports = app => {
     // Terminate the bot and the proc watcher that keeps it up
     app.Commands.set('tell', {
         desc: 'tell [nick] [message] : Reach out and touch somebody',
-        access: app.Config.accessLevels.owner,
+        access: app.Config.accessLevels.admin,
         call: tell
     });
 

@@ -2,6 +2,7 @@
 const scriptInfo = {
     name: 'loggingListener',
     file: 'loggingListener.js',
+    desc: 'Log IRC evets to the database',
     createdBy: 'Dave Richer'
 };
 

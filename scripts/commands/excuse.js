@@ -2,6 +2,7 @@
 const scriptInfo = {
     name: 'excuse',
     file: 'excuse.js',
+    desc: 'Provider Bastard Operator from hell excuses',
     createdBy: 'Dave Richer'
 };
 

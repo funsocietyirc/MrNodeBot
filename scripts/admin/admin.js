@@ -2,6 +2,7 @@
 const scriptInfo = {
     name: 'admin',
     file: 'admin.js',
+    desc: 'Private Admin help, and Admin User management',
     createdBy: 'Dave Richer'
 };
 

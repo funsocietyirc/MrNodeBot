@@ -1,29 +1,18 @@
 'use strict';
 const scriptInfo = {
-    name: 'nick',
-    file: 'nick.js',
+    name: 'Also Known As',
+    file: 'aka.js',
+    desc: 'Get information from the nick change table',
     createdBy: 'Dave Richer'
 };
 
 const Models = require('bookshelf-model-loader');
-const Moment = require('moment');
-const _ = require('lodash');
 
 module.exports = app => {
     // Log nick changes in the alias table
     if (!app.Database && !Models.Alias) {
         return;
     }
-
-    // Web front end
-    const frontEnd = (req, res) => {
-        Models.Alias.fetchAll().then(results => {
-            res.render('nickchanges', {
-                results: results.toJSON(),
-                moment: Moment
-            });
-        });
-    };
 
     // List known nicks for a given alias
     const aka = (to, from, text, message) => {
@@ -53,14 +42,6 @@ module.exports = app => {
         desc: '[alias] get known aliases',
         access: app.Config.accessLevels.identified,
         call: aka
-    });
-
-    // Web Front End
-    app.WebRoutes.set('nickchanges', {
-        handler: frontEnd,
-        path: '/nickchanges',
-        desc: 'Nick Changes',
-        name: 'nickchanges'
     });
 
     // Return the script info

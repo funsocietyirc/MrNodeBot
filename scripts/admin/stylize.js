@@ -2,6 +2,7 @@
 const scriptInfo = {
     name: 'stylize',
     file: 'stylize.js',
+    desc: 'Super colorized version of tell',
     createdBy: 'Dave Richer'
 };
 

@@ -1,7 +1,8 @@
 'use strict';
 const scriptInfo = {
-    name: 'akaActive',
-    file: 'akaActive.js',
+    name: 'analyze',
+    file: 'analyze.js',
+    desc: 'Get a summary of information from a online IRC user',
     createdBy: 'Dave Richer'
 };
 
@@ -182,7 +183,7 @@ module.exports = app => {
     /**
       Trigger command for advanced active tracking
     **/
-    const akaActive = (to, from, text, message) => {
+    const analyze = (to, from, text, message) => {
         // Bail if there is no argument
         const args = text.split(' ');
 
@@ -206,10 +207,10 @@ module.exports = app => {
         init(to, nick, subCommand, reportToIrc);
     };
 
-    app.Commands.set('aka-active', {
+    app.Commands.set('analyze', {
         desc: '[Nick] [Sub Command] - Advanced Analytics tool',
         access: app.Config.accessLevels.admin,
-        call: akaActive
+        call: analyze
     });
 
     // Return the script info

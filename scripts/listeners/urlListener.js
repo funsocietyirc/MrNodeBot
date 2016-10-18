@@ -1,10 +1,9 @@
-/**
-    Watch Channels for URLS
-**/
 'use strict';
+
 const scriptInfo = {
     name: 'urlListener',
     file: 'urlListener.js',
+    desc: 'Listen for URLS, append them to a DB table, clean them if they expire, and other stuff',
     createdBy: 'Dave Richer'
 };
 
@@ -16,6 +15,7 @@ const HashMap = require('hashmap');
 const Models = require('bookshelf-model-loader');
 const helpers = require('../../helpers');
 const conLogger = require('../../lib/consoleLogger');
+const rp = require('request-promise-native');
 
 /**
   Translate urls into Google short URLS
@@ -159,11 +159,46 @@ module.exports = app => {
             if (err || !title) {
                 resolve(results);
                 return;
-            }            
+            }
             resolve(_.merge(results, {
                 title: helpers.StripNewLine(_.trim(title))
             }));
         });
+    });
+
+    // Get the youtube key from link
+    const getYoutube = (key, results) => new Promise((resolve, reject) => {
+
+        // Bail if we have no result
+        if (!key || _.isEmpty(key)) {
+            resolve(results);
+            return;
+        }
+        return rp({
+                uri: 'https://www.googleapis.com/youtube/v3/videos',
+                qs: {
+                    id: key,
+                    key: app.Config.apiKeys.google,
+                    fields: 'items(id,snippet(channelId,title,categoryId),statistics)',
+                    part: 'snippet,statistics'
+                }
+            })
+            .then(result => {
+                let data = JSON.parse(result).items[0];
+                console.log(data.snippet.title);
+                let videoTitle = data.snippet.title || '';
+                let viewCount = data.statistics.viewCount || 0;
+                let likeCount = data.statistics.likeCount || 0;
+                let dislikeCount = data.statistics.dislikeCount || 0;
+                let favCount = data.statistics.favouriteCount || 0;
+                let commentCount = data.statistics.commentCount || 0;
+                resolve(_.merge(results, {
+                    youTube: {
+                      videoTitle, viewCount, likeCount, dislikeCount, favCount, commentCount
+                    },
+                    title: `Title: "${videoTitle}" Views: ${viewCount} Likes: ${likeCount} Dislikes: ${dislikeCount} Favourites: ${favCount} Comments: ${commentCount}`
+                }));
+            });
     });
 
     // Formatting Helper
@@ -222,9 +257,16 @@ module.exports = app => {
                 // Process
                 .then(results => shorten(url, results))
                 .then(results => {
-                    // TODO Check for youtbe URL
-                    // TODO Check for github URL
-                    return getTitle(url, results)
+                    // check for youTube
+                    let match = url.match(/^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/);
+                    // If We have a valid Youtube Link
+                    if (match && match[2].length == 11) {
+                        return getYoutube(match[2], results);
+                    }
+                    // If we have a regular link
+                    else {
+                        return getTitle(url, results)
+                    }
                 })
                 .then(results => say(to, from, results))
                 // Report

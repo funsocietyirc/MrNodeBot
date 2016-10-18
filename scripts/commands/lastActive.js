@@ -2,18 +2,13 @@
 const scriptInfo = {
     name: 'lastActive',
     file: 'lastActive.js',
+    desc: 'Get stats on the last activity of a IRC user',
     createdBy: 'Dave Richer'
 };
 
 const Moment = require('moment');
 const Models = require('bookshelf-model-loader');
 
-/**
-  Message Statistics Module
-  Commands: counter clear-counter last-active
-  Listeners: counter
-  Web Routes: counter
-**/
 module.exports = app => {
 
     // If we have Database availability
@@ -57,7 +52,7 @@ module.exports = app => {
     // Command
     app.Commands.set('last-active', {
         desc: '[user] shows the last activity of the user',
-        access: app.Config.accessLevels.guest,
+        access: app.Config.accessLevels.identified,
         call: lastActive
     });
 

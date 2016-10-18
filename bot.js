@@ -38,7 +38,7 @@ class MrNodeBot {
         this._pusher = this.Config.pusher.enabled ? new Pusher(this.Config.pusher.config) : false;
 
         // TwitterClient
-        // Check to see if twitter is enabled in the config, but only if that key is available, 
+        // Check to see if twitter is enabled in the config, but only if that key is available,
         // since legacy versions didn't expect it.
         if (_.isUndefined(this.Config.features.twitter.enabled) || this.Config.features.twitter.enabled) {
             // Check to see if you have API keys configured to properly load the TwitterClient
@@ -128,6 +128,7 @@ class MrNodeBot {
                 this._ircClient.say(nickserv, `identify ${this.Config.nickserv.password}`);
             }
 
+            // Load in the scripts
             this._loadDynamicAssets(false);
 
             // Run The callback

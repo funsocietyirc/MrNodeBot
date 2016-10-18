@@ -1,8 +1,9 @@
 // Static Routes and pages
 'use strict';
 const scriptInfo = {
-    name: 'static',
-    file: 'static.js',
+    name: 'Static Pages',
+    file: 'staticWeb.js',
+    desc: 'Static Express Pages',
     createdBy: 'Dave Richer'
 };
 

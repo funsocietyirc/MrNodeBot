@@ -17,6 +17,7 @@ query params:
 const scriptInfo = {
     name: 'urlApi',
     file: 'urlApi.js',
+    desc: 'The URL Express API',
     createdBy: 'Dave Richer'
 };
 
@@ -124,7 +125,7 @@ module.exports = app => {
         name: 'api.urls',
         verb: 'get'
     });
-    
+
     app.WebRoutes.set('api.sources', {
         handler: imageSourceHandler,
         desc: 'Get the available sources',

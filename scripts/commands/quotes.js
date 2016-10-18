@@ -2,6 +2,7 @@
 const scriptInfo = {
     name: 'quotes',
     file: 'quotes.js',
+    desc: 'Privates add-quote, del-qutote, and quote. Allows rudenemntary quote system',
     createdBy: 'Dave Richer'
 };
 

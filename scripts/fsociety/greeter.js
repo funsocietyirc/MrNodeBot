@@ -6,6 +6,8 @@
 const scriptInfo = {
     name: 'greeter',
     file: 'greeter.js',
+    desc: 'Send a message to users joining mr robot sub channels based on certain conditions, ' +
+        'letting them know and inviting them to #fsociety',
     createdBy: 'Dave Richer'
 };
 
@@ -80,10 +82,10 @@ module.exports = app => {
         let lowerCaseChannel = channel.toLowerCase();
         // Make sure we are not reporting ourselves
         if (
-          nick != app.nick &&
-          lowerCaseChannel != mainChannel &&
-          !_.includes(app.Config.features.fsociety.greetIgnore, lowerCaseChannel) &&
-          !app._ircClient.isInChannel(app.Config.features.fsociety.mainChannel, nick)
+            nick != app.nick &&
+            lowerCaseChannel != mainChannel &&
+            !_.includes(app.Config.features.fsociety.greetIgnore, lowerCaseChannel) &&
+            !app._ircClient.isInChannel(app.Config.features.fsociety.mainChannel, nick)
         ) {
             checkChannel(channel, nick, message.host, () => {
                 if (app.Config.features.fsociety.report) {

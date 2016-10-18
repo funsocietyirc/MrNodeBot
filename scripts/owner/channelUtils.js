@@ -1,7 +1,8 @@
 'use strict';
 const scriptInfo = {
     name: 'Channels',
-    file: 'channel.js',
+    file: 'channelUtils.js',
+    desc: 'Channel Utilities',
     createdBy: 'Dave Richer'
 };
 

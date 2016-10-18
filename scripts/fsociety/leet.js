@@ -2,6 +2,7 @@
 const scriptInfo = {
     name: 'leet',
     file: 'leet.js',
+    desc: 'The leet speak version of tell',
     createdBy: 'Dave Richer'
 };
 

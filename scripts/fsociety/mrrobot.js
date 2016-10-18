@@ -2,6 +2,7 @@
 const scriptInfo = {
     name: 'mrrobot',
     file: 'mrorbot.js',
+    desc: 'Watch for quotes from the MrRobot bot, log them, clean them, and allow for announcement of them',
     createdBy: 'Dave Richer'
 };
 
@@ -116,6 +117,7 @@ module.exports = app => {
                 app.say(chan || to, `${result.get('quote')} -- Powered By #MrRobot`);
             });
     };
+    
     app.Commands.set('mrrobot', {
         desc: '[Channel / Search Text] Mr Robot quotes powered by #MrRobot',
         access: app.Config.accessLevels.identified,

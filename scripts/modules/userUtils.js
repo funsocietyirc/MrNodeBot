@@ -1,9 +1,9 @@
 'use strict';
 const scriptInfo = {
-    name: 'users',
-    file: 'users.js',
-    createdBy: 'Dave Richer',
-    description: 'Provide Account Services'
+    name: 'User Utilities',
+    file: 'userUtils.js',
+    desc: 'Provides Registration and other User management functionality',
+    createdBy: 'Dave Richer'
 };
 
 module.exports = app => {

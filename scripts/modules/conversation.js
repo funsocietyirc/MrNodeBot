@@ -2,6 +2,7 @@
 const scriptInfo = {
     name: 'conversation',
     file: 'conversation.js',
+    desck: 'Allow the bot to be conversational in private messages, or randomly in channels',
     createdBy: 'Dave Richer'
 };
 
