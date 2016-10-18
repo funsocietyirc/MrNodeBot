@@ -188,7 +188,7 @@ module.exports = app => {
                 // We have no data, default back to the original title grabber
                 if(!data) {
                     return getTitle(url, results)
-                })
+                }
                 let videoTitle = data.snippet.title || '';
                 let viewCount = data.statistics.viewCount || 0;
                 let likeCount = data.statistics.likeCount || 0;
