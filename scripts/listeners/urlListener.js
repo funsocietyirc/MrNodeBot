@@ -179,7 +179,7 @@ module.exports = app => {
                 qs: {
                     id: key,
                     key: app.Config.apiKeys.google,
-                    fields: 'items(id,snippet(channelId,title,categoryId,author),statistics)',
+                    fields: 'items(id,snippet(channelId,title,categoryId),statistics)',
                     part: 'snippet,statistics'
                 }
             })
