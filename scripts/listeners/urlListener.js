@@ -123,7 +123,6 @@ module.exports = app => {
                 });
         })
         .then(results => {
-          console.log(results);
           // Log Youtube Url
           if(results.youTube) {
             return Models.YouTubeLink.create({
@@ -241,30 +240,40 @@ module.exports = app => {
             });
     });
 
+    const logos = {
+      youTube: c.grey.bold('You') + c.red.bold('Tube')
+    };
+
+    const icons = {
+      upArrow: c.green.bold('↑'),
+      downArrow: c.red.bold('↓'),
+      views: c.navy.bold('⚘'),
+      comments: c.blue.bold('✍'),
+      sideArrow: c.grey.bold('→')
+    }
+
     // Formatting Helper
     const shortSay = (to, from, payload) => {
-        let shortString = c.bold('Short:');
-        let titleString = c.bold('Info:');
         let output = '';
         let space = () => output == '' ? '' : ' ';
 
         // We have a Short URL
         if (payload.shortUrl && payload.url.length > app.Config.features.urls.titleMin) {
-            output = output + `${shortString} ${c.grey(payload.shortUrl)}`;
+            output = output + `${c.navy(payload.shortUrl)} ${icons.sideArrow}`;
         }
         // We have a Title
         if (payload.title && payload.title != '') {
-            output = output + space() + `${titleString} ${c.olive(payload.title)}`;
+            output = output + space() + payload.title;
         }
         // We have a YouTube video response
         if (payload.youTube) {
             let yr = payload.youTube;
-            output = output + space() + `${c.grey.bold('You')}${c.red.bold('Tube')} ${yr.videoTitle} ${c.navy.bold('⚘')} ` +
-                `${c.navy(yr.viewCount)} ${c.green.bold('↑')} ${c.green(yr.likeCount)} ${c.red.bold('↓')} ${c.red(yr.dislikeCount)}` +
-                ` ${c.blue.bold('✍')} ${c.blue(yr.commentCount)}`;
+            output = output + space() + `${logos.youTube} ${yr.videoTitle} ${icons.views} ` +
+                `${c.navy(yr.viewCount)} ${icons.upArrow} ${c.green(yr.likeCount)} ${icons.downArrow} ${c.red(yr.dislikeCount)}` +
+                ` ${icons.comments} ${c.blue(yr.commentCount)}`;
         }
         if (output != '') {
-            app.say(to, `(${from}) ` + output);
+            app.say(to, `${from} ${icons.sideArrow} ` + output);
         }
     };
 
