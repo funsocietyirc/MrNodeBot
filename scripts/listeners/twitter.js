@@ -14,15 +14,19 @@ module.exports = app => {
     if (!app._twitterClient) {
         return;
     }
+    
+    let twitterEnabled = (_.isUndefined(app.Config.features.twitter.enabled) || app.Config.features.twitter.enabled);
 
     const say = (tweet) => {
         // Announce to Channels
         app.Config.features.twitter.channels.forEach((chan) => {
+            if (!twitterEnabled) return;
             app.say(chan, `[Twitter] @${tweet.user.screen_name}: ${tweet.text}`);
         });
     };
 
     const push = (tweet) => {
+        if (!twitterEnabled) return;
         // Load in pusher if it is active
         if (!app.Config.pusher.enabled && !app._pusher) {
             return;
@@ -47,6 +51,7 @@ module.exports = app => {
 
     // the Main twitter watcher
     const watcher = () => {
+        if (!twitterEnabled) return;
         let newStream = app._twitterClient.stream('user', {
             with: app.Config.features.twitter.followers
         });
@@ -63,6 +68,7 @@ module.exports = app => {
 
     // Tweet a message
     const tweetCmd = (to, from, text, message) => {
+        if (!twitterEnabled) return;
         if (!text) {
             app.say(from, 'Cannot tweet nothing champ...');
             return;
@@ -73,6 +79,7 @@ module.exports = app => {
         };
 
         app._twitterClient.post('statuses/update', twitConfig, (error, tweet, response) => {
+            if (!twitterEnabled) return;
             if (error) {
                 conLogger('Twitter Error: ' + error, 'error');
                 app.say(from, 'Something is not quite right with your tweet');
