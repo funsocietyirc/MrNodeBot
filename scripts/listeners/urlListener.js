@@ -11,6 +11,7 @@ const c = require('irc-colors');
 const _ = require('lodash');
 const xray = require('x-ray')();
 const GoogleUrl = require('google-url');
+const moment = require('moment');
 const HashMap = require('hashmap');
 const Models = require('bookshelf-model-loader');
 const helpers = require('../../helpers');
@@ -306,7 +307,11 @@ module.exports = app => {
             downArrow: c.red.bold('↓'),
             views: c.navy.bold('⚘'),
             comments: c.blue.bold('✍'),
-            sideArrow: c.grey.bold('→')
+            sideArrow: c.grey.bold('→'),
+            anchor: c.navy.bold('⚓'),
+            star: c.yellow.bold('*'),
+            happy: c.green.bold('☺'),
+            sad: c.red.bold('☹')
         }
 
         // Formatting Helper
@@ -316,7 +321,7 @@ module.exports = app => {
 
                 // We have a Short URL
                 if (payload.shortUrl && payload.url.length > app.Config.features.urls.titleMin) {
-                    output = output + `${c.navy(payload.shortUrl)} ${icons.sideArrow}`;
+                    output = output + `${icons.anchor} ${c.navy(payload.shortUrl)} ${icons.sideArrow}`;
                 }
                 // We have a Title
                 if (payload.title && payload.title != '') {
@@ -333,23 +338,10 @@ module.exports = app => {
 
                 // We Have GitHub data
                 if (!_.isUndefined(payload.gitHub)) {
-                    // Format The response
-                    // results.gitHub = gitHubData = {
-                    //   name: data.name,
-                    //   owner: data.owner.login,
-                    //   desc: data.description,
-                    //   isFork: data.fork,
-                    //   lastPush: data.pushed_at,
-                    //   stars: data.stargazers_count,
-                    //   watchers: data.watchers_count,
-                    //   language: data.language,
-                    //   forks: data.forks_count,
-                    //   issues: data.open_issues_count,
-                    //   fullName: data.full_name,
-                    // };
                     let gh = payload.gitHub;
-                    output = output + space() + `${logos.gitHub} ${icons.sideArrow} ${gh.owner} ${icons.sideArrow} ${gh.name} ${icons.sideArrow} ${gh.desc} ${gh.isFork ? '*fork*' : ''} Last Push: ${gh.lastPush} Stars: ${gh.stars} ` +
-                        `Watchers: ${gh.watchers} Language: ${gh.language} ${gh.forks ? `Forks: ` + gh.forks : ''} Issues: ${gh.issues}`;
+                    let lastUpdate = '~ ' + moment(gh.lastPush).fromNow();
+                    output = output + space() + `${logos.gitHub} ${icons.sideArrow} ${gh.owner} ${icons.sideArrow} ${gh.name} ${icons.sideArrow} ${gh.desc} ${gh.isFork ? '*fork*' : ''} ${icons.sideArrow} ${c.bold('Updated:')} ${lastUpdate} ${icons.sideArrow} ${gh.language} ${icons.sideArrow} ${icons.star} ${c.yellow(gh.stars)} ` +
+                        `${icons.views} ${c.navy.bold(gh.watchers)} ${gh.forks ? c.bold(`Forks:) ` + gh.forks : ''}${icons.sad} ${c.red(gh.issues)}`;
         }
 
         if (output != '') {
