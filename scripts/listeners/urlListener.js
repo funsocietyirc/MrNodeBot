@@ -224,7 +224,7 @@ module.exports = app => {
         // We have a YouTube video response
         if (payload.youTube) {
             let yr = payload.youTube;
-            output = output + space() + `${c.bold('Title:')} "${c.olive(yr.videoTitle)}" ${c.bold('Views:')} ` +
+            output = output + space() + `${c.white.bgBlack('You')}${c.black.bgWhite('Tube')} ${c.bold('Title:')} "${c.olive(yr.videoTitle)}" ${c.bold('Views:')} ` +
                 `${c.olive(yr.viewCount)} ${c.bold('Likes:')} ${c.olive(yr.likeCount)} ${c.bold('Dislikes:')} ${c.olive(yr.dislikeCount)}` +
                 ` ${c.bold('Comments:')} ${c.olive(yr.commentCount)}`;
         }
