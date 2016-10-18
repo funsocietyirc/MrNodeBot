@@ -193,13 +193,11 @@ module.exports = app => {
                 let viewCount = data.statistics.viewCount || 0;
                 let likeCount = data.statistics.likeCount || 0;
                 let dislikeCount = data.statistics.dislikeCount || 0;
-                let favCount = data.statistics.favouriteCount || 0;
                 let commentCount = data.statistics.commentCount || 0;
                 resolve(_.merge(results, {
                     youTube: {
-                      videoTitle, viewCount, likeCount, dislikeCount, favCount, commentCount
-                    },
-                    title: `Title: "${videoTitle}" Views: ${viewCount} Likes: ${likeCount} Dislikes: ${dislikeCount} Favourites: ${favCount} Comments: ${commentCount}`
+                      videoTitle, viewCount, likeCount, dislikeCount, commentCount
+                    }
                 }));
             });
     });
@@ -209,12 +207,20 @@ module.exports = app => {
         let shortString = c.bold('Short:');
         let titleString = c.bold('Info:');
         let output = '';
+        let space = () => output == '' ? '' : ' ';
+
+        // We have a Short URL
         if (payload.shortUrl && payload.url.length > app.Config.features.urls.titleMin) {
             output = output + `${shortString} ${c.grey(payload.shortUrl)}`;
         }
+        // We have a Title
         if (payload.title && payload.title != '') {
-            let space = output == '' ? '' : ' ';
-            output = output + space + `${titleString} ${c.olive(payload.title)}`;
+            output = output + space() + `${titleString} ${c.olive(payload.title)}`;
+        }
+        // We have a YouTube video response
+        if(payload.youTube) {
+          let yr = payload.youTube;
+          output = output + space() + `Title: "${c.olive(yr.videoTitle)}" Views: ${c.olive(yr.viewCount)} Likes: ${c.olive(yr.likeCount)} Dislikes: ${c.olive(yr.dislikeCount)} Comments: ${c.olive(yr.commentCount)}`;
         }
         if (output != '') {
             app.say(to, `(${from}) ` + output);
