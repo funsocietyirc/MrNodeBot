@@ -167,7 +167,7 @@ module.exports = app => {
     });
 
     // Get the youtube key from link
-    const getYoutube = (key, results) => new Promise((resolve, reject) => {
+    const getYoutube = (url, key, results) => new Promise((resolve, reject) => {
 
         // Bail if we have no result
         if (!key || _.isEmpty(key)) {
@@ -179,13 +179,16 @@ module.exports = app => {
                 qs: {
                     id: key,
                     key: app.Config.apiKeys.google,
-                    fields: 'items(id,snippet(channelId,title,categoryId),statistics)',
+                    fields: 'items(id,snippet(channelId,title,categoryId,author),statistics)',
                     part: 'snippet,statistics'
                 }
             })
             .then(result => {
                 let data = JSON.parse(result).items[0];
-                console.log(data.snippet.title);
+                // We have no data, default back to the original title grabber
+                if(!data {
+                    return getTitle(url, results)
+                })
                 let videoTitle = data.snippet.title || '';
                 let viewCount = data.statistics.viewCount || 0;
                 let likeCount = data.statistics.likeCount || 0;
@@ -204,7 +207,7 @@ module.exports = app => {
     // Formatting Helper
     const shortSay = (to, from, payload) => {
         let shortString = c.bold('Short:');
-        let titleString = c.bold('Title:');
+        let titleString = c.bold('Info:');
         let output = '';
         if (payload.shortUrl && payload.url.length > app.Config.features.urls.titleMin) {
             output = output + `${shortString} ${c.grey(payload.shortUrl)}`;
@@ -261,7 +264,7 @@ module.exports = app => {
                     let match = url.match(/^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/);
                     // If We have a valid Youtube Link
                     if (match && match[2].length == 11) {
-                        return getYoutube(match[2], results);
+                        return getYoutube(url, match[2], results);
                     }
                     // If we have a regular link
                     else {
