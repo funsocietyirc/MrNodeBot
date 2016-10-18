@@ -259,9 +259,9 @@ module.exports = app => {
         // We have a YouTube video response
         if (payload.youTube) {
             let yr = payload.youTube;
-            output = output + space() + `${c.grey.bold('You')}${c.red.bold('Tube')} ${c.bold('Title:')} "${c.olive(yr.videoTitle)}" ${c.bold('⚇')} ` +
-                `${c.olive(yr.viewCount)} ${c.green.bold('↑')} ${c.olive(yr.likeCount)} ${c.red.bold('↓')} ${c.olive(yr.dislikeCount)}` +
-                ` ${c.bold('✑')} ${c.olive(yr.commentCount)}`;
+            output = output + space() + `${c.grey.bold('You')}${c.red.bold('Tube')} ${yr.videoTitle} ${c.navy.bold('⚘')} ` +
+                `${c.navy(yr.viewCount)} ${c.green.bold('↑')} ${c.green(yr.likeCount)} ${c.red.bold('↓')} ${c.red(yr.dislikeCount)}` +
+                ` ${c.blue.bold('✍')} ${c.blue(yr.commentCount)}`;
         }
         if (output != '') {
             app.say(to, `(${from}) ` + output);
