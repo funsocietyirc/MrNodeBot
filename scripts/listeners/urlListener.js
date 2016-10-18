@@ -206,7 +206,7 @@ module.exports = app => {
         });
 
         // Get GitHub Information
-        const getGitHub = (url, domain, user, repo, results) => rp({
+        const getGitHub = (url, user, repo, results) => rp({
                 uri: `https://api.github.com/repos/${user}/${repo}`,
                 headers: {
                     'user-agent': 'MrNodeBot'
@@ -237,6 +237,34 @@ module.exports = app => {
                 return getTitle(url, results)
             });
 
+        // get BitBucket Information
+        const getBitBucket = (url, user, repo, results) => rp({
+                uri: `https://api.bitbucket.org/2.0/repositories/${user}/${repo}`,
+                headers: {
+                    'user-agent': 'MrNodeBot'
+                }
+            })
+            .then(result => {
+                let data = JSON.parse(result);
+                if (!data) {
+                    return getTitle(url, results);
+                }
+                results.bitBucket = {
+                  name: data.name,
+                  ownerUserName: data.owner.username,
+                  ownerDisplayName: data.owner.display_name,
+                  lastPush: data.updated_on,
+                  fullName: data.full_name,
+                  language: data.language,
+                  hasIssues: data.has_issues,
+                  desc: data.description
+                };
+                return results;
+            })
+            .catch(err => {
+                return getTitle(url, results);
+            });
+
         const getRepoInfo = (url, domain, user, repo, results) => {
             // Bail if we have no result, default back to getTitle
             if (_.isEmpty(url, domain, user, repo)) {
@@ -245,11 +273,11 @@ module.exports = app => {
 
             switch (domain.toLowerCase()) {
                 case 'github.com':
-                    return getGitHub(url, domain, user, repo, results);
+                    return getGitHub(url, user, repo, results);
                     break;
                 case 'bitbucket.org':
                     // TODO Implement BitBucket
-                    return getTitle(url, results);
+                    return getBitBucket(url, user, repo, results);
                     break;
                 default:
                     return getTitle(url, results);
@@ -299,7 +327,8 @@ module.exports = app => {
 
         const logos = {
             youTube: c.grey.bold('You') + c.red.bold('Tube'),
-            gitHub: c.grey.bold('GitHub')
+            gitHub: c.grey.bold('GitHub'),
+            bitBucket: c.navy.bold('BitBucket'),
         };
 
         const icons = {
@@ -340,9 +369,24 @@ module.exports = app => {
                 if (!_.isUndefined(payload.gitHub)) {
                     let gh = payload.gitHub;
                     let lastUpdate = '~ ' + moment(gh.lastPush).fromNow();
-                    output = output + space() + `${logos.gitHub} ${icons.sideArrow} ${gh.owner} ${icons.sideArrow} ${gh.name} ${icons.sideArrow} ${gh.desc} ${gh.isFork ? '*fork*' : ''} ${icons.sideArrow} ${c.bold('Updated:')} ${lastUpdate} ${icons.sideArrow} ${gh.language} ${icons.sideArrow} ${icons.star} ${c.yellow(gh.stars)} ` +
-                        `${icons.views} ${c.navy.bold(gh.watchers)} ${gh.forks ? c.bold(`Forks: `)  + gh.forks : ''}${icons.sad} ${c.red(gh.issues)}`;
-        }
+                    output = output + space() + `${logos.gitHub} ${icons.sideArrow} ${gh.owner} ${icons.sideArrow} ${gh.name} ${icons.sideArrow} ${gh.desc} ${gh.isFork ? '*fork*' : ''} ${icons.sideArrow} ${c.bold('Updated:')} ${lastUpdate} ${icons.sideArrow}` +
+                        ` ${gh.language} ${icons.sideArrow} ${icons.star} ${c.yellow(gh.stars)} ` +
+                        `${icons.views} ${c.navy(gh.watchers)} ${gh.forks ? c.bold(`Forks: `)  + gh.forks + ' ' : ''}${icons.sad} ${c.red(gh.issues)}`;
+                }
+
+                // We Have BitBucket data
+                if(!_.isUndefined(payload.bitBucket)) {
+                  let bb = payload.bitBucket;
+                  let lastUpdate = '~ ' + moment(bb.lastPush).fromNow();
+                  output = output + space() + `${logos.bitBucket} ${icons.sideArrow} ${bb.ownerDisplayName} ${icons.sideArrow} ${bb.desc ? bb.desc : 'BitBucket Repository'}`;
+                  output = output + space() + `${icons.sideArrow} ${c.bold('Updated:')} ${lastUpdate} `;
+                  if(bb.language) {
+                    output = output + space() + `${icons.sideArrow} ${bb.language}`;
+                  }
+                  if(bb.hasIssues) {
+                    output = output + space() + `${icons.sideArrow} ${icons.sad}` ;
+                  }
+                }
 
         if (output != '') {
             app.say(to, `${from} ${icons.sideArrow} ` + output);
