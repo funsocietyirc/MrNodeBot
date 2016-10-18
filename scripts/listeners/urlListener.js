@@ -186,7 +186,7 @@ module.exports = app => {
             .then(result => {
                 let data = JSON.parse(result).items[0];
                 // We have no data, default back to the original title grabber
-                if(!data {
+                if(!data) {
                     return getTitle(url, results)
                 })
                 let videoTitle = data.snippet.title || '';
