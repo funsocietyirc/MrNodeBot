@@ -59,9 +59,8 @@ module.exports = app => {
                     aL.combined({
                         text: data.join('. '),
                         //showSourceText: 1,
-                        emotions:1,
-                        knowledgeGraph:1,
-                        maxRetrieve: 10,
+                        // emotion:1,
+                        // knowledgeGraph:1,
                         extract: 'page-image,image-kw,feed,entity,keyword,taxonomy,concept,relation,pub-date,doc-sentiment,doc-emotion'
                     }, (err, response) => {
                         if (err || !response || response.status != 'OK') {
@@ -72,11 +71,29 @@ module.exports = app => {
                             }
                             return;
                         }
-                        //console.log(JSON.stringify(response, null, 2));
 
-                        let concepts = _.map(response.concepts,'text');
-                        app.say(to, `${nick} is interested in things like: ${concepts.join(', ')}`)
+                        // Log to console
+//                        console.log(JSON.stringify(response, null, 2));
 
+                        let concepts = _.map(response.concepts,'text').join(', ');
+                        let taxonomy = [];
+                        _(response.taxonomy).map('label').map(value => _.filter(value.split('/')), n => true).uniq().each(value => {
+                          _.each(value, item => {
+                            taxonomy.push(item);
+                          });
+                        });
+                        taxonomy = _.uniq(taxonomy).join(', ');
+                        
+                        let space = () => ' - ';
+                        let output = `${nick} is interested in concepts like: ${concepts}`;
+                        output = output + space() + `Most of the time ${nick} is ${response.docSentiment.type}`;
+                        output = output + space() + `They are also interested in: ${taxonomy}`;
+                        output = output + space() + `There emotional state is: `;
+                        _.each(response.docEmotions, (value, key) => {
+                            output = output + ` ${_.capitalize(key)}: ${helpers.RoundNumber(value * 100)}%`
+                        });
+
+                        app.say(to, output);
                         //app.say(to, `${nick} is that ${response.language} character who has been mostly ${response.docSentiment.type} on ${channel}`);
                     });
                 })
@@ -90,94 +107,6 @@ module.exports = app => {
             access: app.Config.accessLevels.admin,
             call: combined
         });
-
-    // Get the users overall sentiment
-    const sentiment = (to, from, text, message) => {
-        let textArray = text.split(' ');
-        let [nick, channel, limit] = textArray;
-        // No Nick Provided
-        if (!text || !nick || !channel) {
-            app.say(to, 'The Sentiment command requires a Nick and a Channel');
-            return;
-        }
-        getResults(nick, channel, limit)
-            .then(results => {
-                let data = _(results.pluck('text')).uniq().reverse().value();
-                if (!data) {
-                    app.say(to, 'Something went wrong completing your sentiment command');
-                    return;
-                }
-                aL.sentiment({
-                    text: data.join(' ')
-                }, (err, response) => {
-                    if (err || !response || response.status != 'OK') {
-                        app.say(to, 'Something went wrong completing your sentiment command');
-                        console.log('Sentiment Error:');
-                        if (err) {
-                            console.dir(err);
-                        }
-                        return;
-                    }
-                    app.say(to, `${nick} is that ${response.language} character who has been mostly ${response.docSentiment.type} on ${channel}`);
-                });
-            })
-            .catch(err => {
-                console.log('Sentiment Error:');
-                console.dir(err);
-            });
-    };
-    app.Commands.set('sentiment', {
-        desc: '[Nick] [Channel] Get the sentiment information for a specified user',
-        access: app.Config.accessLevels.admin,
-        call: sentiment
-    });
-
-    // Get the users emotion
-    const emotion = (to, from, text, message) => {
-        let textArray = text.split(' ');
-        let [nick, channel, limit] = textArray;
-
-        // No Nick Provided
-        if (!text || !nick || !channel) {
-            app.say(to, 'The Emotion command requires a Nick and a Channel');
-            return;
-        }
-
-        getResults(nick, channel, limit)
-            .then(results => {
-                let data = _(results.pluck('text')).uniq().reverse().value();
-                if (!data) {
-                    app.say(to, 'There is not enough data on this user to gauge their emotional state...hr');
-                    return;
-                }
-                aL.emotion({
-                    text: data.join(' ')
-                }, (err, response) => {
-                    if (err || !response || response.status != 'OK') {
-                        app.say(to, 'Something went wrong completing your sentiment command');
-                        console.log('Emotion Error:');
-                        if (err) {
-                            console.dir(err);
-                        }
-                        return;
-                    }
-                    let output = `The Emotional state of ${nick} on ${channel}`;
-                    _.each(response.docEmotions, (value, key) => {
-                        output = output + ` ${key}: ${helpers.RoundNumber(value * 100)}%`
-                    });
-                    app.say(to, output);
-                });
-            })
-            .catch(err => {
-                console.log('Emotion Error:');
-                console.dir(err);
-            });
-    };
-    app.Commands.set('emotion', {
-        desc: '[Nick] [Channel] Get the emotion information for a specified user',
-        access: app.Config.accessLevels.admin,
-        call: emotion
-    });
 
 
     return scriptInfo;
