@@ -9,14 +9,14 @@ const scriptInfo = {
 
 const c = require('irc-colors');
 const _ = require('lodash');
-const xray = require('x-ray')();
-const GoogleUrl = require('google-url');
-const moment = require('moment');
-const HashMap = require('hashmap');
-const Models = require('bookshelf-model-loader');
-const helpers = require('../../helpers');
-const conLogger = require('../../lib/consoleLogger');
 const rp = require('request-promise-native');
+const xray = require('x-ray')();
+const moment = require('moment');
+const Models = require('bookshelf-model-loader');
+const HashMap = require('hashmap');
+const helpers = require('../../helpers');
+const GoogleUrl = require('google-url');
+const conLogger = require('../../lib/consoleLogger');
 
 /**
   Translate urls into Google short URLS
@@ -346,51 +346,78 @@ module.exports = app => {
         // Formatting Helper
         const shortSay = (to, from, payload) => {
                 let output = '';
-                let space = () => output == '' ? '' : ' ';
+                let space = () => ' ' + icons.sideArrow + ' ';
 
                 // We have a Short URL
                 if (payload.shortUrl && payload.url.length > app.Config.features.urls.titleMin) {
-                    output = output + `${icons.anchor} ${c.navy(payload.shortUrl)} ${icons.sideArrow}`;
+                    output = output + `${icons.anchor} ${c.navy(payload.shortUrl)}`;
                 }
+
                 // We have a Title
                 if (payload.title && payload.title != '') {
-                    output = output + space() + payload.title;
+                    output = output + space() + `${payload.title}`;
                 }
 
                 // We have a YouTube video response
                 if (!_.isUndefined(payload.youTube)) {
                     let yr = payload.youTube;
-                    output = output + space() + `${logos.youTube} ${icons.sideArrow} ${yr.videoTitle} ${icons.views} ` +
-                        `${c.navy(yr.viewCount)} ${icons.upArrow} ${c.green(yr.likeCount)} ${icons.downArrow} ${c.red(yr.dislikeCount)}` +
-                        ` ${icons.comments} ${c.blue(yr.commentCount)}`;
+                    output = output + space() + logos.youTube;
+                    output = output + space() + yr.videoTitle;
+                    output = output + space() + `${icons.views} ${c.navy(yr.viewCount)} ${icons.upArrow} ${c.green(yr.likeCount)} ${icons.downArrow} ${c.red(yr.dislikeCount)} ${icons.comments} ${c.blue(yr.commentCount)}`;
                 }
 
                 // We Have GitHub data
                 if (!_.isUndefined(payload.gitHub)) {
                     let gh = payload.gitHub;
-                    let lastUpdate = '~ ' + moment(gh.lastPush).fromNow();
-                    output = output + space() + `${logos.gitHub} ${icons.sideArrow} ${gh.owner} ${icons.sideArrow} ${gh.name} ${icons.sideArrow} ${gh.desc} ${gh.isFork ? '*fork*' : ''} ${icons.sideArrow} ${c.bold('Updated:')} ${lastUpdate} ${icons.sideArrow}` +
-                        ` ${gh.language} ${icons.sideArrow} ${icons.star} ${c.yellow(gh.stars)} ` +
-                        `${icons.views} ${c.navy(gh.watchers)} ${gh.forks ? c.bold(`Forks: `)  + gh.forks + ' ' : ''}${icons.sad} ${c.red(gh.issues)}`;
+
+                    output = output + space() + logos.gitHub;
+                    output = output + space() + gh.owner;
+                    output = output + space() + gh.name;
+                    output = output + space() + gh.desc
+                    if(gh.lastPush) {
+                      output = output + space() + `${c.bold('Updated:')} ~ ${moment(gh.lastPush).fromNow()}`;
+                    }
+                    if(gh.isFork) {
+                      output = output + space() + 'Forked';
+                    }
+                    if(gh.language) {
+                      output = output + space() + gh.language;
+                    }
+                    if(gh.stars) {
+                      output = output + space() + `${icons.star} ${c.yellow(gh.stars)}`;
+                    }
+                    if(gh.views && gh.views != gh.stars) {
+                      output = output + space() + `${icons.views} ${c.navy(gh.watchers)}`;
+                    }
+                    if(gh.forks) {
+                      output = output + space() + `${c.bold(`Forks:`)} ${gh.forks}`;
+                    }
+                    if(gh.issues) {
+                      output = output + space() + `${icons.sad} ${c.red(gh.issues)}`;
+                    }
+
                 }
 
                 // We Have BitBucket data
                 if(!_.isUndefined(payload.bitBucket)) {
                   let bb = payload.bitBucket;
-                  let lastUpdate = '~ ' + moment(bb.lastPush).fromNow();
                   output = output + space() + `${logos.bitBucket} ${icons.sideArrow} ${bb.ownerDisplayName} ${icons.sideArrow} ${bb.desc ? bb.desc : 'BitBucket Repository'}`;
-                  output = output + space() + `${icons.sideArrow} ${c.bold('Updated:')} ${lastUpdate} `;
+                  output = output + space() + `${c.bold('Updated:')} ~ ${ moment(bb.lastPush).fromNow()}`;
                   if(bb.language) {
-                    output = output + space() + `${icons.sideArrow} ${bb.language}`;
+                    output = output + space() + `${bb.language}`;
                   }
                   if(bb.hasIssues) {
-                    output = output + space() + `${icons.sideArrow} ${icons.sad}` ;
+                    output = output + space() + `${icons.sad}` ;
                   }
                 }
 
-        if (output != '') {
-            app.say(to, `${from} ${icons.sideArrow} ` + output);
-        }
+                // Bail if we have no output
+                if (output == '') {
+                  return;
+                }
+
+                // Report back to IRC
+                app.say(to, `${from} ${icons.sideArrow} ` + output);
     };
 
     // Report back to IRC
@@ -446,6 +473,7 @@ module.exports = app => {
                     if (gitMatch && gitMatch[1] && gitMatch[2] && gitMatch[3]) {
                         return getRepoInfo(url, gitMatch[1], gitMatch[2], gitMatch[3], results);
                     }
+
                     // If we have a regular link
                     return getTitle(url, results)
                 })
@@ -456,9 +484,6 @@ module.exports = app => {
                 .catch(handleErrors)
             );
     };
-
-    // URL Info
-    const urlInfo = (to, from, text, message) => {};
 
     // List for urls
     app.Listeners.set('url-listener', {
