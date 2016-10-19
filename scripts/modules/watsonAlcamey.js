@@ -52,7 +52,6 @@ module.exports = app => {
                     app.say(to, 'Something went wrong completing your sentiment command');
                     return;
                 }
-                console.log(data.join(' '));
                 aL.sentiment({
                     text: data.join(' ')
                 }, (err, response) => {
@@ -64,7 +63,7 @@ module.exports = app => {
                         }
                         return;
                     }
-                    app.say(from, `${nick} is that ${response.language} character who has been mostly ${response.docSentiment.type} on ${channel}`);
+                    app.say(to, `${nick} is that ${response.language} character who has been mostly ${response.docSentiment.type} on ${channel}`);
                   });
             })
             .catch(err => {
