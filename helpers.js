@@ -73,6 +73,8 @@ const Plural = exports.Plural = (text, number) => number > 1 || number === 0 ? t
 // Strip new lines
 const StripNewLine = exports.StripNewLine = text => text.replace(/(?:\r\n|\r|\n)/g, ' ');
 
+// Comma deliminate numbers at 3 digits
+const NumberWithCommas = exports.NumberWithCommas = x =>  x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
 // Extract URLS From text
 const ExtractUrls = exports.ExtractUrls = text => text.toString().match(/\b((?:[a-z][\w-]+:(?:\/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))/ig);

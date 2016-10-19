@@ -250,14 +250,14 @@ module.exports = app => {
                     return getTitle(url, results);
                 }
                 results.bitBucket = {
-                  name: data.name,
-                  ownerUserName: data.owner.username,
-                  ownerDisplayName: data.owner.display_name,
-                  lastPush: data.updated_on,
-                  fullName: data.full_name,
-                  language: data.language,
-                  hasIssues: data.has_issues,
-                  desc: data.description
+                    name: data.name,
+                    ownerUserName: data.owner.username,
+                    ownerDisplayName: data.owner.display_name,
+                    lastPush: data.updated_on,
+                    fullName: data.full_name,
+                    language: data.language,
+                    hasIssues: data.has_issues,
+                    desc: data.description
                 };
                 return results;
             })
@@ -363,7 +363,7 @@ module.exports = app => {
                     let yr = payload.youTube;
                     output = output + space() + logos.youTube;
                     output = output + space() + yr.videoTitle;
-                    output = output + space() + `${icons.views} ${c.navy(yr.viewCount)} ${icons.upArrow} ${c.green(yr.likeCount)} ${icons.downArrow} ${c.red(yr.dislikeCount)} ${icons.comments} ${c.blue(yr.commentCount)}`;
+                    output = output + space() + `${icons.views} ${c.navy(helpers.NumberWithCommas(yr.viewCount))} ${icons.upArrow} ${c.green(helpers.NumberWithCommas(yr.likeCount))} ${icons.downArrow} ${c.red(helpers.NumberWithCommas(yr.dislikeCount))} ${icons.comments} ${c.blue(helpers.NumberWithCommas(yr.commentCount))}`;
                 }
 
                 // We Have GitHub data
@@ -374,26 +374,26 @@ module.exports = app => {
                     output = output + space() + gh.owner;
                     output = output + space() + gh.name;
                     output = output + space() + gh.desc
-                    if(gh.lastPush) {
-                      output = output + space() + `${c.bold('Updated:')} ~ ${moment(gh.lastPush).fromNow()}`;
+                    if (gh.lastPush) {
+                        output = output + space() + `${c.bold('Updated:')} ~ ${moment(gh.lastPush).fromNow()}`;
                     }
-                    if(gh.isFork) {
-                      output = output + space() + 'Forked';
+                    if (gh.isFork) {
+                        output = output + space() + 'Forked';
                     }
-                    if(gh.language) {
-                      output = output + space() + gh.language;
+                    if (gh.language) {
+                        output = output + space() + gh.language;
                     }
-                    if(gh.stars) {
-                      output = output + space() + `${icons.star} ${c.yellow(gh.stars)}`;
+                    if (gh.stars) {
+                        output = output + space() + `${icons.star} ${c.yellow(helpers.NumberWithCommas(gh.stars))}`;
                     }
-                    if(gh.views && gh.views != gh.stars) {
-                      output = output + space() + `${icons.views} ${c.navy(gh.watchers)}`;
+                    if (gh.views && gh.views != gh.stars) {
+                        output = output + space() + `${icons.views} ${c.navy(helpers.NumberWithCommas(gh.watchers))}`;
                     }
-                    if(gh.forks) {
-                      output = output + space() + `${c.bold(`Forks:`)} ${gh.forks}`;
+                    if (gh.forks) {
+                        output = output + space() + `${c.bold(`Forks:`)} ${helpers.NumberWithCommas(gh.forks)}`;
                     }
                     if(gh.issues) {
-                      output = output + space() + `${icons.sad} ${c.red(gh.issues)}`;
+                      output = output + space() + `${icons.sad} ${c.red(helpers.NumberWithCommas(gh.issues))}`;
                     }
 
                 }
@@ -412,7 +412,7 @@ module.exports = app => {
                 }
 
                 // Bail if we have no output
-                if (output == '') {
+                if (_.isEmpty(output)) {
                   return;
                 }
 

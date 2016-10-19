@@ -95,24 +95,29 @@ module.exports = app => {
                             Models.Url.where('url', url).destroy();
                             return;
                         }
-                        helpers.smartHttp(url).get(url, res => {
-                            res.once('data', chunk => {
-                                res.destroy();
-                                // Check extension
-                                let type = fileType(chunk);
-                                let ext = '';
-                                if (type && type.ext) {
-                                    ext = type.ext;
-                                }
-                                // If Valid image extension bailout
-                                if (ext === 'png' || ext === 'gif' || ext === 'jpg' || ext === 'jpeg') {
-                                    return;
-                                }
-                                // Remove from database
-                                conLogger(`Removing non image link ${url} from Url table`, 'info');
-                                Models.Url.where('url', url).destroy();
-                            });
-                        });
+                        try {
+                          helpers.smartHttp(url).get(url, res => {
+                              res.once('data', chunk => {
+                                  res.destroy();
+                                  // Check extension
+                                  let type = fileType(chunk);
+                                  let ext = '';
+                                  if (type && type.ext) {
+                                      ext = type.ext;
+                                  }
+                                  // If Valid image extension bailout
+                                  if (ext === 'png' || ext === 'gif' || ext === 'jpg' || ext === 'jpeg') {
+                                      return;
+                                  }
+                                  // Remove from database
+                                  conLogger(`Removing non image link ${url} from Url table`, 'info');
+                                  Models.Url.where('url', url).destroy();
+                              });
+                          });
+                        } catch(err) {
+                          conLogger('error in imageUtils:','error');
+                          console.dir(err);
+                        };
                     });
                 });
             });
