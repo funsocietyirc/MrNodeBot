@@ -46,7 +46,7 @@ module.exports = app => {
             return;
         }
 
-        getResults(nick)
+        getResults(text)
             .then(results => {
                 let contentItems = [];
                 results.each(model => {
