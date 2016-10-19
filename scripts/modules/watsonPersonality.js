@@ -60,9 +60,9 @@ module.exports = app => {
                         language: 'en',
                     });
                 });
-                console.dir(contentItems);
+                console.dir(JSON.parse(contentItems));
                 pI.profile({
-                    contentItems
+                    contentItems: JSON.parse(contentItems);
                 }, (error, response) => {
                     if (error)
                         console.log('error:', error);
