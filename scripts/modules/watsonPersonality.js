@@ -78,7 +78,7 @@ module.exports = app => {
     app.Commands.set('personify', {
         desc: '[Nick] Get a detailed Personal report',
         access: app.Config.accessLevels.owner,
-        call: combined
+        call: personify
     });
 
 
