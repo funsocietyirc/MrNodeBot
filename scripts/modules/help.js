@@ -59,7 +59,7 @@ module.exports = app => {
             results.push({
                 desc: value.desc,
                 command: key,
-                access: helpers.accessString(value.access)
+                access: helpers.AccessString(value.access)
             });
         });
 

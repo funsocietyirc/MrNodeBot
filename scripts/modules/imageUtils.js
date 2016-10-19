@@ -61,7 +61,7 @@ module.exports = app => {
             })
             .then(() => {
                 // Clean up when done
-                cleanImages(to, from, text, message);
+                cleanImages();
                 app.say(from, 'The Image URL enteries have been successfully rebuilt');
             })
     };
@@ -80,6 +80,7 @@ module.exports = app => {
 
     // Clean the DB of broken URLS
     const cleanImages = () => {
+      conLogger('Running Clean Images','info');
         Models.Url.query(qb => {
                 // Build Up Query
                 qb.where(whereImages);
@@ -87,6 +88,7 @@ module.exports = app => {
             .fetchAll()
             .then(results => {
                 results.pluck('url').forEach(url => {
+
                     // Check if url is valid
                     checkUrl(url, good => {
                         if (!good) {
@@ -120,6 +122,7 @@ module.exports = app => {
                         };
                     });
                 });
+                conLogger('Clean Images script completed','info');
             });
     };
 

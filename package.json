@@ -52,6 +52,7 @@
     "shelljs": "^0.7.3",
     "twit": "^2.2.5",
     "url-exists": "^1.0.3",
+    "watson-developer-cloud": "^2.6.1",
     "x-ray": "^2.3.0"
   }
 }
