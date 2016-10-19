@@ -28,7 +28,7 @@ module.exports = app => {
     });
 
 
-    const getResults = (nick, channel) => Models.Logging.query(qb => {
+    const getResults = (nick, channel, limit) => Models.Logging.query(qb => {
             qb
                 .select(['text', 'timestamp'])
                 .distinct('text')
@@ -36,20 +36,20 @@ module.exports = app => {
                 .andWhere('to','like', channel)
                 .andWhere('text', 'not like', 's/%')
                 .orderBy('timestamp', 'desc')
-                .limit(500);
+                .limit(limit || 500);
         })
         .fetchAll();
 
         // Get the users overall sentiment
         const combined = (to, from, text, message) => {
             let textArray = text.split(' ');
-            let [nick, channel] = textArray;
+            let [nick, channel, limit] = textArray;
             // No Nick Provided
             if (!text || !nick || !channel) {
                 app.say(to, 'The Combined command requires a Nick and a Channel');
                 return;
             }
-            getResults(nick, channel)
+            getResults(nick, channel, limit)
                 .then(results => {
                     let data = _(results.pluck('text')).uniq().reverse().value();
                     if (!data) {
@@ -58,7 +58,7 @@ module.exports = app => {
                     }
                     aL.combined({
                         text: data.join('. '),
-                        showSourceText: 1,
+                        //showSourceText: 1,
                         emotions:1,
                         knowledgeGraph:1,
                         maxRetrieve: 10,
@@ -94,13 +94,13 @@ module.exports = app => {
     // Get the users overall sentiment
     const sentiment = (to, from, text, message) => {
         let textArray = text.split(' ');
-        let [nick, channel] = textArray;
+        let [nick, channel, limit] = textArray;
         // No Nick Provided
         if (!text || !nick || !channel) {
             app.say(to, 'The Sentiment command requires a Nick and a Channel');
             return;
         }
-        getResults(nick, channel)
+        getResults(nick, channel, limit)
             .then(results => {
                 let data = _(results.pluck('text')).uniq().reverse().value();
                 if (!data) {
@@ -135,7 +135,7 @@ module.exports = app => {
     // Get the users emotion
     const emotion = (to, from, text, message) => {
         let textArray = text.split(' ');
-        let [nick, channel] = textArray;
+        let [nick, channel, limit] = textArray;
 
         // No Nick Provided
         if (!text || !nick || !channel) {
@@ -143,7 +143,7 @@ module.exports = app => {
             return;
         }
 
-        getResults(nick, channel)
+        getResults(nick, channel, limit)
             .then(results => {
                 let data = _(results.pluck('text')).uniq().reverse().value();
                 if (!data) {
