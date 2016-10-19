@@ -73,6 +73,13 @@ const Plural = exports.Plural = (text, number) => number > 1 || number === 0 ? t
 // Strip new lines
 const StripNewLine = exports.StripNewLine = text => text.replace(/(?:\r\n|\r|\n)/g, ' ');
 
+// Round numbers
+const RoundNumber = exports.RoundNumber = (num, decimals) =>  {
+    decimals = decimals || 2;
+    var t = Math.pow(10, decimals);
+    return (Math.round((num * t) + (decimals > 0 ? 1 : 0) * (Math.sign(num) * (10 / Math.pow(100, decimals)))) / t).toFixed(decimals);
+};
+
 // Comma deliminate numbers at 3 digits
 const NumberWithCommas = exports.NumberWithCommas = x =>  x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 

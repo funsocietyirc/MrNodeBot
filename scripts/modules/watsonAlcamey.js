@@ -10,6 +10,7 @@ const scriptInfo = {
 const AlchemyLanguageV1 = require('watson-developer-cloud/alchemy-language/v1');
 
 const Models = require('bookshelf-model-loader');
+const helpers = require('../../helpers');
 
 const _ = require('lodash');
 
@@ -26,15 +27,65 @@ module.exports = app => {
         api_key: app.Config.apiKeys.watson.alchemy.apikey
     });
 
+
     const getResults = (nick, channel) => Models.Logging.query(qb => {
             qb
                 .select(['text', 'timestamp'])
-                .where('from', 'like', nick)
-                .andWhere('to', 'like', channel)
+                .distinct('text')
+                .where('from','like', nick)
+                .andWhere('to','like', channel)
+                .andWhere('text', 'not like', 's/%')
                 .orderBy('timestamp', 'desc')
                 .limit(500);
         })
         .fetchAll();
+
+        // Get the users overall sentiment
+        const combined = (to, from, text, message) => {
+            let textArray = text.split(' ');
+            let [nick, channel] = textArray;
+            // No Nick Provided
+            if (!text || !nick || !channel) {
+                app.say(to, 'The Combined command requires a Nick and a Channel');
+                return;
+            }
+            getResults(nick, channel)
+                .then(results => {
+                    let data = _(results.pluck('text')).uniq().reverse().value();
+                    if (!data) {
+                        app.say(to, 'Something went wrong completing your combined command');
+                        return;
+                    }
+                    aL.combined({
+                        text: data.join('. '),
+                        showSourceText: 1,
+                        emotions:1,
+                        knowledgeGraph:1,
+                        maxRetrieve: 10,
+                        extract: 'page-image,image-kw,feed,entity,keyword,taxonomy,concept,relation,pub-date,doc-sentiment,doc-emotion'
+                    }, (err, response) => {
+                        if (err || !response || response.status != 'OK') {
+                            app.say(to, 'Something went wrong completing your combined command');
+                            console.log('Sentiment Error:');
+                            if (err) {
+                                console.dir(err);
+                            }
+                            return;
+                        }
+                        console.log(JSON.stringify(response, null, 2));
+                        //app.say(to, `${nick} is that ${response.language} character who has been mostly ${response.docSentiment.type} on ${channel}`);
+                    });
+                })
+                .catch(err => {
+                    console.log('Combined Error:');
+                    console.dir(err);
+                });
+        };
+        app.Commands.set('combined', {
+            desc: '[Nick] [Channel] Get the combined information for a specified user',
+            access: app.Config.accessLevels.admin,
+            call: combined
+        });
 
     // Get the users overall sentiment
     const sentiment = (to, from, text, message) => {
@@ -77,11 +128,6 @@ module.exports = app => {
         call: sentiment
     });
 
-    const round = (num, decimals) => {
-        var t = Math.pow(10, decimals);
-        return (Math.round((num * t) + (decimals > 0 ? 1 : 0) * (Math.sign(num) * (10 / Math.pow(100, decimals)))) / t).toFixed(decimals);
-    }
-
     // Get the users emotion
     const emotion = (to, from, text, message) => {
         let textArray = text.split(' ');
@@ -97,7 +143,7 @@ module.exports = app => {
             .then(results => {
                 let data = _(results.pluck('text')).uniq().reverse().value();
                 if (!data) {
-                    app.say(to, 'Something went wrong completing your sentiment command');
+                    app.say(to, 'There is not enough data on this user to gauge their emotional state...hr');
                     return;
                 }
                 aL.emotion({
@@ -113,7 +159,7 @@ module.exports = app => {
                     }
                     let output = `The Emotional state of ${nick} on ${channel}`;
                     _.each(response.docEmotions, (value, key) => {
-                        output = output + ` ${key}: ${round(value * 100,2)}%`
+                        output = output + ` ${key}: ${helpers.RoundNumber(value * 100)}%`
                     });
                     app.say(to, output);
                 });
