@@ -52,6 +52,7 @@ module.exports = app => {
                     app.say(to, 'Something went wrong completing your sentiment command');
                     return;
                 }
+                console.log(data.join(' '));
                 aL.sentiment({
                     text: data.join(' ')
                 }, (err, response) => {

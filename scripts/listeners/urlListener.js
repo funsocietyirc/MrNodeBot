@@ -350,7 +350,7 @@ module.exports = app => {
                 let space = () => ' ' + icons.sideArrow + ' ';
 
                 // We have a Short URL
-                if (payload.shortUrl && payload.url.length > app.Config.features.urls.titleMin) {
+                if (!_.isUndefined(payload.shortUrl) && !_.isEmpty(payload.shortUrl) && payload.url.length > app.Config.features.urls.titleMin) {
                     output = output + `${icons.anchor} ${c.navy(payload.shortUrl)}`;
                 }
 
