@@ -62,7 +62,7 @@ module.exports = app => {
                 });
                 console.dir(JSON.parse(contentItems));
                 pI.profile({
-                    contentItems: JSON.parse(contentItems);
+                    contentItems: JSON.parse(contentItems)
                 }, (error, response) => {
                     if (error)
                         console.log('error:', error);
