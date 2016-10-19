@@ -43,7 +43,7 @@ module.exports = app => {
                     .where('from', 'like', nick)
                     .andWhere('to', 'like', channel)
                     .orderBy('timestamp', 'desc')
-                    .limit(100);
+                    .limit(250);
             })
             .fetchAll()
             .then(results => {
@@ -64,8 +64,8 @@ module.exports = app => {
                         }
                         return;
                     }
-                    console.dir(response);
-                });
+                    app.say(from, `${nick} is that ${response.language} character who has been mostly ${response.docSentiment.type} on ${channel}`);
+                  });
             })
             .catch(err => {
                 console.log('Sentiment Error:');
