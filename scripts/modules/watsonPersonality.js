@@ -60,7 +60,7 @@ module.exports = app => {
                         language: 'en',
                     });
                 });
-
+                console.dir(contentItems);
                 pI.profile({
                     contentItems
                 }, (error, response) => {
