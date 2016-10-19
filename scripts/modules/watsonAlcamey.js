@@ -72,7 +72,11 @@ module.exports = app => {
                             }
                             return;
                         }
-                        console.log(JSON.stringify(response, null, 2));
+                        //console.log(JSON.stringify(response, null, 2));
+
+                        let concepts = _.map(response.concepts,'text');
+                        app.say(to, `${nick} is interested in things like: ${concepts.join(', ')}`)
+
                         //app.say(to, `${nick} is that ${response.language} character who has been mostly ${response.docSentiment.type} on ${channel}`);
                     });
                 })
