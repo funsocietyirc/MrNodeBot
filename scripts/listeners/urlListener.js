@@ -338,9 +338,10 @@ module.exports = app => {
             comments: c.blue.bold('✍'),
             sideArrow: c.grey.bold('→'),
             anchor: c.navy.bold('⚓'),
-            star: c.yellow.bold('*'),
+            star: c.yellow('✡'),
             happy: c.green.bold('☺'),
-            sad: c.red.bold('☹')
+            sad: c.red.bold('☹'),
+            time: c.grey.bold('@')
         }
 
         // Formatting Helper
@@ -375,7 +376,7 @@ module.exports = app => {
                     output = output + space() + gh.name;
                     output = output + space() + gh.desc
                     if (gh.lastPush) {
-                        output = output + space() + `${c.bold('Updated:')} ~ ${moment(gh.lastPush).fromNow()}`;
+                        output = output + space() + `${icons.time} ${c.grey.bold('~')} ${moment(gh.lastPush).fromNow()}`;
                     }
                     if (gh.isFork) {
                         output = output + space() + 'Forked';
@@ -402,7 +403,7 @@ module.exports = app => {
                 if(!_.isUndefined(payload.bitBucket)) {
                   let bb = payload.bitBucket;
                   output = output + space() + `${logos.bitBucket} ${icons.sideArrow} ${bb.ownerDisplayName} ${icons.sideArrow} ${bb.desc ? bb.desc : 'BitBucket Repository'}`;
-                  output = output + space() + `${c.bold('Updated:')} ~ ${ moment(bb.lastPush).fromNow()}`;
+                  output = output + space() + `${icons.time} ${c.grey.bold('~')} ${ moment(bb.lastPush).fromNow()}`;
                   if(bb.language) {
                     output = output + space() + `${bb.language}`;
                   }
@@ -457,8 +458,9 @@ module.exports = app => {
             .filter(url => !url.startsWith('ftp'))
             .each(url =>
                 startChain(url)
-                // Process
+                // Grab Short URL
                 .then(results => shorten(url, results))
+                // Grab URL Meta data based on site
                 .then(results => {
                     // Check for youTube
                     let ytMatch = url.match(/^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/);
@@ -477,11 +479,16 @@ module.exports = app => {
                     // If we have a regular link
                     return getTitle(url, results)
                 })
+                // Report back to IRC
                 .then(results => say(to, from, results))
-                // Report
+                // Log To Database
                 .then(results => logInDb(url, to, from, message, results))
+                // Send to Pusher
                 .then(results => pusher(url, to, from, results))
-                .catch(handleErrors)
+                .catch(err => {
+                  conLogger('Error in URL Listener chain:', 'error');
+                  console.dir(err);
+                })
             );
     };
 
