@@ -347,7 +347,7 @@ module.exports = app => {
         // Formatting Helper
         const shortSay = (to, from, payload) => {
                 let output = '';
-                let space = () => ' ' + icons.sideArrow + ' ';
+                let space = () => output != '' ? ' ' + icons.sideArrow + ' ' : ' ';
 
                 // We have a Short URL
                 if (!_.isUndefined(payload.shortUrl) && !_.isEmpty(payload.shortUrl) && payload.url.length > app.Config.features.urls.titleMin) {
