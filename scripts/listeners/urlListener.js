@@ -326,7 +326,7 @@ module.exports = app => {
                             country: data.Country,
                             awards: data.Awards,
                             poster: data.Poster,
-                            metaScore: data.Metascore || null,
+                            metaScore: data.Metascore == 'N/A' ? null : data.Metascore,
                             imdbRating: data.imdbRating,
                             imdbVotes: data.imdbVotes,
                             type: data.Type,
@@ -432,6 +432,9 @@ module.exports = app => {
                   output = output + space() + _.capitalize(imdb.type);
                   if(imdb.seasons) {
                     output = output + space() + `${c.bold('Seasons:')} ${imdb.seasons}`;
+                  }
+                  if(imdb.metaScore) {
+                    output = output + space() + `${c.bold('MetaScore:')} ${imdb.metaScore}`;
                   }
                   output = output + space() + c[imdb.imdbRating < 5 ? 'red' : 'green'](`Rating: ${imdb.imdbRating}`);
                   output = output + space() + `${icons.upArrow} ${c.green(imdb.imdbVotes)}`;
