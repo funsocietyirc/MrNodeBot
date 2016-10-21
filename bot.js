@@ -640,7 +640,8 @@ class MrNodeBot {
     set channels(value) {
         // Given an array
         if (_.isArray(value)) value.forEach(channel => this._ircClient.join(channel));
-        else {
+        // Given a string
+        else if(_.isString(value)) {
             value.split(' ').forEach(channel => this._ircClient.join(channel));
         }
     };

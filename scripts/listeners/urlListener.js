@@ -234,6 +234,7 @@ module.exports = app => {
                 return results;
             })
             .catch(err => {
+                console.dir(err);
                 return getTitle(url, results)
             });
 
@@ -262,22 +263,24 @@ module.exports = app => {
                 return results;
             })
             .catch(err => {
+                console.dir(err);
                 return getTitle(url, results);
             });
 
-        const getRepoInfo = (url, domain, user, repo, results) => {
+        const getGenericInfo = (url, matches, results) => {
             // Bail if we have no result, default back to getTitle
-            if (_.isEmpty(url, domain, user, repo)) {
+            if (_.isEmpty(url) || _.isEmpty(matches)) {
                 return getTitle(url, results);
             }
-
-            switch (domain.toLowerCase()) {
+            let domain = matches[1].toLowerCase();
+            switch (domain) {
                 case 'github.com':
-                    return getGitHub(url, user, repo, results);
+                    // 2: User, 3: Repo
+                    return getGitHub(url, matches[2], matches[3], results);
                     break;
                 case 'bitbucket.org':
-                    // TODO Implement BitBucket
-                    return getBitBucket(url, user, repo, results);
+                    // 2: User, 3: Repo
+                    return getBitBucket(url, matches[2], matches[3], results);
                     break;
                 default:
                     return getTitle(url, results);
@@ -285,6 +288,57 @@ module.exports = app => {
             }
         };
 
+        // get IMDB Data
+        const getImdb = (url, key, results) =>
+            new Promise((resolve, reject) => {
+                // Bail if we have no result
+                if (!key || _.isEmpty(key)) {
+                    resolve(results);
+                    return;
+                }
+
+                return rp({
+                        uri: 'https://www.omdbapi.com',
+                        qs: {
+                            i: key,
+                            plot: 'short',
+                            r: 'json'
+                        }
+                    })
+                    .then(result => {
+                        //  && data.Response != 'True'
+                        let data = JSON.parse(result);
+                        if (!data) {
+                            return getTitle(url, results)
+                        }
+                        results.imdb = {
+                            title: data.Title,
+                            year: data.Year,
+                            rated: data.Rated,
+                            released: data.Released,
+                            runtime: data.Runtime,
+                            genre: data.Genre,
+                            writer: data.Writer,
+                            director: data.Directory,
+                            actors: data.Actors.split(', '),
+                            plot: data.Plot,
+                            language: data.Language.split(', '),
+                            country: data.Country,
+                            awards: data.Awards,
+                            poster: data.Poster,
+                            metaScore: data.Metascore || null,
+                            imdbRating: data.imdbRating,
+                            imdbVotes: data.imdbVotes,
+                            type: data.Type,
+                            seasons: data.totalSeasons
+                        };
+                        resolve(results);
+                    })
+                    .catch(err => {
+                        return getTitle(url, results);
+                        console.dir(err);
+                    })
+            });
 
         // Get the youtube key from link
         const getYoutube = (url, key, results) => new Promise((resolve, reject) => {
@@ -329,6 +383,7 @@ module.exports = app => {
             youTube: c.grey.bold('You') + c.red.bold('Tube'),
             gitHub: c.grey.bold('GitHub'),
             bitBucket: c.navy.bold('BitBucket'),
+            imdb: c.brown.bold('IMDB'),
         };
 
         const icons = {
@@ -365,6 +420,21 @@ module.exports = app => {
                     output = output + space() + logos.youTube;
                     output = output + space() + yr.videoTitle;
                     output = output + space() + `${icons.views} ${c.navy(helpers.NumberWithCommas(yr.viewCount))} ${icons.upArrow} ${c.green(helpers.NumberWithCommas(yr.likeCount))} ${icons.downArrow} ${c.red(helpers.NumberWithCommas(yr.dislikeCount))} ${icons.comments} ${c.blue(helpers.NumberWithCommas(yr.commentCount))}`;
+                }
+
+                // We have IMDB data
+                if(!_.isUndefined(payload.imdb)) {
+                  let imdb = payload.imdb;
+                  output = output + space() + logos.imdb;
+                  output = output + space() + imdb.title;
+                  output = output + space() + imdb.year;
+                  output = output + space() + imdb.genre;
+                  output = output + space() + _.capitalize(imdb.type);
+                  if(imdb.seasons) {
+                    output = output + space() + `${c.bold('Seasons:')} ${imdb.seasons}`;
+                  }
+                  output = output + space() + c[imdb.imdbRating < 5 ? 'red' : 'green'](`Rating: ${imdb.imdbRating}`);
+                  output = output + space() + `${icons.upArrow} ${c.green(imdb.imdbVotes)}`;
                 }
 
                 // We Have GitHub data
@@ -453,7 +523,7 @@ module.exports = app => {
         // Input does not contain urls
         if (!urls) return;
 
-        _(urls)
+      _(urls)
             // We do not deal with FTP
             .filter(url => !url.startsWith('ftp'))
             .each(url =>
@@ -469,14 +539,20 @@ module.exports = app => {
                         return getYoutube(url, ytMatch[2], results);
                     }
 
-                    // Check for GitHub or BitBucket
-                    let gitMatch = url.match(/(?:git@(?![\w\.]+@)|https:\/{2}|http:\/{2})([\w\.@]+)[\/:]([\w,\-,\_]+)\/([\w,\-,\_]+)(?:\.git)?\/?/);
-                    // Match 1: Domain, Match 2: User Group3: Repo
-                    if (gitMatch && gitMatch[1] && gitMatch[2] && gitMatch[3]) {
-                        return getRepoInfo(url, gitMatch[1], gitMatch[2], gitMatch[3], results);
+                    // Check for IMDB
+                    let imdbMatch = url.match(/(?:www\.)?imdb.com\/title\/(tt[^\/]+).*/);
+                    if(imdbMatch && imdbMatch[1]) {
+                      return getImdb(url, imdbMatch[1], results);
                     }
 
-                    // If we have a regular link
+                    // Get Generic Information
+                    let genericMatch = url.match(/(?:git@(?![\w\.]+@)|https:\/{2}|http:\/{2})([\w\.@]+)[\/:]([\w,\-,\_]+)\/([\w,\-,\_]+)(?:\.git)?\/?/);
+                    // Match 1: Domain, Match 2: User Group3: Repo
+                    if (genericMatch) {
+                        return getGenericInfo(url, genericMatch, results);
+                    }
+
+                    // Nothing has matched
                     return getTitle(url, results)
                 })
                 // Report back to IRC

@@ -1,4 +1,7 @@
 'use strict';
+/*
+  Exprimental and not currently working
+*/
 
 const scriptInfo = {
     name: 'Waston Personality',
@@ -60,9 +63,9 @@ module.exports = app => {
                         language: 'en',
                     });
                 });
-                console.dir(JSON.parse(contentItems));
+                console.dir(contentItems);
                 pI.profile({
-                    contentItems: JSON.parse(contentItems)
+                    contentItems: contentItems
                 }, (error, response) => {
                     if (error)
                         console.log('error:', error);

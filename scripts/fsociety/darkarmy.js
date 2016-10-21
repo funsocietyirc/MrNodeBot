@@ -7,7 +7,7 @@ const scriptInfo = {
     name: 'darkarmy',
     file: 'darkarmy.js',
     desc: 'Just a list of Dark Army Random channels, Topic Lock advertisements for main channel,' +
-          'Provide a list of currently joined Darm Army channels',
+        'Provide a list of currently joined Darm Army channels',
     createdBy: 'Dave Richer'
 };
 
@@ -21,29 +21,37 @@ module.exports = app => {
     }
 
     // Join main channel
-    app._ircClient.join(app.Config.features.fsociety.mainChannel);
+    if (!_.includes(app.channels, app.Config.features.fsociety.mainChannel)) {
+        app._ircClient.join(app.Config.features.fsociety.mainChannel);
+    }
 
     // Grab a list of the 'darm army channels'
     let darkChannels = app.Config.features.fsociety.additionalChannels.concat(require('../../lib/darkchannels')(app.Config.features.fsociety.totalChannels));
 
     // Join the dark army channels
     const joinChannels = () => {
-        if (!darkChannels.length) {
+        if (_.isEmpty(darkChannels)) {
             return;
         }
 
         const interval = app.Config.features.fsociety.delay * 1000; // In seconds
-        const timeMessage = `I am joining the Dark Army! It will take me ` + interval * darkChannels.length + ` seconds...`;
+        const timeMessage = `I am joining the Dark Army! It will take me ` + app.Config.features.fsociety.delay * darkChannels.length + ` seconds...`;
 
         if (app.Config.debug) {
             app.say(app.Config.owner.nick, timeMessage);
         }
+
         conLogger(timeMessage, 'info');
-        for (var i = 0; i < darkChannels.length; i++) {
-            setTimeout(function(i) {
-                app._ircClient.join(darkChannels[i]);
-            }, interval * i, i);
-        }
+
+        _.each(darkChannels, (channel, i) => {
+            if (!_.includes(app.channels, channel)) {
+                setTimeout(
+                    () => {
+                      app.channels = channel;
+                    },
+                    interval * i, i);
+            }
+        });
     };
 
     // Topic lock if possible
