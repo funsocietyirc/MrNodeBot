@@ -77,6 +77,7 @@ module.exports = app => {
 
     // Log Kicks
     const kickCmd = (channel, nick, by, reason, message) => {
+        console.log(channel, nick, by, reason, message)
         if (!Models.KickLogging) {
             return;
         }
@@ -100,7 +101,6 @@ module.exports = app => {
         if (!Models.QuitLogging) {
             return;
         }
-        console.log(nick, reason, channels);
         Models.QuitLogging.create({
                 nick: nick,
                 reason: reason,

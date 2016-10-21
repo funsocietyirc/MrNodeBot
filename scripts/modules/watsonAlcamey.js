@@ -27,7 +27,6 @@ module.exports = app => {
         api_key: app.Config.apiKeys.watson.alchemy.apikey
     });
 
-
     const getResults = (nick, channel, limit) =>
         Models.Logging.query(qb => {
             qb
@@ -70,9 +69,6 @@ module.exports = app => {
                         }
                         return;
                     }
-
-                    // Log to console
-                    // console.log(JSON.stringify(response, null, 2));
 
                     // Prepare the concepts
                     let concepts = _.map(response.concepts, 'text').join(', ');

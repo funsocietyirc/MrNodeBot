@@ -7,15 +7,16 @@ const scriptInfo = {
 };
 
 const conLogger = require('../../lib/consoleLogger');
+const pusher = require('../../lib/pusher');
 
 module.exports = app => {
     // Send Announcement Over Pusher
     const pusher = (to, from, text, message, timestamp) => {
         // Load in pusher if it is active
-        if (!app.Config.pusher.enabled && !app._pusher) {
+        if (!pusher) {
             return (results);
         }
-        app._pusher.trigger('public', 'announce', {
+        pusher.trigger('public', 'announce', {
             to,
             from,
             text,
@@ -60,7 +61,7 @@ module.exports = app => {
     };
     // Terminate the bot and the proc watcher that keeps it up
     app.Commands.set('announce', {
-        desc: '[text] Broadcase announcement',
+        desc: '[text] Broadcast announcement',
         access: app.Config.accessLevels.owner,
         call: handler
     });

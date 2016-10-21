@@ -9,6 +9,7 @@ const scriptInfo = {
 const _ = require('lodash');
 const Models = require('bookshelf-model-loader');
 const conLogger = require('../../lib/consoleLogger');
+const scheduler = require('../../lib/scheduler');
 
 module.exports = app => {
     // Do not load module if we have no database
@@ -97,7 +98,7 @@ module.exports = app => {
         call: cleanQuotes
     });
     // Schedule job
-    app.schedule('cleanMrRobotQuotes', cronTime, cleanQuotes);
+    scheduler.schedule('cleanMrRobotQuotes', cronTime, cleanQuotes);
 
     const mrrobot = (to, from, text, message) => {
         let chan = _.first(text) === '#' ?  _.first(text.split(' ')) : false;
@@ -117,7 +118,7 @@ module.exports = app => {
                 app.say(chan || to, `${result.get('quote')} -- Powered By #MrRobot`);
             });
     };
-    
+
     app.Commands.set('mrrobot', {
         desc: '[Channel / Search Text] Mr Robot quotes powered by #MrRobot',
         access: app.Config.accessLevels.identified,

@@ -6,11 +6,11 @@ process.setMaxListeners(0);
 
 const HashMap = require('hashmap');
 const storage = require('node-persist');
-const Pusher = require('pusher');
 const fs = require('fs');
 const _ = require('lodash');
 const helpers = require('./helpers');
 const conLogger = require('./lib/consoleLogger');
+const scheduler = require('./lib/scheduler');
 const RandomString = require('./lib/randomString');
 
 // Load in overrides
@@ -34,9 +34,6 @@ class MrNodeBot {
         // Grab the IRC instance
         this._ircClient = require('./lib/ircclient');
 
-        // Start pusher, or assign it to false
-        this._pusher = this.Config.pusher.enabled ? new Pusher(this.Config.pusher.config) : false;
-
         // TwitterClient
         // Check to see if twitter is enabled in the config, but only if that key is available,
         // since legacy versions didn't expect it.
@@ -47,8 +44,7 @@ class MrNodeBot {
                 !this.Config.apiKeys.twitter.tokenKey ||
                 !this.Config.apiKeys.twitter.tokenSecret) {
                 conLogger('Twitter API keys not configured in config.js: bypassing TwitterClient', 'danger');
-            }
-            else {
+            } else {
                 this._twitterClient = require('./lib/twitterClient');
             }
         }
@@ -70,10 +66,6 @@ class MrNodeBot {
         // Lists
         this.Ignore = [];
         this.Admins = [];
-        this.SystemJobs = [];
-
-        // Assign scheduler
-        this._scheduler = require('node-schedule');
 
         // Track root path
         this.AppRoot = require('app-root-path').toString();
@@ -244,23 +236,26 @@ class MrNodeBot {
         conLogger(`Loading all scripts from ${dir}`, 'loading');
 
         // Require In the scripts
-        fs.readdirSync(normalizedPath).forEach(file => {
-            // Attempt to see if the module is already loaded
-            let fullPath = `${normalizedPath}${path.sep}${file}`;
-            // Attempt to Load the module
-            try {
-                conLogger(`Loading Script: ${file} `, 'success');
-                if (clearCache === true) {
-                    this._clearCache(fullPath);
+        // Load all files with .js extension
+        _(fs.readdirSync(normalizedPath))
+            .filter(file => file[0] != '_' && _.endsWith(file, '.js'))
+            .each(file => {
+                // Attempt to see if the module is already loaded
+                let fullPath = `${normalizedPath}${path.sep}${file}`;
+                // Attempt to Load the module
+                try {
+                    conLogger(`Loading Script: ${file} `, 'success');
+                    if (clearCache === true) {
+                        this._clearCache(fullPath);
+                    }
+                    loadedScripts.push({
+                        fullPath: fullPath,
+                        info: require(`./${dir}/${file}`)(this)
+                    });
+                } catch (err) {
+                    conLogger(`[${err}] in: ${fullPath}`.replace(`${path.sep}${path.sep}`, `${path.sep}`), 'error');
                 }
-                loadedScripts.push({
-                    fullPath: fullPath,
-                    info: require(`./${dir}/${file}`)(this)
-                });
-            } catch (err) {
-                conLogger(`[${err}] in: ${fullPath}`.replace(`${path.sep}${path.sep}`, `${path.sep}`), 'error');
-            }
-        });
+            });
 
         return loadedScripts;
     };
@@ -314,11 +309,7 @@ class MrNodeBot {
             this.Config = require('./config.js');
 
             // Clear all existing jobs
-            _.forEach(this._scheduler.scheduledJobs, job => {
-                if (!_.includes(this.SystemJobs, job.name)) {
-                    job.cancel();
-                }
-            });
+            scheduler.clear();
 
             this.Config.irc.autoConnect = false;
             this.AdmCallbacks.clear();
@@ -574,7 +565,6 @@ class MrNodeBot {
     };
 
     // Handle CTCP commands
-    //noinspection JSMethodCanBeStatic
     _handleCtcpCommands(app, from, to, text, type, message) {
         let textArray = text.split(' ');
         return;
@@ -598,22 +588,6 @@ class MrNodeBot {
     // Send notice to the target
     notice(target, message) {
         this._ircClient.notice(target, this._filterMessage(message));
-    };
-
-    // Schedule a job using the cron scheduler
-    schedule(name, time, callback, system) {
-        // Job already exists
-        if (_.includes(this._scheduler.scheduledJobs, name)) {
-            conLogger(`Duplicate job ${name} for time ${time} not loaded`);
-            return;
-        }
-        // If this is a system job, keep track so we do not purge during reload
-        if (system === true) {
-            this.SystemJobs.push(name);
-        }
-        // Pas the new job to the scheulder
-        this._scheduler.scheduleJob(name, time, callback);
-
     };
 
     isInChannel(channel, nick) {
@@ -641,7 +615,7 @@ class MrNodeBot {
         // Given an array
         if (_.isArray(value)) value.forEach(channel => this._ircClient.join(channel));
         // Given a string
-        else if(_.isString(value)) {
+        else if (_.isString(value)) {
             value.split(' ').forEach(channel => this._ircClient.join(channel));
         }
     };

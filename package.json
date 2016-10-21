@@ -30,7 +30,6 @@
     "file-type": "^3.9.0",
     "freeport": "^1.0.5",
     "gitlog": "^2.0.1",
-    "google-url": "^0.0.4",
     "hashmap": "^2.0.3",
     "irc": "git://github.com/funsocietyirc/node-irc.git",
     "irc-colors": "^1.3.*",

@@ -9,7 +9,7 @@ const scriptInfo = {
 module.exports = app => {
 
     // Part Channel
-    const part = (to, fro, text, message) => {
+    const part = (to, from, text, message) => {
       let textArray = text.split(' ');
       if (!textArray.length) {
           app.say(from, 'I need some more information...');

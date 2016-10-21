@@ -8,13 +8,15 @@ const scriptInfo = {
 const _ = require('lodash');
 const helpers = require('../../helpers');
 const conLogger = require('../../lib/consoleLogger');
+const pusher = require('../../lib/pusher');
+
 let currentStream = null;
 
 module.exports = app => {
     if (!app._twitterClient) {
         return;
     }
-    
+
     let twitterEnabled = (_.isUndefined(app.Config.features.twitter.enabled) || app.Config.features.twitter.enabled);
 
     const say = (tweet) => {
@@ -28,11 +30,11 @@ module.exports = app => {
     const push = (tweet) => {
         if (!twitterEnabled) return;
         // Load in pusher if it is active
-        if (!app.Config.pusher.enabled && !app._pusher) {
+        if (!pusher) {
             return;
         }
         let timestamp = Date.now();
-        app._pusher.trigger('public', 'tweets', {
+        pusher.trigger('public', 'tweets', {
             tweet,
             timestamp
         });

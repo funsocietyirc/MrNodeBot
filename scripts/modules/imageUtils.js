@@ -7,11 +7,13 @@ const scriptInfo = {
 };
 
 const _ = require('lodash');
+const Models = require('bookshelf-model-loader');
+
 const helpers = require('../../helpers');
 const fileType = require('file-type');
 const checkUrl = require('../../lib/checkUrl');
 const conLogger = require('../../lib/consoleLogger');
-const Models = require('bookshelf-model-loader');
+const scheduler = require('../../lib/scheduler');
 
 // Display a list of images in the Web Front end
 module.exports = app => {
@@ -191,7 +193,7 @@ module.exports = app => {
     });
 
     // Scheduler automatic cleanup
-    app.schedule('cleanImages', cronTime, () => {
+    scheduler.schedule('cleanImages', cronTime, () => {
         conLogger('Running Clean URL Script to remove unreachable hosts', 'info');
         cleanImages();
     });
