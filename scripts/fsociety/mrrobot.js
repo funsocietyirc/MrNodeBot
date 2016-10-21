@@ -18,7 +18,6 @@ module.exports = app => {
     }
 
     const quoteModel = Models.MrRobotQuotes;
-    const cronTime = '00 00 * * *';
     const includeExceptions = [
         'i am Mr. Robot (~mrrobot@unaffiliated/kl4200/bot/mrrobot)',
         'Error:',
@@ -97,6 +96,11 @@ module.exports = app => {
         access: app.Config.accessLevels.owner,
         call: cleanQuotes
     });
+
+    // Clear cache every hour
+    let cronTime = new scheduler.RecurrenceRule();
+    cronTime.minute = 0;
+
     // Schedule job
     scheduler.schedule('cleanMrRobotQuotes', cronTime, cleanQuotes);
 

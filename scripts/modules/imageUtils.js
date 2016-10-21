@@ -22,8 +22,6 @@ module.exports = app => {
         return;
     }
 
-    const cronTime = '01 * * * *';
-
     // Where image helpers
     const whereImages = (clause, field) => {
         // Default to the URL field if none specified
@@ -193,6 +191,8 @@ module.exports = app => {
     });
 
     // Scheduler automatic cleanup
+    let cronTime = new scheduler.RecurrenceRule();
+    cronTime.minute = 45;
     scheduler.schedule('cleanImages', cronTime, () => {
         conLogger('Running Clean URL Script to remove unreachable hosts', 'info');
         cleanImages();

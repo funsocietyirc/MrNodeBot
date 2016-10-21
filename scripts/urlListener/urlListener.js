@@ -25,10 +25,17 @@ const endChain = require('./_endChain'); // Finish the chain
 const sendToDb = require('./_sendToDb'); // Log Urls to the Database
 const sendToPusher = require('./_sendToPusher'); // Send To Pusher
 
+const HashMap = require('hashmap');
+const scheduler = require('../../lib/scheduler');
+
 // Libs
 const ircUrlFormatter = require('./_ircUrlFormatter'); // IRC Formatter
 
+// Cache URLS to prevent unnecessary API calls
+const resultCache = new HashMap();
+
 module.exports = app => {
+
     // Libs
     const announceIgnore = app.Config.features.urls.announceIgnore || [];
     // Fetch the ignore list
@@ -91,32 +98,82 @@ module.exports = app => {
         _(urls)
             // We do not deal with FTP
             .filter(url => !url.startsWith('ftp'))
-            .each(url =>
-                startChain(url, to, from, text, message, is)
-                // Grab Short URL
-                .then(results => getShorten(results))
-                // Grab URL Meta data based on site
-                .then(results => matcher(results))
-                // Report back to IRC, got to pass through say for now
-                .then(results => sendToIrc(results))
-                // Log To Database
-                .then(results => sendToDb(results))
-                // Send to Pusher
-                .then(results => sendToPusher(results))
-                // End chain
-                .then(results => endChain(results))
-                // Catch Errors
-                .catch(err => {
-                    conLogger('Error in URL Listener chain:', 'error');
-                    console.dir(err);
-                })
-            );
+            .each(url => {
+                // Url Exists in cache
+                if (resultCache.has(url)) {
+                    new Promise((resolve, reject) => {
+                            resolve(resultCache.get(url));
+                        })
+                        // Report back to IRC, got to pass through say for now
+                        .then(results => sendToIrc(results))
+                        // Log To Database
+                        .then(results => sendToDb(results))
+                        // Send to Pusher
+                        .then(results => sendToPusher(results))
+                        // Set the Cache flag to true
+                        .then(results => {
+                            results.cached = true;
+                            return results;
+                        })
+                        // End chain
+                        .then(results => endChain(results))
+                        // Catch Errors
+                        .catch(err => {
+                            conLogger('Error in URL Listener Cache chain:', 'error');
+                            console.dir(err);
+                        });
+                }
+                // Url Does not exist in cache
+                else {
+                    startChain(url, to, from, text, message, is)
+                        // Grab Short URL
+                        .then(results => getShorten(results))
+                        // Grab URL Meta data based on site
+                        .then(results => matcher(results))
+                        // Report back to IRC, got to pass through say for now
+                        .then(results => sendToIrc(results))
+                        // Cache results
+                        .then(results => {
+                            resultCache.set(url, results);
+                            return results;
+                        })
+                        // Log To Database
+                        .then(results => sendToDb(results))
+                        // Send to Pusher
+                        .then(results => sendToPusher(results))
+                        // End chain
+                        .then(results => endChain(results))
+                        // Catch Errors
+                        .catch(err => {
+                            conLogger('Error in URL Listener chain:', 'error');
+                            console.dir(err);
+                        });
+                }
+            });
     };
 
     // List for urls
     app.Listeners.set('url-listener', {
         desc: 'Listen for URLS',
         call: listener
+    });
+
+    // Clear cache every hour
+    const cronTime = new scheduler.RecurrenceRule();
+    cronTime.minute = 30;
+    const clean = scheduler.schedule('urlResultCache', cronTime, () => {
+        conLogger('Clearing The Url Result Cache', 'info');
+        resultCache.clear();
+    });
+
+    // Allow the manual clearing of cache
+    app.Commands.set('clear-url-cache', {
+        desc: 'Clear the URL Cache',
+        access: app.Config.accessLevels.admin,
+        call: (to,from,text,message) => {
+          resultCache.clear();
+          app.say(from, 'The URL Result Cache has been cleared');
+        }
     });
 
     // Return the script info
