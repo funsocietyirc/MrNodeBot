@@ -39,7 +39,7 @@ module.exports = (results) => {
                 return results;
             }
             if(results.isShort) {
-              results.url = results.longUrl;
+              results.url = result.longUrl;
             }
             return _.merge(results, {
                 shortUrl: results.isShort ? result.longUrl: result.id
