@@ -20,7 +20,7 @@ module.exports = app => {
             }
             return;
         }
-        app.say(to, `${FML}: ${_.sample(results)}`);
+        app.say(to, `FML: ${_.sample(results)}`);
     });
   };
   app.Commands.set('fml', {
