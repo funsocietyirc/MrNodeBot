@@ -37,6 +37,9 @@ module.exports = (results) => {
             return append;
         };
 
+        // This is a re post
+        if(results.orginalFrom) append(results.orginalFrom);
+
         // We have a Short URL
         if (!_.isUndefined(results.shortUrl) && !_.isEmpty(results.shortUrl) && results.url.length > config.features.urls.titleMin) {
             append(`${icons.anchor} ${c.navy(results.shortUrl)}`);
@@ -93,5 +96,5 @@ module.exports = (results) => {
         }
 
         // Finished
-        return output ? `${results.from} ${icons.sideArrow} ` + output : '';
+        return output ? `${c[results.cached ? 'green' : 'red']('*')} ${results.from} ${icons.sideArrow} ` + output : '';
 };

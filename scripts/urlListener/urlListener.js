@@ -102,7 +102,16 @@ module.exports = app => {
                 // Url Exists in cache
                 if (resultCache.has(url)) {
                     new Promise((resolve, reject) => {
-                            resolve(resultCache.get(url));
+                            // Grab the cached result
+                            let result = resultCache.get(url);
+                            // Update the document
+                            if(from != result.from) {
+                              result.orignalFrom = result.from;                              
+                            }
+                            result.from = from;
+                            result.to = to;
+                            result.message = message;
+                            resolve(result);
                         })
                         // Report back to IRC, got to pass through say for now
                         .then(results => sendToIrc(results))
