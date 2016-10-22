@@ -27,7 +27,9 @@ module.exports = app => {
                 json: true
             })
             .then(data => {
-                if (!data || _.isEmpty(data)) {
+                // DEBUG
+                console.dir(data);
+                if (!data || _.isEmpty(data) || data.Response == 'False') {
                     app.say(to, 'Your IMDB request rendered no results, better luck next time');
                     return;
                 }

@@ -14,7 +14,7 @@ module.exports = app => {
     // Echo Test command
     app.Commands.set('echo', {
         desc: '[text] Exactly what it sounds like',
-        access: app.Config.accessLevels.identified,
+        access: app.Config.accessLevels.admin,
         call: echo
     });
 
