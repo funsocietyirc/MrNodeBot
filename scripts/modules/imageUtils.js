@@ -8,10 +8,9 @@ const scriptInfo = {
 
 const _ = require('lodash');
 const Models = require('bookshelf-model-loader');
-
 const helpers = require('../../helpers');
 const fileType = require('file-type');
-const checkUrl = require('../../lib/checkUrl');
+const rp = require('request-promise-native');
 const conLogger = require('../../lib/consoleLogger');
 const scheduler = require('../../lib/scheduler');
 
@@ -80,7 +79,7 @@ module.exports = app => {
 
     // Clean the DB of broken URLS
     const cleanImages = () => {
-      conLogger('Running Clean Images','info');
+        conLogger('Running Clean Images', 'info');
         Models.Url.query(qb => {
                 // Build Up Query
                 qb.where(whereImages);
@@ -88,41 +87,33 @@ module.exports = app => {
             .fetchAll()
             .then(results => {
                 results.pluck('url').forEach(url => {
+                    rp({
+                            uri: url,
+                            method: 'GET',
+                            encoding: null,
+                        })
+                        .then(urlResult => {
+                            let type = fileType(urlResult);
 
-                    // Check if url is valid
-                    checkUrl(url, good => {
-                        if (!good) {
-                            // If not delete url
-                            conLogger(`Removing dead link ${url} from Url table`, 'info');
+                            // Get extension
+                            let ext = '';
+                            if (type && type.ext) {
+                                ext = type.ext;
+                            }
+
+                            // If Valid image extension bailout
+                            if (ext === 'png' || ext === 'gif' || ext === 'jpg' || ext === 'jpeg') {
+                                return;
+                            }
+
+                            conLogger(`Removing Non Image link ${url}`,'info');
                             Models.Url.where('url', url).destroy();
-                            return;
-                        }
-                        try {
-                          helpers.smartHttp(url).get(url, res => {
-                              res.once('data', chunk => {
-                                  res.destroy();
-                                  // Check extension
-                                  let type = fileType(chunk);
-                                  let ext = '';
-                                  if (type && type.ext) {
-                                      ext = type.ext;
-                                  }
-                                  // If Valid image extension bailout
-                                  if (ext === 'png' || ext === 'gif' || ext === 'jpg' || ext === 'jpeg') {
-                                      return;
-                                  }
-                                  // Remove from database
-                                  conLogger(`Removing non image link ${url} from Url table`, 'info');
-                                  Models.Url.where('url', url).destroy();
-                              });
-                          });
-                        } catch(err) {
-                          conLogger('error in imageUtils:','error');
-                          console.dir(err);
-                        };
-                    });
+                        })
+                        .catch(err => {
+                          conLogger(`Removing Dead Image link ${url}`,'info');
+                          Models.Url.where('url', url).destroy();
+                        });
                 });
-                conLogger('Clean Images script completed','info');
             });
     };
 
@@ -194,7 +185,6 @@ module.exports = app => {
     let cronTime = new scheduler.RecurrenceRule();
     cronTime.minute = 45;
     scheduler.schedule('cleanImages', cronTime, () => {
-        conLogger('Running Clean URL Script to remove unreachable hosts', 'info');
         cleanImages();
     });
 

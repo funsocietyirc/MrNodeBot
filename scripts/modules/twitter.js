@@ -9,6 +9,7 @@ const _ = require('lodash');
 const helpers = require('../../helpers');
 const conLogger = require('../../lib/consoleLogger');
 const pusher = require('../../lib/pusher');
+const ircTypo = require('../../lib/ircTypography');
 
 let currentStream = null;
 
@@ -23,7 +24,7 @@ module.exports = app => {
         // Announce to Channels
         app.Config.features.twitter.channels.forEach((chan) => {
             if (!twitterEnabled) return;
-            app.say(chan, `[Twitter] @${tweet.user.screen_name}: ${tweet.text}`);
+            app.say(chan, `${ircTypo.logos.twitter} @${tweet.user.screen_name}: ${tweet.text}`);
         });
     };
 

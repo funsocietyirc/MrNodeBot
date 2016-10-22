@@ -1,22 +1,24 @@
 'use strict';
 const scriptInfo = {
-    name: 'excuse',
-    file: 'excuse.js',
+    name: 'BOFH Excuse',
+    file: 'bofh.js',
     desc: 'Provider Bastard Operator from hell excuses',
     createdBy: 'Dave Richer'
 };
 
-const excuse = require('../../helpers').Excuse;
+const bofh = require('../../helpers').Excuse;
+const ircTypography = require('../../lib/ircTypography');
 const _ = require('lodash');
+
 
 module.exports = app => {
     // Random BOFH Excuse
-    app.Commands.set('excuse', {
+    app.Commands.set('bofh', {
         desc: '[Channel?] Send a BOFH excuse',
         access: app.Config.accessLevels.identified,
         call: (to, from, text, message) => {
             let chan = _.first(text.split(' '));
-            app.say(chan || to, excuse());
+            app.say(chan || to, `${ircTypography.logos.bofh} ${bofh()}`);
         }
     });
 

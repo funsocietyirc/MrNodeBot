@@ -10,6 +10,7 @@ const _ = require('lodash');
 const Models = require('bookshelf-model-loader');
 const conLogger = require('../../lib/consoleLogger');
 const scheduler = require('../../lib/scheduler');
+const ircTypography = require('../../lib/ircTypography');
 
 module.exports = app => {
     // Do not load module if we have no database
@@ -119,7 +120,7 @@ module.exports = app => {
                     app.say(chan || to, `I have not yet encountered anything like that.`);
                     return;
                 }
-                app.say(chan || to, `${result.get('quote')} -- Powered By #MrRobot`);
+                app.say(chan || to, `${ircTypography.logos.mrrobot} ${result.get('quote')}`);
             });
     };
 
