@@ -45,7 +45,7 @@ module.exports = (results) => {
             subOutput = subOutput + history.from;
           }
           if(history.to != results.to) {
-            subOutput = subOutput + '/' + history.to;
+            subOutput = subOutput + (history.from != results.from ? '/' : '') + history.to;
           }
           if(!_.isEmpty(subOutput)) {
             append(subOutput);
