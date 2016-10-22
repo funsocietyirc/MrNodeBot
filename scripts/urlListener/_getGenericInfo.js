@@ -14,7 +14,7 @@ const getGitHub = (user, repo, results) => rp({
     })
     .then(data => {
         if (!data) {
-            return getTitle(results.url, results);
+            return getTitle(results);
         }
         // Format The response
         results.gitHub = {
@@ -35,7 +35,7 @@ const getGitHub = (user, repo, results) => rp({
     .catch(err => {
         console.log('Error in getGitHub link function');
         console.dir(err);
-        return getTitle(results.url, results)
+        return getTitle(results)
     });
 
 // get BitBucket Information
@@ -48,7 +48,7 @@ const getBitBucket = (user, repo, results) => rp({
     })
     .then(data => {
         if (!data) {
-            return getTitle(results.url, results);
+            return getTitle(results);
         }
         results.bitBucket = {
             name: data.name,
@@ -65,15 +65,17 @@ const getBitBucket = (user, repo, results) => rp({
     .catch(err => {
         console.log('Error in getBitbucket link function');
         console.dir(err);
-        return getTitle(url, results);
+        return getTitle(results);
     });
 
-module.exports = (matches, results) => {
+module.exports = (url, matches, results) => {
     // Bail if we have no result, default back to getTitle
-    if (_.isEmpty(results.url) || _.isEmpty(matches)) {
+    if (_.isEmpty(url) || _.isEmpty(matches)) {
         return getTitle(results);
     }
+
     let domain = matches[1].toLowerCase();
+
     switch (domain) {
         case 'github.com':
             // 2: User, 3: Repo

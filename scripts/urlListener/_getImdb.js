@@ -21,7 +21,7 @@ module.exports = (key, results) => {
         })
         .then(data => {
             if (!data) {
-                return getTitle(results.url, results);
+                return getTitle(results);
             }
             results.imdb = {
                 title: data.Title,

@@ -44,24 +44,29 @@ module.exports = app => {
 
     // Link matcher
     const matcher = (results) => {
+        // Google Short URL has been expnded, we will use that to
+        // run the expressions through
+        let url = results.isShort ? results.shortUrl : results.url;
+
         // Check for youTube
-        let ytMatch = results.url.match(/^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/);
+        let ytMatch = url.match(/^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/);
+
         // If We have a valid Youtube Link
         if (ytMatch && ytMatch[2].length == 11) {
             return getYoutube(ytMatch[2], results);
         }
 
         // Check for IMDB
-        let imdbMatch = results.url.match(/(?:www\.)?imdb.com\/title\/(tt[^\/]+).*/);
+        let imdbMatch = url.match(/(?:www\.)?imdb.com\/title\/(tt[^\/]+).*/);
         if (imdbMatch && imdbMatch[1]) {
-            return getImdb(imdbMatch[1], results);
+            return getImdb(url, imdbMatch[1], results);
         }
 
         // Get Generic Information
-        let genericMatch = results.url.match(/(?:git@(?![\w\.]+@)|https:\/{2}|http:\/{2})([\w\.@]+)[\/:]([\w,\-,\_]+)\/([\w,\-,\_]+)(?:\.git)?\/?/);
+        let genericMatch = url.match(/(?:git@(?![\w\.]+@)|https:\/{2}|http:\/{2})([\w\.@]+)[\/:]([\w,\-,\_]+)\/([\w,\-,\_]+)(?:\.git)?\/?/);
         // Match 1: Domain, Match 2: User Group3: Repo
         if (genericMatch) {
-            return getGenericInfo(genericMatch, results);
+            return getGenericInfo(url, genericMatch, results);
         }
 
         // Nothing has matched
