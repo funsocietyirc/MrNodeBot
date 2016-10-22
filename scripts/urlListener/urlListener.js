@@ -59,7 +59,7 @@ module.exports = app => {
         // Check for IMDB
         let imdbMatch = url.match(/(?:www\.)?imdb.com\/title\/(tt[^\/]+).*/);
         if (imdbMatch && imdbMatch[1]) {
-            return getImdb(url, imdbMatch[1], results);
+            return getImdb(imdbMatch[1], results);
         }
 
         // Get Generic Information

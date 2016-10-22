@@ -5,27 +5,10 @@ const _ = require('lodash');
 const config = require('../../config.js');
 const helpers = require('../../helpers');
 const moment = require('moment');
+const ircTypography = require('../../lib/ircTypography');
 
-
-const logos = {
-    youTube: c.grey.bold('You') + c.red.bold('Tube'),
-    gitHub: c.grey.bold('GitHub'),
-    bitBucket: c.navy.bold('BitBucket'),
-    imdb: c.brown.bold('IMDB'),
-};
-
-const icons = {
-    upArrow: c.green.bold('↑'),
-    downArrow: c.red.bold('↓'),
-    views: c.navy.bold('⚘'),
-    comments: c.blue.bold('✍'),
-    sideArrow: c.grey.bold('→'),
-    anchor: c.navy.bold('⚓'),
-    star: c.yellow('✡'),
-    happy: c.green.bold('☺'),
-    sad: c.red.bold('☹'),
-    time: c.grey.bold('@')
-};
+const logos = ircTypography.logos;
+const icons = ircTypography.icons;
 
 // Formatting Helper
 module.exports = (results) => {
@@ -51,7 +34,6 @@ module.exports = (results) => {
             append(subOutput);
           }
         }
-
 
         // We have a Short URL
         if (results.isShort || (!_.isUndefined(results.shortUrl) && !_.isEmpty(results.shortUrl) && results.url.length > config.features.urls.titleMin)) {

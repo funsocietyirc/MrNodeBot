@@ -7,6 +7,8 @@ const scriptInfo = {
 };
 
 const _ = require('lodash');
+const ircTypography = require('../../lib/ircTypography');
+
 const xray = require('x-ray')();
 
 module.exports = app => {
@@ -20,7 +22,7 @@ module.exports = app => {
             }
             return;
         }
-        app.say(to, `FML: ${_.sample(results)}`);
+        app.say(to, `${ircTypography.logos.fml} ${_.sample(results)}`);
     });
   };
   app.Commands.set('fml', {

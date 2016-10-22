@@ -8,6 +8,8 @@ const scriptInfo = {
 
 const _ = require('lodash');
 const rp = require('request-promise-native');
+const ircTypography = require('../../lib/ircTypography');
+
 
 module.exports = app => {
     const imdb = (to, from, text, message) => {
@@ -30,7 +32,7 @@ module.exports = app => {
                     return;
                 }
                 app.say(to,
-                    `IMDB: ${data.Title} (${data.Year}) (https://www.imdb.com/title/${data.imdbID}) Released: ${data.Released} Runtime: ${data.Runtime} Genre: ${data.Genre} ` +
+                    `${ircTypography.logos.imdb} ${data.Title} (${data.Year}) (https://www.imdb.com/title/${data.imdbID}) Released: ${data.Released} Runtime: ${data.Runtime} Genre: ${data.Genre} ` +
                     `Type: ${data.Type} Writer(s): ${data.Writer} Cast: ${data.Actors} Rating: ${data.imdbRating} Votes: ${data.imdbVotes} MetaScore: ${data.Metascore} Plot: ${data.Plot}`
                 );
             })

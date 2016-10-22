@@ -24,7 +24,7 @@ module.exports = (key, results) => {
             let data = result.items[0];
             // We have no data, default back to the original title grabber
             if (!data) {
-                return getTitle(results.url, results)
+                return getTitle(results)
             }
             let videoTitle = data.snippet.title;
             let viewCount = data.statistics.viewCount;

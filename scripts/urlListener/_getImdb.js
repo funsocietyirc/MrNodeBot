@@ -20,7 +20,7 @@ module.exports = (key, results) => {
             json: true
         })
         .then(data => {
-            if (!data) {
+            if (!data || !data.Response || data.Response == 'False') {
                 return getTitle(results);
             }
             results.imdb = {
@@ -44,10 +44,10 @@ module.exports = (key, results) => {
                 type: data.Type,
                 seasons: data.totalSeasons
             };
-            return (results);
+            return results;
         })
         .catch(err => {
-            return getTitle(results);
             console.dir(err);
+            return getTitle(results);
         })
 };
