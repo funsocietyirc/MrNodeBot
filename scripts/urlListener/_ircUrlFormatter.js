@@ -63,7 +63,7 @@ module.exports = (results) => {
                 (_.capitalize(imdb.type));
             if (imdb.seasons) append(`${c.bold('Seasons:')} ${imdb.seasons}`);
             if (imdb.rated) append(`${c.bold('Rated:')} ${imdb.rated}`);
-            if (imdb.metaScore) append(`${c.bold('MetaScore:')} ${imdb.metaScore}`);
+            if (imdb.metaScore && imdb.metaScore != 'N/A') append(`${c.bold('MetaScore:')} ${imdb.metaScore}`);
 
             append(c[imdb.imdbRating < 5 ? 'red' : 'green'](`Rating: ${imdb.imdbRating}`))
                 (`${icons.views} ${c.navy(imdb.imdbVotes)}`);

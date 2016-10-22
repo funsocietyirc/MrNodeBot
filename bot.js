@@ -611,12 +611,22 @@ class MrNodeBot {
     get channels() {
         return _(this._ircClient.chans).keys().uniq().value();
     };
+
+    // Getting to allow quick setting of channels
     set channels(value) {
         // Given an array
-        if (_.isArray(value)) value.forEach(channel => this._ircClient.join(channel));
+        if (_.isArray(value)) value.forEach(channel => {
+          if (!this.isInChannel(channel)) {
+            this._ircClient.join(channel);
+          }
+        });
         // Given a string
         else if (_.isString(value)) {
-            value.split(' ').forEach(channel => this._ircClient.join(channel));
+          value.split(' ').forEach(channel => {
+            if (!this.isInChannel(channel)) {
+              this._ircClient.join(channel);
+            }
+          });
         }
     };
 

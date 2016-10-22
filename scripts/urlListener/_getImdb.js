@@ -31,7 +31,7 @@ module.exports = (key, results) => {
                 runtime: data.Runtime,
                 genre: data.Genre,
                 writer: data.Writer,
-                director: data.Directory,
+                director: data.Director,
                 actors: data.Actors.split(', '),
                 plot: data.Plot,
                 language: data.Language.split(', '),

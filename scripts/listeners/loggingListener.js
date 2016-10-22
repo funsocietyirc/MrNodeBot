@@ -77,7 +77,6 @@ module.exports = app => {
 
     // Log Kicks
     const kickCmd = (channel, nick, by, reason, message) => {
-        console.log(channel, nick, by, reason, message)
         if (!Models.KickLogging) {
             return;
         }
