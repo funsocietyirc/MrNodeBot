@@ -153,7 +153,7 @@ module.exports = app => {
     cronTime.minute = 30;
     const clean = scheduler.schedule('urlResultCache', cronTime, () => {
         conLogger('Clearing The Url Result Cache', 'info');
-        resultCache.clear();
+        resultsCache.clear();
     });
 
     // Allow the manual clearing of cache

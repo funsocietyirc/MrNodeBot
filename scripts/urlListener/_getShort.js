@@ -6,28 +6,40 @@ const apiKey = require('../../config').apiKeys.google;
 
 module.exports = (results) => {
     // Check input / Gate
-    if (_.isEmpty(apiKey) || results.url.startsWith('http://goo.gl/') || results.url.startsWith('https://goo.gl/')) {
+    if (!apiKey || _.isEmpty(apiKey)) {
         return results;
     }
 
+    results.isShort = _.includes(results.url, '://goo.gl/');
+
+    let rpOption = !results.isShort ? {
+      uri: `https://www.googleapis.com/urlshortener/v1/url`,
+      method: 'POST',
+      json: true,
+      qs: {
+        key: apiKey
+      },
+      body: {
+          "longUrl": results.url
+      }
+    } : {
+      method: 'GET',
+      json: true,
+      uri: 'https://www.googleapis.com/urlshortener/v1/url',
+      qs: {
+        key: apiKey,
+        shortUrl: results.url
+      }
+    };
+
     // Get the SHORT Url
-    return rp({
-            uri: `https://www.googleapis.com/urlshortener/v1/url`,
-            method: 'POST',
-            json: true,
-            qs: {
-              key: apiKey
-            },
-            body: {
-                "longUrl": results.url
-            }
-        })
+    return rp(rpOption)
         .then(result => {
-            if (!result || !result.id) {
+            if (!result || !result.id || (result.isShort && !result.longUrl)) {
                 return results;
             }
             return _.merge(results, {
-                shortUrl: result.id
+                shortUrl: results.isShort ? result.longUrl: result.id
             })
         })
         .catch(err => {
