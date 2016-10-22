@@ -30,7 +30,7 @@ module.exports = app => {
                     return;
                 }
                 app.say(to,
-                    `IMDB: ${data.Title} (${data.Year}) (https://www.imdb.com/title/${data.imdbID}) Released: ${data.Released} Runtime: ${data.Runtime} Genre: ${data.Genre}` +
+                    `IMDB: ${data.Title} (${data.Year}) (https://www.imdb.com/title/${data.imdbID}) Released: ${data.Released} Runtime: ${data.Runtime} Genre: ${data.Genre} ` +
                     `Type: ${data.Type} Writer(s): ${data.Writer} Cast: ${data.Actors} Rating: ${data.imdbRating} Votes: ${data.imdbVotes} MetaScore: ${data.Metascore} Plot: ${data.Plot}`
                 );
             })

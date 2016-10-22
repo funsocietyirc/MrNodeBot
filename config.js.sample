@@ -45,6 +45,10 @@ module.exports = {
         nick: 'IronY',
         host: 'unaffiliated/irony'
     },
+    // We are using a local version of the IRC client
+    // To use this you must have a node-irc directory at a child level
+    // of the MrNodeBot directory
+    ircClientDebug: false,
     // Irc Client Configuration see https://node-irc.readthedocs.io/en/latest/API.html#client
     irc: {
         nick: 'MrNodeBot',
