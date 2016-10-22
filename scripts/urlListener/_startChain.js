@@ -16,5 +16,6 @@ module.exports = (url,to,from,text,message,is) => new Promise((resolve, reject) 
         is,
         delivered: [],
         secure: url.startsWith('https://'),
+        history: [],
     });
 });

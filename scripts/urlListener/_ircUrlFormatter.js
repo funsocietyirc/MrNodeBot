@@ -38,7 +38,20 @@ module.exports = (results) => {
         };
 
         // This is a re post
-        if(results.orginalFrom) append(results.orginalFrom);
+        if(!_.isEmpty(results.history)) {
+          let history = _.first(results.history);
+          let subOutput = '';
+          if(history.from != results.from) {
+            subOutput = subOutput + history.from;
+          }
+          if(history.to != results.to) {
+            subOutput = subOutput + '/' + history.to;
+          }
+          if(!_.isEmpty(subOutput)) {
+            append(subOutput);
+          }
+        }
+
 
         // We have a Short URL
         if (!_.isUndefined(results.shortUrl) && !_.isEmpty(results.shortUrl) && results.url.length > config.features.urls.titleMin) {

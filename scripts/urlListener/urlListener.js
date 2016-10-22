@@ -14,6 +14,7 @@ const conLogger = require('../../lib/consoleLogger');
 
 // Build
 const startChain = require('./_startChain.js'); // Begin the chain
+const startCachedChain = require('./_startCachedChain'); // Begin cache chain
 const getShorten = require('./_getShort'); // Shorten the URL
 const getTitle = require('./_getTitle'); // Get the title
 const getGenericInfo = require('./_getGenericInfo'); // Get Generic Link matches
@@ -32,7 +33,7 @@ const scheduler = require('../../lib/scheduler');
 const ircUrlFormatter = require('./_ircUrlFormatter'); // IRC Formatter
 
 // Cache URLS to prevent unnecessary API calls
-const resultCache = new HashMap();
+const resultsCache = require('./_resultsCache');
 
 module.exports = app => {
 
@@ -100,19 +101,8 @@ module.exports = app => {
             .filter(url => !url.startsWith('ftp'))
             .each(url => {
                 // Url Exists in cache
-                if (resultCache.has(url)) {
-                    new Promise((resolve, reject) => {
-                            // Grab the cached result
-                            let result = resultCache.get(url);
-                            // Update the document
-                            if(from != result.from) {
-                              result.orignalFrom = result.from;                              
-                            }
-                            result.from = from;
-                            result.to = to;
-                            result.message = message;
-                            resolve(result);
-                        })
+                if (resultsCache.has(url)) {
+                    startCachedChain(url, to, from, text, message, is)
                         // Report back to IRC, got to pass through say for now
                         .then(results => sendToIrc(results))
                         // Log To Database
@@ -120,10 +110,6 @@ module.exports = app => {
                         // Send to Pusher
                         .then(results => sendToPusher(results))
                         // Set the Cache flag to true
-                        .then(results => {
-                            results.cached = true;
-                            return results;
-                        })
                         // End chain
                         .then(results => endChain(results))
                         // Catch Errors
@@ -141,11 +127,6 @@ module.exports = app => {
                         .then(results => matcher(results))
                         // Report back to IRC, got to pass through say for now
                         .then(results => sendToIrc(results))
-                        // Cache results
-                        .then(results => {
-                            resultCache.set(url, results);
-                            return results;
-                        })
                         // Log To Database
                         .then(results => sendToDb(results))
                         // Send to Pusher
@@ -179,9 +160,9 @@ module.exports = app => {
     app.Commands.set('clear-url-cache', {
         desc: 'Clear the URL Cache',
         access: app.Config.accessLevels.admin,
-        call: (to,from,text,message) => {
-          resultCache.clear();
-          app.say(from, 'The URL Result Cache has been cleared');
+        call: (to, from, text, message) => {
+            resultCache.clear();
+            app.say(from, 'The URL Result Cache has been cleared');
         }
     });
 
