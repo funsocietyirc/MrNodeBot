@@ -161,7 +161,7 @@ module.exports = app => {
         desc: 'Clear the URL Cache',
         access: app.Config.accessLevels.admin,
         call: (to, from, text, message) => {
-            resultCache.clear();
+            resultsCache.clear();
             app.say(from, 'The URL Result Cache has been cleared');
         }
     });
