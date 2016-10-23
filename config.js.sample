@@ -30,10 +30,6 @@ module.exports = {
             // Only load in development
             // '/scripts/beta',
         ],
-        // Model Directories
-        models: [
-            '/models'
-        ],
         // Currently running Environment
         env: 'devel'
     },

@@ -25,15 +25,15 @@ module.exports = (app) => {
 
     // Set the view engine
     webServer.set('view engine', 'pug');
-
+    webServer.set('views', __dirname + '/views');
     // Serve Favicon
-    webServer.use(favicon(__dirname + '/../assets/favicon.ico'));
+    webServer.use(favicon(__dirname + '/assets/favicon.ico'));
 
     // Static routes
-    webServer.use('/assets', Express.static('assets'));
+    webServer.use('/assets', Express.static(__dirname + '/assets'));
 
     // Uploads
-    webServer.use('/uploads', Express.static('uploads'));
+    webServer.use('/uploads', Express.static(__dirname + '/uploads'));
 
     // Use fileupload extension
     webServer.use(fileUpload());

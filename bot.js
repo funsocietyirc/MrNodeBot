@@ -4,11 +4,11 @@
 // Extend the max socket listeners
 process.setMaxListeners(0);
 
-const HashMap = require('hashmap');
-const storage = require('node-persist');
-const fs = require('fs');
 const _ = require('lodash');
+const fs = require('fs');
+const storage = require('node-persist');
 const helpers = require('./helpers');
+const HashMap = require('hashmap');
 const conLogger = require('./lib/consoleLogger');
 const scheduler = require('./lib/scheduler');
 const RandomString = require('./lib/randomString');
@@ -32,7 +32,7 @@ class MrNodeBot {
         this._scriptDirectories = this.Config.bot.scripts;
 
         // Grab the IRC instance
-        this._ircClient = require('./lib/ircclient');
+        this._ircClient = require('./lib/ircClient');
 
         // TwitterClient
         // Check to see if twitter is enabled in the config, but only if that key is available,
@@ -103,7 +103,7 @@ class MrNodeBot {
 
     _initWebServer() {
         conLogger('Starting Web Server...', 'info');
-        this.WebServer = require('./lib/webServer')(this);
+        this.WebServer = require('./web/server')(this);
         conLogger(`Web Server started on port ${this.Config.express.port}`, 'success');
     };
 
@@ -133,7 +133,7 @@ class MrNodeBot {
     _initDbSubSystem() {
         if (this.Config.knex.enabled) {
             conLogger('Initializing Database Sub System', 'info');
-            this.Database = require('./lib/orm');
+            this.Database = require('./database/client');
             conLogger('Database Sub System Initialized', 'success');
         } else {
             conLogger('No Database system found, features limited', 'error');
@@ -281,9 +281,8 @@ class MrNodeBot {
         // Load the Ignore list
         storage.getItem('ignored', (err, value) => {
             this.Ignore = value || this.Ignore;
+            conLogger(`Total Ignored: ${this.Ignore.length}`, 'info');
         });
-
-        conLogger(`Total Ignored: ${this.Ignore.length}`, 'info');
 
         // Load the Admin list
         storage.getItem('admins', (err, value) => {
