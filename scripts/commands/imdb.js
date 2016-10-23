@@ -10,7 +10,6 @@ const _ = require('lodash');
 const rp = require('request-promise-native');
 const ircTypography = require('../../lib/ircTypography');
 
-
 module.exports = app => {
     const imdb = (to, from, text, message) => {
         if (!text || _.isEmpty(text)) {
@@ -27,8 +26,6 @@ module.exports = app => {
                 json: true
             })
             .then(data => {
-                // DEBUG
-                console.dir(data);
                 if (!data || _.isEmpty(data) || data.Response == 'False') {
                     app.say(to, 'Your IMDB request rendered no results, better luck next time');
                     return;
@@ -45,7 +42,7 @@ module.exports = app => {
             });
     };
 
-    // Register Tweet Command
+    // Register IMDB Command
     app.Commands.set('imdb', {
         desc: '[title] - Get IMDB info for a given title',
         access: app.Config.accessLevels.identified,

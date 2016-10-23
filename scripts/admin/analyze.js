@@ -110,9 +110,11 @@ module.exports = app => {
                 sayHelper('Last Active', `as ${data.lastResult.from} on ${lastDateActive.format('h:mma MMM Do')} (${lastDateActive.fromNow()}) On: ${data.lastResult.to}`);
                 sayHelper('Last Message', data.lastResult.text);
 
+                // Display location data if it exists
                 if (city || regionName || countryName || postal || timeZone || lat || long) {
                     sayHelper('Location Data', `${city}${regionName}${countryName}${postal}${timeZone}${lat}${long}`);
                 }
+
                 sayHelper('Total Lines', `${contentLine(data.totalLines)}`);
     };
 
@@ -184,13 +186,8 @@ module.exports = app => {
       Trigger command for advanced active tracking
     **/
     const analyze = (to, from, text, message) => {
-        // Bail if there is no argument
-        const args = text.split(' ');
-
         // Parse Text
-        const nick = args.splice(0, 1)[0];
-        const subCommand = args.splice(0, 1)[0];
-
+        const [nick, subCommand] = text.split(' ');
 
         if (!subCommand || !nick) {
             app.say(to, 'Both a Sub Command and a Nick are required');
@@ -198,8 +195,7 @@ module.exports = app => {
         }
 
         // Check for valid commands
-        const validCommands = ['ident', 'host', 'nick'];
-        if (validCommands.indexOf(subCommand) == -1) {
+        if (!_.includes(['ident', 'host', 'nick'], subCommand)) {
             app.say(to, 'That is not a valid Sub Command silly');
             return;
         }
