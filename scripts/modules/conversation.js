@@ -7,13 +7,7 @@ const scriptInfo = {
 };
 
 const _ = require('lodash');
-
-const chatBot = (function() {
-    var botObj = botObj || require('../../node_modules/bot/lib/bot.js'),
-        botDb = botDb || require('../../node_modules/bot/lib/db.js'),
-        botDefaults = botDefaults || require('../../node_modules/bot/db/defaults.json');
-    return new botObj(new botDb, botDefaults);
-}());
+const gen = require('../generators/_chatBotLine');
 
 /**
   Make the bot randomly conversational
@@ -34,12 +28,13 @@ module.exports = app => {
 
     const listen = (to, from, text, message, is) => {
         if (conversational && !_.includes(ignoredChans, to) && !is.triggered && app.random.bool(1, is.privateMsg ? 1 : randomChance)(app.randomEngine)) {
-            var replyText = chatBot.answer(text).replaceAll('<br>', '');
-            app.say(to, `${from}, ${replyText}`);
+            gen(text)
+              .then(result => app.say(to, `${from}, ${result}`));
         }
     };
 
-    app.Commands.set('converse', {
+    // Toggle the conversational listener status
+    app.Commands.set('conversation', {
         desc: 'Make the bot randomly conversational',
         access: app.Config.accessLevels.admin,
         call: converse

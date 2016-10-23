@@ -7,28 +7,32 @@ const scriptInfo = {
 };
 
 const _ = require('lodash');
-const ircTypography = require('../../lib/ircTypography');
-
-const xray = require('x-ray')();
+const gen = require('../generators/_fmlLine');
+const ircTypography = require('../lib/_ircTypography');
 
 module.exports = app => {
   const fml = (to, from, text, message) => {
-    xray('http://www.fmylife.com/random', ['a.fmllink'])((err, results) => {
-        if (err || !results || _.isEmpty(results)) {
-            app.say(to, 'Something went wrong with the FML API');
-            if(err) {
-              console.log('FML Command Error:');
-              console.dir(err);
-            }
-            return;
-        }
-        app.say(to, `${ircTypography.logos.fml} ${_.sample(results)}`);
-    });
+  gen()
+    .then(result => {
+      if(!result || _.isEmpty(result)) {
+        app.say(to, 'I could not seem to find any FML lines');
+        return;
+      }
+      app.say(to, `${ircTypography.logos.fml} ${result}`);
+    })
+    .catch(err => {
+      app.say(to,'Something went wrong with the FML API');
+      console.log('FML Command Error:');
+      console.dir(err);
+    })
+
   };
+
   app.Commands.set('fml', {
       desc: 'Get a random FML quote',
       access: app.Config.accessLevels.identified,
       call: fml
   });
-  return app;
-}
+
+  return scriptInfo;
+};

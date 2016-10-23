@@ -3,19 +3,32 @@ module.exports = {
     project: require('./package.json'),
     // Bot specific
     bot: {
-        debug: true,
-        disableScripts: false,
-        // Script Directories
-        scripts: [
+            debug: true,
+            disableScripts: false,
+            // Script Directories
+            scripts: [
+            // Core Libs
+            '/scripts/lib',
+            // Data Generators (Promises)
+            '/scripts/generators',
+            // Express end points
             '/scripts/pages',
+            // Single Point commands
             '/scripts/commands',
+            // Administrative commands
             '/scripts/admin',
+            // Owner commands
             '/scripts/owner',
+            // Listeners
             '/scripts/listeners',
+            // Scripts that have mix of everything
             '/scripts/modules',
+            // Fsociety Module -- For #fsociety on Freenode
             '/scripts/fsociety',
+            // URL Listener feature
             '/scripts/urlListener',
-            '/scripts/beta', // Only load in development
+            // Only load in development
+            // '/scripts/beta',
         ],
         // Model Directories
         models: [

@@ -10,7 +10,7 @@ const _ = require('lodash');
 const Models = require('bookshelf-model-loader');
 const conLogger = require('../../lib/consoleLogger');
 const scheduler = require('../../lib/scheduler');
-const ircTypography = require('../../lib/ircTypography');
+const ircTypography = require('../lib/_ircTypography');
 
 module.exports = app => {
     // Do not load module if we have no database

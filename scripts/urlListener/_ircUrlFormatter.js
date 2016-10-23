@@ -5,7 +5,7 @@ const _ = require('lodash');
 const config = require('../../config.js');
 const helpers = require('../../helpers');
 const moment = require('moment');
-const ircTypography = require('../../lib/ircTypography');
+const ircTypography = require('../lib/_ircTypography');
 
 const logos = ircTypography.logos;
 const icons = ircTypography.icons;

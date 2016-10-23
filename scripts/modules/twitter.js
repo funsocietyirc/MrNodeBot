@@ -9,7 +9,7 @@ const _ = require('lodash');
 const helpers = require('../../helpers');
 const conLogger = require('../../lib/consoleLogger');
 const pusher = require('../../lib/pusher');
-const ircTypo = require('../../lib/ircTypography');
+const ircTypo = require('../lib/_ircTypography');
 
 let currentStream = null;
 

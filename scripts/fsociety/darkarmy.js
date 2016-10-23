@@ -26,7 +26,7 @@ module.exports = app => {
     }
 
     // Grab a list of the 'darm army channels'
-    let darkChannels = app.Config.features.fsociety.additionalChannels.concat(require('../../lib/darkchannels')(app.Config.features.fsociety.totalChannels));
+    let darkChannels = app.Config.features.fsociety.additionalChannels.concat(require('./_darkChannels')(app.Config.features.fsociety.totalChannels));
 
     // Join the dark army channels
     const joinChannels = () => {

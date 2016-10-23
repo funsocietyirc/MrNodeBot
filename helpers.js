@@ -3,7 +3,6 @@ const moment = require('moment');
 const c = require('irc-colors');
 const _ = require('lodash');
 const startTime = moment();
-const excuses = require('./lib/bofhExcuses');
 
 // Transform to leet speak
 const leetSpeak = exports.leetSpeak = text => text.replace(/l|i/gi, '1').replace(/z/gi, '2')
@@ -43,9 +42,6 @@ const AccessString = exports.AccessString = str => {
             return 'Unknown';
     }
 };
-
-/* Get a BOFH Excuse */
-const Excuse = exports.Excuse = () => _.sample(excuses);
 
 /* Get the difference between now and the current time */
 const TimeDiff = exports.TimeDiff = time => moment.duration(moment(time, 'DD/MM/YYYY').diff(moment()));

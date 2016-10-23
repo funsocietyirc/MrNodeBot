@@ -1,4 +1,14 @@
-module.exports =  [
+'use strict';
+
+const _ = require('lodash');
+
+module.exports = (size) => new Promise((resolve, reject) => {
+  size = size || 1;
+  resolve(_.sampleSize(excuses, size));
+});
+
+/* Get a BOFH Excuse */
+const excuses = [
     'clock speed', 'solar flares', 'electromagnetic radiation from satellite debris', 'static from nylon underwear', 'static from plastic slide rules',
     'global warming', 'poor power conditioning', 'static buildup', 'doppler effect', 'hardware stress fractures', 'magnetic interference from money/credit cards',
     'dry joints on cable plug', 'we\'re waiting for [the phone company] to fix that line', 'sounds like a Windows problem, try calling Microsoft support',

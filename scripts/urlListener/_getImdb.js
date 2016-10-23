@@ -2,6 +2,7 @@
 
 const _ = require('lodash');
 const rp = require('request-promise-native');
+const gen = require('../generators/_imdbData');
 const getTitle = require('./_getTitle');
 
 module.exports = (key, results) => {
@@ -10,16 +11,9 @@ module.exports = (key, results) => {
         return results;
     }
 
-    return rp({
-            uri: 'https://www.omdbapi.com',
-            qs: {
-                i: key,
-                plot: 'short',
-                r: 'json'
-            },
-            json: true
-        })
+    return gen(key, 'id')
         .then(data => {
+          console.dir(data);
             if (!data || !data.Response || data.Response == 'False') {
                 return getTitle(results);
             }

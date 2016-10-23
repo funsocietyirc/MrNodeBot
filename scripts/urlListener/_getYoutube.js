@@ -1,25 +1,16 @@
 'use strict';
 
 const _ = require('lodash');
-const rp = require('request-promise-native');
-const getTitle = require('./_getTitle');
+const gen = require('../generators/_youTubeVideoData');
 const apiKey = require('../../config').apiKeys.google;
+const getTitle = require('./_getTitle');
 
 module.exports = (key, results) => {
     // Bail if we have no result
     if (!apiKey || !key || _.isEmpty(key)) {
         return getTitle(results);
     }
-    return rp({
-            uri: 'https://www.googleapis.com/youtube/v3/videos',
-            qs: {
-                id: key,
-                key: apiKey,
-                fields: 'items(id,snippet(channelId,title,categoryId),statistics)',
-                part: 'snippet,statistics'
-            },
-            json: true
-        })
+    return gen(apiKey, key)
         .then(result => {
             let data = result.items[0];
             // We have no data, default back to the original title grabber

@@ -7,8 +7,8 @@ const scriptInfo = {
 };
 
 const _ = require('lodash');
-const rp = require('request-promise-native');
-const ircTypography = require('../../lib/ircTypography');
+const gen = require('../generators/_imdbData');
+const ircTypography = require('../lib/_ircTypography');
 
 module.exports = app => {
     const imdb = (to, from, text, message) => {
@@ -16,15 +16,7 @@ module.exports = app => {
             app.say(to, 'I require something to actually look up');
             return;
         }
-        rp({
-                uri: 'https://www.omdbapi.com',
-                qs: {
-                    t: text,
-                    plot: 'short',
-                    r: 'json'
-                },
-                json: true
-            })
+        gen(text,'title')
             .then(data => {
                 if (!data || _.isEmpty(data) || data.Response == 'False') {
                     app.say(to, 'Your IMDB request rendered no results, better luck next time');
