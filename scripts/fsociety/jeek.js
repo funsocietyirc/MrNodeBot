@@ -6,18 +6,15 @@ const scriptInfo = {
     createdBy: 'Dave Richer'
 };
 
-const _ = require('lodash');
 const xray = require('x-ray')();
 
-
-module.export = (app) => {
-  const jeek = (to, from, text, message) => xray('http://ishealive.jeek.net', h1)((err, results) => {
+module.exports = (app) => {
+  const jeek = (to, from, text, message) => xray('http://ishealive.jeek.net', ['h1'])((err, results) => {
       if (err) {
           app.say(to, 'Something went wrong finding out if jeek is alive')
           return;
       }
-      app.say(to, `Is Jeek Alive? ${h1}`);
-      resolve(_.sampleSize(results,count));
+      app.say(to, `Is Jeek Alive? ${results[1]}`);
   });
 
   // Total Messages command
