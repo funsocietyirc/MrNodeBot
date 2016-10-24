@@ -66,12 +66,12 @@ class MrNodeBot {
         // Lists
         this.Ignore = [];
         this.Admins = [];
+        this.LoadedScripts = [];
 
         // Track root path
         this.AppRoot = require('app-root-path').toString();
 
         // Class Variables that are initialized elsewhere
-        this._loadedScripts = null;
         this.Database = null;
         this.Webserver = null;
         this.random = null;
@@ -231,7 +231,6 @@ class MrNodeBot {
     _loadScriptsFromDir(dir, clearCache) {
         let path = require('path');
         let normalizedPath = path.join(__dirname, dir);
-        let loadedScripts = [];
 
         conLogger(`Loading all scripts from ${dir}`, 'loading');
 
@@ -248,7 +247,7 @@ class MrNodeBot {
                     if (clearCache === true) {
                         this._clearCache(fullPath);
                     }
-                    loadedScripts.push({
+                    this.LoadedScripts.push({
                         fullPath: fullPath,
                         info: require(`./${dir}/${file}`)(this)
                     });
@@ -256,8 +255,6 @@ class MrNodeBot {
                     conLogger(`[${err}] in: ${fullPath}`.replace(`${path.sep}${path.sep}`, `${path.sep}`), 'error');
                 }
             });
-
-        return loadedScripts;
     };
 
     // Application Setup
@@ -328,7 +325,7 @@ class MrNodeBot {
         // Load in the Scripts
         if (!this.Config.bot.disableScripts) {
             this._scriptDirectories.forEach(script => {
-                this._loadedScripts = this._loadScriptsFromDir(script, true);
+                this._loadScriptsFromDir(script, true);
             });
 
             // Read in command rebindings
