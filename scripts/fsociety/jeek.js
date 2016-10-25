@@ -12,42 +12,61 @@ const Models = require('bookshelf-model-loader');
 const scheduler = require('../../lib/scheduler');
 const randomEngine = require('../../lib/randomEngine');
 
-let lastId = 0;
-let motherQuotes = [];
-let lastQuote = '';
 
 module.exports = (app) => {
-  if (!Models.Logging) return $scriptInfo;
+    if (!Models.Logging) return $scriptInfo;
+
+    let motherQuotes = [];
+    let noResults = false;
 
     const getMother = () => {
-      // Load Initial Mother responses from jeek
-      Models.Logging.query(qb =>
-        qb
-        .select(['text','id'])
-        .where('text', 'like', '%mother%')
-        .andWhere('from', 'like', 'jeek')
-        .andWhere('text', 'not like', 's/%')
-        .andWhere('id','>',lastId)
-      )
-      .fetchAll()
-      .then(results => {
-        results.forEach(result => {
-          motherQuotes.push(result.get('text'));
-          lastId = result.get('id');
-        });
-        motherQuotes = _.uniq(motherQuotes);
-      })
-      .catch(err => {
-        console.log('Error Loading jeek mother quotes quotes');
-        console.dir(err);
-      });
+        // Load Initial Mother responses from jeek
+          return Models.Logging.query(qb =>
+                  qb
+                  .select(['text', 'id'])
+                  .where(clause =>
+                    clause
+                      .where('text', 'like', '%mother%')
+                      .andWhere('from', 'like', 'jeek')
+                      .andWhere('text', 'not like', 's/%')
+                  )
+              )
+              .fetchAll()
+              .then(results => {
+                 _(results.pluck('text')).uniq().each(t => motherQuotes.push(t));
+
+                 if(!motherQuotes.length) return;
+                 
+                 let mother = (to, from, text, message) => {
+                     // Get a random quote then omit the quote from the collection
+                     let say = () => {
+                       quote = randomEngine.pick(motherQuotes);
+                       motherQuotes = _.without(motherQuotes, quote);
+                       app.say(to, quote);
+                     };
+
+                     // We have run out of quotes, reload!
+                     if (!motherQuotes.length) {
+                         return getMother().then(() => say());
+                     }
+
+                     say();
+                 };
+
+                 app.Commands.set('mother', {
+                     desc: 'Get a your mother line care of Jeek',
+                     access: app.Config.accessLevels.identified,
+                     call: mother
+                 });
+              })
+            .catch(err => {
+                console.log('Error Loading jeek mother quotes quotes');
+                console.dir(err);
+            });
     };
+    // Load Initial set of quotes
     getMother();
 
-    // Get More results
-    let cronTime = new scheduler.RecurrenceRule();
-    cronTime.minute = 30;
-    scheduler.schedule('getMoreJeek', cronTime, getMother);
 
     // Check Jeeks Website to make sure he is still alive
     const jeek = (to, from, text, message) => xray('http://ishealive.jeek.net', ['h1'])((err, results) => {
@@ -58,24 +77,6 @@ module.exports = (app) => {
         app.say(to, `Is Jeek Alive? ${results[1]}`);
     });
 
-    const mother = (to, from, text, message) => {
-      if(_.isEmpty(motherQuotes)) {
-        app.say(to, 'I am afraid your mother is currently unavailble...');
-        return;
-      }
-      let quote = '';
-      do {
-        quote = randomEngine.pick(motherQuotes);
-        if(motherQuotes.length == 1){
-          break;
-        }
-      } while(lastQuote == quote);
-      lastQuote = quote;
-      app.say(to, quote);
-    };
-
-
-
     // Total Messages command
     app.Commands.set('jeek', {
         desc: 'Is Jeek Alive?',
@@ -83,10 +84,5 @@ module.exports = (app) => {
         call: jeek
     });
 
-    app.Commands.set('mother', {
-        desc: 'Get a your mother line care of Jeek',
-        access: app.Config.accessLevels.identified,
-        call: mother
-    })
     return scriptInfo;
 };
