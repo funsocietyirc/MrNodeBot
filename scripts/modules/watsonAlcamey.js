@@ -44,7 +44,7 @@ module.exports = app => {
         .fetchAll();
 
     const whatsup = (to, from, text, message) => {
-        let [channel] = text.split(' ');
+        let [channel] = text.split('. ');
         channel = channel || to;
         Models.Logging.query(qb =>
             qb
