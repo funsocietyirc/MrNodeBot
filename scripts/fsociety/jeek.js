@@ -35,7 +35,7 @@ module.exports = (app) => {
             )
             .fetchAll()
             .then(results => {
-                _(results.pluck('text')).uniq().each(t => motherQuotes.push(t));
+                _(results.pluck('text')).uniq().filter(t => !_.includes(t, 'moment')).each(t => motherQuotes.push(t));
 
                 if (!motherQuotes.length) return;
 
