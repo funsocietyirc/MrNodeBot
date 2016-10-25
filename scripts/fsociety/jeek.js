@@ -86,5 +86,15 @@ module.exports = (app) => {
         call: jeek
     });
 
+    const raptorJesus = (to,from,text,message) => {
+      app.say(to, `Our Lord and Saviour: http://i.imgur.com/E1fQQdr.png`);
+    }
+    // Total Messages command
+    app.Commands.set('RaptorJesus', {
+        desc: 'Get a pic of RaptorJesus',
+        access: app.Config.accessLevels.identified,
+        call: raptorJesus
+    });
+
     return scriptInfo;
 };
