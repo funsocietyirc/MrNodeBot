@@ -21,6 +21,7 @@ module.exports = (app) => {
 
     const getMother = () => {
         // Load Initial Mother responses from jeek
+        motherQuotes = [];
         return Models.Logging.query(qb =>
                 qb
                 .select(['text', 'id'])
@@ -28,10 +29,9 @@ module.exports = (app) => {
                     clause
                     .where('text', 'like', '%mother%')
                     .orWhere('text', 'like', '%mom%')
+                    .andWhere('text', 'not like', 's/%')
                 )
                 .andWhere('from', 'like', 'jeek')
-                .andWhere('text', 'not like', 's/%')
-
             )
             .fetchAll()
             .then(results => {
