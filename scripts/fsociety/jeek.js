@@ -91,11 +91,12 @@ module.exports = (app) => {
     });
 
     // Report an image of our lord and savour, RaptorJesus
-    const raptorJesus = (to,from,text,message) => {
+    const raptorJesus = (to, from, text, message) => {
       // If he is in the channel
       if(app.isInChannel(to, 'RaptorJesus')) {
         app.action(to, 'prays to RaptorJesus');
       }
+
       app.say(to, `Our Lord and Saviour: http://i.imgur.com/E1fQQdr.png`);
     }
 
