@@ -28,7 +28,7 @@ module.exports = (app) => {
           .orderByRaw('rand()')
           .limit(1)
         )
-        .fetchOne()
+        .fetch()
         .then(results => {
           if(!results) return;
           app.say(to, results.get('text'));
