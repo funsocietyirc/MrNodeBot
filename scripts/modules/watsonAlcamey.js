@@ -56,7 +56,7 @@ module.exports = app => {
         )
         .fetchAll()
         .then(results => {
-          if(_.isEmpty(results)) {
+          if(!results) {
             app.say(to, 'I do not have have any data on this channel');
             return;
           }

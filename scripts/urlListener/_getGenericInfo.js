@@ -70,7 +70,7 @@ const getBitBucket = (user, repo, results) => rp({
 
 module.exports = (url, matches, results) => {
     // Bail if we have no result, default back to getTitle
-    if (_.isEmpty(url) || _.isEmpty(matches)) {
+    if (_.isEmpty(url) || !matches.length) {
         return getTitle(results);
     }
 

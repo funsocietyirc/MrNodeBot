@@ -21,7 +21,7 @@ module.exports = (results) => {
         };
 
         // This is a re post
-        if(!_.isEmpty(results.history)) {
+        if(results.history.length) {
           let history = _.first(results.history);
           let subOutput = '';
           if(history.from != results.from) {

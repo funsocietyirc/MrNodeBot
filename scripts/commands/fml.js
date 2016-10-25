@@ -14,7 +14,7 @@ module.exports = app => {
   const fml = (to, from, text, message) => {
   gen()
     .then(result => {
-      if(!result || _.isEmpty(result)) {
+      if(!result) {
         app.say(to, 'I could not seem to find any FML lines');
         return;
       }
