@@ -42,7 +42,7 @@ module.exports = (app) => {
         call: jeek
     });
 
-    app.Commands.set('mother' {
+    app.Commands.set('mother', {
         desc: 'Get a your mother line care of Jeek',
         access: app.Config.accessLevels.identified,
         call: mother
