@@ -21,44 +21,46 @@ module.exports = (app) => {
 
     const getMother = () => {
         // Load Initial Mother responses from jeek
-          return Models.Logging.query(qb =>
-                  qb
-                  .select(['text', 'id'])
-                  .where(clause =>
+        return Models.Logging.query(qb =>
+                qb
+                .select(['text', 'id'])
+                .where(clause =>
                     clause
-                      .where('text', 'like', '%mother%')
-                      .andWhere('from', 'like', 'jeek')
-                      .andWhere('text', 'not like', 's/%')
-                  )
-              )
-              .fetchAll()
-              .then(results => {
-                 _(results.pluck('text')).uniq().each(t => motherQuotes.push(t));
+                    .where('text', 'like', '%mother%')
+                    .orWhere('text', 'like', '%mom%')
+                )
+                .andWhere('from', 'like', 'jeek')
+                .andWhere('text', 'not like', 's/%')
 
-                 if(!motherQuotes.length) return;
-                 
-                 let mother = (to, from, text, message) => {
-                     // Get a random quote then omit the quote from the collection
-                     let say = () => {
-                       quote = randomEngine.pick(motherQuotes);
-                       motherQuotes = _.without(motherQuotes, quote);
-                       app.say(to, quote);
-                     };
+            )
+            .fetchAll()
+            .then(results => {
+                _(results.pluck('text')).uniq().each(t => motherQuotes.push(t));
 
-                     // We have run out of quotes, reload!
-                     if (!motherQuotes.length) {
-                         return getMother().then(() => say());
-                     }
+                if (!motherQuotes.length) return;
 
-                     say();
-                 };
+                let mother = (to, from, text, message) => {
+                    // Get a random quote then omit the quote from the collection
+                    let say = () => {
+                        quote = randomEngine.pick(motherQuotes);
+                        motherQuotes = _.without(motherQuotes, quote);
+                        app.say(to, quote);
+                    };
 
-                 app.Commands.set('mother', {
-                     desc: 'Get a your mother line care of Jeek',
-                     access: app.Config.accessLevels.identified,
-                     call: mother
-                 });
-              })
+                    // We have run out of quotes, reload!
+                    if (!motherQuotes.length) {
+                        return getMother().then(() => say());
+                    }
+
+                    say();
+                };
+
+                app.Commands.set('mother', {
+                    desc: 'Get a your mother line care of Jeek',
+                    access: app.Config.accessLevels.identified,
+                    call: mother
+                });
+            })
             .catch(err => {
                 console.log('Error Loading jeek mother quotes quotes');
                 console.dir(err);
