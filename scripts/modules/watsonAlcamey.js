@@ -20,6 +20,9 @@ module.exports = app => {
         return scriptInfo;
     }
 
+    // Space helper
+    let space = () => ' - ';
+
     const aL = new AlchemyLanguageV1({
         headers: {
             'X-Watson-Learning-Opt-Out': true
@@ -39,6 +42,82 @@ module.exports = app => {
                 .limit(limit || 500);
         })
         .fetchAll();
+
+    const whatsup = (to, from, text, message) => {
+        let [channel] = text.split(' ');
+        channel = channel || to;
+        Models.Logging.query(qb =>
+            qb
+            .select(['text', 'timestamp'])
+            .distinct('text')
+            .where('to', 'like', channel)
+            .orderBy('timestamp', 'desc')
+            .limit(150)
+        )
+        .fetchAll()
+        .then(results => {
+          if(_.isEmpty(results)) {
+            app.say(to, 'I do not have have any data on this channel');
+            return;
+          }
+
+          let data = _(results.pluck('text')).uniq().reverse().value();
+          if (!data) {
+              app.say(to, 'Something went wrong completing your combined command');
+              return;
+          }
+
+          aL.combined({
+              text: data.join('. '),
+              //showSourceText: 1, // Show Source Text for debugging
+              extract: 'taxonomy,concept,doc-sentiment,doc-emotion'
+          }, (err, response) => {
+            if (err || !response || response.status != 'OK') {
+                app.say(to, 'Something went wrong completing your combined command');
+                console.log('Sentiment Error:');
+                if (err) {
+                    console.dir(err);
+                }
+                return;
+            }
+
+            // Prepare the concepts
+            let concepts = _.map(response.concepts, 'text').join(', ');
+
+            // Prepare the taxonomy
+            let taxonomy = [];
+            _(response.taxonomy).map('label').map(value => _.filter(value.split('/')), n => true).uniq().each(value => {
+                _.each(value, item => {
+                    taxonomy.push(item);
+                });
+            });
+
+            taxonomy = _.uniq(taxonomy).join(', ');
+
+            // Prepare the output
+            let output = `${channel} is interested in concepts like: ${concepts}`;
+            output = output + space() + `Most of the time ${channel} is ${response.docSentiment.type}`;
+            output = output + space() + `They are also interested in: ${taxonomy}`;
+            output = output + space() + `The emotional state of ${channel} is: `;
+            _.each(response.docEmotions, (value, key) => {
+                output = output + ` ${_.capitalize(key)}: ${helpers.RoundNumber(value * 100)}%`
+            });
+
+            // Report back to IRC
+            app.say(to, output);
+          });
+
+        })
+        .catch(err => {
+          console.log('Error in Whats up');
+          console.dir(err);
+        });
+    };
+    app.Commands.set('whatsup', {
+        desc: '[Channel?] Get the combined information for a specified channel (defaults to current channel)',
+        access: app.Config.accessLevels.admin,
+        call: whatsup
+    });
 
     // Get the users overall sentiment
     const combined = (to, from, text, message) => {
@@ -80,10 +159,8 @@ module.exports = app => {
                             taxonomy.push(item);
                         });
                     });
-                    taxonomy = _.uniq(taxonomy).join(', ');
 
-                    // Space helper
-                    let space = () => ' - ';
+                    taxonomy = _.uniq(taxonomy).join(', ');
 
                     // Prepare the output
                     let output = `${nick} is interested in concepts like: ${concepts}`;
@@ -108,6 +185,7 @@ module.exports = app => {
         access: app.Config.accessLevels.admin,
         call: combined
     });
+
 
 
     return scriptInfo;
