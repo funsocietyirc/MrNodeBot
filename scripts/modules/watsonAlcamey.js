@@ -68,7 +68,7 @@ module.exports = app => {
           }
 
           aL.combined({
-              text: data.join('. '),
+              text: data.join(' '),
               //showSourceText: 1, // Show Source Text for debugging
               extract: 'taxonomy,concept,doc-sentiment,doc-emotion'
           }, (err, response) => {
