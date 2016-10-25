@@ -16,12 +16,12 @@ const randomEngine = require('../../lib/randomEngine');
 module.exports = (app) => {
     if (!Models.Logging) return $scriptInfo;
 
-    let motherQuotes = [];
-    let noResults = false;
+    const motherQuotes = [];
 
     const getMother = () => {
         // Load Initial Mother responses from jeek
-        motherQuotes = [];
+        motherQuotes.splice(0, motherQuotes.length);
+
         return Models.Logging.query(qb =>
                 qb
                 .select(['text', 'id'])
@@ -43,7 +43,7 @@ module.exports = (app) => {
                     // Get a random quote then omit the quote from the collection
                     let say = () => {
                         quote = randomEngine.pick(motherQuotes);
-                        motherQuotes = _.without(motherQuotes, quote);
+                        _.pull(motherQuotes, quote);
                         app.say(to, quote);
                     };
 
