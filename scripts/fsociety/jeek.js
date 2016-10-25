@@ -14,6 +14,7 @@ const randomEngine = require('../../lib/randomEngine');
 
 let lastId = 0;
 let motherQuotes = [];
+let lastQuote = '';
 
 module.exports = (app) => {
   if (!Models.Logging) return $scriptInfo;
@@ -34,6 +35,7 @@ module.exports = (app) => {
           motherQuotes.push(result.get('text'));
           lastId = result.get('id');
         });
+        motherQuotes = _.uniq(motherQuotes);
       })
       .catch(err => {
         console.log('Error Loading jeek mother quotes quotes');
@@ -61,7 +63,15 @@ module.exports = (app) => {
         app.say(to, 'I am afraid your mother is currently unavailble...');
         return;
       }
-      app.say(to, randomEngine.pick(motherQuotes));
+      let quote = '';
+      do {
+        quote = randomEngine.pick(motherQuotes);
+        if(motherQuotes.length == 1){
+          break;
+        }
+      } while(lastQuote == quote);
+      lastQuote = quote;
+      app.say(to, quote);
     };
 
 
