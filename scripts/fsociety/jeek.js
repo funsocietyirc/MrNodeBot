@@ -76,6 +76,10 @@ module.exports = (app) => {
             app.say(to, 'Something went wrong finding out if jeek is alive')
             return;
         }
+        // If he is in the channel
+        if(app.isInChannel(to, 'jeek')) {
+          app.action(to, 'points to jeek');
+        }
         app.say(to, `Is Jeek Alive? ${results[1]}`);
     });
 
@@ -86,9 +90,15 @@ module.exports = (app) => {
         call: jeek
     });
 
+    // Report an image of our lord and savour, RaptorJesus
     const raptorJesus = (to,from,text,message) => {
+      // If he is in the channel
+      if(app.isInChannel(to, 'RaptorJesus')) {
+        app.action(to, 'prays to RaptorJesus');
+      }
       app.say(to, `Our Lord and Saviour: http://i.imgur.com/E1fQQdr.png`);
     }
+
     // Total Messages command
     app.Commands.set('RaptorJesus', {
         desc: 'Get a pic of RaptorJesus',
