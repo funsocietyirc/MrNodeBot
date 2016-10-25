@@ -6,6 +6,8 @@ const scriptInfo = {
     createdBy: 'Dave Richer'
 };
 
+const random = require('../../lib/randomEngine');
+
 module.exports = app => {
     const flip = (to, from, text, message) => {
         let txtArray = text.split(' ');
@@ -19,11 +21,11 @@ module.exports = app => {
                 answer = false;
                 break;
             default:
-                answer = app.random.bool()(app.randomEngine);
+                answer = random.bool();
                 break;
         }
 
-        let rand = app.random.bool()(app.randomEngine);
+        let rand = random.bool();
         let randString = rand ? 'heads' : 'tails';
         let answerString = answer ? 'heads' : 'tails';
         let outcomeString = rand === answer ? 'win' : 'lose';

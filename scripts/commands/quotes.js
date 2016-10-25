@@ -10,6 +10,7 @@ const HashMap = require('hashmap');
 const Moment = require('moment');
 const color = require('irc-colors');
 const storage = require('node-persist');
+const random = require('../../lib/randomEngine');
 const consoleLogger = require('../../lib/consoleLogger');
 const _ = require('lodash');
 
@@ -78,7 +79,7 @@ module.exports = app => {
 
     const randomQuote = (to, from, text, message) => {
         // Get a random number, offset by -1
-        var randomNumber = app.random.integer(1, quotes.count())(app.randomEngine) - 1;
+        var randomNumber = random.integer(1, quotes.count()) - 1;
 
         // Get the quote text to deal with the hash map system
         var quote = quotes.keys()[randomNumber];

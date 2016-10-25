@@ -4,20 +4,35 @@
 // Extend the max socket listeners
 process.setMaxListeners(0);
 
+// Node Libs
 const _ = require('lodash');
 const fs = require('fs');
 const storage = require('node-persist');
-const helpers = require('./helpers');
 const HashMap = require('hashmap');
+// Project libs
+const helpers = require('./helpers');
 const conLogger = require('./lib/consoleLogger');
 const scheduler = require('./lib/scheduler');
-const RandomString = require('./lib/randomString');
-
-// Load in overrides
+const randomString = require('./lib/randomString');
+// Extend for project
 require('./extensions');
-
 // Extend For Un-cache
 require('./lib/uncache')(require);
+// Dynamic collections
+const dynCollections = _([
+  'AdmCallbacks',
+  'NickChanges',
+  'Registered',
+  'Listeners',
+  'WebRoutes',
+  'Commands',
+  'Stats',
+  'OnJoin',
+  'OnKick',
+  'OnPart',
+  'OnQuit',
+  'OnTopic',
+]);
 
 class MrNodeBot {
     constructor(callback, configPath) {
@@ -31,37 +46,14 @@ class MrNodeBot {
         // Set Script Directories
         this._scriptDirectories = this.Config.bot.scripts;
 
+        // Grab twitter client
+        this._twitterClient = require('./lib/twitterClient');
+
         // Grab the IRC instance
         this._ircClient = require('./lib/ircClient');
 
-        // TwitterClient
-        // Check to see if twitter is enabled in the config, but only if that key is available,
-        // since legacy versions didn't expect it.
-        if (_.isUndefined(this.Config.features.twitter.enabled) || this.Config.features.twitter.enabled) {
-            // Check to see if you have API keys configured to properly load the TwitterClient
-            if (!this.Config.apiKeys.twitter.consumerKey ||
-                !this.Config.apiKeys.twitter.consumerSecret ||
-                !this.Config.apiKeys.twitter.tokenKey ||
-                !this.Config.apiKeys.twitter.tokenSecret) {
-                conLogger('Twitter API keys not configured in config.js: bypassing TwitterClient', 'danger');
-            } else {
-                this._twitterClient = require('./lib/twitterClient');
-            }
-        }
-
-        // A list of collections used
-        this.AdmCallbacks = new HashMap();
-        this.NickChanges = new HashMap();
-        this.Registered = new HashMap();
-        this.Listeners = new HashMap();
-        this.WebRoutes = new HashMap();
-        this.Commands = new HashMap();
-        this.Stats = new HashMap();
-        this.OnJoin = new HashMap();
-        this.OnKick = new HashMap();
-        this.OnPart = new HashMap();
-        this.OnQuit = new HashMap();
-        this.OnTopic = new HashMap();
+        // Collections
+        dynCollections.each(v => this[v] = new HashMap());
 
         // Lists
         this.Ignore = [];
@@ -74,142 +66,121 @@ class MrNodeBot {
         // Class Variables that are initialized elsewhere
         this.Database = null;
         this.Webserver = null;
-        this.random = null;
-        this.randomEngine = null;
 
-
-        // Init the Database subsystem
+        // Init Chain
         this._initDbSubSystem();
-
-        // // Init the Web server
         this._initWebServer();
-        //
-        // // Init irc
         this._initIrc();
-
-        // Init storage
         this._initStorageSubSystem();
-
-        // Setup the app
-        this._initRandomSubSystem();
-
-        // Initialize the user manager
         this._initUserManager();
-
-        // Add the listeners
-        this._initListeners();
-
     };
 
+    // Init the Web Server
     _initWebServer() {
         conLogger('Starting Web Server...', 'info');
         this.WebServer = require('./web/server')(this);
         conLogger(`Web Server started on port ${this.Config.express.port}`, 'success');
     };
 
+    // Init the IRC Bot
     _initIrc() {
         conLogger('Connecting to IRC', 'info');
-        // Connect the Bot to the irc network
-        this._ircClient.connect(20, () => {
-            conLogger(`Connected to ${this.Config.irc.server} as ${this._ircClient.nick}`, 'success');
-
+        return new Promise((resolve, reject) => {
+                // Connect the Bot to the irc network
+                this._ircClient.connect(20, () => {
+                    conLogger(`Connected to ${this.Config.irc.server} as ${this._ircClient.nick}`, 'success');
+                    resolve();
+                });
+            })
             // If there is a password and we are on the same nick we were configured for, identify
-            if (this.Config.nickserv.password && this.Config.irc.nick == this._ircClient.nick) {
+            .then(() => {
+                if (!this.Config.nickserv.password || this.Config.irc.nick != this._ircClient.nick) return;
                 let first = this.Config.nickserv.host ? `@${this.Config.nickserv.host}` : '';
                 let nickserv = `${this.Config.nickserv.nick}${first}`;
                 this._ircClient.say(nickserv, `identify ${this.Config.nickserv.password}`);
-            }
-
+            })
             // Load in the scripts
-            this._loadDynamicAssets(false);
-
+            .then(() => {
+                this._loadDynamicAssets(false);
+            })
+            // Initialize the listeners
+            .then(() => {
+                conLogger('Initializing Listeners', 'info');
+                _({
+                        // Handle On Connect
+                        registered: () => {
+                            this._handleRegistered();
+                        },
+                        // Handle Channel Messages
+                        'message#': (from, to, text, message) => {
+                            this._handleCommands(from, to, text, message);
+                        },
+                        // Handle Private Messages
+                        pm: (from, text, message) => {
+                            this._handleCommands(from, from, text, message);
+                        },
+                        // Handle Notices, also used to check validation for NickServ requests
+                        notice: (from, text, message) => {
+                            this._handleAuthenticatedCommands(from, text, message);
+                        },
+                        // Handle CTCP Requests
+                        ctcp: (from, to, text, type, message) => {
+                            this._handleCtcpCommands(from, to, text, message);
+                        },
+                        // Handle Nick changes
+                        nick: (oldnick, newnick, channels, message) => {
+                            this._handleNickChanges(oldnick, newnick, channels, message);
+                        },
+                        // Handle Joins
+                        join: (channel, nick, message) => {
+                            this._handleOnJoin(channel, nick, message);
+                        },
+                        // Handle On Parts
+                        part: (channel, nick, reason, message) => {
+                            this._handleOnPart(channel, nick, reason, message);
+                        },
+                        // Handle On Kick
+                        kick: (channel, nick, by, reason, message) => {
+                            this._handleOnKick(channel, nick, by, reason, message);
+                        },
+                        // Handle On Quit
+                        quit: (nick, reason, channels, message) => {
+                            this._handleOnQuit(nick, reason, channels, message);
+                        },
+                        // Handle Topic changes
+                        topic: (channel, topic, nick, message) => {
+                            this._handleOnTopic(channel, topic, nick, message);
+                        },
+                        // Catch all to prevent drop on error
+                        error: message => {
+                            // This can now be turned on by setting showErrors in the bot configuration
+                        }
+                    })
+                    // Add the listeners to the IRC Client
+                    .each((value, key) => this._ircClient.addListener(key, value));
+            })
             // Run The callback
-            if (this._callback) {
-                this._callback(this);
-            }
-        });
+            .then(() => {
+                if (this._callback) this._callback(this);
+            });
     };
 
+    // Init the Database subsystem
     _initDbSubSystem() {
+        // We have a Database available
         if (this.Config.knex.enabled) {
             conLogger('Initializing Database Sub System', 'info');
             this.Database = require('./database/client');
             conLogger('Database Sub System Initialized', 'success');
-        } else {
-            conLogger('No Database system found, features limited', 'error');
-            this.Database = false;
+            return;
         }
+
+        // We haave no Database available
+        conLogger('No Database system found, features limited', 'error');
+        this.Database = false;
     };
 
-    _initListeners() {
-        conLogger('Initializing Listeners', 'info');
-
-        // There is no place like home
-        let self = this;
-
-        // Handle On Connect
-        this._ircClient.addListener('registered', () => {
-            this._handleRegistered(self);
-        });
-
-        // Handle Channel Messages
-        this._ircClient.addListener('message#', (from, to, text, message) => {
-            this._handleCommands(self, from, to, text, message);
-        });
-
-        // Handle Private Messages
-        this._ircClient.addListener('pm', (from, text, message) => {
-            this._handleCommands(self, from, from, text, message);
-        });
-
-        // Handle Notices, also used to check validation for NickServ requests
-        this._ircClient.addListener('notice', (from, text, message) => {
-            this._handleAuthenticatedCommands(self, from, text, message);
-        });
-
-        // Handle CTCP Requests
-        this._ircClient.addListener('ctcp', (from, to, text, type, message) => {
-            this._handleCtcpCommands(self, from, to, text, message);
-        });
-
-        // Handle Nick changes
-        this._ircClient.addListener('nick', (oldnick, newnick, channels, message) => {
-            this._handleNickChanges(self, oldnick, newnick, channels, message);
-        });
-
-        // Handle On Joins
-        this._ircClient.addListener('join', (channel, nick, message) => {
-            this._handleOnJoin(self, channel, nick, message);
-        });
-
-        // Handle On Parts
-        this._ircClient.addListener('part', (channel, nick, reason, message) => {
-            this._handleOnPart(self, channel, nick, reason, message);
-        });
-
-        // Handle On Kick
-        this._ircClient.addListener('kick', (channel, nick, by, reason, message) => {
-            this._handleOnKick(self, channel, nick, by, reason, message);
-        });
-
-        // Handle On Quit
-        this._ircClient.addListener('quit', (nick, reason, channels, message) => {
-            this._handleOnQuit(self, nick, reason, channels, message);
-        });
-
-        // Handle Topic changes
-        this._ircClient.addListener('topic', (channel, topic, nick, message) => {
-            this._handleOnTopic(self, channel, topic, nick, message);
-        });
-
-        // Catch all to prevent drop on error
-        this._ircClient.addListener('error', message => {
-            // This can now be turned on by setting showErrors in the bot configuration
-        });
-
-        conLogger('Listeners Initialized', 'success');
-    };
-
+    // Initialize the user manager
     _initUserManager() {
         if (!this.Database) {
             conLogger('Database not present, UserManager disabled');
@@ -257,20 +228,7 @@ class MrNodeBot {
             });
     };
 
-    // Application Setup
-    _initRandomSubSystem() {
-        conLogger('Initializing Application State', 'info');
-
-        // Bring in random-js
-        this.random = require('random-js');
-        // Init Random seed
-        this.randomEngine = this.random.engines.mt19937();
-
-        // Auto Seed the random engine
-        this.randomEngine.autoSeed();
-    };
-
-    // Node Persist storage
+    // Init storage
     _initStorageSubSystem() {
         // Load the storage before the Bot connects (Sync)
         storage.initSync();
@@ -303,23 +261,12 @@ class MrNodeBot {
             // Reload the Configuration
             this._clearCache('./config.js');
             this.Config = require('./config.js');
-
             // Clear all existing jobs
             scheduler.clear();
-
+            // Assure AutoConnect flag is not reset
             this.Config.irc.autoConnect = false;
-            this.AdmCallbacks.clear();
-            this.NickChanges.clear();
-            this.Registered.clear();
-            this.Listeners.clear();
-            this.WebRoutes.clear();
-            this.Commands.clear();
-            this.Stats.clear();
-            this.OnJoin.clear();
-            this.OnPart.clear();
-            this.OnKick.clear();
-            this.OnQuit.clear();
-            this.OnTopic.clear();
+            // Clear Dynamic Collections
+            dynCollections.each(v => this[v].clear());
         }
 
         // Load in the Scripts
@@ -369,13 +316,14 @@ class MrNodeBot {
     };
 
     // Handle Nick changes
-    _handleNickChanges(app, oldnick, newnick, channels, message) {
+    _handleNickChanges(oldnick, newnick, channels, message) {
         // track if the bots nick was changed
         if (oldnick === this._ircClient.nick) {
             this._ircClient.nick = newnick;
         }
+
         // Run events
-        app.NickChanges.forEach((value, key) => {
+        this.NickChanges.forEach((value, key) => {
             try {
                 value.call(oldnick, newnick, channels, message);
             } catch (e) {
@@ -385,8 +333,8 @@ class MrNodeBot {
     };
 
     // Handle On Joins
-    _handleOnJoin(app, channel, nick, message) {
-        app.OnJoin.forEach((value, key) => {
+    _handleOnJoin(channel, nick, message) {
+        this.OnJoin.forEach((value, key) => {
             try {
                 value.call(channel, nick, message);
             } catch (e) {
@@ -396,8 +344,8 @@ class MrNodeBot {
     };
 
     // Handle On Part
-    _handleOnPart(app, channel, nick, reason, message) {
-        app.OnPart.forEach((value, key) => {
+    _handleOnPart(channel, nick, reason, message) {
+        this.OnPart.forEach((value, key) => {
             try {
                 value.call(channel, nick, reason, message);
             } catch (e) {
@@ -407,8 +355,8 @@ class MrNodeBot {
     };
 
     // Handle On Kick
-    _handleOnKick(app, channel, nick, by, reason, message) {
-        app.OnKick.forEach((value, key) => {
+    _handleOnKick(channel, nick, by, reason, message) {
+        this.OnKick.forEach((value, key) => {
             try {
                 value.call(channel, nick, by, reason, message);
             } catch (e) {
@@ -418,8 +366,8 @@ class MrNodeBot {
     };
 
     // Handle On Quit
-    _handleOnQuit(app, nick, reason, channels, message) {
-        app.OnQuit.forEach((value, key) => {
+    _handleOnQuit(nick, reason, channels, message) {
+        this.OnQuit.forEach((value, key) => {
             try {
                 value.call(nick, reason, channels, message);
             } catch (e) {
@@ -429,8 +377,8 @@ class MrNodeBot {
     };
 
     // Handle Topic changes
-    _handleOnTopic(app, channel, topic, nick, message) {
-        app.OnTopic.forEach((value, key) => {
+    _handleOnTopic(channel, topic, nick, message) {
+        this.OnTopic.forEach((value, key) => {
             try {
                 value.call(channel, topic, nick, message);
             } catch (e) {
@@ -440,10 +388,10 @@ class MrNodeBot {
     };
 
     // Fired when the bot connects to the network
-    _handleRegistered(app) {
-        app.Registered.forEach((value, key) => {
+    _handleRegistered() {
+        this.Registered.forEach((value, key) => {
             try {
-                value.call(app);
+                value.call();
             } catch (e) {
                 conLogger(e, 'error');
             }
@@ -451,11 +399,11 @@ class MrNodeBot {
     };
 
     // Process the commands
-    _handleCommands(app, from, to, text, message) {
+    _handleCommands(from, to, text, message) {
         // Build the is object to pass along to the command router
         let is = {
             ignored: _.includes(this.Ignore, _.toLower(from)),
-            self: from === app._ircClient.nick,
+            self: from === this._ircClient.nick,
             privateMsg: to === from
         };
 
@@ -466,11 +414,11 @@ class MrNodeBot {
         let output = textArray.join(' ');
 
         // Check on trigger for private messages
-        is.triggered = (is.privateMsg && app.Commands.has(cmd) ? true : (text.startsWith(app._ircClient.nick) && app.Commands.has(cmd)));
+        is.triggered = (is.privateMsg && this.Commands.has(cmd) ? true : (text.startsWith(this._ircClient.nick) && this.Commands.has(cmd)));
 
         // Process the listeners
         if (!is.triggered && !is.ignored && !is.self) {
-            app.Listeners.forEach((value, key) => {
+            this.Listeners.forEach((value, key) => {
                 try {
                     value.call(to, from, text, message, is);
                 } catch (e) {
@@ -482,15 +430,15 @@ class MrNodeBot {
         // If triggered, not ignored, and not a self message
         if (is.triggered && !is.ignored && !is.self) {
             // Check if the command exists
-            if (app.Commands.has(cmd)) {
+            if (this.Commands.has(cmd)) {
                 // Make sure its not admin only
-                if (app.Commands.get(cmd).access === app.Config.accessLevels.guest) {
+                if (this.Commands.get(cmd).access === this.Config.accessLevels.guest) {
                     // Record Stats
-                    app.Stats.set(cmd, app.Stats.has(cmd) ? app.Stats.get(cmd) + 1 : 1);
+                    this.Stats.set(cmd, this.Stats.has(cmd) ? this.Stats.get(cmd) + 1 : 1);
                     // Run the callback, give it the text array without the command
-                    app.Commands.get(cmd).call(to, from, output, message, is);
+                    this.Commands.get(cmd).call(to, from, output, message, is);
                 } else {
-                    app.AdmCallbacks.set(from, {
+                    this.AdmCallbacks.set(from, {
                         cmd: cmd,
                         from: from,
                         to: to,
@@ -500,29 +448,29 @@ class MrNodeBot {
                     });
                     // Send a check to nickserv to see if the user is registered
                     // Will spawn the notice listener to do the rest of the work
-                    let first = app.Config.nickserv.host ? `@${app.Config.nickserv.host}` : '';
-                    app.say(`${app.Config.nickserv.nick}${first}`, `acc ${from}`);
+                    let first = this.Config.nickserv.host ? `@${this.Config.nickserv.host}` : '';
+                    this.say(`${this.Config.nickserv.nick}${first}`, `acc ${from}`);
                 }
             }
         }
     };
 
     //noinspection JSMethodCanBeStatic
-    _handleAuthenticatedCommands(app, nick, to, text, message) {
-        if (_.toLower(nick) === _.toLower(app.Config.nickserv.nick)) {
+    _handleAuthenticatedCommands(nick, to, text, message) {
+        if (_.toLower(nick) === _.toLower(this.Config.nickserv.nick)) {
             let [user, acc, code] = text.split(' ');
 
             // Halt function if things do not check out
             if (!user || !acc || !code || acc !== 'ACC') return;
 
             // If the user has an admin callback on the queue
-            if (app.AdmCallbacks.has(user)) {
-                let admCall = app.AdmCallbacks.get(user),
-                    admCmd = app.Commands.get(admCall.cmd),
+            if (this.AdmCallbacks.has(user)) {
+                let admCall = this.AdmCallbacks.get(user),
+                    admCmd = this.Commands.get(admCall.cmd),
                     admTextArray = admCall.text.split(' ');
 
                 // Check if the user is identified, pass it along in the is object
-                admCall.is.identified = code == app.Config.nickserv.accCode;
+                admCall.is.identified = code == this.Config.nickserv.accCode;
 
                 // Clean the output
                 admTextArray.splice(0, admCall.to === admCall.from ? 1 : 2);
@@ -532,58 +480,53 @@ class MrNodeBot {
                 if (admCall.is.identified) {
                     let admFromLower = _.toLower(admCall.from);
                     let unauthorized =
-                        (admCmd.access == app.Config.accessLevels.owner && admFromLower !== _.toLower(app.Config.owner.nick)) ||
-                        (admCmd.access === app.Config.accessLevels.admin && !_.includes(app.Admins, admFromLower));
+                        (admCmd.access == this.Config.accessLevels.owner && admFromLower !== _.toLower(this.Config.owner.nick)) ||
+                        (admCmd.access === this.Config.accessLevels.admin && !_.includes(this.Admins, admFromLower));
 
                     // Log to the console if a user without access a command they are not privy too
                     if (unauthorized) {
                         let group = helpers.AccessString(admCall.access);
-                        app.say(admCall.from, `You are not a member of the ${group} access list.`);
+                        this.say(admCall.from, `You are not a member of the ${group} access list.`);
                         conLogger(`${admCall.from} on ${admCall.to} tried to use the ${group} command ${admCall.cmd}`, 'error');
                         return;
                     }
 
                     try {
-                        app.Commands.get(admCall.cmd).call(admCall.to, admCall.from, output, admCall.message, admCall.is);
+                        this.Commands.get(admCall.cmd).call(admCall.to, admCall.from, output, admCall.message, admCall.is);
                     } catch (e) {
                         conLogger(e, 'error');
                     }
                 }
                 // Is not identified
                 else {
-                    app.say(admCall.from, 'You must be identified with nickserv to use this command');
+                    this.say(admCall.from, 'You must be identified with nickserv to use this command');
                 }
 
                 // Remove the callback from the stack
-                app.AdmCallbacks.remove(user);
+                this.AdmCallbacks.remove(user);
             }
         }
     };
 
     // Handle CTCP commands
-    _handleCtcpCommands(app, from, to, text, type, message) {
+    _handleCtcpCommands(from, to, text, type, message) {
         let textArray = text.split(' ');
         return;
     };
 
-    // Run through random parser
-    _filterMessage(message) {
-        return RandomString(this.random, this.randomEngine, message);
-    };
-
     // Send a message to the target
     say(target, message) {
-        this._ircClient.say(target, this._filterMessage(message));
+        this._ircClient.say(target, randomString(message));
     };
 
     // Send a action to the target
     action(target, message) {
-        this._ircClient.action(target, this._filterMessage(message));
+        this._ircClient.action(target, randomString(message));
     };
 
     // Send notice to the target
     notice(target, message) {
-        this._ircClient.notice(target, this._filterMessage(message));
+        this._ircClient.notice(target, randomString(message));
     };
 
     isInChannel(channel, nick) {
@@ -612,20 +555,21 @@ class MrNodeBot {
     set channels(value) {
         // Given an array
         if (_.isArray(value)) value.forEach(channel => {
-          if (!this.isInChannel(channel)) {
-            this._ircClient.join(channel);
-          }
+            if (!this.isInChannel(channel)) {
+                this._ircClient.join(channel);
+            }
         });
         // Given a string
         else if (_.isString(value)) {
-          value.split(' ').forEach(channel => {
-            if (!this.isInChannel(channel)) {
-              this._ircClient.join(channel);
-            }
-          });
+            value.split(' ').forEach(channel => {
+                if (!this.isInChannel(channel)) {
+                    this._ircClient.join(channel);
+                }
+            });
         }
     };
 
 }
 
-module.exports = callback => new MrNodeBot(callback);
+// Export Class
+module.exports = MrNodeBot;

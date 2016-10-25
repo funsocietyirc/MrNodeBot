@@ -8,7 +8,7 @@ const scriptInfo = {
 
 const _ = require('lodash');
 const gen = require('../generators/_chatBotLine');
-
+const random = require('../../lib/randomEngine.js');
 /**
   Make the bot randomly conversational
   Commands: converse
@@ -27,7 +27,7 @@ module.exports = app => {
     };
 
     const listen = (to, from, text, message, is) => {
-        if (conversational && !_.includes(ignoredChans, to) && !is.triggered && app.random.bool(1, is.privateMsg ? 1 : randomChance)(app.randomEngine)) {
+        if (conversational && !_.includes(ignoredChans, to) && !is.triggered && random.bool(1, is.privateMsg ? 1 : randomChance)) {
             gen(text)
               .then(result => app.say(to, `${from}, ${result}`));
         }
