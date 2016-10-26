@@ -45,7 +45,7 @@ module.exports = app => {
                 jResults.each(v => {
                     msgCount[v.from] = _.isUndefined(msgCount[v.from]) ? 1 : msgCount[v.from] + 1;
                 });
-                jResults.each(v => {
+                jResults.uniq(v => v.from).each(v => {
                     if (msgCount[v.from] < threshold || !app.isInChannel(channel, v.from) || app._ircClient.isOpOrVoiceInChannel(channel, v.from))
                         return;
                     setTimeout(() => {
