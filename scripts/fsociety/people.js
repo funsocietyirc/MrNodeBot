@@ -1,25 +1,22 @@
 'use static';
 const scriptInfo = {
-    name: 'jeek',
-    file: 'jeek.js',
-    desc: 'Is Jeek alive?',
+    name: 'FSociety Peoples',
+    file: 'people.js',
+    desc: 'Commands for certain #fsociety members',
     createdBy: 'Dave Richer'
 };
 
 const _ = require('lodash');
 const xray = require('x-ray')();
 const Models = require('bookshelf-model-loader');
-const scheduler = require('../../lib/scheduler');
-const randomEngine = require('../../lib/randomEngine');
-
 
 module.exports = (app) => {
     if (!Models.Logging) return $scriptInfo;
 
-    const motherQuotes = [];
-    let usedQuoteCount = 0;
 
     const getMother = () => {
+        let motherQuotes = [];
+        let usedQuoteCount = 0;
         // Load Initial Mother responses from jeek
         motherQuotes.splice(0, motherQuotes.length);
 
@@ -36,26 +33,28 @@ module.exports = (app) => {
             )
             .fetchAll()
             .then(results => {
+                // Prepare the mother quotes
                 _(results.pluck('text')).uniq().filter(t => !_.includes(t, 'moment')).each(t => motherQuotes.push(t));
-
+                // Bail if we have no quotes
                 if (!motherQuotes.length) return;
-
-                let mother = (to, from, text, message) => {
+                // Shuffle quotes
+                motherQuotes = _.shuffle(motherQuotes);
+                // Expose mother quotes command
+                const mother = (to, from, text, message) => {
                     let commands = text.split(' ');
 
                     // Arguments
-                    if(commands.length) {
-                      switch(commands[0]) {
-                        case 'total':
-                          app.say(to, `On Stack: ${motherQuotes.length} Used: ${usedQuoteCount} Total: ${motherQuotes.length + usedQuoteCount}`);
-                          return;
-                      }
+                    if (commands.length) {
+                        switch (commands[0]) {
+                            case 'total':
+                                app.say(to, `On Stack: ${motherQuotes.length} Used: ${usedQuoteCount} Total: ${motherQuotes.length + usedQuoteCount}`);
+                                return;
+                        }
                     }
 
                     // Get a random quote then omit the quote from the collection
                     let say = () => {
-                        quote = randomEngine.pick(motherQuotes);
-                        _.pull(motherQuotes, quote);
+                        quote = motherQuotes.pop();
                         usedQuoteCount = usedQuoteCount + 1;
                         app.say(to, quote);
                         // We have run out of quotes, reload!
@@ -63,10 +62,8 @@ module.exports = (app) => {
                             return getMother().then(() => say());
                         }
                     };
-
                     say();
                 };
-
                 app.Commands.set('mother', {
                     desc: 'Get a your mother line care of Jeek',
                     access: app.Config.accessLevels.identified,
@@ -89,8 +86,8 @@ module.exports = (app) => {
             return;
         }
         // If he is in the channel
-        if(app.isInChannel(to, 'jeek')) {
-          app.action(to, 'points to jeek');
+        if (app.isInChannel(to, 'jeek')) {
+            app.action(to, 'points to jeek');
         }
         app.say(to, `Is Jeek Alive? ${results[1]}`);
     });
@@ -101,16 +98,15 @@ module.exports = (app) => {
         call: jeek
     });
 
-
     // Report an image of our lord and savour, RaptorJesus
     const raptorJesus = (to, from, text, message) => {
-      // If he is in the channel
-      if(app.isInChannel(to, 'RaptorJesus')) {
-        app.action(to, 'prays to RaptorJesus');
-      }
+        // If he is in the channel
+        if (app.isInChannel(to, 'RaptorJesus')) {
+            app.action(to, 'prays to RaptorJesus');
+        }
 
-      app.say(to, `Our Lord and Saviour: http://i.imgur.com/E1fQQdr.png`);
-    }
+        app.say(to, `Our Lord and Saviour: http://i.imgur.com/E1fQQdr.png`);
+    };
 
     // Total Messages command
     app.Commands.set('RaptorJesus', {
