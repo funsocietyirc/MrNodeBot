@@ -47,7 +47,7 @@ module.exports = (app) => {
                     if(commands.length) {
                       switch(commands[0]) {
                         case 'total':
-                          app.say(to, `On Stack: ${motherQuotes.length} Used: ${usedQuoteCount} Total: ${motherQuotes.length - usedQuoteCount}`);
+                          app.say(to, `On Stack: ${motherQuotes.length} Used: ${usedQuoteCount} Total: ${motherQuotes.length + usedQuoteCount}`);
                           return;
                       }
                     }
