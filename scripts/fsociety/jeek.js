@@ -56,7 +56,7 @@ module.exports = (app) => {
                     let say = () => {
                         quote = randomEngine.pick(motherQuotes);
                         _.pull(motherQuotes, quote);
-                        usedQuoteCount = usedQuoteCount + usedQuoteCount;
+                        usedQuoteCount = usedQuoteCount + 1;
                         app.say(to, quote);
                         // We have run out of quotes, reload!
                         if (!motherQuotes.length) {
