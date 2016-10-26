@@ -21,11 +21,11 @@ module.exports = app => {
         switch (txtArray.length) {
             case 1:
                 channel = _.isEmpty(txtArray[0]) ? to : txtArray[0];
-                thresh = _.isNumber(parseInt(thresh)) ? thresh : threshold;
+                thresh = threshold;
                 break;
             case 2:
                 channel = txtArray[0];
-                thresh = _.isNumber(parseInt(txtArray[1])) ? txtArray[1] : threshold;
+                thresh = txtArray[1] % 1 === 0 ? txtArray[1] : threshold;
                 break
         }
 
