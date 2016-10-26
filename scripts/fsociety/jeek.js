@@ -54,11 +54,18 @@ module.exports = (app) => {
 
                     say();
                 };
-
                 app.Commands.set('mother', {
                     desc: 'Get a your mother line care of Jeek',
                     access: app.Config.accessLevels.identified,
                     call: mother
+                });
+                // Total Messages command
+                app.Commands.set('mother-size', {
+                    desc: '',
+                    access: app.Config.accessLevels.owner,
+                    call: (to, from, text, message) => {
+                      app.say(to, `I have ${motherQuotes.length} mother comments available`);
+                    }
                 });
             })
             .catch(err => {
@@ -83,12 +90,12 @@ module.exports = (app) => {
         app.say(to, `Is Jeek Alive? ${results[1]}`);
     });
 
-    // Total Messages command
     app.Commands.set('jeek', {
         desc: 'Is Jeek Alive?',
         access: app.Config.accessLevels.identified,
         call: jeek
     });
+
 
     // Report an image of our lord and savour, RaptorJesus
     const raptorJesus = (to, from, text, message) => {
