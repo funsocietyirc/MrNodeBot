@@ -19,12 +19,8 @@ module.exports = app => {
         let thresh = null;
 
         switch (txtArray.length) {
-            case 0:
-                channel = to;
-                thresh = _.isNumber(parseInt(thresh)) ? thresh : threshold;
-                break;
             case 1:
-                channel = txtArray[0];
+                channel = _.isEmpty(txtArray[0]) ? to : txtArray[0];
                 thresh = _.isNumber(parseInt(thresh)) ? thresh : threshold;
                 break;
             case 2:
