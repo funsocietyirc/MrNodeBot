@@ -13,7 +13,7 @@ const threshold = 50;
 module.exports = app => {
     if (!app.Database || !Models.Logging) return scriptInfo;
 
-    const voiceEmergency = (to, from, text, message) => {
+    const voiceRegulars = (to, from, text, message) => {
         let [channel, thresh] = text.split(' ');
         channel = channel || to;
         thresh = _.isNumber(parseInt(thresh)) ? thresh : threshold;
@@ -59,10 +59,10 @@ module.exports = app => {
     };
 
     // Terminate the bot and the proc watcher that keeps it up
-    app.Commands.set('voice-emergency', {
-        desc: '[Channel?] [Threshold?] Voice the last 50 active people in a channel',
+    app.Commands.set('voice-regulars', {
+        desc: '[Channel?] [Threshold?] Voice the regulars in a channel',
         access: app.Config.accessLevels.admin,
-        call: voiceEmergency
+        call: voiceRegulars
     });
 
     // Return the script info
