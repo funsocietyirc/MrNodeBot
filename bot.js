@@ -515,6 +515,7 @@ class MrNodeBot {
     };
 
     isInChannel(channel, nick) {
+        nick = nick || this.nick;
         return this._ircClient.isInChannel(channel, nick);
     };
 
