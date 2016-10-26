@@ -41,18 +41,18 @@ module.exports = app => {
                 }
                 let msgCount = [];
                 let count = 1;
-                _(results.toJSON())
-                    .each(v => {
-                        msgCount[v.from] = _.isUndefined(msgCount[v.from]) ? 1 : msgCount[v.from] + 1;
-                    })
-                    .each(v => {
-                        if(msgCount[v.from] < threshold || !app.isInChannel(channel, nick) || app._ircClient.isOpOrVoiceInChannel(channel, nick) )
-                          return;
-                          setTimeout(() => {
-                              app._ircClient.send('mode', channel, '+v', nick);
-                          }, 1000 * count);
-                          count = count + 1;
-                    });
+                let jResults = _(results.toJSON());
+                jResults.each(v => {
+                    msgCount[v.from] = _.isUndefined(msgCount[v.from]) ? 1 : msgCount[v.from] + 1;
+                });
+                jResults.each(v => {
+                    if (msgCount[v.from] < threshold || !app.isInChannel(channel, nick) || app._ircClient.isOpOrVoiceInChannel(channel, nick))
+                        return;
+                    setTimeout(() => {
+                        app._ircClient.send('mode', channel, '+v', nick);
+                    }, 1000 * count);
+                    count = count + 1;
+                });
             });
     };
 
