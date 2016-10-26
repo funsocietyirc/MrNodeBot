@@ -46,7 +46,7 @@ module.exports = app => {
                         msgCount[v.from] = _.isUndefined(msgCount[v.from]) ? 1 : msgCount[v.from] + 1;
                     })
                     .each(v => {
-                        if(msgCount[v.from] < threshold !app.isInChannel(channel, nick) || app._ircClient.isOpOrVoiceInChannel(channel, nick) )
+                        if(msgCount[v.from] < threshold || !app.isInChannel(channel, nick) || app._ircClient.isOpOrVoiceInChannel(channel, nick) )
                           return;
                           setTimeout(() => {
                               app._ircClient.send('mode', channel, '+v', nick);
