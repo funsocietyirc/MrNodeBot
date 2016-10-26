@@ -54,14 +54,14 @@ module.exports = app => {
                 }
                 let msgCount = [];
                 let count = 1;
-                let jResults = _(results.toJSON()).filter(v => app.isInChannel(channel, v.from) && !app._ircClient.isOpOrVoiceInChannel(channel, v.from));
+                let jResults = _(results.toJSON());
 
                 jResults.each(v => {
                     msgCount[v.from] = _.isUndefined(msgCount[v.from]) ? 1 : msgCount[v.from] + 1;
                 });
 
                 jResults.each(v => {
-                    if (msgCount[v.from] < thresh)
+                    if (msgCount[v.from] < thresh && !app.isInChannel(channel, v.from) && app._ircClient.isOpOrVoiceInChannel(channel, v.from))
                         return;
                     msgCount[v.from] = 0;
                     setTimeout(() => {
