@@ -17,6 +17,7 @@ module.exports = (app) => {
     if (!Models.Logging) return $scriptInfo;
 
     const motherQuotes = [];
+    let usedQuoteCount = 0;
 
     const getMother = () => {
         // Load Initial Mother responses from jeek
@@ -40,32 +41,36 @@ module.exports = (app) => {
                 if (!motherQuotes.length) return;
 
                 let mother = (to, from, text, message) => {
+                    let commands = text.split(' ');
+
+                    // Arguments
+                    if(commands.length) {
+                      switch(commands[0]) {
+                        case 'total':
+                          app.say(to, `On Stack: ${motherQuotes.length} Used: ${usedQuoteCount} Total: ${motherQuotes.length - usedQuoteCount}`);
+                          return;
+                      }
+                    }
+
                     // Get a random quote then omit the quote from the collection
                     let say = () => {
                         quote = randomEngine.pick(motherQuotes);
                         _.pull(motherQuotes, quote);
+                        usedQuoteCount = usedQuoteCount + usedQuoteCount;
                         app.say(to, quote);
+                        // We have run out of quotes, reload!
+                        if (!motherQuotes.length) {
+                            return getMother().then(() => say());
+                        }
                     };
-
-                    // We have run out of quotes, reload!
-                    if (!motherQuotes.length) {
-                        return getMother().then(() => say());
-                    }
 
                     say();
                 };
+
                 app.Commands.set('mother', {
                     desc: 'Get a your mother line care of Jeek',
                     access: app.Config.accessLevels.identified,
                     call: mother
-                });
-                // Total Messages command
-                app.Commands.set('mother-size', {
-                    desc: '',
-                    access: app.Config.accessLevels.owner,
-                    call: (to, from, text, message) => {
-                      app.say(to, `I have ${motherQuotes.length} mother comments available`);
-                    }
                 });
             })
             .catch(err => {
