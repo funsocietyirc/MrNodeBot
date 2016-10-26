@@ -94,7 +94,7 @@ module.exports = app => {
 
 
     // Register Listener
-    app.Registered.set('watcher', {
+    app.OnConnected.set('watcher', {
         call: watcher,
         desc: 'Twitter watcher',
         name: 'TwitterWatcher'

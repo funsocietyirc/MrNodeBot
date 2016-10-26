@@ -23,19 +23,19 @@ require('./lib/uncache')(require);
 
 // Dynamic collections
 const dynCollections = _([
-  'AdmCallbacks', // Administrative commands
-  'NickChanges', // Fired On Nick changes
-  'Registered', // Fired on Server Register
-  'Listeners', // Fired when messages are received
-  'WebRoutes', // Express JS Web routes
-  'Commands', // IRC Trigger commands
-  'Stats', // Basic usage stats
-  'OnJoin', // Fired when user joins channel
-  'OnKick', // Fired when user is kicked from channel
-  'OnPart', // Fired when user parts channel
-  'OnQuit', // Fired when user quites network
-  'OnTopic', // Fired when topic is changed
-  'OnConnected', // Fired when Connection to IRC is established
+    'AdmCallbacks', // Administrative commands
+    'NickChanges', // Fired On Nick changes
+    'Registered', // Fired on Server Register
+    'Listeners', // Fired when messages are received
+    'WebRoutes', // Express JS Web routes
+    'Commands', // IRC Trigger commands
+    'Stats', // Basic usage stats
+    'OnJoin', // Fired when user joins channel
+    'OnKick', // Fired when user is kicked from channel
+    'OnPart', // Fired when user parts channel
+    'OnQuit', // Fired when user quites network
+    'OnTopic', // Fired when topic is changed
+    'OnConnected', // Fired when Connection to IRC is established
 ]);
 
 class MrNodeBot {
@@ -89,13 +89,11 @@ class MrNodeBot {
     // Init the IRC Bot
     _initIrc() {
         conLogger('Connecting to IRC', 'info');
-        return new Promise((resolve, reject) => {
-                // Connect the Bot to the irc network
-                this._ircClient.connect(20, () => {
-                    conLogger(`Connected to ${this.Config.irc.server} as ${this._ircClient.nick}`, 'success');
-                    resolve();
-                });
-            })
+        // Connect the Bot to the irc network
+        return new Promise((resolve, reject) => this._ircClient.connect(20, () => {
+                conLogger(`Connected to ${this.Config.irc.server} as ${this._ircClient.nick}`, 'success');
+                resolve();
+            }))
             // If there is a password and we are on the same nick we were configured for, identify
             .then(() => {
                 if (!this.Config.nickserv.password || this.Config.irc.nick != this._ircClient.nick) return;
@@ -104,74 +102,49 @@ class MrNodeBot {
                 this._ircClient.say(nickserv, `identify ${this.Config.nickserv.password}`);
             })
             // Load in the scripts
-            .then(() => {
-                this._loadDynamicAssets(false);
-            })
+            .then(() => this._loadDynamicAssets(false))
             // Initialize the listeners
             .then(() => {
                 conLogger('Initializing Listeners', 'info');
                 _({
-                        // Handle On Connect
-                        registered: () => {
-                            this._handleRegistered();
-                        },
+                        // Handle On First Line recieved from IRC Client
+                        'registered': message => this._handleRegistered(message),
                         // Handle Channel Messages
-                        'message#': (from, to, text, message) => {
-                            this._handleCommands(from, to, text, message);
-                        },
+                        'message#': (from, to, text, message) => this._handleCommands(from, to, text, message),
                         // Handle Private Messages
-                        pm: (from, text, message) => {
-                            this._handleCommands(from, from, text, message);
-                        },
+                        pm: (from, text, message) => this._handleCommands(from, from, text, message),
                         // Handle Notices, also used to check validation for NickServ requests
-                        notice: (from, text, message) => {
-                            this._handleAuthenticatedCommands(from, text, message);
-                        },
+                        notice: (from, text, message) => this._handleAuthenticatedCommands(from, text, message),
                         // Handle CTCP Requests
-                        ctcp: (from, to, text, type, message) => {
-                            this._handleCtcpCommands(from, to, text, message);
-                        },
+                        ctcp: (from, to, text, type, message) => this._handleCtcpCommands(from, to, text, message),
                         // Handle Nick changes
-                        nick: (oldnick, newnick, channels, message) => {
-                            this._handleNickChanges(oldnick, newnick, channels, message);
-                        },
+                        nick: (oldnick, newnick, channels, message) => this._handleNickChanges(oldnick, newnick, channels, message),
                         // Handle Joins
-                        join: (channel, nick, message) => {
-                            this._handleOnJoin(channel, nick, message);
-                        },
+                        join: (channel, nick, message) => this._handleOnJoin(channel, nick, message),
                         // Handle On Parts
-                        part: (channel, nick, reason, message) => {
-                            this._handleOnPart(channel, nick, reason, message);
-                        },
+                        part: (channel, nick, reason, message) => this._handleOnPart(channel, nick, reason, message),
                         // Handle On Kick
-                        kick: (channel, nick, by, reason, message) => {
-                            this._handleOnKick(channel, nick, by, reason, message);
-                        },
+                        kick: (channel, nick, by, reason, message) => this._handleOnKick(channel, nick, by, reason, message),
                         // Handle On Quit
-                        quit: (nick, reason, channels, message) => {
-                            this._handleOnQuit(nick, reason, channels, message);
-                        },
+                        quit: (nick, reason, channels, message) => this._handleOnQuit(nick, reason, channels, message),
                         // Handle Topic changes
-                        topic: (channel, topic, nick, message) => {
-                            this._handleOnTopic(channel, topic, nick, message);
-                        },
+                        topic: (channel, topic, nick, message) => this._handleOnTopic(channel, topic, nick, message),
                         // Catch all to prevent drop on error
-                        error: message => {
-                            // This can now be turned on by setting showErrors in the bot configuration
-                        }
+                        error: message => {}
                     })
                     // Add the listeners to the IRC Client
                     .each((value, key) => this._ircClient.addListener(key, value));
             })
+            // Run The On Connected events
+            .then(() => this.OnConnected.forEach(x => {
+                try {
+                    x.call();
+                } catch (e) {
+                    conLogger(e, 'error');
+                }
+            }))
             // Run The callback
             .then(() => {
-                this.OnConnected.forEach(x => {
-                  try {
-                      x.call();
-                  } catch (e) {
-                      conLogger(e, 'error');
-                  }
-                });
                 if (this._callback) this._callback(this);
             });
     };
@@ -399,10 +372,10 @@ class MrNodeBot {
     };
 
     // Fired when the bot connects to the network
-    _handleRegistered() {
+    _handleRegistered(message) {
         this.Registered.forEach((value, key) => {
             try {
-                value.call();
+                value.call(message);
             } catch (e) {
                 conLogger(e, 'error');
             }
@@ -520,6 +493,7 @@ class MrNodeBot {
     };
 
     // Handle CTCP commands
+    // TODO handle ACL on ctcp commands
     _handleCtcpCommands(from, to, text, type, message) {
         let textArray = text.split(' ');
         return;

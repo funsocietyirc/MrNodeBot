@@ -7,7 +7,7 @@ const scriptInfo = {
 };
 
 const conLogger = require('../../lib/consoleLogger');
-const pusher = require('../../lib/pusher');
+const pusherApi = require('../../lib/pusher');
 
 module.exports = app => {
     // Send Announcement Over Pusher
@@ -16,7 +16,7 @@ module.exports = app => {
         if (!pusher) {
             return (results);
         }
-        pusher.trigger('public', 'announce', {
+        pusherApi.trigger('public', 'announce', {
             to,
             from,
             text,

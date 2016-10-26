@@ -27,6 +27,7 @@ module.exports = app => {
 
     // Grab a list of the 'darm army channels'
     let darkChannels = app.Config.features.fsociety.additionalChannels.concat(require('./_darkChannels')(app.Config.features.fsociety.totalChannels));
+
     // Join the dark army channels
     const joinChannels = () => {
         if (!darkChannels.length) {
@@ -62,7 +63,7 @@ module.exports = app => {
         app.say(from, `Join me on ${app.Config.features.fsociety.mainChannel} or one of the other Mr. Robot channels: ` + darkChannels.join(' '));
     };
 
-    // Provide a registered provider, this will fire when the bot connects to the network
+    // Provide a OnConnected provider, this will fire when the bot connects to the network
     app.OnConnected.set('darkarmy', {
         call: joinChannels,
         desc: 'Join Fsociety channels',

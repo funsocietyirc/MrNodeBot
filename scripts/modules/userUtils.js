@@ -12,6 +12,7 @@ module.exports = app => {
     // identify with other nicks/hosts
     const register = (to, from, text, message) => {
         let args = text.split(' ');
+        console.dir(args);
         if (!args[0]) {
             app.say(from, 'A Email is required');
             return;
@@ -25,6 +26,8 @@ module.exports = app => {
             // Log the user in here
         })
         .catch(err => {
+            console.log('Account Registration Error');
+            console.dir(err);
             app.say(from, 'Something went wrong creating your account, the username may exist');
         });
     };
@@ -40,15 +43,14 @@ module.exports = app => {
 
         // Process text
         text = text.split(' ');
-        let command = text.splice(0,1).toString();
-        let subCommand = text.splice(0,1).toString();
-        text = text.join(' ');
+        let [command] = text.splice(0,1);
 
         switch (command) {
             case 'register':
-                register(to, from, text, message);
+                register(to, from, text.join(' '), message);
                 break;
             case 'help':
+                let [subCommand] = text.splice(0,1);
                 if (!subCommand) {
                     app.say(from, 'The following are valid commands, use account help [command], for more information.');
                     app.say(from, 'register');
