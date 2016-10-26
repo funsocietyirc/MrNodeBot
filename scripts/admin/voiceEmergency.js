@@ -31,16 +31,14 @@ module.exports = app => {
     )
     .fetchAll()
     .then(results => {
+      let count = 1;
       results.forEach(result => {
         let nick = result.get('from');
-        if(!nick || !app.isInChannel(nick, channel)) {
-          app.say(to, `${nick} is not in ${channel}`);
-          return;
+        let voice = () => {
+          app._ircClient.send('mode', channel, '+v', nick);
         }
-        console.log(nick);
-        console.log(channel);
-        console.log(app.isInChannel(nick, channel));
-        app._ircClient.send('mode', channel, '+v', nick);
+        setTimeout(voice, 1000 * count);
+        count = count + 1;
       })
     })
 
