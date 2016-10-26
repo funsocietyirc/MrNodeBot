@@ -12,14 +12,11 @@ const Models = require('bookshelf-model-loader');
 
 module.exports = (app) => {
     if (!Models.Logging) return $scriptInfo;
-
-
+    // Mother Recurssive command
     const getMother = () => {
         let motherQuotes = [];
         let usedQuoteCount = 0;
         // Load Initial Mother responses from jeek
-        motherQuotes.splice(0, motherQuotes.length);
-
         return Models.Logging.query(qb =>
                 qb
                 .select(['text', 'id'])
@@ -34,15 +31,12 @@ module.exports = (app) => {
             .fetchAll()
             .then(results => {
                 // Prepare the mother quotes
-                _(results.pluck('text')).uniq().filter(t => !_.includes(t, 'moment')).each(t => motherQuotes.push(t));
+                motherQuotes = _(results.pluck('text')).uniq().filter(t => !_.includes(t, 'moment')).shuffle().value();
                 // Bail if we have no quotes
                 if (!motherQuotes.length) return;
-                // Shuffle quotes
-                motherQuotes = _.shuffle(motherQuotes);
                 // Expose mother quotes command
                 const mother = (to, from, text, message) => {
                     let commands = text.split(' ');
-
                     // Arguments
                     if (commands.length) {
                         switch (commands[0]) {
@@ -51,16 +45,16 @@ module.exports = (app) => {
                                 return;
                         }
                     }
-
                     // Get a random quote then omit the quote from the collection
                     let say = () => {
                         quote = motherQuotes.pop();
                         usedQuoteCount = usedQuoteCount + 1;
-                        app.say(to, quote);
                         // We have run out of quotes, reload!
                         if (!motherQuotes.length) {
                             return getMother().then(() => say());
                         }
+                        // Report to IRC
+                        app.say(to, quote);
                     };
                     say();
                 };
@@ -77,7 +71,6 @@ module.exports = (app) => {
     };
     // Load Initial set of quotes
     getMother();
-
 
     // Check Jeeks Website to make sure he is still alive
     const jeek = (to, from, text, message) => xray('http://ishealive.jeek.net', ['h1'])((err, results) => {
