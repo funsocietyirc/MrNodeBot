@@ -26,7 +26,7 @@ module.exports = app => {
                     clause.where('to', 'like', channel)
                 )
                 .distinct('from')
-                .orderBy('timestamp', 'desc')
+                .orderBy('id', 'desc')
                 .limit(usersToVoice)
             )
             .fetchAll()
