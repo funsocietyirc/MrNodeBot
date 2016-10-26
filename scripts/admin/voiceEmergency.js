@@ -46,10 +46,10 @@ module.exports = app => {
                     msgCount[v.from] = _.isUndefined(msgCount[v.from]) ? 1 : msgCount[v.from] + 1;
                 });
                 jResults.each(v => {
-                    if (msgCount[v.from] < threshold || !app.isInChannel(channel, nick) || app._ircClient.isOpOrVoiceInChannel(channel, nick))
+                    if (msgCount[v.from] < threshold || !app.isInChannel(channel, v.from) || app._ircClient.isOpOrVoiceInChannel(channel, v.from))
                         return;
                     setTimeout(() => {
-                        app._ircClient.send('mode', channel, '+v', nick);
+                        app._ircClient.send('mode', channel, '+v', v.from);
                     }, 1000 * count);
                     count = count + 1;
                 });
