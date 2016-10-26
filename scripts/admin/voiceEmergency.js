@@ -50,8 +50,7 @@ module.exports = app => {
                         return;
                     msgCount[v.from] = 0;
                     setTimeout(() => {
-                      console.log(v.from);
-                      //  app._ircClient.send('mode', channel, '+v', v.from);
+                       app._ircClient.send('mode', channel, '+v', v.from);
                     }, 1000 * count);
                     count = count + 1;
                 });
