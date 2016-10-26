@@ -33,7 +33,10 @@ module.exports = app => {
     .then(results => {
       results.forEach(result => {
         let nick = result.get('from');
-        if(!nick || !app.isInChannel(nick, channel)) return;
+        if(!nick || !app.isInChannel(nick, channel)) {
+          app.say(to, `${nick} is not in ${channel}`);
+          return;
+        }
         console.log(nick);
         console.log(channel);
         console.log(app.isInChannel(nick, channel));
