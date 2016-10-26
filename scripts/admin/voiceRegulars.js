@@ -22,6 +22,7 @@ module.exports = app => {
             case 0:
                 channel = to;
                 thresh = _.isNumber(parseInt(thresh)) ? thresh : threshold;
+                break;
             case 1:
                 channel = txtArray[0];
                 thresh = _.isNumber(parseInt(thresh)) ? thresh : threshold;
@@ -54,14 +55,14 @@ module.exports = app => {
                 }
                 let msgCount = [];
                 let count = 1;
-                let jResults = _(results.toJSON());
+                let jResults = _(results.toJSON()).filter(v => app.isInChannel(channel, v.from) && !app._ircClient.isOpOrVoiceInChannel(channel, v.from));
 
                 jResults.each(v => {
                     msgCount[v.from] = _.isUndefined(msgCount[v.from]) ? 1 : msgCount[v.from] + 1;
                 });
 
                 jResults.each(v => {
-                    if (msgCount[v.from] < thresh && !app.isInChannel(channel, v.from) && app._ircClient.isOpOrVoiceInChannel(channel, v.from))
+                    if (msgCount[v.from] < thresh)
                         return;
                     msgCount[v.from] = 0;
                     setTimeout(() => {
