@@ -8,7 +8,7 @@ const scriptInfo = {
 
 const _ = require('lodash');
 const Models = require('bookshelf-model-loader');
-const usersToVoice = 100;
+const threshold = 50;
 
 module.exports = app => {
     if (!app.Database || !Models.Logging) return scriptInfo;
@@ -25,9 +25,9 @@ module.exports = app => {
         Models.Logging.query(qb => qb.where(clause =>
                     clause.where('to', 'like', channel)
                 )
-                .distinct('from')
+                //.distinct('from')
                 .orderBy('id', 'desc')
-                .limit(usersToVoice)
+                //.limit(threshold)
             )
             .fetchAll()
             .then(results => {
@@ -39,17 +39,20 @@ module.exports = app => {
                     app.say(from, `I am not an op in ${channel}`);
                     return;
                 }
-
+                let msgCount = [];
                 let count = 1;
-                results.forEach(result => {
-                        let nick = result.get('from');
-                        if(!app.isInChannel(channel, nick) || app._ircClient.isOpOrVoiceInChannel(channel,nick)) return;
-                        setTimeout(() => {
-                            app._ircClient.send('mode', channel, '+v', nick);
-                        }, 1000 * count);
-
-                        count = count + 1;
+                _(results.toJSON())
+                    .each(v => {
+                        msgCount[v.from] = _.isUndefined(msgCount[v.from]) ? 1 : msgCount[v.from] + 1;
                     })
+                    .each(v => {
+                        if(msgCount[v.from] < threshold !app.isInChannel(channel, nick) || app._ircClient.isOpOrVoiceInChannel(channel, nick) )
+                          return;
+                          setTimeout(() => {
+                              app._ircClient.send('mode', channel, '+v', nick);
+                          }, 1000 * count);
+                          count = count + 1;
+                    });
             });
     };
 
