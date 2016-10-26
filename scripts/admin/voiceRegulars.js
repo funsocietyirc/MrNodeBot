@@ -1,8 +1,8 @@
 'use strict';
 const scriptInfo = {
-    name: 'Voice Emergency',
-    file: 'voiceEmergency.js',
-    desc: 'Voice the last 100 active users',
+    name: 'Voice Regulars',
+    file: 'voiceRegulars.js',
+    desc: 'Voice users by participation',
     createdBy: 'Dave Richer'
 };
 
@@ -14,8 +14,9 @@ module.exports = app => {
     if (!app.Database || !Models.Logging) return scriptInfo;
 
     const voiceEmergency = (to, from, text, message) => {
-        let [channel] = text.split(' ');
+        let [channel, thresh] = text.split(' ');
         channel = channel || to;
+        thresh = _.isNumber(parseInt(thresh)) ? thresh : threshold;
 
         if (channel && !app.isInChannel(channel)) {
             app.say(from, `I am not in the channel ${channel}`);
@@ -46,7 +47,7 @@ module.exports = app => {
                     msgCount[v.from] = _.isUndefined(msgCount[v.from]) ? 1 : msgCount[v.from] + 1;
                 });
                 jResults.each(v => {
-                    if (msgCount[v.from] < threshold || !app.isInChannel(channel, v.from) || app._ircClient.isOpOrVoiceInChannel(channel, v.from))
+                    if (msgCount[v.from] < thresh || !app.isInChannel(channel, v.from) || app._ircClient.isOpOrVoiceInChannel(channel, v.from))
                         return;
                     msgCount[v.from] = 0;
                     setTimeout(() => {
@@ -59,7 +60,7 @@ module.exports = app => {
 
     // Terminate the bot and the proc watcher that keeps it up
     app.Commands.set('voice-emergency', {
-        desc: '[Channel?] Voice the last 50 active people in a channel',
+        desc: '[Channel?] [Threshold?] Voice the last 50 active people in a channel',
         access: app.Config.accessLevels.admin,
         call: voiceEmergency
     });
