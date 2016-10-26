@@ -28,21 +28,13 @@ module.exports = app => {
     // Grab a list of the 'darm army channels'
     let darkChannels =  _.merge(app.Config.features.fsociety.additionalChannels, require('./_darkChannels')(app.Config.features.fsociety.totalChannels));
 
-
     // Join the dark army channels
     const joinChannels = () => {
-      console.log(darkChannels);
-
         if (!darkChannels.length) {
             return;
         }
-
         const interval = app.Config.features.fsociety.delay * 1000; // In seconds
         const timeMessage = `I am joining the Dark Army! It will take me ` + app.Config.features.fsociety.delay * darkChannels.length + ` seconds...`;
-
-        if (app.Config.debug) {
-            app.say(app.Config.owner.nick, timeMessage);
-        }
 
         conLogger(timeMessage, 'info');
 
@@ -72,7 +64,7 @@ module.exports = app => {
     };
 
     // Provide a registered provider, this will fire when the bot connects to the network
-    app.Registered.set('darkarmy', {
+    app.OnConnected.set('darkarmy', {
         call: joinChannels,
         desc: 'Join Fsociety channels',
         name: 'DarkArmy'

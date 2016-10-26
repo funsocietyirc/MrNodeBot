@@ -9,29 +9,33 @@ const _ = require('lodash');
 const fs = require('fs');
 const storage = require('node-persist');
 const HashMap = require('hashmap');
+
 // Project libs
 const helpers = require('./helpers');
 const conLogger = require('./lib/consoleLogger');
 const scheduler = require('./lib/scheduler');
 const randomString = require('./lib/randomString');
+
 // Extend for project
 require('./extensions');
 // Extend For Un-cache
 require('./lib/uncache')(require);
+
 // Dynamic collections
 const dynCollections = _([
-  'AdmCallbacks',
-  'NickChanges',
-  'Registered',
-  'Listeners',
-  'WebRoutes',
-  'Commands',
-  'Stats',
-  'OnJoin',
-  'OnKick',
-  'OnPart',
-  'OnQuit',
-  'OnTopic',
+  'AdmCallbacks', // Administrative commands
+  'NickChanges', // Fired On Nick changes
+  'Registered', // Fired on Server Register
+  'Listeners', // Fired when messages are received
+  'WebRoutes', // Express JS Web routes
+  'Commands', // IRC Trigger commands
+  'Stats', // Basic usage stats
+  'OnJoin', // Fired when user joins channel
+  'OnKick', // Fired when user is kicked from channel
+  'OnPart', // Fired when user parts channel
+  'OnQuit', // Fired when user quites network
+  'OnTopic', // Fired when topic is changed
+  'OnConnected', // Fired when Connection to IRC is established
 ]);
 
 class MrNodeBot {
@@ -52,7 +56,7 @@ class MrNodeBot {
         // Grab the IRC instance
         this._ircClient = require('./lib/ircClient');
 
-        // Collections
+        // Dynamically create Collections
         dynCollections.each(v => this[v] = new HashMap());
 
         // Lists
@@ -161,6 +165,13 @@ class MrNodeBot {
             })
             // Run The callback
             .then(() => {
+                this.OnConnected.forEach(x => {
+                  try {
+                      x.call();
+                  } catch (e) {
+                      conLogger(e, 'error');
+                  }
+                });
                 if (this._callback) this._callback(this);
             });
     };
