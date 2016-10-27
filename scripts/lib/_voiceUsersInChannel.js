@@ -31,18 +31,21 @@ module.exports = (channel, thresh, app, options) => new Promise((resolve, reject
             }
 
             let voices = [];
+            // Process the Database Results
             _(results.toJSON())
                 .groupBy('from')
                 .pickBy((v, k) => app.isInChannel(channel, k) && !app._ircClient.isOpOrVoiceInChannel(channel, k))
                 .mapValues(v => v.length)
                 .pickBy((v, k) => v >= thresh)
-                .each((v, k) => {
-                    voices.push(k);
-                });
+                .each((v, k) => voices.push(k));
+            // Send out the voices
             _(voices)
                 .chunk(4)
-                .each((v,k) => {
-                      setTimeout(() => app._ircClient.send('MODE', channel, '+' + 'v'.repeat(v.length), v[0], v[1] || '', v[2] || '', v[3] || ''), (1 + k) * 1000);
+                .each((v, k) => {
+                    let args = ['MODE', channel, '+' + 'v'.repeat(v.length)].concat(v);
+                    let callBack = () => app._ircClient.send.apply(null, args);
+                    let callBackDelay = (1 + k) * 1000;
+                    setTimeout(callBack, callBackDelay);
                 });
 
             resolve(`Voices ${thresh} users on ${channel}`);
