@@ -6,7 +6,7 @@ const Models = require('bookshelf-model-loader');
 
 module.exports = app => {
     if (!app.Database || !Models.Logging) return scriptInfo;
-    const getSexGuess = require('../generators/_GuessSexInfo');
+    const getSexGuess = require('../generators/_guessSexInfo');
 
     const getResults = nick => {
         return Models.Logging.query(qb =>
