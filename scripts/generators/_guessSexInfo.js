@@ -57,6 +57,7 @@ module.exports = text => new Promise((resolve, reject) => {
     let CombinedPercentage = (FormalPercentage + InformalPercentage > 0) ?
         (FormalPercentage + InformalPercentage) / 2.0 :
         0;
+    CombinedPercentage = Math.round(CombinedPercentage);
 
     let getSex = (male, female) => {
         if (male > female) return 'Male';
