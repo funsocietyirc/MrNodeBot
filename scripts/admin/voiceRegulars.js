@@ -9,7 +9,7 @@ const scriptInfo = {
 const _ = require('lodash');
 const Models = require('bookshelf-model-loader');
 const gen = require('../lib/_voiceUsersInChannel');
-const threshold = 50;
+const threshold = 250;
 
 module.exports = app => {
     if (!app.Database || !Models.Logging) return scriptInfo;
@@ -29,7 +29,7 @@ module.exports = app => {
                 thresh = txtArray[1] % 1 === 0 ? txtArray[1] : threshold;
                 break
         }
-      
+
         gen(channel, thresh, app)
           .then(result => app.say(from, result));
     };
