@@ -21,7 +21,7 @@ module.exports = text => new Promise((resolve, reject) => {
         .value();
 
     if (TextArray.length < 300) {
-        reject('Not Enought words. Try 300 or more');
+        reject(`Sample size is not buck enough. I needed 300 words, I received ${TextArray.length}`);
         return;
     }
 
