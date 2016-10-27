@@ -29,6 +29,7 @@ module.exports = app => {
                 thresh = txtArray[1] % 1 === 0 ? txtArray[1] : threshold;
                 break
         }
+      
         gen(channel, thresh, app)
           .then(result => app.say(from, result));
     };

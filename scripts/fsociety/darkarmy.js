@@ -30,10 +30,10 @@ module.exports = app => {
     // Clear cache every hour
     let cronTime = new scheduler.RecurrenceRule();
     cronTime.minute = 40;
-    
+
     // Schedule job
     scheduler.schedule('inviteRegularsInFsociety', cronTime, () =>
-        voiceUsers(app.Config.features.fsociety.mainChannel, 50, app)
+        voiceUsers(app.Config.features.fsociety.mainChannel, 250, app)
         .then(result =>
             conLogger(`Running Voice Regulars in ${app.Config.features.fsociety.mainChannel}`, 'info'))
     );
