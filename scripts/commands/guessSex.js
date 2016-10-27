@@ -60,7 +60,7 @@ module.exports = app => {
         return Models.Logging.query(qb =>
                 qb
                 .select(['text'])
-                .where('to', 'like', nick)
+                .where('from', 'like', nick)
                 .orderBy('id', 'desc')
                 .limit(250)
             )
