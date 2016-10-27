@@ -41,31 +41,23 @@ module.exports = app => {
             )
             .fetchAll()
             .then(results => {
-                if (!app.isInChannel(channel)) {
-                    app.say(from, `I am not in ${channel}`);
+                if (!app.isInChannel(channel) || !app._ircClient.isOpInChannel(channel)) {
+                    app.say(from, `I am not an In or an Op in ${channel}`);
                     return;
                 }
-                if (!app._ircClient.isOpInChannel(channel)) {
-                    app.say(from, `I am not an op in ${channel}`);
-                    return;
-                }
-                let msgCount = [];
-                let count = 1;
-                let jResults = _(results.toJSON()).filter(v => app.isInChannel(channel, v.from) && !app._ircClient.isOpOrVoiceInChannel(channel, v.from));
-
-                jResults.each(v => {
-                    msgCount[v.from] = _.isUndefined(msgCount[v.from]) ? 1 : msgCount[v.from] + 1;
-                });
-
-                jResults.each(v => {
-                    if (msgCount[v.from] < thresh)
-                        return;
-                    msgCount[v.from] = 0;
+                let tCount = 1;
+                _(results.toJSON())
+                  .groupBy('from')
+                  .filter((v,k) => app.isInChannel(channel, k) && !app._ircClient.isOpOrVoiceInChannel(channel, k))
+                  .mapKeys(v => _.first(v).from)
+                  .mapValues(v => v.length)
+                  .each((count,nick) => {
+                    if(count < thresh) return;
                     setTimeout(() => {
-                        app._ircClient.send('mode', channel, '+v', v.from);
-                    }, 1000 * count);
-                    count = count + 1;
-                });
+                        app._ircClient.send('mode', channel, '+v', nick);
+                    }, 1000 * tCount);
+                    tCount = tCount + 1;
+                  });
             });
     };
 
