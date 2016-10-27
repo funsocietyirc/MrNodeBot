@@ -3,12 +3,12 @@
 const _ = require('lodash');
 const xray = require('x-ray')();
 const helpers = require('../../helpers');
-const regex = /^.*(png|jpg|jpeg|gif)$/i;
+const imageRegex = /^.*(png|jpg|jpeg|gif)$/i;
 
 module.exports = results => new Promise((resolve, reject) => {
     xray(results.url, 'title')((err, title) => {
         if (err || !title) {
-            let match = results.url.match(regex);
+            let match = results.url.match(imageRegex);
             if(match && match[0] && match[1]) {
               resolve(_.merge(results, {
                   title: `${match[1].toUpperCase()} Image`
