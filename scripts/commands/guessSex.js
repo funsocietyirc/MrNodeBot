@@ -80,8 +80,8 @@ module.exports = app => {
                 var Percent;
                 var Weak = 0;
                 app.say(to, `Genre: Informal`);
-                app.say(to, `Female: ${results.FemaleInformal}%`);
-                app.say(to, `Male : ${results.MaleInformal}%`);
+                app.say(to, `Female: ${results.FemaleInformal}`);
+                app.say(to, `Male : ${results.MaleInformal}`);
                 if (results.MaleInformal + results.FemaleInformal > 0) {
                     Percent = results.MaleInformal * 100.0 / (results.MaleInformal + results.FemaleInformal);
                 } else {
@@ -110,8 +110,8 @@ module.exports = app => {
 
                 Weak = 0;
                 app.say(to, 'Genre: Formal');
-                app.say(to, `Female: ${results.FemaleFormal}%`);
-                app.say(to, `Male: ${results.MaleFormal}%`);
+                app.say(to, `Female: ${results.FemaleFormal}`);
+                app.say(to, `Male: ${results.MaleFormal}`);
                 if (results.MaleFormal + results.FemaleFormal > 0) {
                     Percent = results.MaleFormal * 100.0 / (results.MaleFormal + results.FemaleFormal);
                 } else {
