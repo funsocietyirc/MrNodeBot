@@ -34,7 +34,7 @@ module.exports = app => {
             .catch(err => {
                 console.log('Guess Sex Error');
                 console.dir(err);
-                app.say(to, `Something went wrong analying this data`);
+                app.say(to, `Something went wrong analying this data: ${err}`);
             });
     };
     // Provide a OnConnected provider, this will fire when the bot connects to the network
