@@ -45,6 +45,14 @@ module.exports = (app) => {
         }
     });
 
+    // Provide a onjoin handler
+    app.OnJoin.set('fsociety-fr1end', {
+        call: (channel, nick, message) => {
+          if(nick == 'fr1end') app.say(to, `Hello fr1end...`);
+        },
+        name: 'Hello fr1end'
+    });
+
     // Everything past this point requires the database
     if (!Models.Logging) return $scriptInfo;
 
