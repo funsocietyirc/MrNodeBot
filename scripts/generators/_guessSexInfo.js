@@ -1,5 +1,7 @@
 'use strict';
 
+// Original concept credited to http://www.hackerfactor.com/GenderGuesser.php
+
 const _ = require('lodash');
 
 module.exports = text => new Promise((resolve, reject) => {

@@ -1,6 +1,8 @@
 'use strict';
 const scriptInfo = {};
 
+// Original concept credited to http://www.hackerfactor.com/GenderGuesser.php
+
 const _ = require('lodash');
 const Models = require('bookshelf-model-loader');
 
@@ -27,14 +29,7 @@ module.exports = app => {
         let [nick] = text.split(' ');
         nick = nick || from;
         getResults(nick)
-            .then(results => {
-                _.each(results, (v, k) => {
-                    app.say(to, `Language Genre: ${k} -> Female: ${v.female} -> Male : ${v.male} -> Difference: ${v.diff}; ${v.percentage}% -> Verdict: ${v.sex} ${v.weak ? '(Weak)' : ''}`);
-                    if (v.weak) {
-                        app.say(to, `You scored Weak, which could indiciate European origin.`);
-                    }
-                });
-            })
+            .then(results => _.each(results, (v, k) => app.say(to, `Language Genre: ${k} -> Female: ${v.female} -> Male : ${v.male} -> Difference: ${v.diff}; ${v.percentage}% -> Verdict: ${v.sex} ${v.weak ? '(European?)' : ''}`)))
             .catch(err => {
                 console.log('Guess Sex Error');
                 console.dir(err);
