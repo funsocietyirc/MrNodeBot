@@ -48,6 +48,6 @@ module.exports = (channel, thresh, app, options) => new Promise((resolve, reject
                     setTimeout(callBack, callBackDelay);
                 });
 
-            resolve(`Voices ${thresh} users on ${channel}`);
+            resolve(`Voicing users with ${thresh} messages or more in the last ${options.timeUnit} ${options.timeMeasure} on ${channel}`);
         });
 });
