@@ -25,7 +25,17 @@ const logos = {
     lmgtfy: c.grey.bold('LMGTFY'),
 };
 
+const colorNumber = num => {
+  if(num > 50) return c.green(num);
+  if(num < 50) return c.red(num);
+  return c.blue(num);
+};
+
+const title = text => c.bold(text);
+
 module.exports = {
   logos,
-  icons
+  icons,
+  title,
+  colorNumber
 };

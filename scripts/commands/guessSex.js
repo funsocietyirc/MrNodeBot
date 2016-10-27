@@ -1,5 +1,10 @@
 'use strict';
-const scriptInfo = {};
+const scriptInfo = {
+    name: 'Guess Sex',
+    file: 'guessSex.js',
+    desc: 'Guess the sex of a user based on their chat history',
+    createdBy: 'Dave Richer'
+};
 
 // Original concept credited to http://www.hackerfactor.com/GenderGuesser.php
 
@@ -10,6 +15,7 @@ const sampleSize = 1000;
 module.exports = app => {
     if (!app.Database || !Models.Logging) return scriptInfo;
     const getSexGuess = require('../generators/_guessSexInfo');
+    const type = require('../lib/_ircTypography');
 
     const getResults = nick => {
         return Models.Logging.query(qb =>
@@ -26,11 +32,19 @@ module.exports = app => {
             })
     };
 
+
     const displaySexGuess = (to, from, text, message) => {
         let [nick] = text.split(' ');
         nick = nick || from;
         getResults(nick)
-            .then(results => _.each(results, (v, k) => app.say(to, `Language Genre: ${k} -> Female: ${v.female} -> Male : ${v.male} -> Difference: ${v.diff}; ${v.percentage}% -> Verdict: ${v.sex} ${v.weak ? '(European?)' : ''}`)))
+            .then(r => {
+                let t = r.results.Combined;
+                let buffer = `Gender Guesser ${type.icons.sideArrow} ${nick} ${type.icons.sideArrow} ${r.sampleSize} words sampled ${type.icons.sideArrow} ` +
+                `${type.title('Female:')} ${t.female} ${type.icons.sideArrow} ${type.title('Male')} : ${t.male} ` +
+                `${type.icons.sideArrow} ${type.title('Diff:')} ${t.diff} ${type.icons.sideArrow} ${type.colorNumber(t.percentage)}% ${type.icons.sideArrow} ` +
+                `${t.sex} ${t.weak ? ` ${type.icons.sideArrow} (EU?)` : ''}`;
+                app.say(to, buffer);
+            })
             .catch(err => {
                 console.log('Guess Sex Error');
                 console.dir(err);
@@ -38,7 +52,7 @@ module.exports = app => {
             });
     };
     // Provide a OnConnected provider, this will fire when the bot connects to the network
-    app.Commands.set('guess-sex', {
+    app.Commands.set('gender', {
         call: displaySexGuess,
         desc: '[Nick?] Guess the sex of the user',
         access: app.Config.accessLevels.admin

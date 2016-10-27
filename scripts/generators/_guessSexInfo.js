@@ -44,52 +44,58 @@ module.exports = text => new Promise((resolve, reject) => {
         }
     });
 
-    let FormalPercentage = MaleFormal + FemaleFormal > 0 ? MaleFormal * 100.0 / (MaleFormal + FemaleFormal) : 0;
+    let FormalPercentage = (MaleFormal + FemaleFormal > 0) ?
+        MaleFormal * 100.0 / (MaleFormal + FemaleFormal) :
+        0;
     FormalPercentage = FormalPercentage ? parseInt(FormalPercentage * 100) / 100.0 : 0;
-    let InformalPercentage = MaleInformal + FemaleInformal > 0 ? MaleInformal * 100.0 / (MaleInformal + FemaleInformal) : 0
+
+    let InformalPercentage = (MaleInformal + FemaleInformal > 0) ?
+        MaleInformal * 100.0 / (MaleInformal + FemaleInformal) :
+        0;
     InformalPercentage = InformalPercentage ? parseInt(InformalPercentage * 100) / 100.0 : 0;
 
-    // Guage Informal Sex
-    let InformalSex = null;
-    if (MaleInformal > FemaleInformal) {
-        InformalSex = 'Male';
-    } else if (MaleInformal < FemaleInformal) {
-        InformalSex = 'Female';
-    } else {
-        InformalSex = 'Unkown';
-    }
+    let CombinedPercentage = (FormalPercentage + InformalPercentage > 0) ?
+        (FormalPercentage + InformalPercentage) / 2.0 :
+        0;
 
-    // Guage Formal Sex
-    let FormalSex = null;
-    if (MaleFormal > FemaleFormal) {
-        FormalSex = 'Male';
-    } else if (MaleFormal < FemaleFormal) {
-        FormalSex = 'Female';
-    } else {
-        FormalSex = 'Unkown';
-    }
+    let getSex = (male, female) => {
+        if (male > female) return 'Male';
+        if (male < female) return 'Female';
+        return 'Unkown';
+    };
 
     // Return results
     resolve({
-      // Formal
+      results: {
+        // Formal
         Formal: {
-          // Formal
-          male: MaleFormal,
-          female: FemaleFormal,
-          percentage: FormalPercentage,
-          diff: MaleFormal - FemaleFormal,
-          weak: FormalPercentage > 40 && FormalPercentage < 60,
-          sex: FormalSex,
+            // Formal
+            male: MaleFormal,
+            female: FemaleFormal,
+            percentage: FormalPercentage,
+            diff: MaleFormal - FemaleFormal,
+            weak: FormalPercentage > 40 && FormalPercentage < 60,
+            sex: getSex(MaleFormal, FemaleFormal),
         },
         // Informal
         Informal: {
-          male: MaleInformal,
-          female: FemaleInformal,
-          percentage: InformalPercentage,
-          diff: MaleInformal - FemaleInformal,
-          weak: InformalPercentage > 40 && InformalPercentage < 60,
-          sex: InformalSex,
+            male: MaleInformal,
+            female: FemaleInformal,
+            percentage: InformalPercentage,
+            diff: MaleInformal - FemaleInformal,
+            weak: InformalPercentage > 40 && InformalPercentage < 60,
+            sex: getSex(MaleInformal, FemaleInformal),
+        },
+        Combined: {
+          male: MaleFormal + MaleInformal,
+          female: FemaleFormal + FemaleInformal,
+          percentage: CombinedPercentage,
+          diff: (MaleFormal + MaleInformal) - (FemaleFormal + FemaleInformal),
+          weak: CombinedPercentage > 40 && CombinedPercentage < 60,
+          sex: getSex(MaleFormal + MaleInformal, FemaleFormal + FemaleInformal),
         }
+      },
+      sampleSize: TextArray.length
     });
 });
 
