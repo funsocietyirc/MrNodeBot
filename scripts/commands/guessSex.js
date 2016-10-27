@@ -47,12 +47,52 @@ module.exports = app => {
             }
         });
 
-        // return results
+        let FormalPercentage = MaleFormal + FemaleFormal > 0 ? MaleFormal * 100.0 / (MaleFormal + FemaleFormal) : 0;
+        FormalPercentage = FormalPercentage ? parseInt(FormalPercentage * 100) / 100.0 : 0;
+        let InformalPercentage = MaleInformal + FemaleInformal > 0 ? MaleInformal * 100.0 / (MaleInformal + FemaleInformal) : 0
+        InformalPercentage = InformalPercentage ? parseInt(InformalPercentage * 100) / 100.0 : 0;
+
+        // Guage Informal Sex
+        let InformalSex = null;
+        if (MaleInformal > FemaleInformal) {
+            InformalSex = 'Male';
+        } else if (MaleInformal < FemaleInformal) {
+            InformalSex = 'Female';
+        } else {
+            InformalSex = 'Unkown';
+        }
+
+        // Guage Formal Sex
+        let FormalSex = null;
+        if (MaleFormal > FemaleFormal) {
+            FormalSex = 'Male';
+        } else if (MaleFormal < FemaleFormal) {
+            FormalSex = 'Female';
+        } else {
+            FormalSex = 'Unkown';
+        }
+
+        // Return results
         resolve({
-            MaleInformal,
-            MaleFormal,
-            FemaleInformal,
-            FemaleFormal
+          // Formal
+            Formal: {
+              // Formal
+              male: MaleFormal,
+              female: FemaleFormal,
+              percentage: FormalPercentage,
+              diff: MaleFormal - FemaleFormal,
+              weak: FormalPercentage > 40 && FormalPercentage < 60,
+              sex: FormalSex,
+            },
+            // Informal
+            Informal: {
+              male: MaleInformal,
+              female: FemaleInformal,
+              percentage: InformalPercentage,
+              diff: MaleInformal - FemaleInformal,
+              weak: InformalPercentage > 40 && InformalPercentage < 60,
+              sex: InformalSex,
+            }
         });
     });
 
@@ -76,69 +116,12 @@ module.exports = app => {
         nick = nick || from;
         getResults(nick)
             .then(results => {
-                // Display results
-                var Percent;
-                var Weak = 0;
-                app.say(to, `Genre: Informal`);
-                app.say(to, `Female: ${results.FemaleInformal}`);
-                app.say(to, `Male : ${results.MaleInformal}`);
-                if (results.MaleInformal + results.FemaleInformal > 0) {
-                    Percent = results.MaleInformal * 100.0 / (results.MaleInformal + results.FemaleInformal);
-                } else {
-                    Percent = 0;
+              _.each(results, (v,k) => {
+                app.say(to, `Language Genre: ${k} -> Female: ${v.female} -> Male : ${v.male} -> Difference: ${v.diff}; ${v.percentage}% -> Verdict: ${v.sex} ${v.weak ? '(Weak)' : ''}`);
+                if(v.weak) {
+                  app.say(to,`You scored Weak, which could indiciate European origin.`);
                 }
-                Percent *= 100;
-                Percent = parseInt(Percent) / 100.0;
-                app.say(to, `Difference: ${results.MaleInformal - results.FemaleInformal}; ${Percent}%`);
-
-                let buffer = "Verdict: ";
-                if ((Percent > 40) && (Percent < 60)) {
-                    Weak++;
-                    buffer += "Weak ";
-                }
-                if (results.MaleInformal > results.FemaleInformal) {
-                    buffer += "MALE";
-                } else if (results.MaleInformal < results.FemaleInformal) {
-                    buffer += "FEMALE";
-                } else {
-                    buffer += "unknown";
-                }
-                app.say(to, `Verdict: ${buffer}`)
-                if (Weak > 0) {
-                    app.say(to, `Weak emphasis could indicate European.`);
-                }
-
-                Weak = 0;
-                app.say(to, 'Genre: Formal');
-                app.say(to, `Female: ${results.FemaleFormal}`);
-                app.say(to, `Male: ${results.MaleFormal}`);
-                if (results.MaleFormal + results.FemaleFormal > 0) {
-                    Percent = results.MaleFormal * 100.0 / (results.MaleFormal + results.FemaleFormal);
-                } else {
-                    Percent = 0.001;
-                }
-                Percent *= 100;
-                Percent = parseInt(Percent) / 100.0;
-                app.say(to, `Difference: ${results.MaleFormal - results.FemaleFormal}; ${Percent}%`);
-
-                buffer = '';
-                if ((Percent > 40) && (Percent < 60)) {
-                    Weak++;
-                    buffer += "Weak ";
-                }
-                if (results.MaleFormal > results.FemaleFormal) {
-                    buffer += "MALE";
-                } else if (results.MaleFormal < results.FemaleFormal) {
-                    buffer += "FEMALE";
-                } else {
-                    buffer += "unknown";
-                }
-                app.say(to, `Verdict: ${buffer}`);
-
-                if (Weak > 0) {
-                    app.say(to, 'Weak emphasis could indicate European.');
-                }
-                return;
+              });
             })
             .catch(err => {
                 console.log('Guess Sex Error');
@@ -147,10 +130,10 @@ module.exports = app => {
             });
     };
     // Provide a OnConnected provider, this will fire when the bot connects to the network
-    app.Commands.set('guesssex', {
+    app.Commands.set('guess-sex', {
         call: displaySexGuess,
         desc: '[Nick?] Guess the sex of the user',
-        access: app.Config.accessLevels.identified
+        access: app.Config.accessLevels.admin
     });
 
     return scriptInfo;
