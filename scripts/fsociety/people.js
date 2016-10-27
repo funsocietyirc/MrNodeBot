@@ -45,10 +45,10 @@ module.exports = (app) => {
         }
     });
 
-    // Provide a onjoin handler
+    // Say Hello To Fr1end
     app.OnJoin.set('fsociety-fr1end', {
         call: (channel, nick, message) => {
-          if(nick == 'fr1end') app.say(to, `Hello fr1end...`);
+          if(nick == 'fr1end') app.say(channel, `Hello fr1end...`);
         },
         name: 'Hello fr1end'
     });
