@@ -6,7 +6,7 @@ const _ = require('lodash');
 
 module.exports = text => new Promise((resolve, reject) => {
     if (!text || !_.isString(text)) {
-        reject('You did not give a input, or gave improer input');
+        reject('You did not give input, or gave improper input');
         return;
     }
 
