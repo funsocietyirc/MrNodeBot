@@ -34,9 +34,9 @@ module.exports = app => {
             return;
         }
 
-        Models.Logging.query(qb => qb.where(clause =>
-                    clause.where('to', 'like', channel)
-                )
+        Models.Logging
+            .query(qb => qb
+                .where(clause => clause.where('to', 'like', channel))
                 .orderBy('id', 'desc')
             )
             .fetchAll()
@@ -47,17 +47,20 @@ module.exports = app => {
                 }
                 let tCount = 1;
                 _(results.toJSON())
-                  .groupBy('from')
-                  .filter((v,k) => app.isInChannel(channel, k) && !app._ircClient.isOpOrVoiceInChannel(channel, k))
-                  .mapKeys(v => _.first(v).from)
-                  .mapValues(v => v.length)
-                  .each((count,nick) => {
-                    if(count < thresh) return;
-                    setTimeout(() => {
-                        app._ircClient.send('mode', channel, '+v', nick);
-                    }, 1000 * tCount);
-                    tCount = tCount + 1;
-                  });
+                    .groupBy('from')
+                    .filter((v, k) => app.isInChannel(channel, k) && !app._ircClient.isOpOrVoiceInChannel(channel, k))
+                    .mapKeys(v => _.first(v).from)
+                    .mapValues(v => v.length)
+                    .map((count, nick) => {
+                        if (count >= thresh) return nick
+                    })
+                    .chunk(4)
+                    .each(v => {
+                        setTimeout(() => {
+                            app._ircClient.send('MODE', channel, '+' + 'v'.repeat(v.length), v[0],v[1] || '', v[2] || '', v[3] || '');
+                        }, 1000 * tCount);
+                        tCount = tCount + 1;
+                    });
             });
     };
 
