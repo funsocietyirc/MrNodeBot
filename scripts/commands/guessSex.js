@@ -141,6 +141,8 @@ module.exports = app => {
                 return;
             })
             .catch(err => {
+                console.log('Guess Sex Error');
+                console.dir(err);
                 app.say(to, `Something went wrong analying this data`);
             });
     };
