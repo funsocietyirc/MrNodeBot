@@ -5,6 +5,7 @@ const scriptInfo = {};
 
 const _ = require('lodash');
 const Models = require('bookshelf-model-loader');
+const sampleSize = 1000;
 
 module.exports = app => {
     if (!app.Database || !Models.Logging) return scriptInfo;
@@ -16,7 +17,7 @@ module.exports = app => {
                 .select(['text'])
                 .where('from', 'like', nick)
                 .orderBy('id', 'desc')
-                .limit(250)
+                .limit(sampleSize)
             )
             .fetchAll()
             .then(results => {
