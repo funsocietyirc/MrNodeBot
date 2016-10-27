@@ -8,6 +8,7 @@ const scriptInfo = {
 
 const _ = require('lodash');
 const Models = require('bookshelf-model-loader');
+const gen = require('../lib/_voiceUsersInChannel');
 const threshold = 50;
 
 module.exports = app => {
@@ -28,36 +29,8 @@ module.exports = app => {
                 thresh = txtArray[1] % 1 === 0 ? txtArray[1] : threshold;
                 break
         }
-
-        if (!app.isInChannel(channel)) {
-            app.say(from, `I am not in the channel ${channel}`);
-            return;
-        }
-
-        Models.Logging
-            .query(qb => qb
-                .where('to', 'like', channel)
-                .orderBy('id', 'desc')
-            )
-            .fetchAll()
-            .then(results => {
-                if (!app.isInChannel(channel) || !app._ircClient.isOpInChannel(channel)) {
-                    app.say(from, `I am not in or an Op in ${channel}`);
-                    return;
-                }
-                _(results.toJSON())
-                    .groupBy('from')
-                    .filter((v, k) => app.isInChannel(channel, k) && !app._ircClient.isOpOrVoiceInChannel(channel, k))
-                    .mapKeys(v => _.first(v).from)
-                    .mapValues(v => v.length)
-                    .map((count, nick) => {
-                        if (count >= thresh) return nick
-                    })
-                    .chunk(4)
-                    .each((v, k) => {
-                        setTimeout(() => app._ircClient.send('MODE', channel, '+' + 'v'.repeat(v.length), v[0], v[1] || '', v[2] || '', v[3] || ''), (1 + k) * 1000);
-                    });
-            });
+        gen(channel, thresh, app)
+          .then(result => app.say(from, result));
     };
 
     // Terminate the bot and the proc watcher that keeps it up
