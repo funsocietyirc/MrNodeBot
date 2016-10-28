@@ -27,16 +27,31 @@ module.exports = app => {
         app._ircClient.join(app.Config.features.fsociety.mainChannel);
     }
 
-    // Clear cache every hour
-    let cronTime = new scheduler.RecurrenceRule();
-    cronTime.minute = 40;
+    // DB Required functionaity
+    // Voice users in the main channel
+    if(app.Database) {
 
-    // Schedule job
-    scheduler.schedule('inviteRegularsInFsociety', cronTime, () =>
-        voiceUsers(app.Config.features.fsociety.mainChannel, 250, app)
-        .then(result =>
-            conLogger(`Running Voice Regulars in ${app.Config.features.fsociety.mainChannel}`, 'info'))
-    );
+
+      // Voice Users every hour if they meet a certain threshold
+      let cronTime = new scheduler.RecurrenceRule();
+      cronTime.minute = 40;
+      scheduler.schedule('inviteRegularsInFsociety', cronTime, () =>
+          voiceUsers(app.Config.features.fsociety.mainChannel, 250, app)
+          .then(result => conLogger(`Running Voice Regulars in ${app.Config.features.fsociety.mainChannel}`, 'info'))
+          .catch(err => conLogger(`Error in Voice Regulars: ${err.message}`))
+      );
+
+      // Voice Users on join if they meet a certain threshold
+      app.OnJoin.set('fsociety-voicer', {
+          call: (channel, nick, message) => {
+            if(channel != app.Config.features.fsociety.mainChannel) return;
+            voiceUsers(app.Config.features.fsociety.mainChannel, 250, app,{
+              nicks: [nick]
+            });
+          },
+          name: 'fsociety-greetr'
+      });
+    }
 
     // Join the dark army channels
     const darkChannels = app.Config.features.fsociety.additionalChannels.concat(require('./_darkChannels')(app.Config.features.fsociety.totalChannels));

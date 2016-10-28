@@ -1,53 +1,30 @@
 'use strict';
 
 const _ = require('lodash');
-const Models = require('bookshelf-model-loader');
-const moment = require('moment');
+const participation = require('./_channelParticipation');
 
 module.exports = (channel, thresh, app, options) => new Promise((resolve, reject) => {
-    if (!app.isInChannel(channel)) {
-        resolve(`I am not in the channel ${channel}`)
+    if (!app.isInChannel(channel) || !app._ircClient.isOpInChannel(channel)) {
+        reject(new Error(`I am not in, or I am not an op in ${channel}`));
         return;
     }
 
-    options = options || {};
-    if (_.isUndefined(options.timeUnit)) options.timeUnit = 1;
-    if (_.isUndefined(options.timeMeasure)) options.timeMeasure = 'months';
+    options = _.isObject(options) ? options : {};
+    options.threshold = thresh;
 
-    return Models.Logging
-        .query(qb => qb
-            .where(clause =>
-                clause
-                .where('to', 'like', channel)
-                .andWhere('timestamp', '>=', moment().subtract(options.timeUnit, options.timeMeasure).format('YYYY-MM-DD HH:mm:ss'))
-            )
-            .orderBy('id', 'desc')
-        )
-        .fetchAll()
+    return participation(channel, options)
         .then(results => {
-            if (!app.isInChannel(channel) || !app._ircClient.isOpInChannel(channel)) {
-                resolve(`I am not in, or I am not an op in ${channel}`);
-                return;
-            }
-
-            let voices = [];
-            // Process the Database Results
-            _(results.toJSON())
-                .groupBy('from')
-                .pickBy((v, k) => app.isInChannel(channel, k) && !app._ircClient.isOpOrVoiceInChannel(channel, k))
-                .mapValues(v => v.length)
-                .pickBy((v, k) => v >= thresh)
-                .each((v, k) => voices.push(k));
-            // Send out the voices
-            _(voices)
+            let actions = _.filter(results, v => app.isInChannel(channel, v.nick) && !app._ircClient.isOpOrVoiceInChannel(channel, v.nick));
+            _(actions)
                 .chunk(4)
                 .each((v, k) => {
-                    let args = ['MODE', channel, '+' + 'v'.repeat(v.length)].concat(v);
+                    let args = ['MODE', channel, '+' + 'v'.repeat(v.length)].concat(_.map(v, 'nick'));
                     let callBack = () => app._ircClient.send.apply(null, args);
                     let callBackDelay = (1 + k) * 1000;
                     setTimeout(callBack, callBackDelay);
-                });
-
-            resolve(`Voicing users with ${thresh} messages or more in the last ${options.timeUnit} ${options.timeMeasure} on ${channel}`);
+                })
+        })
+        .then(() => {
+            resolve(`Voicing users with ${thresh} on ${channel}`);
         });
 });

@@ -7,12 +7,11 @@ const scriptInfo = {
 };
 
 const _ = require('lodash');
-const Models = require('bookshelf-model-loader');
 const gen = require('../lib/_voiceUsersInChannel');
 const threshold = 250;
 
 module.exports = app => {
-    if (!app.Database || !Models.Logging) return scriptInfo;
+    if (!app.Database) return scriptInfo;
 
     const voiceRegulars = (to, from, text, message) => {
         let txtArray = text.split(' ');
@@ -29,9 +28,10 @@ module.exports = app => {
                 thresh = txtArray[1] % 1 === 0 ? txtArray[1] : threshold;
                 break
         }
-
+        
         gen(channel, thresh, app)
-          .then(result => app.say(from, result));
+          .then(result => app.say(from, result))
+          .catch(err => app.say(from, `Error ${err.message}`));
     };
 
     // Terminate the bot and the proc watcher that keeps it up
