@@ -44,9 +44,12 @@ module.exports = app => {
       // Voice Users on join if they meet a certain threshold
       app.OnJoin.set('fsociety-voicer', {
           call: (channel, nick, message) => {
-            if(channel != app.Config.features.fsociety.mainChannel) return;
+            if(channel != app.Config.features.fsociety.mainChannel || nick == app.nick) return;
             voiceUsers(app.Config.features.fsociety.mainChannel, 250, app,{
               nicks: [nick]
+            })
+            .catch(err => {
+              console.log(`fsoceity-voicer: ${err.message}`);
             });
           },
           name: 'fsociety-greetr'
