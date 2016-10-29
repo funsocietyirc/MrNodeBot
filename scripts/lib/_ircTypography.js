@@ -23,7 +23,7 @@ const logos = {
     mrrobot: c.red.bold('#MrRobot'),
     twitter: c.blue.bold('Twitter'),
     lmgtfy: c.grey.bold('LMGTFY'),
-    reddut: c.blue.bold('REDDIT'),
+    reddit: c.blue.bold('REDDIT'),
 };
 
 const colorNumber = num => {

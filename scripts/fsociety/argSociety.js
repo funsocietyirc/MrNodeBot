@@ -83,7 +83,7 @@ module.exports = app => {
         loadPosts()
             .then(result => {
                 if (!result.updated) return; // No updates, bail
-                app.say(argChannel, `${type.logos.reddit} ${type.icons.sideArrow} New! ${type.icons.sideArrow} ${result.post.author} ${type.icons.sideArrow} ${result.post.title} ${type.icons.sideArrow} ${result.post.url}`);
+                app.say(argChannel, `${type.logos.reddit} ${type.icons.sideArrow} ${result.post.author} ${type.icons.sideArrow} ${result.post.title} ${type.icons.sideArrow} ${result.post.url}`);
             })
             .catch(err => {
                 console.log(`${argReddit} reddit error`);
