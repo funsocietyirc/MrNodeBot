@@ -3,7 +3,7 @@
 const scriptInfo = {
   name: 'argSociety',
   file: 'argSociety.js',
-  desc: 'Misc functionality for ##argSociety on freenode',
+  desc: 'Misc functionality for ##mrRobotARG on freenode',
   createdBy: 'Dave Richer'
 };
 
@@ -13,7 +13,9 @@ const scheduler = require('../../lib/scheduler');
 const conLogger = require('../../lib/consoleLogger');
 const type = require('../lib/_ircTypography');
 
-const argChannel = '##argSociety';
+const argChannel = '##mrRobotARG';
+const argReddit = 'argsociety';
+const redditStream = 'new';
 
 module.exports = app => {
     // Hold on to the posts
@@ -24,7 +26,7 @@ module.exports = app => {
             headers: {
                 'user-agent': 'MrNodeBot'
             },
-            uri: 'https://www.reddit.com/r/argsociety/new/.json',
+            uri: `https://www.reddit.com/r/${argReddit}/${redditStream}/.json`,
             json: true
         })
         .then(results => new Promise((resolve, reject) => {
@@ -67,25 +69,24 @@ module.exports = app => {
 
         // Run on load
         loadPosts()
-          .then(result => conLogger('Grabbing first ArgSociety post','info'))
+          .then(result => conLogger(`Grabbing first ${argReddit} post for ${argChannel}`,'info'))
           .catch(err => console.dir(err));
 
 
     // Assoicate the cron job for every 15 mins
     const cronTime = new scheduler.RecurrenceRule();
     cronTime.minute = [0, 15, 30, 45];
-    const update = scheduler.schedule('argSocietyReddit', cronTime, () => {
-        conLogger('Running Reddit for argSociety', 'info');
+    const update = scheduler.schedule(`${argReddit}${argChannel}`, cronTime, () => {
+        conLogger(`Running Reddit for ${argChannel}`, 'info');
         // We are not in the arg society channel
         if (!app.isInChannel(argChannel)) return;
-
         loadPosts()
             .then(result => {
-                if (!result.updated) return;
+                if (!result.updated) return; // No updates, bail
                 app.say(argChannel, `${type.logos.reddit} ${type.icons.sideArrow} New! ${type.icons.sideArrow} ${result.post.author} ${type.icons.sideArrow} ${result.post.title} ${type.icons.sideArrow} ${result.post.url}`);
             })
             .catch(err => {
-                console.log('ArgSociety reddit error');
+                console.log(`${argReddit} reddit error`);
                 console.dir(err);
             });
     });
