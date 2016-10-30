@@ -14,5 +14,5 @@ module.exports = {
   get: text => collection.get(getHash(text)),
   has: text => collection.has(getHash(text)),
   forEach: collection.forEach,
-  clear: clear
+  clear: collection.clear
 };
