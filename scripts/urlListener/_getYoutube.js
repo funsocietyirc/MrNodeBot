@@ -9,6 +9,7 @@ module.exports = (key, results) => !apiKey || !key || _.isEmpty(key) ? results :
     gen(apiKey, key)
     .then(result => {
         let data = result.items[0];
+
         // We have no data, default back to the original title grabber
         if (!data) return results;
 

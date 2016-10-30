@@ -11,9 +11,9 @@ module.exports = (user, repo, results) => rp({
         json: true
     })
     .then(data => {
-        if (!data) {
-            return results;
-        }
+        // No data, bail
+        if (!data) return results;
+
         // Format The response
         results.gitHub = {
             name: data.name,

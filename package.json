@@ -51,7 +51,7 @@
     "request-promise-native": "^1.0.3",
     "scrypt": "^6.0.3",
     "serve-favicon": "^2.3.0",
-    "shelljs": "^0.7.3",
+    "shelljs": "^0.7.5",
     "twit": "^2.2.5",
     "watson-developer-cloud": "^2.6.2",
     "x-ray": "^2.3.0"

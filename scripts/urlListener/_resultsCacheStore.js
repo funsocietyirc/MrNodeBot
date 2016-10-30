@@ -1,4 +1,9 @@
 'use strict'
+/**
+  Wrap a HashMap object in a crypto MD5 gen to allow for reasonable length
+  but unique keys.
+**/
+
 const crypto = require('crypto');
 const HashMap = require('hashmap');
 

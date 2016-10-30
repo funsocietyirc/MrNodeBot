@@ -7,10 +7,9 @@ const gen = require('../generators/_imdbData');
 module.exports = (key, results) => !key || _.isEmpty(key) ? results :
 gen(key, 'id')
     .then(data => {
-      console.dir(data);
-        if (!data || !data.Response || data.Response == 'False') {
-            return results;
-        }
+        // No Data, or malformed data, bail
+        if (!data || !data.Response || data.Response == 'False') return results;
+        // Append Results
         results.imdb = {
             title: data.Title,
             year: data.Year,
@@ -35,6 +34,7 @@ gen(key, 'id')
         return results;
     })
     .catch(err => {
+        console.log('Error In getImdb URL Chain');
         console.dir(err);
         return results;
     });
