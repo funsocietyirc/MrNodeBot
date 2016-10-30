@@ -14,7 +14,7 @@ const icons = ircTypography.icons;
 module.exports = (results) => {
         // Site is not live
         if(results.unreachable) {
-          return `${results.from} posted a unreachable link ${results.url}`;
+          return `${results.from} posted an unreachable link ${results.url}`;
         }
 
         // Output chain helper functions
