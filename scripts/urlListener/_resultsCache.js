@@ -10,8 +10,8 @@ const getHash = text => crypto
 const collection = new HashMap();
 
 module.exports = {
-  get: (key, value) => collection.set(getHash(key), value),
-  set: text => collection.get(getHash(text)),
+  set: (key, value) => collection.set(getHash(key), value),
+  get: text => collection.get(getHash(text)),
   has: text => collection.has(getHash(text)),
   forEach: collection.forEach
 };
