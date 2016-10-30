@@ -13,5 +13,6 @@ module.exports = {
   set: (key, value) => collection.set(getHash(key), value),
   get: text => collection.get(getHash(text)),
   has: text => collection.has(getHash(text)),
-  forEach: collection.forEach
+  forEach: collection.forEach,
+  clear: clear
 };
