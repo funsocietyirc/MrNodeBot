@@ -40,7 +40,7 @@ module.exports = (results) => {
         }
 
         // Print real URL
-        if(results.realUrl) {
+        if(results.realUrl && results.url != results.realUrl) {
           append(`${icons.anchor} ${c.navy(results.realUrl)}`);
         }
 
