@@ -10,37 +10,23 @@ module.exports = (results) => {
         return results;
     }
 
-    results.isShort = _.includes(results.url, '://goo.gl/');
-
-    let rpOption = !results.isShort ? {
-      uri: `https://www.googleapis.com/urlshortener/v1/url`,
-      method: 'POST',
-      json: true,
-      qs: {
-        key: apiKey
-      },
-      body: {
-          "longUrl": results.url
-      }
-    } : {
-      method: 'GET',
-      json: true,
-      uri: 'https://www.googleapis.com/urlshortener/v1/url',
-      qs: {
-        key: apiKey,
-        shortUrl: results.url
-      }
-    };
-
     // Get the SHORT Url
-    return rp(rpOption)
+    return rp({
+            method: 'GET',
+            json: true,
+            uri: 'https://www.googleapis.com/urlshortener/v1/url',
+            qs: {
+                key: apiKey,
+                shortUrl: results.url
+            }
+        })
         .then(result => {
             if (!result || !result.id || (result.isShort && !result.longUrl)) {
                 return results;
             }
 
             return _.merge(results, {
-                shortUrl: results.isShort ? result.longUrl: result.id
+                shortUrl: results.isShort ? result.longUrl : result.id
             })
         })
         .catch(err => {

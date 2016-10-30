@@ -46,7 +46,7 @@ module.exports = app => {
     const matcher = (results) => {
         // Google Short URL has been expnded, we will use that to
         // run the expressions through
-        let url = results.isShort ? results.shortUrl : results.url;
+        let url = results.realUrl ? results.realUrl : results.url;
 
         // Check for youTube
         let ytMatch = url.match(/^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/);
@@ -64,13 +64,14 @@ module.exports = app => {
 
         // Get Generic Information
         let genericMatch = url.match(/(?:git@(?![\w\.]+@)|https:\/{2}|http:\/{2})([\w\.@]+)[\/:]([\w,\-,\_]+)\/([\w,\-,\_]+)(?:\.git)?\/?/);
+
         // Match 1: Domain, Match 2: User Group3: Repo
         if (genericMatch) {
             return getGenericInfo(url, genericMatch, results);
         }
 
-        // Nothing has matched
-        return getTitle(results);
+        return results;
+
     };
 
     const sendToIrc = (results) => {
@@ -127,6 +128,8 @@ module.exports = app => {
                 // Url Does not exist in cache
                 else {
                     startChain(url, to, from, text, message, is)
+                        // Get title
+                        .then(results => getTitle(results))
                         // Grab Short URL
                         .then(results => getShorten(results))
                         // Grab URL Meta data based on site

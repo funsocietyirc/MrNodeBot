@@ -12,6 +12,10 @@ const icons = ircTypography.icons;
 
 // Formatting Helper
 module.exports = (results) => {
+        if(results.unreachable) {
+          app.say(to, `${results.from} posted a unreachable link`);
+        }
+
         // Output chain helper functions
         let output = '';
         let space = () => output != '' ? ' ' + icons.sideArrow + ' ' : ' ';
@@ -35,13 +39,17 @@ module.exports = (results) => {
           }
         }
 
+        // Print real URL
+        if(results.realUrl) {
+          append(`${icons.anchor} ${c.navy(results.realUrl)}`);
+        }
+
         // We have a Short URL
         if (results.isShort || (!_.isUndefined(results.shortUrl) && !_.isEmpty(results.shortUrl) && results.url.length > config.features.urls.titleMin)) {
             append(`${icons.anchor} ${c.navy(results.shortUrl)}`);
         }
 
-        // We have a Title
-        if (results.title && results.title != '') append(results.title);
+
 
         // We have a YouTube video response
         if (!_.isUndefined(results.youTube)) {
@@ -52,7 +60,7 @@ module.exports = (results) => {
         }
 
         // We have IMDB data
-        if (!_.isUndefined(results.imdb)) {
+        else if (!_.isUndefined(results.imdb)) {
             let imdb = results.imdb;
             append(logos.imdb)
                 (imdb.title)
@@ -68,7 +76,7 @@ module.exports = (results) => {
         }
 
         // We Have GitHub data
-        if (!_.isUndefined(results.gitHub)) {
+        else if (!_.isUndefined(results.gitHub)) {
             let gh = results.gitHub;
             append(logos.gitHub)(gh.owner)(gh.name)(gh.desc);
             if (gh.lastPush) append(`${icons.time} ${c.grey.bold('~')} ${moment(gh.lastPush).fromNow()}`);
@@ -81,13 +89,18 @@ module.exports = (results) => {
         }
 
         // We Have BitBucket data
-        if(!_.isUndefined(results.bitBucket)) {
+        else if(!_.isUndefined(results.bitBucket)) {
           let bb = results.bitBucket;
           append(`${logos.bitBucket} ${icons.sideArrow} ${bb.ownerDisplayName} ${icons.sideArrow} ${bb.desc ? bb.desc : 'BitBucket Repository'}`)
             (`${icons.time} ${c.grey.bold('~')} ${ moment(bb.lastPush).fromNow()}`)
 
           if(bb.language) append(bb.language);
           if(bb.hasIssues) append(icons.sad);
+        }
+
+        else {
+          // We have a Title
+          if (results.title && results.title != '') append(results.title);
         }
 
         // Finished
