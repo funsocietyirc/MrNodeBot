@@ -43,7 +43,10 @@ module.exports = app => {
     const userIgnore = app.Config.features.urls.userIgnore || [];
 
     // Link matcher
-    const matcher = (results) => {
+    const matcher = results => {
+        if (results.unreachable) {
+            return results;
+        }
         // Google Short URL has been expnded, we will use that to
         // run the expressions through
         let url = results.realUrl ? results.realUrl : results.url;

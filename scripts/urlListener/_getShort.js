@@ -6,7 +6,7 @@ const apiKey = require('../../config').apiKeys.google;
 
 module.exports = (results) => {
     // Check input / Gate
-    if (!apiKey || _.isEmpty(apiKey)) {
+    if (results.unreachable || !apiKey || _.isEmpty(apiKey)) {
         return results;
     }
 

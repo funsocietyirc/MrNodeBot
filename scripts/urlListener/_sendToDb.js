@@ -7,6 +7,9 @@ const Models = require('bookshelf-model-loader');
 const urlLoggerIgnore = require('../../config').features.urls.loggingIgnore || [];
 
 module.exports = (results) => {
+    if (results.unreachable) {
+        return results;
+    }
     let ignored = urlLoggerIgnore.some(hash => {
         if (_.includes(hash, _.toLower(results.to))) {
             return true;

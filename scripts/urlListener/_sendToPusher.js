@@ -3,8 +3,8 @@
 const _ = require('lodash');
 const pusher = require('../../lib/pusher');
 module.exports = (results) => {
-    // Load in pusher if it is active
-    if (!pusher) {
+    // Bail if we have no pusher or the result was unreachable
+    if (!pusher || results.unreachable) {
       return results;
     }
     // Decide which pusher channel to push over
