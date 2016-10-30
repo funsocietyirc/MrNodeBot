@@ -12,8 +12,9 @@ const icons = ircTypography.icons;
 
 // Formatting Helper
 module.exports = (results) => {
+        // Site is not live
         if(results.unreachable) {
-          app.say(to, `${results.from} posted a unreachable link`);
+          return `${results.from} posted a unreachable link ${results.url}`;
         }
 
         // Output chain helper functions
