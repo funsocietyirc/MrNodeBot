@@ -1,7 +1,6 @@
 'use strict';
 const scriptInfo = {
     name: 'origins',
-    file: 'origin.js',
     desc: 'Show the Bots current uptime and other statistics',
     createdBy: 'Dave Richer'
 };

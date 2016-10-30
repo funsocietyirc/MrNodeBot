@@ -2,7 +2,6 @@
 
 const scriptInfo = {
     name: 'Image Upload Web Front End',
-    file: 'imageUploadWeb.js',
     desc: 'Provides a PUG form for uploading photos',
     createdBy: 'Dave Richer'
 };

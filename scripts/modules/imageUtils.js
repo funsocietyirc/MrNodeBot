@@ -1,7 +1,6 @@
 'use strict';
 const scriptInfo = {
     name: 'Image Utilitie Module',
-    file: 'imageUtils.js',
     desc: 'Tools to remove all images from the url table, rebuild them, and them should they die',
     createdBy: 'Dave Richer'
 };

@@ -1,8 +1,9 @@
 'use strict';
 const config = require('../../config');
 const conLogger = require('../../lib/consoleLogger');
-const resultsCache = require('./_resultsCache');
+const resultsCache = require('./_resultsCacheStore');
 module.exports = (results) => {
+
   // Cache results
   resultsCache.set(results.url, results);
 

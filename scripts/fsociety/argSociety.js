@@ -2,7 +2,6 @@
 
 const scriptInfo = {
   name: 'argSociety',
-  file: 'argSociety.js',
   desc: 'Misc functionality for ##mrRobotARG on freenode',
   createdBy: 'Dave Richer'
 };

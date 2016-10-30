@@ -2,7 +2,6 @@
 
 const scriptInfo = {
   name: 'showImageLink',
-  file: 'showImageLink.js',
   desc: 'Announce a Image link for the user triggering the command',
   createdBy: 'Dave Richer'
 };

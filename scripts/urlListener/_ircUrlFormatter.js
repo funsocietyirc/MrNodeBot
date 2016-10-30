@@ -14,7 +14,7 @@ const icons = ircTypography.icons;
 module.exports = (results) => {
         // Site is not live
         if(results.unreachable) {
-          return `${c[results.cached ? 'green' : 'red']('*')} ${results.from} ${icons.sideArrow} ${results.url} ${icons.sideArrow} ${c.red.bold('Unreachable Link')}`;
+          return `${c[results.cached ? 'green' : 'red']('*')} ${results.from} ${icons.sideArrow} ${c.blue(results.url)} ${icons.sideArrow} ${c.red.bold('Unreachable Link')}`;
         }
 
         // Output chain helper functions
@@ -49,8 +49,6 @@ module.exports = (results) => {
         if (!_.isUndefined(results.shortUrl) && !_.isEmpty(results.shortUrl) && results.url.length > config.features.urls.titleMin) {
             append(`${icons.anchor} ${c.navy(results.shortUrl)}`);
         }
-
-
 
         // We have a YouTube video response
         if (!_.isUndefined(results.youTube)) {

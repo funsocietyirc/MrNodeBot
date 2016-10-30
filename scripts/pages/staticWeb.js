@@ -2,7 +2,6 @@
 'use strict';
 const scriptInfo = {
     name: 'Static Pages',
-    file: 'staticWeb.js',
     desc: 'Static Express Pages',
     createdBy: 'Dave Richer'
 };

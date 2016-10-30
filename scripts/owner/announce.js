@@ -1,7 +1,6 @@
 'use strict';
 const scriptInfo = {
     name: 'Announce',
-    file: 'announce.js',
     desc: 'Announce to all active channels, and to Twitter',
     createdBy: 'Dave Richer'
 };

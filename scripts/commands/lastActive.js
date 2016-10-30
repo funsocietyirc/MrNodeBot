@@ -1,7 +1,6 @@
 'use strict';
 const scriptInfo = {
     name: 'lastActive',
-    file: 'lastActive.js',
     desc: 'Get stats on the last activity of a IRC user',
     createdBy: 'Dave Richer'
 };

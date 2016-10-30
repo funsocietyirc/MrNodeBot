@@ -1,7 +1,6 @@
 'use strict';
 const scriptInfo = {
     name: 'mentioned',
-    file: 'mentioned.js',
     desc: 'Provides some interaction with the message logging model, such has total messages, random line' +
           'and last mentioned',
     createdBy: 'Dave Richer'

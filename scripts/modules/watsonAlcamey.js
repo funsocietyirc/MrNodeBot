@@ -2,7 +2,6 @@
 
 const scriptInfo = {
     name: 'Waston Alcamey',
-    file: 'watsonAlcamey.js',
     desc: 'Test Script for watson analytics',
     createdBy: 'Dave Richer'
 };

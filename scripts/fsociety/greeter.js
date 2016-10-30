@@ -5,7 +5,6 @@
 'use strict';
 const scriptInfo = {
     name: 'greeter',
-    file: 'greeter.js',
     desc: 'Send a message to users joining mr robot sub channels based on certain conditions, ' +
         'letting them know and inviting them to #fsociety',
     createdBy: 'Dave Richer'

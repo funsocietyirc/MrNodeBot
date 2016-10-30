@@ -1,7 +1,6 @@
 'use static';
 const scriptInfo = {
     name: 'FSociety Peoples',
-    file: 'people.js',
     desc: 'Commands for certain #fsociety members',
     createdBy: 'Dave Richer'
 };

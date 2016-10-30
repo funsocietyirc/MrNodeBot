@@ -1,7 +1,6 @@
 'use strict';
 const scriptInfo = {
     name: 'ignore',
-    file: 'ignore.js',
     desc: 'Private mute, unmute, and ignored commands. Prevents the bot from seeing messages from ' +
           'specified IRC users',
     createdBy: 'Dave Richer'

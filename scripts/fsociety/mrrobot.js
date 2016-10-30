@@ -1,7 +1,6 @@
 'use strict';
 const scriptInfo = {
     name: 'mrrobot',
-    file: 'mrorbot.js',
     desc: 'Watch for quotes from the MrRobot bot, log them, clean them, and allow for announcement of them',
     createdBy: 'Dave Richer'
 };

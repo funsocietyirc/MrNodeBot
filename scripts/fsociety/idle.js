@@ -1,7 +1,6 @@
 'use strict';
 const scriptInfo = {
     name: 'idle',
-    file: 'idle.js',
     desc: 'Provide random gibberish should the primary channel be inactive for to long',
     createdBy: 'Dave Richer'
 };

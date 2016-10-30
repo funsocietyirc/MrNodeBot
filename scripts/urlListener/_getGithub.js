@@ -1,0 +1,37 @@
+'use strict'
+
+const rp = require('request-promise-native');
+
+// Get GitHub Information
+module.exports = (user, repo, results) => rp({
+        uri: `https://api.github.com/repos/${user}/${repo}`,
+        headers: {
+            'user-agent': 'MrNodeBot'
+        },
+        json: true
+    })
+    .then(data => {
+        if (!data) {
+            return results;
+        }
+        // Format The response
+        results.gitHub = {
+            name: data.name,
+            owner: data.owner.login,
+            desc: data.description,
+            isFork: data.fork,
+            lastPush: data.pushed_at,
+            stars: data.stargazers_count,
+            watchers: data.watchers_count,
+            language: data.language,
+            forks: data.forks_count,
+            issues: data.open_issues_count,
+            fullName: data.full_name,
+        };
+        return results;
+    })
+    .catch(err => {
+        console.log('Error in getGitHub link function');
+        console.dir(err);
+        return results;
+    });

@@ -1,7 +1,6 @@
 'use strict';
 const scriptInfo = {
     name: 'hello',
-    file: 'hello.js',
     desc: 'Display a salutation to a IRC user, randomText test script',
     createdBy: 'Dave Richer'
 };

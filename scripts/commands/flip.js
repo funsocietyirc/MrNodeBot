@@ -1,7 +1,6 @@
 'use strict';
 const scriptInfo = {
     name: 'flip',
-    file: 'flip.js',
     desc: 'Simulate a coin toss, Random Engine test script',
     createdBy: 'Dave Richer'
 };

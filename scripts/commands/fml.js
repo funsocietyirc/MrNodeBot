@@ -1,7 +1,6 @@
 'use strict';
 const scriptInfo = {
   name: 'FML',
-  file: 'fml.js',
   desc: 'Get FML Quote',
   createdBy: 'Dave Richer'
 };

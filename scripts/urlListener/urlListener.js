@@ -2,7 +2,6 @@
 
 const scriptInfo = {
     name: 'urlListener',
-    file: 'urlListener.js',
     desc: 'Listen for URLS, append them to a DB table, clean them if they expire, and other stuff including pulling proper meta data',
     createdBy: 'Dave Richer'
 };
@@ -15,11 +14,9 @@ const conLogger = require('../../lib/consoleLogger');
 // Build
 const startChain = require('./_startChain.js'); // Begin the chain
 const startCachedChain = require('./_startCachedChain'); // Begin cache chain
-const getShorten = require('./_getShort'); // Shorten the URL
 const getTitle = require('./_getTitle'); // Get the title
-const getGenericInfo = require('./_getGenericInfo'); // Get Generic Link matches
-const getImdb = require('./_getImdb.js'); // Get IMDB Data
-const getYoutube = require('./_getYoutube.js'); // Get the youtube key from link
+const matcher = require('././_linkMatcher'); // Link Matcher
+const getShorten = require('./_getShort'); // Shorten the URL
 const endChain = require('./_endChain'); // Finish the chain
 
 // Report
@@ -33,48 +30,18 @@ const scheduler = require('../../lib/scheduler');
 const ircUrlFormatter = require('./_ircUrlFormatter'); // IRC Formatter
 
 // Cache URLS to prevent unnecessary API calls
-const resultsCache = require('./_resultsCache');
+const resultsCache = require('./_resultsCacheStore');
 
 module.exports = app => {
 
     // Libs
     const announceIgnore = app.Config.features.urls.announceIgnore || [];
+
     // Fetch the ignore list
     const userIgnore = app.Config.features.urls.userIgnore || [];
 
-    // Link matcher
-    const matcher = results => {
-        // Google Short URL has been expnded, we will use that to
-        // run the expressions through
-        let url = results.realUrl ? results.realUrl : results.url;
-
-        // Check for youTube
-        let ytMatch = url.match(/^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/);
-
-        // If We have a valid Youtube Link
-        if (ytMatch && ytMatch[2].length == 11) {
-            return getYoutube(ytMatch[2], results);
-        }
-
-        // Check for IMDB
-        let imdbMatch = url.match(/(?:www\.)?imdb.com\/title\/(tt[^\/]+).*/);
-        if (imdbMatch && imdbMatch[1]) {
-            return getImdb(imdbMatch[1], results);
-        }
-
-        // Get Generic Information
-        let genericMatch = url.match(/(?:git@(?![\w\.]+@)|https:\/{2}|http:\/{2})([\w\.@]+)[\/:]([\w,\-,\_]+)\/([\w,\-,\_]+)(?:\.git)?\/?/);
-
-        // Match 1: Domain, Match 2: User Group3: Repo
-        if (genericMatch) {
-            return getGenericInfo(url, genericMatch, results);
-        }
-
-        return results;
-
-    };
-
-    const sendToIrc = (results) => {
+    // Send Response to IRC
+    const sendToIrc = results => {
         if (!_.includes(announceIgnore, results.to)) {
             let output = ircUrlFormatter(results);
             // Bail if we have no output
@@ -90,55 +57,39 @@ module.exports = app => {
         return results;
     };
 
+    // Individual URL Processing chain
+    const processUrl = (url, to, from, text, message, is) => {
+        let isCached = resultsCache.has(url); // Check if it is Cached
+        let chain = isCached ? startCachedChain : startChain; // Load appropriate start method
+        chain(url, to, from, text, message, is) // Begin Chain
+            .then(results => results.isCached ? results : // If we Have a cached object, continue in chain
+                getTitle(results) // Make a request, verify the site exists, and grab metadata
+                .then(results => results.unreachable ? results : // If the site is no up, continue the chain
+                    getShorten(results) // Otherwise grab the google SHORT Url
+                    .then(results => matcher(results)) // Then send it to the regex matcher
+                ))
+            .then(results => sendToIrc(results)) // Send Results to IRC
+            .then(results => results.unreachable ? results : // If the site is unreachable, carry on in chain
+                sendToDb(results) // Otherwise Log To Database
+                .then(results => sendToPusher(results)) // Then broadcast to pusher
+            )
+            .then(results => endChain(results)) // End the chain, cache results
+            .catch(err => {
+                conLogger('Error in URL Listener chain:', 'error');
+                console.dir(err);
+            });
+    };
+
     // Handler
     const listener = (to, from, text, message, is) => {
         // Check to see if the user is ignored from url listening, good for bots that repete
         if (_.includes(userIgnore, from)) return;
 
-        // Get Urls
-        let urls = helpers.ExtractUrls(text);
-
-        // Input does not contain urls
-        if (!urls) return;
-
         // Url Processing chain
-        _(urls)
-            // We do not deal with FTP
-            .filter(url => !url.startsWith('ftp'))
-            .each(url => {
-                let isCached = resultsCache.has(url);
-                let chain = isCached ? startCachedChain : startChain;
-                chain(url, to, from, text, message, is)
-                    .then(results => {
-                        // We are cached so we do not need to grab this data again
-                        if (results.isCached) return results;
-                        // Grab meta data
-                        return getTitle(results) // Get title
-                            .then(results => {
-                                // Link is unreachable
-                                if (results.unreachable) return results;
-                                return getShorten(results) // Grab URL Meta data based on site
-                                    // Grab URL Meta data based on site
-                                    .then(results => matcher(results))
-                            });
-                    })
-                    // Report back to IRC, got to pass through say for now
-                    .then(results => sendToIrc(results))
-                    .then(results => {
-                        // bail if the link is unreachable
-                        if (results.unreachable) return results;
-                        return sendToDb(results) // Log To Database
-                            // Send to Pusher
-                            .then(results => sendToPusher(results))
-                    })
-                    // End chain
-                    .then(results => endChain(results))
-                    // Catch Errors
-                    .catch(err => {
-                        conLogger('Error in URL Listener chain:', 'error');
-                        console.dir(err);
-                    });
-            });
+        _(helpers.ExtractUrls(text))
+            .uniq() // Assure No Duplicated URLS on the same line return multiple results
+            .reject(url => url.startsWith('ftp')) // We do not deal with FTP
+            .each(url => processUrl(url, to, from, text, message, is));
     };
 
     // List for urls

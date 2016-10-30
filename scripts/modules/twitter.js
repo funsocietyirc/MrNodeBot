@@ -1,7 +1,6 @@
 'use strict';
 const scriptInfo = {
     name: 'robotTweet',
-    file: 'twitter.js',
     createdBy: 'Dave Richer'
 };
 

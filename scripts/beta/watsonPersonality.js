@@ -5,7 +5,6 @@
 
 const scriptInfo = {
     name: 'Waston Personality',
-    file: 'watsonPersonality.js',
     desc: 'Test Script for watson personality',
     createdBy: 'Dave Richer'
 };

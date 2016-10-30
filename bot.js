@@ -192,20 +192,23 @@ class MrNodeBot {
         // Require In the scripts
         // Load all files with .js extension
         _(fs.readdirSync(normalizedPath))
-            .filter(file => file[0] != '_' && _.endsWith(file, '.js'))
             .each(file => {
                 // Attempt to see if the module is already loaded
                 let fullPath = `${normalizedPath}${path.sep}${file}`;
                 // Attempt to Load the module
                 try {
-                    conLogger(`Loading Script: ${file} `, 'success');
-                    if (clearCache === true) {
+                    // Clear the chache if specified
+                    if (clearCache === true && !_.endsWith(file, 'Store.js')) {
                         this._clearCache(fullPath);
                     }
-                    this.LoadedScripts.push({
-                        fullPath: fullPath,
-                        info: require(`./${dir}/${file}`)(this)
-                    });
+                    // If we are not dealing with a partial file _something.js
+                    if (file[0] != '_' && _.endsWith(file, '.js')) {
+                      conLogger(`Loading Script: ${file} `, 'success');
+                      this.LoadedScripts.push({
+                          fullPath: fullPath,
+                          info: require(`./${dir}/${file}`)(this)
+                      });
+                    }
                 } catch (err) {
                     conLogger(`[${err}] in: ${fullPath}`.replace(`${path.sep}${path.sep}`, `${path.sep}`), 'error');
                 }

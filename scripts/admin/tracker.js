@@ -2,7 +2,6 @@
 
 const scriptInfo = {
     name: 'tracker',
-    file: 'tracker.js',
     desc: 'Get GEO IP info on a IRC user',
     createdBy: 'Dave Richer'
 };
@@ -15,7 +14,7 @@ const helpers = require('../../helpers');
   Try and get the location of a user using geoip
   Commands: tracker
 **/
-module.exports = app => {    
+module.exports = app => {
     // Handler
     const tracker = (to, from, text, message) => {
         let textArray = text.split(' ');

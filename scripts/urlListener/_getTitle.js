@@ -3,7 +3,7 @@
 const _ = require('lodash');
 const xray = require('x-ray')();
 const helpers = require('../../helpers');
-const imageRegex = /^.*(png|jpg|jpeg|gif)$/i;
+const imageRegex = /^.*(png|jpg|jpeg|gif|mp4|avi|mpeg|gifv)$/i;
 const rp = require('request-promise-native');
 
 module.exports = results => new Promise((resolve, reject) => rp({
@@ -15,7 +15,7 @@ module.exports = results => new Promise((resolve, reject) => rp({
             let match = results.url.match(imageRegex);
             if (match && match[0] && match[1]) {
                 resolve(_.merge(results, {
-                    title: `${match[1].toUpperCase()} Image`,
+                    title: `${match[1].toUpperCase()} Media`,
                     realUrl: response.request.uri.href
                 }));
                 return;
@@ -28,11 +28,9 @@ module.exports = results => new Promise((resolve, reject) => rp({
         let formatedTitle = helpers.StripNewLine(_.trim(title));
         resolve(_.merge(results, {
             title: formatedTitle,
-            realUrl: response.request.uri.href
+            realUrl: response.request.uri.href,
         }));
     }))
-    .catch(function(err) {
-        resolve(_.merge(results, {
-            unreachable: true
-        }))
-    }));
+    .catch(() => resolve(_.merge(results, {
+        unreachable: true
+    }))));

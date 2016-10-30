@@ -1,7 +1,6 @@
 'use strict';
 const scriptInfo = {
     name: 'help',
-    file: 'help.js',
     desc: 'Dynamically created help system',
     createdBy: 'Dave Richer'
 };

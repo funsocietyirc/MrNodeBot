@@ -1,7 +1,6 @@
 'use strict';
 const scriptInfo = {
   name: 'Channel Token',
-  file: 'channelToken.js',
   desc: 'Give a IRC user a unique token that identifies them to a channel',
   createdBy: 'Dave Richer'
 };

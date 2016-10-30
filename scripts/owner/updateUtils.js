@@ -1,7 +1,6 @@
 'use strict';
 const scriptInfo = {
     name: 'Update Utilities',
-    file: 'updateUtils.js',
     desc: 'Provides refresh (reloads scripts), update (pulls from git hub), and halt (terminates bot)',
     createdBy: 'Dave Richer'
 };

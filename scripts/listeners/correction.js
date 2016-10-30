@@ -1,7 +1,6 @@
 'use strict';
 const scriptInfo = {
     name: 'SED Correction',
-    file: 'correction.js',
     desc: 'Listen for SED like corrections',
     createdBy: 'Dave Richer'
 };

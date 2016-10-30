@@ -1,7 +1,6 @@
 'use strict';
 const scriptInfo = {
     name: 'Topic Utilities',
-    file: 'topicUtils.js',
     desc: 'Utilites to view and manipulate the channel topic',
     createdBy: 'Dave Richer'
 };

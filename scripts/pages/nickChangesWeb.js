@@ -1,7 +1,6 @@
 'use strict';
 const scriptInfo = {
     name: 'Nick Changes Web Front end',
-    file: 'nickChangesWeb.js',
     desc: 'Get information on aliases through web front end',
     createdBy: 'Dave Richer'
 };

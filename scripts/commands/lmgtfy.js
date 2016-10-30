@@ -1,7 +1,6 @@
 'use strict';
 const scriptInfo = {
     name: 'Let me google that for you',
-    file: 'lmgtfy.js',
     desc: 'Grab a let me google that for you link',
     createdBy: 'Dave Richer'
 };

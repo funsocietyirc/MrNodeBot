@@ -2,7 +2,6 @@
 
 const scriptInfo = {
     name: 'Evaluate',
-    file: 'eval.js',
     desc: 'Allow for inline JS Evaluation via IRC for easier debugging',
     createdBy: 'Dave Richer'
 };

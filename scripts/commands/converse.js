@@ -1,7 +1,6 @@
 'use strict';
 const scriptInfo = {
     name: 'Converse',
-    file: 'converse.js',
     desc: 'Converse with the bot',
     createdBy: 'Dave Richer'
 };

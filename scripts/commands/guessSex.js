@@ -1,7 +1,6 @@
 'use strict';
 const scriptInfo = {
     name: 'Guess Sex',
-    file: 'guessSex.js',
     desc: 'Guess the sex of a user based on their chat history',
     createdBy: 'Dave Richer'
 };

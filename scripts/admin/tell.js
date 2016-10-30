@@ -1,7 +1,6 @@
 'use strict';
 const scriptInfo = {
     name: 'tell',
-    file: 'tell.js',
     desc: 'Have the Bot give a channel or user a message',
     createdBy: 'Dave Richer'
 };

@@ -1,7 +1,6 @@
 'use strict'
 const scriptInfo = {
   name: 'Canada Post Commands',
-  file: 'cpost.js',
   desc: 'Get things like package tracking and postal code suggestions',
   createdBy: 'Dave Richer'
 };

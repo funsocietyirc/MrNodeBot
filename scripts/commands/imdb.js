@@ -1,7 +1,6 @@
 'use strict';
 const scriptInfo = {
     name: 'Imdb',
-    file: 'imdb.js',
     desc: 'Get IMDB info by title',
     createdBy: 'Dave Richer'
 };

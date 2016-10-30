@@ -1,7 +1,6 @@
 'use strict';
 const scriptInfo = {
     name: 'analyze',
-    file: 'analyze.js',
     desc: 'Get a summary of information from a online IRC user',
     createdBy: 'Dave Richer'
 };

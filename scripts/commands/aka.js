@@ -1,7 +1,6 @@
 'use strict';
 const scriptInfo = {
     name: 'Also Known As',
-    file: 'aka.js',
     desc: 'Get information from the nick change table',
     createdBy: 'Dave Richer'
 };

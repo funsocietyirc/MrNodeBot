@@ -1,7 +1,6 @@
 'use strict';
 const scriptInfo = {
     name: 'Voice Regulars',
-    file: 'voiceRegulars.js',
     desc: 'Voice users by participation',
     createdBy: 'Dave Richer'
 };
@@ -28,7 +27,7 @@ module.exports = app => {
                 thresh = txtArray[1] % 1 === 0 ? txtArray[1] : threshold;
                 break
         }
-        
+
         gen(channel, thresh, app)
           .then(result => app.say(from, result))
           .catch(err => app.say(from, `Error ${err.message}`));

@@ -1,7 +1,6 @@
 'use strict';
 const scriptInfo = {
     name: 'stats',
-    file: 'stats.js',
     desc: 'Provide very basic command usage stats',
     createdBy: 'Dave Richer'
 };

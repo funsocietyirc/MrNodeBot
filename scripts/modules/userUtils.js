@@ -1,7 +1,6 @@
 'use strict';
 const scriptInfo = {
     name: 'User Utilities',
-    file: 'userUtils.js',
     desc: 'Provides Registration and other User management functionality',
     createdBy: 'Dave Richer'
 };

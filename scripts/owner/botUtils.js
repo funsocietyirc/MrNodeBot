@@ -1,7 +1,6 @@
 'use strict';
 const scriptInfo = {
     name: 'Bot Utilities',
-    file: 'botUtils.js',
     desc: 'Bot administrative commands',
     createdBy: 'Dave Richer'
 };

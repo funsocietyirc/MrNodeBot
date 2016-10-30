@@ -16,7 +16,6 @@ query params:
 
 const scriptInfo = {
     name: 'urlApi',
-    file: 'urlApi.js',
     desc: 'The URL Express API',
     createdBy: 'Dave Richer'
 };

@@ -1,7 +1,6 @@
 'use strict';
 const scriptInfo = {
     name: 'echo',
-    file: 'echo.js',
     desc: 'Echo text back to the IRC user, a simple test script',
     createdBy: 'Dave Richer'
 };

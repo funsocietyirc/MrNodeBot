@@ -1,7 +1,6 @@
 'use strict';
 const scriptInfo = {
     name: 'BOFH Excuse',
-    file: 'bofh.js',
     desc: 'Provider Bastard Operator from hell excuses',
     createdBy: 'Dave Richer'
 };

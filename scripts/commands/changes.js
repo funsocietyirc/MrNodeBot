@@ -2,7 +2,6 @@
 
 const scriptInfo = {
     name: 'changes',
-    file: 'changes.js',
     desc: 'Allow users to see git changes from IRC',
     createdBy: 'Dave Richer'
 };
