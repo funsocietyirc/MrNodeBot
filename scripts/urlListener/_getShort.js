@@ -10,14 +10,19 @@ module.exports = (results) => {
         return results;
     }
 
+    results.isShort = _.includes(results.url, '://goo.gl/');
+
+
     // Get the SHORT Url
     return rp({
-            method: 'GET',
+            uri: `https://www.googleapis.com/urlshortener/v1/url`,
+            method: 'POST',
             json: true,
-            uri: 'https://www.googleapis.com/urlshortener/v1/url',
             qs: {
-                key: apiKey,
-                shortUrl: results.url
+                key: apiKey
+            },
+            body: {
+                "longUrl": results.url
             }
         })
         .then(result => {
