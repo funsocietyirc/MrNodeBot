@@ -31,7 +31,6 @@ module.exports = app => {
     // Voice users in the main channel
     if(app.Database) {
 
-
       // Voice Users every hour if they meet a certain threshold
       let cronTime = new scheduler.RecurrenceRule();
       cronTime.minute = 40;
@@ -83,7 +82,6 @@ module.exports = app => {
         desc: 'Join Fsociety channels',
         name: 'DarkArmy'
     });
-
 
     // Topic lock if possible
     const topicLock = (channel, topic, nick, message) => {

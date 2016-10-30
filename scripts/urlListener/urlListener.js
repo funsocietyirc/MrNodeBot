@@ -105,6 +105,7 @@ module.exports = app => {
             // We do not deal with FTP
             .filter(url => !url.startsWith('ftp'))
             .each(url => {
+
                 // Url Exists in cache
                 if (resultsCache.has(url)) {
                     startCachedChain(url, to, from, text, message, is)
