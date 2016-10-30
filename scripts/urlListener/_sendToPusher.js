@@ -19,7 +19,7 @@ module.exports = (results) => {
         timestamp,
         // If this is a youtube video, use the vide title rather then the title
         // TODO Update
-        title: (!_.isUndefined(results.youTube) && results.youTube.videoTitle) ? results.youTube.videoTitle : results.title || ''
+        title: results.title
     };
     // Include an ID if we have one
     if (results.id) {

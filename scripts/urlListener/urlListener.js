@@ -109,48 +109,31 @@ module.exports = app => {
             // We do not deal with FTP
             .filter(url => !url.startsWith('ftp'))
             .each(url => {
-
-                // Url Exists in cache
-                if (resultsCache.has(url)) {
-                    startCachedChain(url, to, from, text, message, is)
-                        // Report back to IRC, got to pass through say for now
-                        .then(results => sendToIrc(results))
-                        // Log To Database
-                        .then(results => sendToDb(results))
-                        // Send to Pusher
-                        .then(results => sendToPusher(results))
-                        // Set the Cache flag to true
-                        // End chain
-                        .then(results => endChain(results))
-                        // Catch Errors
-                        .catch(err => {
-                            conLogger('Error in URL Listener Cache chain:', 'error');
-                            console.dir(err);
-                        });
-                }
-                // Url Does not exist in cache
-                else {
-                    startChain(url, to, from, text, message, is)
-                        // Get title
-                        .then(results => getTitle(results))
-                        // Grab Short URL
-                        .then(results => getShorten(results))
-                        // Grab URL Meta data based on site
-                        .then(results => matcher(results))
-                        // Report back to IRC, got to pass through say for now
-                        .then(results => sendToIrc(results))
-                        // Log To Database
-                        .then(results => sendToDb(results))
-                        // Send to Pusher
-                        .then(results => sendToPusher(results))
-                        // End chain
-                        .then(results => endChain(results))
-                        // Catch Errors
-                        .catch(err => {
-                            conLogger('Error in URL Listener chain:', 'error');
-                            console.dir(err);
-                        });
-                }
+                let isCached = resultsCache.has(url);
+                let chain = isCached ? startCachedChain : startChain;
+                chain(url, to, from, text, message, is)
+                    .then(results => {
+                        // We are cached so we do not need to grab this data again
+                        if (results.isCached) return results;
+                        // Grab meta data
+                        return getTitle(results) // Get title
+                            .then(results => getShorten(results)) // Grab URL Meta data based on site
+                            // Grab URL Meta data based on site
+                            .then(results => matcher(results))
+                    })
+                    // Report back to IRC, got to pass through say for now
+                    .then(results => sendToIrc(results))
+                    // Log To Database
+                    .then(results => sendToDb(results))
+                    // Send to Pusher
+                    .then(results => sendToPusher(results))
+                    // End chain
+                    .then(results => endChain(results))
+                    // Catch Errors
+                    .catch(err => {
+                        conLogger('Error in URL Listener chain:', 'error');
+                        console.dir(err);
+                    });
             });
     };
 
