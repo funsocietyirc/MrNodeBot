@@ -4,7 +4,7 @@ const _ = require('lodash');
 const pusher = require('../../lib/pusher');
 module.exports = (results) => {
     // Bail if we have no pusher or the result was unreachable
-    if (!pusher || results.unreachable) {
+    if (!pusher) {
       return results;
     }
     // Decide which pusher channel to push over

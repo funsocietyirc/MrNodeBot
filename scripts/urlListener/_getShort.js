@@ -6,12 +6,9 @@ const apiKey = require('../../config').apiKeys.google;
 
 module.exports = (results) => {
     // Check input / Gate
-    if (results.unreachable || !apiKey || _.isEmpty(apiKey)) {
+    if (!apiKey || _.isEmpty(apiKey)) {
         return results;
     }
-
-    results.isShort = _.includes(results.url, '://goo.gl/');
-
 
     // Get the SHORT Url
     return rp({
@@ -26,7 +23,7 @@ module.exports = (results) => {
             }
         })
         .then(result => {
-            if (!result || !result.id || (result.isShort && !result.longUrl)) {
+            if (!result || !result.id) {
                 return results;
             }
 

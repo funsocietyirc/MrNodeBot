@@ -44,9 +44,6 @@ module.exports = app => {
 
     // Link matcher
     const matcher = results => {
-        if (results.unreachable) {
-            return results;
-        }
         // Google Short URL has been expnded, we will use that to
         // run the expressions through
         let url = results.realUrl ? results.realUrl : results.url;
@@ -117,16 +114,23 @@ module.exports = app => {
                         if (results.isCached) return results;
                         // Grab meta data
                         return getTitle(results) // Get title
-                            .then(results => getShorten(results)) // Grab URL Meta data based on site
-                            // Grab URL Meta data based on site
-                            .then(results => matcher(results))
+                            .then(results => {
+                                // Link is unreachable
+                                if (results.unreachable) return results;
+                                return getShorten(results) // Grab URL Meta data based on site
+                                    // Grab URL Meta data based on site
+                                    .then(results => matcher(results))
+                            });
                     })
                     // Report back to IRC, got to pass through say for now
                     .then(results => sendToIrc(results))
-                    // Log To Database
-                    .then(results => sendToDb(results))
-                    // Send to Pusher
-                    .then(results => sendToPusher(results))
+                    .then(results => {
+                        // bail if the link is unreachable
+                        if (results.unreachable) return results;
+                        return sendToDb(results) // Log To Database
+                            // Send to Pusher
+                            .then(results => sendToPusher(results))
+                    })
                     // End chain
                     .then(results => endChain(results))
                     // Catch Errors

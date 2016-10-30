@@ -46,7 +46,7 @@ module.exports = (results) => {
         }
 
         // We have a Short URL
-        if (results.isShort || (!_.isUndefined(results.shortUrl) && !_.isEmpty(results.shortUrl) && results.url.length > config.features.urls.titleMin)) {
+        if (!_.isUndefined(results.shortUrl) && !_.isEmpty(results.shortUrl) && results.url.length > config.features.urls.titleMin) {
             append(`${icons.anchor} ${c.navy(results.shortUrl)}`);
         }
 
