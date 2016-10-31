@@ -9,6 +9,7 @@ module.exports = results => new Promise((resolve, reject) => rp({
         uri: results.url,
         resolveWithFullResponse: true,
         headers: {
+            // Fake user agent so we get HTML responses
             'user-agent': 'Mozilla/5.0 (Windows NT 6.3; WOW64)'
         }
     })
@@ -21,9 +22,9 @@ module.exports = results => new Promise((resolve, reject) => rp({
         results.realUrl = response.request.uri.href;
 
         // We did not recieve enough information from the request
-        if(!contentType) {
-          resolve(results);
-          return;
+        if (!contentType) {
+            resolve(results);
+            return;
         }
 
         // We have valid HTML

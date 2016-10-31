@@ -1,5 +1,18 @@
 'use strict';
 
+/**
+  MrNodeBot URL Announce feature:
+    This will take in a line of text, parse it for URLS, it will then itterate through
+    each url and grab meta data on it. This includes checking if the URL is alive,
+    grabbing the request header params, checking content type, extracting title. The url is also
+    ran against matches for other APIS used to extract data, such has youtube/imdb..
+    The resulting information is then sent back to be displayed on IRC, broadcast over Pusher, and logged via DB.
+    If we are in debug mode a complete chain of information will be echoed to the console.
+
+    The basic concept of this is a promise/function that takes in a results object, and returns either
+    a modified results object, or in case of error, that same results object.
+**/
+
 const scriptInfo = {
     name: 'urlListener',
     desc: 'Listen for URLS, append them to a DB table, clean them if they expire, and other stuff including pulling proper meta data',
@@ -98,10 +111,10 @@ module.exports = app => {
         call: listener
     });
 
-    // Clear cache every four hours
+    // Clear cache every four hours on the 30 min mark
     const cronTime = new scheduler.RecurrenceRule();
     cronTime.hour = [0,4,8,12,16,20];
-    cronTime.minuet = 0;
+    cronTime.minuet = 30;
     const clean = scheduler.schedule('urlResultCache', cronTime, () => {
         conLogger('Clearing The Url Result Cache', 'info');
         resultsCache.clear();
