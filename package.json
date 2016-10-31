@@ -53,6 +53,7 @@
     "serve-favicon": "^2.3.0",
     "shelljs": "^0.7.5",
     "twit": "^2.2.5",
+    "urijs": "^1.18.2",
     "watson-developer-cloud": "^2.6.2",
     "x-ray": "^2.3.0"
   }
