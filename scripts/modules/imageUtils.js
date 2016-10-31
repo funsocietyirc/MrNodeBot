@@ -7,7 +7,7 @@ const scriptInfo = {
 
 const _ = require('lodash');
 const Models = require('bookshelf-model-loader');
-const helpers = require('../../helpers');
+const extractUrls = require('../../lib/extractUrls');
 const fileType = require('file-type');
 const rp = require('request-promise-native');
 const conLogger = require('../../lib/consoleLogger');
@@ -45,7 +45,7 @@ module.exports = app => {
                 // This needs to be done incase a image link and a non image link were included
                 // On the same line
                 logResults.forEach(logResult => {
-                    _(helpers.ExtractUrls(logResult.get('text')))
+                    _(extractUrls(logResult.get('text')))
                         .filter(url => (_.includes(url, '.jpeg') || _.includes(url, '.jpg') || _.includes(url, '.gif') || _.includes(url, '.png')) && url.startsWith('http'))
                         .each(url => {
                             Models.Url.create({

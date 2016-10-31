@@ -16,4 +16,5 @@ module.exports = text => rp({
     format: 'json',
     url: text
   }
-});
+})
+.then(results => results.shorturl || '');

@@ -21,7 +21,7 @@ const scriptInfo = {
 
 const _ = require('lodash');
 
-const helpers = require('../../helpers');
+const extractUrls = require('../../lib/extractUrls');
 const conLogger = require('../../lib/consoleLogger');
 
 // Build
@@ -31,17 +31,12 @@ const getDocument = require('./_getDocument'); // Get the title
 const matcher = require('././_linkMatcher'); // Link Matcher
 const getShorten = require('./_getShort'); // Shorten the URL
 const endChain = require('./_endChain'); // Finish the chain
-
 // Report
 const sendToDb = require('./_sendToDb'); // Log Urls to the Database
 const sendToPusher = require('./_sendToPusher'); // Send To Pusher
-
-const HashMap = require('hashmap');
-const scheduler = require('../../lib/scheduler');
-
 // Libs
 const ircUrlFormatter = require('./_ircUrlFormatter'); // IRC Formatter
-
+const scheduler = require('../../lib/scheduler');
 // Cache URLS to prevent unnecessary API calls
 const resultsCache = require('./_resultsCacheStore');
 
@@ -99,7 +94,7 @@ module.exports = app => {
         if (_.includes(userIgnore, from)) return;
 
         // Url Processing chain
-        _(helpers.ExtractUrls(text))
+        _(extractUrls(text))
             .uniq() // Assure No Duplicated URLS on the same line return multiple results
             .reject(url => url.startsWith('ftp')) // We do not deal with FTP
             .each(url => processUrl(url, to, from, text, message, is));

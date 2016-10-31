@@ -16,12 +16,11 @@ module.exports = app => {
         }
         gen('http://lmgtfy.com/?q=' + encodeURIComponent(text))
             .then(result => {
-              console.dir(result);
-                if (!result.shorturl) {
+                if (!result) {
                     app.say(to, 'Something went wrong figuring that out for you');
                     return;
                 }
-                app.say(to, `${ircTypography.logos.lmgtfy} ${result.shorturl}`);
+                app.say(to, `${ircTypography.logos.lmgtfy} ${result}`);
             })
             .catch(err => {
                 console.log('LMGTFY Error');
