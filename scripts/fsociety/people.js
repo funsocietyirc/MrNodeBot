@@ -6,6 +6,7 @@ const scriptInfo = {
 };
 
 const _ = require('lodash');
+const c = require('irc-colors');
 const xray = require('x-ray')();
 const Models = require('bookshelf-model-loader');
 
@@ -50,6 +51,25 @@ module.exports = (app) => {
           if(nick == 'fr1end') app.say(channel, `Hello fr1end...`);
         },
         name: 'Hello fr1end'
+    });
+
+    // Redwheelbarrow
+    let wheelBarrow = [
+      "                                   _______",
+      "      ___________________________.'.------`",
+      "     '---------------------------.'",
+      "       `.       #FSOCIETY      .'",
+      "     .-//`.                  .'",
+      "  .' .//.'/`================'",
+      " =[=:====:=]=           \\||",
+      "  '. `--' .'             \_|",
+      "    `-  -'",
+    ];
+
+    app.Commands.set('redwheelbarrow', {
+        desc: 'Is Jeek Alive?',
+        access: app.Config.accessLevels.admin,
+        call: (to, from, text, message) => _.each(wheelBarrow, line => app.say(to, c.red(line)))
     });
 
     // Everything past this point requires the database
