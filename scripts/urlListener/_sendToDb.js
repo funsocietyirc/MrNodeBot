@@ -12,6 +12,7 @@ module.exports = (results) => {
             return true;
         }
     });
+    
     if (!Models.Url || ignored) {
         return results;
     }
@@ -30,27 +31,23 @@ module.exports = (results) => {
             return results;
         })
         // Log Youtube Url
-        .then(results => {
-            if (_.isUndefined(results.youTube)) {
-                return results;
-            }
-
-            return Models.YouTubeLink.create({
-                    url: results.url,
-                    to: results.to,
-                    from: results.from,
-                    title: results.youTube.videoTitle,
-                    user: results.message.user,
-                    host: results.message.host
-                })
-                .then(record => {
-                    results.delivered.push({
-                        protocol: 'youTubeDatabase',
-                        on: Date.now()
-                    });
-                    return results;
+        .then(results => _.isUndefined(results.youTube) ? results :
+            Models.YouTubeLink.create({
+                url: results.url,
+                to: results.to,
+                from: results.from,
+                title: results.youTube.videoTitle,
+                user: results.message.user,
+                host: results.message.host
+            })
+            .then(record => {
+                results.delivered.push({
+                    protocol: 'youTubeDatabase',
+                    on: Date.now()
                 });
-        })
+                return results;
+            })
+        )
         .catch((err) => {
             console.log('Error in the DB function of the url listener');
             console.dir(err);

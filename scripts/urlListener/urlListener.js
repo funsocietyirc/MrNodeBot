@@ -14,7 +14,7 @@ const conLogger = require('../../lib/consoleLogger');
 // Build
 const startChain = require('./_startChain.js'); // Begin the chain
 const startCachedChain = require('./_startCachedChain'); // Begin cache chain
-const getTitle = require('./_getTitle'); // Get the title
+const getDocument = require('./_getDocument'); // Get the title
 const matcher = require('././_linkMatcher'); // Link Matcher
 const getShorten = require('./_getShort'); // Shorten the URL
 const endChain = require('./_endChain'); // Finish the chain
@@ -63,7 +63,7 @@ module.exports = app => {
         let chain = isCached ? startCachedChain : startChain; // Load appropriate start method
         chain(url, to, from, text, message, is) // Begin Chain
             .then(results => results.isCached ? results : // If we Have a cached object, continue in chain
-                getTitle(results) // Make a request, verify the site exists, and grab metadata
+                getDocument(results) // Make a request, verify the site exists, and grab metadata
                 .then(results => results.unreachable ? results : // If the site is no up, continue the chain
                     getShorten(results) // Otherwise grab the google SHORT Url
                     .then(results => matcher(results)) // Then send it to the regex matcher
@@ -98,9 +98,10 @@ module.exports = app => {
         call: listener
     });
 
-    // Clear cache every hour
+    // Clear cache every four hours
     const cronTime = new scheduler.RecurrenceRule();
-    cronTime.minute = 30;
+    cronTime.hour = [0,4,8,12,16,20];
+    cronTime.minuet = 0;
     const clean = scheduler.schedule('urlResultCache', cronTime, () => {
         conLogger('Clearing The Url Result Cache', 'info');
         resultsCache.clear();

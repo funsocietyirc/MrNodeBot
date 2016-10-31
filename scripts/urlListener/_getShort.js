@@ -15,13 +15,10 @@ module.exports = results => !apiKey || _.isEmpty(apiKey) ? results :
             "longUrl": results.url
         }
     })
-    .then(result => {
-        if (!result || !result.id) return results;
-
-        return _.merge(results, {
+    .then(result => !result || !result.id ? results :
+        _.merge(results, {
             shortUrl: results.isShort ? result.longUrl : result.id
-        })
-    })
+        }))
     .catch(err => {
         console.log('Error in Google Shortner');
         console.dir(err);

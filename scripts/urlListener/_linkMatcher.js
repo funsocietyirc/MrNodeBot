@@ -13,17 +13,11 @@ module.exports = results => {
 
     // Check for youTube
     let ytMatch = url.match(/^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/);
-
-    // If We have a valid Youtube Link
-    if (ytMatch && ytMatch[2].length == 11) {
-        return getYoutube(ytMatch[2], results);
-    }
+    if (ytMatch && ytMatch[2].length == 11) return getYoutube(ytMatch[2], results);
 
     // Check for IMDB
     let imdbMatch = url.match(/(?:www\.)?imdb.com\/title\/(tt[^\/]+).*/);
-    if (imdbMatch && imdbMatch[1]) {
-        return getImdb(imdbMatch[1], results);
-    }
+    if (imdbMatch && imdbMatch[1]) return getImdb(imdbMatch[1], results);
 
     // Get Generic Information
     let matches = url.match(/(?:git@(?![\w\.]+@)|https:\/{2}|http:\/{2})([\w\.@]+)[\/:]([\w,\-,\_]+)\/([\w,\-,\_]+)(?:\.git)?\/?/);
@@ -33,13 +27,8 @@ module.exports = results => {
 
     // Filter the remaining matches
     switch (matches[1].toLowerCase()) {
-        case 'github.com':
-            // 2: User, 3: Repo
-            return getGitHub(matches[2], matches[3], results);
-        case 'bitbucket.org':
-            // 2: User, 3: Repo
-            return getBitBucket(matches[2], matches[3], results);
-        default:
-            return results;
+        case 'github.com': return getGitHub(matches[2], matches[3], results); // 2: User, 3: Repo
+        case 'bitbucket.org': return getBitBucket(matches[2], matches[3], results); // 2: User, 3: Repo
+        default: return results;
     }
 };
