@@ -107,10 +107,10 @@ module.exports = app => {
     });
 
     // Clear cache every four hours on the 30 min mark
-    const cronTime = new scheduler.RecurrenceRule();
-    cronTime.hour = [0,4,8,12,16,20];
-    cronTime.minuet = 30;
-    const clean = scheduler.schedule('urlResultCache', cronTime, () => {
+    const clean = scheduler.schedule('urlResultCache', {
+      hour:[0,4,8,12,16,20],
+      minute:15
+    }, () => {
         conLogger('Clearing The Url Result Cache', 'info');
         resultsCache.clear();
     });
