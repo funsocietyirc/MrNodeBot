@@ -17,7 +17,7 @@ module.exports = app => {
         app.say(to, 'I could not seem to find any Shower Thoughts');
         return;
       }
-      app.say(to, `Shower Thought ${ircTypography.icons.sideArrow} ${result[0]}`);
+      app.say(to, `Shower Thought ${ircTypography.icons.sideArrow} ${_.first(result)}`);
     })
     .catch(err => {
       app.say(to,'Something went wrong with the Reddit API');
@@ -27,8 +27,8 @@ module.exports = app => {
 
   };
 
-  app.Commands.set('showerthoughts', {
-      desc: 'Get a random showerThoughts',
+  app.Commands.set('shower-thought', {
+      desc: 'Get a random Shower thought',
       access: app.Config.accessLevels.identified,
       call: showerThought
   });

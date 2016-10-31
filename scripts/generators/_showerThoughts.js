@@ -15,6 +15,5 @@ module.exports = amount => rp({
             reject(new Error('No Data was available'));
             return;
         }
-        console.dir(_.sampleSize(_.map(results.data.children, 'data.title'), amount || 1));
         resolve(_.sampleSize(_.map(results.data.children, 'data.title'), amount || 1));
     }));
