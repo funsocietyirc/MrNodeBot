@@ -2,13 +2,10 @@
 
 const _ = require('lodash');
 
-module.exports = (size) => new Promise((resolve, reject) => {
-  size = size || 1;
-  resolve(_.sampleSize(excuses, size));
-});
+module.exports = size => new Promise(resolve => resolve(_.sampleSize(excuses, size || 1)));
 
 /* Get a BOFH Excuse */
-const excuses = [
+const excuses = _.map([
     'clock speed', 'solar flares', 'electromagnetic radiation from satellite debris', 'static from nylon underwear', 'static from plastic slide rules',
     'global warming', 'poor power conditioning', 'static buildup', 'doppler effect', 'hardware stress fractures', 'magnetic interference from money/credit cards',
     'dry joints on cable plug', 'we\'re waiting for [the phone company] to fix that line', 'sounds like a Windows problem, try calling Microsoft support',
@@ -163,4 +160,4 @@ const excuses = [
     'Keyboard Actuator Failure.  Order and Replace.', 'Packet held up at customs.', 'Propagation delay.', 'High line impedance.', 'Someone set us up the bomb.',
     'Power surges on the Underground.', 'Don\'t worry; it\'s been deprecated. The new one is worse.', 'Excess condensation in cloud network', 'It is a layer 8 problem',
     'The math co-processor had an overflow error that leaked out and shorted the RAM', 'Leap second overloaded RHEL6 servers', 'DNS server drank too much and had a hiccup'
-];
+], _.capitalize);

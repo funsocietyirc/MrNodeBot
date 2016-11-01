@@ -6,8 +6,8 @@ const scriptInfo = {
     createdBy: 'Dave Richer'
 };
 
-const http = require('http');
 const _ = require('lodash');
+const gen = require('../generators/_ipLocationData');
 const helpers = require('../../helpers');
 
 /**
@@ -25,46 +25,34 @@ module.exports = app => {
             return;
         }
 
-        app._ircClient.whois(user, (info) => {
-            if (!info) {
-                app.say(to, 'Something has gone very wrong');
-                return;
-            }
-            if(!helpers.ValidHostExpression.test(info.host)){
-                app.say(to, `${from} seems to be hiding behind some sort of mask...`);
-                return;
-            }
-            let options = {
-                host: 'freegeoip.net',
-                port: 80,
-                path: `/json/${info.host}`,
-                method: 'GET'
-            };
-            http.request(options, res => {
-                res.setEncoding('utf8');
-                res.on('data', chunk => {
-                    if (res.statusCode !== 200) {
-                        app.say(to, `${user} has been hidden by a power much greater than mine`);
+        app._ircClient.whoisPromise(user)
+            .then(info => {
+                    if (!helpers.ValidHostExpression.test(info.host)) {
+                        app.say(to, `${from} seems to be hiding behind some sort of mask...`);
                         return;
                     }
-                    let results = JSON.parse(chunk);
-                    let zipString = results.zip_code ? `Zip ${results.zip_code}` : '';
-                    let metroString = results.metro_code ? `Metro ${results.metro_code}` : '';
-                    let timezoneString = results.time_zone ? `Time Zone ${results.time_zone}` : '';
-                    app.say(to, `I have tracked ${user} down to ${results.city}, ${results.region_name}, ${results.country_name} (${results.latitude}, ${results.longitude}) ${zipString} ${metroString} ${timezoneString}`);
-                });
-            }).on('error', err => {
-                app.action(to, 'tinkers with his satellite uplink');
-            }).end();
-        });
-    };
+                    gen(info.host)
+                        .then(results => {
+                            let zipString = results.zip_code ? `Zip ${results.zip_code}` : '';
+                            let metroString = results.metro_code ? `Metro ${results.metro_code}` : '';
+                            let timezoneString = results.time_zone ? `Time Zone ${results.time_zone}` : '';
+                            app.say(to, `I have tracked ${user} down to ${results.city}, ${results.region_name}, ${results.country_name} (${results.latitude}, ${results.longitude}) ${zipString} ${metroString} ${timezoneString}`);
+                        })
+                        .catch(err => {
+                            console.log('Tracker Error:');
+                            console.dir(err);
+                            app.action(to, 'tinkers with his satellite uplink');
+                        });
+            })
+            .catch(err => app.say(to, err.message));
+};
 
-    app.Commands.set('track', {
-        desc: 'Track someone',
-        access: app.Config.accessLevels.admin,
-        call: tracker
-    });
+app.Commands.set('track', {
+    desc: 'Track someone',
+    access: app.Config.accessLevels.admin,
+    call: tracker
+});
 
-    // Return the script info
-    return scriptInfo;
+// Return the script info
+return scriptInfo;
 };

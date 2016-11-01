@@ -5,30 +5,25 @@ const scriptInfo = {
     createdBy: 'Dave Richer'
 };
 
+const _ = require('lodash');
+const fml = require('../generators/_fmlLine');
+const bofh = require('../generators/_bofhExcuse');
+const shower = require('../generators/_showerThoughts');
+
 module.exports = app => {
     // We do not have the configuration needed
-    if(!app.Config.features.fsociety.mainChannel || !app.Config.features.fsociety.idleChat) {
-        return;
-    }
+    if(!app.Config.features.fsociety.mainChannel || !app.Config.features.fsociety.idleChat) return;
 
+    // Set Initial states
     let active = false;
     let initial = true;
-
-    const messages = [
-        'scratches nose', 'inhales a line of morphine', 'hacks the planet', 'smokes a joint', 'calculates humanity',
-        'owns the FBI', 'takes down ECORP', 'figures shit out', 'reads 2600', 'hacks Ashley Madison', 'ponders existence',
-        'drops the mic', 'blows up his hard drives', 'modifies his source code', 'pushes himself upstream',
-        'jumps up, jumps up, and gets down', 'plans a cyber attack', 'bridges interfaces', 'explores his source',
-        'compiles exploits', 'Nmaps random IPs', 'initiates port scans','Googles how to hack','installs Slackware','install Arch','installs Debian',
-        'attempts to infect the channel and spread himself','searches for zero day','runs for president','attempts to program himself a companion bot',
-        'starts X', 'spins up a VM', 'pulls himself from git'
-    ].join('|');
 
     // Increment by min
     const minTimer =  () => {
         if(!active) {
             if(!initial) {
-                app.action(app.Config.features.fsociety.mainChannel, `{${messages}}`);
+                _.sample([fml,bofh,shower])(1)
+                  .then(message => app.notice(app.Config.features.fsociety.mainChannel, _.first(message)));
             } else {
                 initial = false;
             }
