@@ -7,6 +7,7 @@ process.setMaxListeners(0);
 // Node Libs
 const _ = require('lodash');
 const fs = require('fs');
+const path = require('path');
 const storage = require('node-persist');
 const HashMap = require('hashmap');
 
@@ -184,7 +185,6 @@ class MrNodeBot {
     // Read all JS files in the scripts directory and evaluate them
     // During the update process this updates the script portions of the code
     _loadScriptsFromDir(dir, clearCache) {
-        let path = require('path');
         let normalizedPath = path.join(__dirname, dir);
 
         conLogger(`Loading all scripts from ${dir}`, 'loading');

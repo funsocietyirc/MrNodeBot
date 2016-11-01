@@ -53,23 +53,21 @@ module.exports = (app) => {
         name: 'Hello fr1end'
     });
 
-    // Redwheelbarrow
-    let wheelBarrow = [
-      "                                   _______",
-      "      ___________________________.'.------`",
-      "     '---------------------------.'",
-      "       `.       #FSOCIETY      .'",
-      "     .-//`.                  .'",
-      "  .' .//.'/`================'",
-      " =[=:====:=]=           \\||",
-      "  '. `--' .'             \_|",
-      "    `-  -'",
-    ];
-
+    // Show a very attractive wheel barrowa
     app.Commands.set('redwheelbarrow', {
-        desc: 'Is Jeek Alive?',
+        desc: 'Show a Red Wheelbarrow',
         access: app.Config.accessLevels.admin,
-        call: (to, from, text, message) => _.each(wheelBarrow, line => app.say(to, c.red(line)))
+        call: (to, from, text, message) => _.each([
+          "                                   _______",
+          "      ___________________________.'.------`",
+          "     '---------------------------.'",
+          "       `.       #FSOCIETY      .'",
+          "     .-//`.                  .'",
+          "  .' .//.'/`================'",
+          " =[=:====:=]=           \\||",
+          "  '. `--' .'             \_|",
+          "    `-  -'",
+        ], line => app.say(to, c.red(line)))
     });
 
     // Everything past this point requires the database

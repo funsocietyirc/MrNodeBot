@@ -1,9 +1,9 @@
 'use strict';
 
 const scriptInfo = {
-  name: 'argSociety',
-  desc: 'Misc functionality for ##mrRobotARG on freenode',
-  createdBy: 'Dave Richer'
+    name: 'argSociety',
+    desc: 'Misc functionality for ##mrRobotARG on freenode',
+    createdBy: 'Dave Richer'
 };
 
 const _ = require('lodash');
@@ -12,13 +12,13 @@ const scheduler = require('../../lib/scheduler');
 const conLogger = require('../../lib/consoleLogger');
 const type = require('../lib/_ircTypography');
 
-const argChannel = '##mrRobotARG';
+const argChannel = '#mrnodebot2';
 const argReddit = 'argsociety';
 const redditStream = 'new';
 
 module.exports = app => {
     // Hold on to the posts
-    let lastPost = [];
+    let lastPosts = [];
 
     // Load The posts
     const loadPosts = () => rp({
@@ -31,45 +31,51 @@ module.exports = app => {
         .then(results => new Promise((resolve, reject) => {
             // We have No Data
             if (!_.has(results, 'data.children[0].data') || !results.data.children) {
-                reject(new Error('The results object is malformed'));
+                reject(new Error('No valid results available'));
                 return;
             }
 
             // Get the first post
-            let postRequest = _.first(results.data.children).data;
+            //let postRequest = _.first(results.data.children).data;
 
-            // Format the post, we do this to prevent dynamic fields from triggering an announcement
-            let post = {
-                title: postRequest.title,
-                url: postRequest.url,
-                author: postRequest.author,
-                created: postRequest.created
-            };
-
+            let posts = _.map(results.data.children, post => new Object({
+                title: post.data.title,
+                url: post.data.url,
+                author: post.data.author,
+                created: post.data.created
+            }));
 
             // We do not have a last post, keep this one
-            if (!lastPost) {
-              resolve({
-                  updated: false,
-                  post
-              });
-              return;
+            if (!lastPosts) {
+                lostPosts = posts;
+                resolve({
+                    updated: false,
+                    posts: []
+                });
+                return;
             }
 
             // See if it was updated
-            let updated = !_.isEqual(post, lastPost);
-            if (updated) lastPost = post;
+            if (!_.isEqual(posts, lastPosts)) {
+                let diff = _.difference(posts, lastPosts);
+                lastPosts = posts;
+                resolve({
+                    updated: true,
+                    posts: diff
+                });
+            }
 
+            // No changes
             resolve({
-                updated,
-                post
+                updated: false,
+                posts: []
             });
         }));
 
-        // Run on load
-        loadPosts()
-          .then(result => conLogger(`Grabbing first ${argReddit} post for ${argChannel}`,'info'))
-          .catch(err => console.dir(err));
+    // Run on load
+    loadPosts()
+        .then(result => conLogger(`Grabbing first ${argReddit} post for ${argChannel}`, 'info'))
+        .catch(err => console.dir(err));
 
 
     // Assoicate the cron job for every 15 mins
@@ -80,9 +86,9 @@ module.exports = app => {
         // We are not in the arg society channel
         if (!app.isInChannel(argChannel)) return;
         loadPosts()
-            .then(result => {
-                if (!result.updated) return; // No updates, bail
-                app.say(argChannel, `${type.logos.reddit} ${type.icons.sideArrow} ${result.post.author} ${type.icons.sideArrow} ${result.post.title} ${type.icons.sideArrow} ${result.post.url}`);
+            .then(results => {
+                if (!results.updated) return; // No updates, bail
+                _.each(results.posts, post => app.say(argChannel, `${type.logos.reddit} ${type.icons.sideArrow} ${post.author} ${type.icons.sideArrow} ${post.title} ${type.icons.sideArrow} ${post.url}`));
             })
             .catch(err => {
                 console.log(`${argReddit} reddit error`);
