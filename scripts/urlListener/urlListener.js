@@ -74,14 +74,14 @@ module.exports = app => {
                 getDocument(results) // Make a request, verify the site exists, and grab metadata
                 .then(results => results.unreachable ? results : // If the site is no up, continue the chain
                     getShorten(results) // Otherwise grab the google SHORT Url
-                    .then(results => matcher(results)) // Then send it to the regex matcher
+                    .then(matcher) // Then send it to the regex matcher
                 ))
-            .then(results => sendToIrc(results)) // Send Results to IRC
+            .then(sendToIrc) // Send Results to IRC
             .then(results => results.unreachable ? results : // If the site is unreachable, carry on in chain
                 sendToDb(results) // Otherwise Log To Database
-                .then(results => sendToPusher(results)) // Then broadcast to pusher
+                .then(sendToPusher) // Then broadcast to pusher
             )
-            .then(results => endChain(results)) // End the chain, cache results
+            .then(endChain) // End the chain, cache results
             .catch(err => {
                 conLogger('Error in URL Listener chain:', 'error');
                 console.dir(err);
