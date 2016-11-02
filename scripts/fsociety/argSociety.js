@@ -12,7 +12,7 @@ const scheduler = require('../../lib/scheduler');
 const conLogger = require('../../lib/consoleLogger');
 const type = require('../lib/_ircTypography');
 
-const argChannel = '#mrnodebot2';
+const argChannel = '##mrRobotARG';
 const argReddit = 'argsociety';
 const redditStream = 'new';
 
@@ -57,7 +57,7 @@ module.exports = app => {
 
             // See if it was updated
             if (!_.isEqual(posts, lastPosts)) {
-                let diff = _.difference(posts, lastPosts);
+                let diff = _.differenceWith(posts,lastPosts,_.isEqual);
                 lastPosts = posts;
                 resolve({
                     updated: true,
