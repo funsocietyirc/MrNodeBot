@@ -9,6 +9,7 @@ const _ = require('lodash');
 const c = require('irc-colors');
 const xray = require('x-ray')();
 const Models = require('bookshelf-model-loader');
+const excuse = require('../generators/_simpleExcuse');
 
 module.exports = (app) => {
 
@@ -42,6 +43,16 @@ module.exports = (app) => {
             }
             // Report back to IRC
             app.say(to, `Our Lord and Saviour: http://i.imgur.com/E1fQQdr.png`);
+        }
+    });
+
+    // Report an image of our lord and savour, RaptorJesus
+    app.Commands.set('eagle-excuse', {
+        desc: 'Get a random excuse, DIY excuse style',
+        access: app.Config.accessLevels.identified,
+        call: (to, from, text, message) => {
+            // Report back to IRC
+            excuse().then(excuses => app.say(to, _.first(excuses)));
         }
     });
 

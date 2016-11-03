@@ -12,11 +12,11 @@ const scheduler = require('../../lib/scheduler');
 const conLogger = require('../../lib/consoleLogger');
 const type = require('../lib/_ircTypography');
 
-const argChannel = '##mrRobotARG';
-const argReddit = 'argsociety';
-const redditStream = 'new';
-
 module.exports = app => {
+    const argChannel = '##mrRobotARG';
+    const argReddit = 'argsociety';
+    const redditStream = 'new';
+
     // Hold on to the posts
     let lastPosts = [];
 
@@ -36,8 +36,6 @@ module.exports = app => {
             }
 
             // Get the first post
-            //let postRequest = _.first(results.data.children).data;
-
             let posts = _.map(results.data.children, post => new Object({
                 title: post.data.title,
                 url: post.data.url,
