@@ -1,4 +1,4 @@
-// Thanks To FoxBoron @ Freenode for the original Logic
+// Thanks To Foxboron @ Freenode for the original Logic
 
 'use strict';
 // Ascii Module shims
