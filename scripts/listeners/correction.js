@@ -21,7 +21,7 @@ module.exports = app => {
     // Configuration
     const totalDbResults = 50;
     const triggerStart = 's';
-    const specialChar = 'ᴥ';
+    const specialChar = ' ';
     const delimiter = '/';
     // Computed
     const trigger = triggerStart + delimiter;
