@@ -24,7 +24,7 @@ module.exports = app => {
                 qb
                     .where('channel', 'like', channel)
                     .orderBy('timestamp', 'desc')
-                    .limit(5)
+                    .limit(10)
                     .select(['topic', 'nick', 'timestamp']);
             })
             .fetchAll()
@@ -36,13 +36,13 @@ module.exports = app => {
                 app.say(to, `The Topic history has been private messaged to you ${from}`);
                 let count = 0;
                 results.each(result => {
-                    app.say(from, `[${count}]: ${result.get('topic')} | ${result.get('nick')} ${Moment(result.get('timestamp')).fromNow()} `);
+                    app.say(from, `[${count + 1}]: ${result.get('topic')} | ${result.get('nick')} ${Moment(result.get('timestamp')).fromNow()} `);
                     count = count + 1;
                 });
             });
     };
     app.Commands.set('topics', {
-        desc: '[channel] get the last 5 topics',
+        desc: '[channel] get the last 10 topics',
         access: app.Config.accessLevels.identified,
         call: topics
     });
