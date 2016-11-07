@@ -47,7 +47,7 @@
     "pusher": "^1.5.0",
     "rand-token": "^0.2.1",
     "random-js": "^1.0.4",
-    "request": "^2.75.0",
+    "request": "^2.78.0",
     "request-promise-native": "^1.0.3",
     "scrypt": "^6.0.3",
     "serve-favicon": "^2.3.0",
