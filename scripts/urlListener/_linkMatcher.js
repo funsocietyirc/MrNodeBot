@@ -24,7 +24,7 @@ module.exports = results => {
     let imgurMatch = url.match(/imgur\.com\/(image|gallery)\/(.*)/);
     if(imgurMatch && imgurMatch[1] && imgurMatch[2]) return getImgur(imgurMatch[1], imgurMatch[2], results);
 
-    let imgurImageMatch = url.match(/(?:imgur\.com\/)(\w{7})(?:[^\/])/);
+    let imgurImageMatch = url.match(/(?:imgur\.com\/)(\w{3,7})/);
     if(imgurImageMatch && imgurImageMatch[1]) return getImgur('image', imgurImageMatch[1], results);
 
     // Get Generic Information
