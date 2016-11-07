@@ -79,11 +79,11 @@ module.exports = app => {
                     }
                     // Request is from someone other then who sent the message
                     else {
-                        app.say(from, `You said "${result.get('text')}" on ${Moment(result.get('timestamp')).format('hh:mm:ss a MMM Do YY')} in a private message`);
+                        app.say(from, `You said "${result.get('text')}" ${Moment(result.get('timestamp')).fromNow()} in a private message`);
                     }
                 } else {
                     // If it was not a private message
-                    app.say(to, `${resFrom} said "${result.get('text')}" on ${Moment(result.get('timestamp')).format('hh:mm:ss a MMM Do YY')} in this channel`);
+                    app.say(to, `${resFrom} said "${result.get('text')}" on ${Moment(result.get('timestamp')).fromNow()} in this channel`);
                 }
             });
     };

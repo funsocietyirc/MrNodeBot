@@ -6,6 +6,7 @@ const scriptInfo = {
 };
 
 const Models = require('bookshelf-model-loader');
+const Moment = require('moment');
 
 // Used to break up topics
 const divider = ' | ';
@@ -35,7 +36,7 @@ module.exports = app => {
                 app.say(to, `The Topic history has been private messaged to you ${from}`);
                 let count = 0;
                 results.each(result => {
-                    app.say(from, `[${count}]: ${result.attributes.topic} | ${result.attributes.nick} on ${result.attributes.timestamp} `);
+                    app.say(from, `[${count}]: ${result.get('topic')} | ${result.get('nick')} ${Moment(result.get('timestamp')).fromNow()} `);
                     count = count + 1;
                 });
             });

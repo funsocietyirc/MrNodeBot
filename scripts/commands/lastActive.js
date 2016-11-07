@@ -43,8 +43,9 @@ module.exports = app => {
                     app.say(to, `${from}, I have never seen ${user} active`);
                     return;
                 }
-                let timeString = Moment(result.get('timestamp')).format('h:mma MMM Do');
-                app.say(to, `${result.get('from')} was last active on ${result.get('to')} at ${timeString} saying: ${result.get('text')}`);
+                let timeString = Moment(result.get('timestamp')).fromNow();
+
+                app.say(to, `${result.get('from')} was last active ${timeString} on ${result.get('to')} saying: ${result.get('text')}`);
             });
     };
 
