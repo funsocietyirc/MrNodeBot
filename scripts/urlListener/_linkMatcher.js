@@ -21,7 +21,7 @@ module.exports = results => {
     if (imdbMatch && imdbMatch[1]) return getImdb(imdbMatch[1], results);
 
     // Check for Imgur
-    let imgurMatch = url.match(/imgur\.com\/(image|gallery)\/(.*)/);
+    let imgurMatch = url.match(/imgur\.com\/(image|gallery|a)\/(.*)/);
     if(imgurMatch && imgurMatch[1] && imgurMatch[2]) return getImgur(imgurMatch[1], imgurMatch[2], results);
 
     let imgurImageMatch = url.match(/i\.imgur\.com\/(\w*)\.*/);
