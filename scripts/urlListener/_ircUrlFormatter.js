@@ -98,9 +98,9 @@ module.exports = (results) => {
         // We have Imgur image
         else if (!_.isUndefined(results.imgur) && results.imgur.matchType === 'image') {
           let imgur = results.imgur;
-          append(`${logos.imgur} Image`)
-            (imgur.title);
-            (_.capitalize(imgur.type))
+          append(`${logos.imgur} Image`);
+          if(imgur.title && imgur.title != 'null') append(imgur.title);
+          append(_.capitalize(imgur.type))
             (moment.unix(imgur.datetime).fromNow())
             (imgur.section);
             if(imgur.description) append(imgur.description);

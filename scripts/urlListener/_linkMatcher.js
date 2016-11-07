@@ -24,6 +24,9 @@ module.exports = results => {
     let imgurMatch = url.match(/imgur\.com\/(image|gallery)\/(.*)/);
     if(imgurMatch && imgurMatch[1] && imgurMatch[2]) return getImgur(imgurMatch[1], imgurMatch[2], results);
 
+    let imgurImageMatch = url.match(/i\.imgur\.com\/(\w*)\.*/);
+    if(imgurImageMatch && imgurImageMatch[1]) return getImgur('image', imgurImageMatch[1], results);
+
     // Get Generic Information
     let matches = url.match(/(?:git@(?![\w\.]+@)|https:\/{2}|http:\/{2})([\w\.@]+)[\/:]([\w,\-,\_]+)\/([\w,\-,\_]+)(?:\.git)?\/?/);
     // We have no further matches, bail
