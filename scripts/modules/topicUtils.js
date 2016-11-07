@@ -20,13 +20,12 @@ module.exports = app => {
     // Get the last 5 topics
     const topics = (to, from, text, message) => {
         let channel = text || to;
-        Models.Topics.query(qb => {
-                qb
-                    .where('channel', 'like', channel)
-                    .orderBy('timestamp', 'desc')
-                    .limit(20)
-                    .select(['topic', 'nick', 'timestamp']);
-            })
+        Models.Topics.query(qb => qb
+                .where('channel', 'like', channel)
+                .orderBy('timestamp', 'desc')
+                .limit(20)
+                .select(['topic', 'nick', 'timestamp'])
+            )
             .fetchAll()
             .then(results => {
                 if (!results.length) {
@@ -34,11 +33,7 @@ module.exports = app => {
                     return;
                 }
                 app.say(to, `The Topic history has been private messaged to you ${from}`);
-                let count = 0;
-                results.each(result => {
-                    app.say(from, `[${count + 1}]: ${result.get('topic')} | ${result.get('nick')} ${Moment(result.get('timestamp')).fromNow()} `);
-                    count = count + 1;
-                });
+                results.each((result, index) => app.say(from, `[${index + 1}]: ${result.get('topic')} | ${result.get('nick')} ${Moment(result.get('timestamp')).fromNow()}`));
             });
     };
     app.Commands.set('topics', {
@@ -154,11 +149,7 @@ module.exports = app => {
                 }
                 app.say(to, `I have oh so personally delivered that information to you ${from}`);
                 app.say(from, `Here are the topic segements for ${to}`);
-                let x = 1;
-                topic.forEach(r => {
-                    app.say(from, `[${x}] ${r}`);
-                    x = 1 + x;
-                });
+                topic.forEach((r, x) => app.say(from, `[${x + 1}] ${r}`));
             });
     };
     app.Commands.set('topic-segments', {
