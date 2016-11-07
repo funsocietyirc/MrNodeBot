@@ -103,7 +103,7 @@ module.exports = (results) => {
           append(_.capitalize(imgur.type))
             (moment.unix(imgur.datetime).fromNow())
             (imgur.section);
-            if(imgur.description) append(imgur.description);
+            if(imgur.description && imgur.description != 'null') append(imgur.description);
             append(`${imgur.width}x${imgur.height}`);
             if(imgur.animated) append('Animated');
             if(imgur.nswf) append(c.red('NSFW'));
@@ -113,7 +113,7 @@ module.exports = (results) => {
         else if(!_.isUndefined(results.imgur) && results.imgur.matchType === 'gallery') {
           let imgur = results.imgur;
           append(`${logos.imgur} Gallery`)(imgur.account_url)(imgur.title)(moment.unix(imgur.datetime).fromNow());
-          if(imgur.description) append(imgur.description);
+          if(imgur.description && imgur.description != null) append(imgur.description);
           if(imgur.topic) append(imgur.topic);
           if(imgur.section) append(imgur.section);
           append(`${imgur.images_count} ${imgur.images_count > 1 ? 'Images' : 'Image'}`)
