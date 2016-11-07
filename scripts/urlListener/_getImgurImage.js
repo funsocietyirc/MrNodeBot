@@ -4,8 +4,7 @@ const config = require('../../config');
 
 module.exports = (type, key, results) => {
     let clientId = config.apiKeys.imgur.clientId;
-    if (type == 'a') type = 'gallery';
-
+    console.log(type);
     // We have no API key
     if (!clientId || !key || !type) return results;
 
