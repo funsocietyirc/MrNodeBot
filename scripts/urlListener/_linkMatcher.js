@@ -23,7 +23,6 @@ module.exports = results => {
     // Check for Imgur
     let imgurMatch = url.match(/imgur\.com\/(image|gallery)\/(.*)/);
     if(imgurMatch && imgurMatch[1] && imgurMatch[2]) return getImgur(imgurMatch[1], imgurMatch[2], results);
-
     let imgurImageMatch = url.match(/i\.imgur\.com\/(\w*)\.*/);
     if(imgurImageMatch && imgurImageMatch[1]) return getImgur('image', imgurImageMatch[1], results);
 
