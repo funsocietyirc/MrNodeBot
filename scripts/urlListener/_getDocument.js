@@ -10,7 +10,7 @@ module.exports = results => new Promise((resolve, reject) => rp({
         resolveWithFullResponse: true,
         headers: {
             // Fake user agent so we get HTML responses
-            'user-agent': 'Mozilla/5.0 (Windows NT 6.3; WOW64)'
+            'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36'
         }
     })
     .then(response => {
@@ -36,6 +36,7 @@ module.exports = results => new Promise((resolve, reject) => rp({
                         console.log('Error In XRAY Url chain:');
                         console.dir(err);
                     }
+                    console.log(title);
                     resolve(results);
                     return;
                 }

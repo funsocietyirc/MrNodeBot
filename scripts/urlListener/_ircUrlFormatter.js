@@ -44,7 +44,7 @@ module.exports = (results) => {
         if (results.realUrl && results.url != results.realUrl && results.realUrl.length < 160) {
             append(`${icons.anchor} ${c.navy(results.realUrl)}`);
         } else if(results.realUrl && results.url != results.realUrl) {
-            append(`${icons.anchor} ${c.red('Abnormally long URL')}`)
+            append(`${icons.anchor} ${c.red('URL Redirected')}`)
         }
 
         // We have a Short URL
