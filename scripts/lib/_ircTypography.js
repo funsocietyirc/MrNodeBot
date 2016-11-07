@@ -24,6 +24,7 @@ const logos = {
     twitter: c.blue.bold('Twitter'),
     lmgtfy: c.grey.bold('LMGTFY'),
     reddit: c.blue.bold('REDDIT'),
+    imgur: c.green.bold('IMGUR'),
 };
 
 const colorNumber = num => {

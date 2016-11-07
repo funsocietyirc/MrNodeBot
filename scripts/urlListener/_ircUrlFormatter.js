@@ -13,8 +13,8 @@ const icons = ircTypography.icons;
 // Formatting Helper
 module.exports = (results) => {
         // Site is not live
-        if(results.unreachable) {
-          return `${c[results.cached ? 'green' : 'red']('*')} ${results.from} ${icons.sideArrow} ${c.blue(results.url)} ${icons.sideArrow} ${c.red.bold('Unverifiable Link')}`;
+        if (results.unreachable) {
+            return `${c[results.cached ? 'green' : 'red']('*')} ${results.from} ${icons.sideArrow} ${c.blue(results.url)} ${icons.sideArrow} ${c.red.bold('Unverifiable Link')}`;
         }
 
         // Output chain helper functions
@@ -26,23 +26,23 @@ module.exports = (results) => {
         };
 
         // This is a re post
-        if(results.history.length) {
-          let history = _.first(results.history);
-          let subOutput = '';
-          if(history.from != results.from) {
-            subOutput = subOutput + history.from;
-          }
-          if(history.to != results.to) {
-            subOutput = subOutput + (history.from != results.from ? '/' : '') + history.to;
-          }
-          if(!_.isEmpty(subOutput)) {
-            append(subOutput);
-          }
+        if (results.history.length) {
+            let history = _.first(results.history);
+            let subOutput = '';
+            if (history.from != results.from) {
+                subOutput = subOutput + history.from;
+            }
+            if (history.to != results.to) {
+                subOutput = subOutput + (history.from != results.from ? '/' : '') + history.to;
+            }
+            if (!_.isEmpty(subOutput)) {
+                append(subOutput);
+            }
         }
 
         // Print real URL
-        if(results.realUrl && results.url != results.realUrl) {
-          append(`${icons.anchor} ${c.navy(results.realUrl)}`);
+        if (results.realUrl && results.url != results.realUrl) {
+            append(`${icons.anchor} ${c.navy(results.realUrl)}`);
         }
 
         // We have a Short URL
@@ -86,7 +86,6 @@ module.exports = (results) => {
             if (gh.forks) append(`${c.bold(`Forks:`)} ${helpers.NumberWithCommas(gh.forks)}`);
             if (gh.issues) append(`${icons.sad} ${c.red(helpers.NumberWithCommas(gh.issues))}`);
         }
-
         // We Have BitBucket data
         else if(!_.isUndefined(results.bitBucket)) {
           let bb = results.bitBucket;
@@ -96,7 +95,35 @@ module.exports = (results) => {
           if(bb.language) append(bb.language);
           if(bb.hasIssues) append(icons.sad);
         }
-
+        // We have Imgur image
+        else if (!_.isUndefined(results.imgur) && results.imgur.matchType === 'image') {
+          let imgur = results.imgur;
+          append(`${logos.imgur} Image`)
+            (imgur.title);
+            (_.capitalize(imgur.type))
+            (moment.unix(imgur.datetime).fromNow())
+            (imgur.section);
+            if(imgur.description) append(imgur.description);
+            append(`${imgur.width}x${imgur.height}`);
+            if(imgur.animated) append('Animated');
+            if(imgur.nswf) append(c.red('NSFW'));
+            append(`${icons.views} ${c.navy(helpers.NumberWithCommas(imgur.views))}`);
+        }
+        // We have Imgur Gallery
+        else if(!_.isUndefined(results.imgur) && results.imgur.matchType === 'gallery') {
+          let imgur = results.imgur;
+          append(`${logos.imgur} Gallery`)(imgur.account_url)(imgur.title)(moment.unix(imgur.datetime).fromNow());
+          if(imgur.description) append(imgur.description);
+          if(imgur.topic) append(imgur.topic);
+          if(imgur.section) append(imgur.section);
+          append(`${imgur.images_count} ${imgur.images_count > 1 ? 'Images' : 'Image'}`)
+          append(`${icons.views} ${c.navy(helpers.NumberWithCommas(imgur.views))}`)
+            (`${icons.happy} ${c.green(helpers.NumberWithCommas(imgur.ups))}`)
+            (`${icons.sad} ${c.red(helpers.NumberWithCommas(imgur.downs))}`)
+            (`${icons.star} ${c.yellow(imgur.score)}`)
+            (`${icons.comments} ${imgur.comment_count}`);
+          if(imgur.nswf) append(c.red('NSFW'));
+        }
         else {
           // We have a Title
           if (results.title && results.title != '') append(results.title);

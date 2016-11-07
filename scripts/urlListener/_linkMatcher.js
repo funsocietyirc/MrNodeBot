@@ -4,7 +4,8 @@ const _ = require('lodash');
 const getYoutube = require('./_getYoutube.js'); // Get the youtube key from link
 const getImdb = require('./_getImdb.js'); // Get IMDB Data
 const getGitHub = require('./_getGithub'); // Get GitHub Information
-const getBitBucket = require('./_getBitBucket'); // get BitBucket Information
+const getBitBucket = require('./_getBitBucket'); // Get BitBucket Information
+const getImgur = require('./_getImgurImage'); // Get Imgur data
 
 module.exports = results => {
     // Use the realUrl if available when doing matches
@@ -19,9 +20,12 @@ module.exports = results => {
     let imdbMatch = url.match(/(?:www\.)?imdb.com\/title\/(tt[^\/]+).*/);
     if (imdbMatch && imdbMatch[1]) return getImdb(imdbMatch[1], results);
 
+    // Check for Imgur
+    let imgurMatch = url.match(/imgur\.com\/(image|gallery)\/(.*)/);
+    if(imgurMatch && imgurMatch[1] && imgurMatch[2]) return getImgur(imgurMatch[1], imgurMatch[2], results);
+
     // Get Generic Information
     let matches = url.match(/(?:git@(?![\w\.]+@)|https:\/{2}|http:\/{2})([\w\.@]+)[\/:]([\w,\-,\_]+)\/([\w,\-,\_]+)(?:\.git)?\/?/);
-
     // We have no further matches, bail
     if (!matches) return results;
 
