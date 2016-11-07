@@ -24,7 +24,7 @@ module.exports = app => {
                 qb
                     .where('channel', 'like', channel)
                     .orderBy('timestamp', 'desc')
-                    .limit(10)
+                    .limit(20)
                     .select(['topic', 'nick', 'timestamp']);
             })
             .fetchAll()
@@ -42,7 +42,7 @@ module.exports = app => {
             });
     };
     app.Commands.set('topics', {
-        desc: '[channel] get the last 10 topics',
+        desc: '[channel] get the last 20 topics',
         access: app.Config.accessLevels.identified,
         call: topics
     });
