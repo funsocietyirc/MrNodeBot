@@ -203,11 +203,11 @@ class MrNodeBot {
                     }
                     // If we are not dealing with a partial file _something.js
                     if (file[0] != '_' && _.endsWith(file, '.js')) {
-                      conLogger(`Loading Script: ${file} `, 'success');
-                      this.LoadedScripts.push({
-                          fullPath: fullPath,
-                          info: require(`./${dir}/${file}`)(this)
-                      });
+                        conLogger(`Loading Script: ${file} `, 'success');
+                        this.LoadedScripts.push({
+                            fullPath: fullPath,
+                            info: require(`./${dir}/${file}`)(this)
+                        });
                     }
                 } catch (err) {
                     conLogger(`[${err}] in: ${fullPath}`.replace(`${path.sep}${path.sep}`, `${path.sep}`), 'error');
@@ -242,16 +242,35 @@ class MrNodeBot {
         conLogger('Application State Initialized', 'success');
     };
 
-    _loadDynamicAssets(clearCache) {
+    // Read the configuration and alias any commands specified
+    _createCommandAliases() {
+        // Read in command rebindings
+        if (!this.Config.commandBindings || !_.isArray(this.Config.commandBindings)) return;
+
+        this.Config.commandBindings.forEach(commandBinding => {
+            if (!commandBinding.alias || !commandBinding.command) {
+                conLogger(`Improper structure in config.js for commandBindings`, 'error');
+                return;
+            }
+            if (!this.Commands.has(commandBinding.command)) {
+                conLogger(`The command ${commandBinding.command} for alias ${commandBinding.alias} does not exist`, 'error');
+                return;
+            }
+            if (this.Commands.has(commandBinding.alias)) {
+                conLogger(`The alias ${commandBinding.alias} for the command ${commandBinding.command} already exists`, 'error');
+                return;
+            }
+            this.Commands.set(commandBinding.alias, this.Commands.get(commandBinding.command));
+        });
+    };
+
+
+
+    _loadDynamicAssets(clearCache = false) {
         // Clear dynamic assets
-        if (clearCache || false) {
-            // Reload the Configuration
-            this._clearCache('./config.js');
-            this.Config = require('./config.js');
+        if (clearCache) {
             // Clear all existing jobs
             scheduler.clear();
-            // Assure AutoConnect flag is not reset
-            this.Config.irc.autoConnect = false;
             // Clear Dynamic Collections
             dynCollections.each(v => this[v].clear());
         }
@@ -261,25 +280,8 @@ class MrNodeBot {
             this._scriptDirectories.forEach(script => {
                 this._loadScriptsFromDir(script, true);
             });
-
-            // Read in command rebindings
-            if (this.Config.commandBindings && _.isArray(this.Config.commandBindings)) {
-                this.Config.commandBindings.forEach(commandBinding => {
-                    if (!commandBinding.alias || !commandBinding.command) {
-                        conLogger(`Improper structure in config.js for commandBindings`, 'error');
-                        return;
-                    }
-                    if (!this.Commands.has(commandBinding.command)) {
-                        conLogger(`The command ${commandBinding.command} for alias ${commandBinding.alias} does not exist`, 'error');
-                        return;
-                    }
-                    if (this.Commands.has(commandBinding.alias)) {
-                        conLogger(`The alias ${commandBinding.alias} for the command ${commandBinding.command} already exists`, 'error');
-                        return;
-                    }
-                    this.Commands.set(commandBinding.alias, this.Commands.get(commandBinding.command));
-                });
-            }
+            // Assign command aliases
+            this._createCommandAliases();
         }
 
         // Load the web routes
@@ -446,11 +448,6 @@ class MrNodeBot {
     _handleAuthenticatedCommands(nick, to, text, message) {
         if (_.toLower(nick) === _.toLower(this.Config.nickserv.nick)) {
             let [user, acc, code] = text.split(' ');
-
-            // Halt function if things do not check out
-            if (!user || !acc || !code || acc !== 'ACC') return;
-
-            // If the user has an admin callback on the queue
             if (this.AdmCallbacks.has(user)) {
                 let admCall = this.AdmCallbacks.get(user),
                     admCmd = this.Commands.get(admCall.cmd),
@@ -486,7 +483,7 @@ class MrNodeBot {
                 }
                 // Is not identified
                 else {
-                    this.say(admCall.from, 'You must be identified with nickserv to use this command');
+                    this.say(admCall.from, 'You must be identified with NickServ to use this command');
                 }
 
                 // Remove the callback from the stack
@@ -517,9 +514,19 @@ class MrNodeBot {
         this._ircClient.notice(target, randomString(message));
     };
 
+    // Check if user is in channel
     isInChannel(channel, nick) {
         return this._ircClient.isInChannel(channel, nick);
     };
+
+    // Reload the configruation
+    reloadConfiguration() {
+        this._clearCache('./config.js');
+        this.Config = require('./config.js');
+        // Assure AutoConnect flag is not reset
+        this.Config.irc.autoConnect = false;
+    };
+
 
     // Properties
 

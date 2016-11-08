@@ -6,7 +6,7 @@ const fileUpload = require('express-fileupload');
 const bodyParser = require('body-parser');
 /*
   Web Server component:
-  Features: named-routes, favicon, file upload, jade template engine, body parser
+  Features: named-routes, favicon, file upload, jade template engine, body parser, json parser
 */
 module.exports = (app) => {
     let webServer = Express();
@@ -46,6 +46,7 @@ module.exports = (app) => {
         require('freeport')((err, port) => {
             if (err) {
                 conLogger('Error in freeport module', 'error');
+                return;
             }
             app.Config.express.port = port;
             websServer.listen(port);

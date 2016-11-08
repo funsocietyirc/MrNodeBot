@@ -1,7 +1,6 @@
 'use strict';
 
 // MrNodeBot
-
 const _ = require('lodash');
 const fs = require('fs');
 const Bot = require('./bot');
