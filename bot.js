@@ -6,6 +6,7 @@ process.setMaxListeners(0);
 
 // Node Libs
 const _ = require('lodash');
+const c = require('irc-colors');
 const fs = require('fs');
 const path = require('path');
 const storage = require('node-persist');
@@ -511,20 +512,23 @@ class MrNodeBot {
 
     // Send a message to the target
     say(target, message) {
-        logger.info(`Message: ${target}: ${message}`);
-        this._ircClient.say(target, randomString(message));
+        let msg = randomString(message);
+        logger.info(`Message: ${target}: ${c.stripColorsAndStyle(msg)}`, {original: msg});
+        this._ircClient.say(target, msg);
     };
 
     // Send a action to the target
     action(target, message) {
-        logger.info(`Action: ${target}: ${message}`);
-        this._ircClient.action(target, randomString(message));
+        let msg = randomString(message);
+        logger.info(`Action: ${target}: ${c.stripColorsAndStyle(msg)}`, {original: msg});
+        this._ircClient.action(target, msg);
     };
 
     // Send notice to the target
     notice(target, message) {
-        logger.info(`Notice: ${target}: ${message}`)
-        this._ircClient.notice(target, randomString(message));
+        let msg = randomString(message);
+        logger.info(`Notice: ${target}: ${c.stripColorsAndStyle(msg)}`, {original: msg});
+        this._ircClient.notice(target,msg);
     };
 
     // Check if user is in channel
