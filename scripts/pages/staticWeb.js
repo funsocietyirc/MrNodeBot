@@ -9,11 +9,7 @@ const scriptInfo = {
 module.exports = app => {
     // Landing Page
     app.WebRoutes.set('landingPage', {
-        handler: (req,res) => {
-            let ip =  req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-            app.say(app.Config.owner.nick, `Landing page has been visited by: ${ip}`);
-            res.render('landing', {});
-        },
+        handler: (req,res) => res.render('landing', {}),
         desc: 'Landing Page',
         path: '/',
         name: 'landingPage',
@@ -21,9 +17,7 @@ module.exports = app => {
     });
     // Landing Page
     app.WebRoutes.set('chat', {
-        handler: (req,res) => {
-            res.render('chat', {});
-        },
+        handler: (req,res) => res.render('chat', {}),
         desc: 'Chat',
         path: '/chat',
         name: 'chat',
