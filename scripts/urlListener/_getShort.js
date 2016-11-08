@@ -1,8 +1,9 @@
 'use strict';
 const _ = require('lodash');
-const google = require('../generators/_googleShortUrl');
 const isgd = require('../generators/_isGdShortUrl');
+const google = require('../generators/_googleShortUrl');
 const apiKey = require('../../config').apiKeys.google;
+const logger = require('../../lib/logger');
 
 module.exports = results => !apiKey || _.isEmpty(apiKey) ? results :
     _.sample([isgd])(results.url)
@@ -10,7 +11,6 @@ module.exports = results => !apiKey || _.isEmpty(apiKey) ? results :
         shortUrl: url
     }))
     .catch(err => {
-        console.log('Error in Shortner');
-        console.dir(err);
+        logger.error('Error in URL Shortner function', {err});
         return results;
     });

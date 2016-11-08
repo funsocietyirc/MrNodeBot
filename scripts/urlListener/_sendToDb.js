@@ -2,6 +2,7 @@
 
 const _ = require('lodash');
 const Models = require('bookshelf-model-loader');
+const logger = require('../../lib/logger');
 
 // Ignore URL logging for specific channels
 const urlLoggerIgnore = require('../../config').features.urls.loggingIgnore || [];
@@ -12,7 +13,7 @@ module.exports = (results) => {
             return true;
         }
     });
-    
+
     if (!Models.Url || ignored) {
         return results;
     }
@@ -49,8 +50,7 @@ module.exports = (results) => {
             })
         )
         .catch((err) => {
-            console.log('Error in the DB function of the url listener');
-            console.dir(err);
+            logger.error('Error in the DB URL function', {err});
             return results;
         });
 };

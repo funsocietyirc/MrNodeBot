@@ -7,6 +7,7 @@ const scriptInfo = {
 
 const _ = require('lodash');
 const gen = require('../generators/_showerThoughts');
+const logger = require('../../lib/logger');
 const ircTypography = require('../lib/_ircTypography');
 
 module.exports = app => {
@@ -21,8 +22,7 @@ module.exports = app => {
     })
     .catch(err => {
       app.say(to,'Something went wrong with the Reddit API');
-      console.log('Shower Thought Command Error:');
-      console.dir(err);
+      logger.error('Shower Thoughts Error', {err});
     })
 
   };

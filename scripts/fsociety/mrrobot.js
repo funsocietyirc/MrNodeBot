@@ -7,7 +7,7 @@ const scriptInfo = {
 
 const _ = require('lodash');
 const Models = require('bookshelf-model-loader');
-const conLogger = require('../../lib/consoleLogger');
+const logger = require('../../lib/logger');
 const scheduler = require('../../lib/scheduler');
 const ircTypography = require('../lib/_ircTypography');
 
@@ -49,17 +49,11 @@ module.exports = app => {
                         quote: text
                     })
                     .then(result => {
-                      conLogger(`Added New MrRobot show quote: ${text}`,'info');
+                      logger.info(`Added New MrRobot show quote: ${text}`);
                     })
-                    .catch(err => {
-                        conLogger('Error saving result from DB in MrRobotQuote', 'error');
-                        conLogger(err, 'error');
-                    });
+                    .catch(err => logger.error('Error saving result from DB in MrRobotQuote', {err}));
             })
-            .catch(err => {
-                conLogger('Error getting result from DB in MrRobotQuote', 'error');
-                conLogger(err, 'error');
-            });
+            .catch(err => logger.error('Error getting result from DB in MrRobotQuote', {err}));
     };
     // Listen and Log
     app.Listeners.set('mrrobotquotes', {
@@ -75,7 +69,7 @@ module.exports = app => {
             .fetchAll()
             .then(results => {
                 if (!results.length) {
-                    conLogger('Runnig MrRobot Quote clean up job, nothing to clean up...','info');
+                    logger.info('Runnig MrRobot Quote clean up job, nothing to clean up...');
                     return;
                 }
                 results.forEach(result => {
@@ -84,7 +78,7 @@ module.exports = app => {
                         .fetch()
                         .then(secondLine => {
                             result.set('quote',`${result.get('quote').replace('(1 more message)','')} ${secondLine.get('quote')}`).save().then(() => {
-                              conLogger(`Cleaned up MrRobot show quotes, merged quote ${result.get('id')} and ${secondLine.get('id')}`, 'info');
+                              logger.info(`Cleaned up MrRobot show quotes, merged quote ${result.get('id')} and ${secondLine.get('id')}`);
                               secondLine.destroy();
                             });
                         });

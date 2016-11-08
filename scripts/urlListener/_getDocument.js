@@ -1,9 +1,10 @@
 'use strict';
 
 const _ = require('lodash');
+const rp = require('request-promise-native');
 const xray = require('x-ray')();
 const helpers = require('../../helpers');
-const rp = require('request-promise-native');
+const logger = require('../../lib/logger');
 
 module.exports = results => new Promise((resolve, reject) => rp({
         uri: results.url,
@@ -32,11 +33,7 @@ module.exports = results => new Promise((resolve, reject) => rp({
             return xray(response.body, 'title')((err, title) => {
                 if (err || !title) {
                     // Something actually went wrong
-                    if (err) {
-                        console.log('Error In XRAY Url chain:');
-                        console.dir(err);
-                    }
-                    console.log(title);
+                    if (err) logger.error('Error in XRAY URL Chain', {err});
                     resolve(results);
                     return;
                 }
@@ -51,8 +48,7 @@ module.exports = results => new Promise((resolve, reject) => rp({
         resolve(results);
     })
     .catch(err => {
-        console.log('Error Title Request:');
-        console.dir(err);
+        logger.error('Error in URL Get Document function', {err});
         results.unreachable = true;
         resolve(results);
     })

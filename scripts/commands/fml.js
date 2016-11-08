@@ -7,6 +7,7 @@ const scriptInfo = {
 
 const _ = require('lodash');
 const gen = require('../generators/_fmlLine');
+const logger = require('../../lib/logger');
 const ircTypography = require('../lib/_ircTypography');
 
 module.exports = app => {
@@ -21,8 +22,7 @@ module.exports = app => {
     })
     .catch(err => {
       app.say(to,'Something went wrong with the FML API');
-      console.log('FML Command Error:');
-      console.dir(err);
+      logger.error('FML Command Error:', {err});
     })
 
   };

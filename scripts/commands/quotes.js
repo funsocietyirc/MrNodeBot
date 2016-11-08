@@ -10,7 +10,7 @@ const Moment = require('moment');
 const color = require('irc-colors');
 const storage = require('node-persist');
 const random = require('../../lib/randomEngine');
-const consoleLogger = require('../../lib/consoleLogger');
+const logger = require('../../lib/logger');
 const _ = require('lodash');
 
 /**
@@ -94,7 +94,7 @@ module.exports = app => {
 
         // Something went wrong extracting metadata
         if (!data || !data.added || !data.from) {
-            consoleLogger(`Something went wrong with the quote system metadata for quote: ${quote}`, 'error');
+            logger.error(`Something went wrong with the quote system metadata for quote: ${quote}`);
             return;
         }
 

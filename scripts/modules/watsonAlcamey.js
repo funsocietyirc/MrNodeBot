@@ -10,6 +10,7 @@ const AlchemyLanguageV1 = require('watson-developer-cloud/alchemy-language/v1');
 
 const Models = require('bookshelf-model-loader');
 const helpers = require('../../helpers');
+const logger = require('../../lib/logger');
 
 const _ = require('lodash');
 
@@ -73,10 +74,7 @@ module.exports = app => {
           }, (err, response) => {
             if (err || !response || response.status != 'OK') {
                 app.say(to, 'Something went wrong completing your combined command');
-                console.log('Sentiment Error:');
-                if (err) {
-                    console.dir(err);
-                }
+                logger.error('Sentiment Error', {err});
                 return;
             }
 
@@ -107,10 +105,7 @@ module.exports = app => {
           });
 
         })
-        .catch(err => {
-          console.log('Error in Whats up');
-          console.dir(err);
-        });
+        .catch(err => logger.error('Error In Whats Up', {err}));
     };
     app.Commands.set('whatsup', {
         desc: '[Channel?] Get the combined information for a specified channel (defaults to current channel)',
@@ -141,10 +136,7 @@ module.exports = app => {
                 }, (err, response) => {
                     if (err || !response || response.status != 'OK') {
                         app.say(to, 'Something went wrong completing your combined command');
-                        console.log('Sentiment Error:');
-                        if (err) {
-                            console.dir(err);
-                        }
+                        logger.error('Sentiment Error', {err});
                         return;
                     }
 
@@ -174,10 +166,7 @@ module.exports = app => {
                     app.say(to, output);
                 });
             })
-            .catch(err => {
-                console.log('Combined Error:');
-                console.dir(err);
-            });
+            .catch(err => logger.error('Combined Error', {err}));
     };
     app.Commands.set('combined', {
         desc: '[Nick] [Channel] Get the combined information for a specified user',

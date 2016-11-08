@@ -6,7 +6,7 @@ const scriptInfo = {
 
 const _ = require('lodash');
 const helpers = require('../../helpers');
-const conLogger = require('../../lib/consoleLogger');
+const logger = require('../../lib/logger');
 const pusher = require('../../lib/pusher');
 const ircTypo = require('../lib/_ircTypography');
 
@@ -47,9 +47,7 @@ module.exports = app => {
         }
     };
 
-    const onTweetError = error => {
-        conLogger('Twitter Error: ' + error, 'error');
-    };
+    const onTweetError = error => logger.error('Twitter Error', {error});
 
     // the Main twitter watcher
     const watcher = () => {
@@ -83,7 +81,7 @@ module.exports = app => {
         app._twitterClient.post('statuses/update', twitConfig, (error, tweet, response) => {
             if (!twitterEnabled) return;
             if (error) {
-                conLogger('Twitter Error: ' + error, 'error');
+                logger.error('Twitter Error', {error});
                 app.say(from, 'Something is not quite right with your tweet');
                 return;
             };

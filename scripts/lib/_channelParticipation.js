@@ -13,6 +13,7 @@
 const _ = require('lodash');
 const Models = require('bookshelf-model-loader');
 const moment = require('moment');
+const logger = require('../../lib/logger');
 
 const defaultUsageOptions = {
     timeUnit: 1, // Numberic Time  measurement
@@ -82,8 +83,7 @@ module.exports = (channel, options) => new Promise((resolve, reject) => {
             resolve(results);
         })
         .catch(err => {
-            console.log('DB Error in getChannelUsage');
-            console.dir(err);
+            logger.error('DB Error in getChannelUsage', {err});
             reject(new Error('A database error occured'));
         });
 });

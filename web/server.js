@@ -45,7 +45,7 @@ module.exports = (app) => {
     if (!app.Config.express.port) {
         require('freeport')((err, port) => {
             if (err) {
-                conLogger('Error in freeport module', 'error');
+                logger.error('Error in freeport module', {err});
                 return;
             }
             app.Config.express.port = port;

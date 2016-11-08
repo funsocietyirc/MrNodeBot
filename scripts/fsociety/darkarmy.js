@@ -12,7 +12,7 @@ const scriptInfo = {
 
 const _ = require('lodash');
 const voiceUsers = require('../lib/_voiceUsersInChannel');
-const conLogger = require('../../lib/consoleLogger');
+const logger = require('../../lib/logger');
 const scheduler = require('../../lib/scheduler')
 
 module.exports = app => {
@@ -35,8 +35,8 @@ module.exports = app => {
       cronTime.minute = 40;
       scheduler.schedule('inviteRegularsInFsociety', cronTime, () =>
           voiceUsers(app.Config.features.fsociety.mainChannel, 250, app)
-          .then(result => conLogger(`Running Voice Regulars in ${app.Config.features.fsociety.mainChannel}`, 'info'))
-          .catch(err => conLogger(`Error in Voice Regulars: ${err.message}`))
+          .then(result => logger.info(`Running Voice Regulars in ${app.Config.features.fsociety.mainChannel}`))
+          .catch(err => logger.error(`Error in Voice Regulars: ${err.message}`))
       );
 
       // Voice Users on join if they meet a certain threshold
@@ -46,9 +46,7 @@ module.exports = app => {
             voiceUsers(app.Config.features.fsociety.mainChannel, 250, app,{
               nicks: [nick]
             })
-            .catch(err => {
-              console.log(`fsoceity-voicer: ${err.message}`);
-            });
+            .catch(err => logger.error(`fsoceity-voicer: ${err.message}`));
           },
           name: 'fsociety-greetr'
       });
@@ -63,7 +61,7 @@ module.exports = app => {
         const interval = app.Config.features.fsociety.delay * 1000; // In seconds
         const timeMessage = `I am joining the Dark Army! It will take me ` + app.Config.features.fsociety.delay * darkChannels.length + ` seconds...`;
 
-        conLogger(timeMessage, 'info');
+        logger.info(timeMessage);
 
         _.each(darkChannels, (channel, i) => {
             if (!_.includes(app.channels, channel)) {

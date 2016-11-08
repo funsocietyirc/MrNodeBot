@@ -1,6 +1,6 @@
 'use strict';
 const config = require('../../config');
-const conLogger = require('../../lib/consoleLogger');
+const logger = require('../../lib/logger');
 const resultsCache = require('./_resultsCacheStore');
 module.exports = (results) => {
 
@@ -8,10 +8,7 @@ module.exports = (results) => {
   resultsCache.set(results.url, results);
 
   // If we are in debug mode, echo request to console
-  if(config.bot.debug == true) {
-    conLogger('URL Link chain completed');
-    console.dir(results);
-  }
+  if(config.bot.debug == true) logger.log('URL Link chain completed', {results});
 
   return results;
 };

@@ -5,13 +5,14 @@ const scriptInfo = {
     createdBy: 'Dave Richer'
 };
 
+const logger = require('../../lib/logger');
+
 module.exports = app => {
     // Register a User
     // Current use case: User is already registered with services, but can register and be able to
     // identify with other nicks/hosts
     const register = (to, from, text, message) => {
         let args = text.split(' ');
-        console.dir(args);
         if (!args[0]) {
             app.say(from, 'A Email is required');
             return;
@@ -25,8 +26,7 @@ module.exports = app => {
             // Log the user in here
         })
         .catch(err => {
-            console.log('Account Registration Error');
-            console.dir(err);
+            logger.error('Account Registration Error', {err});
             app.say(from, 'Something went wrong creating your account, the username may exist');
         });
     };

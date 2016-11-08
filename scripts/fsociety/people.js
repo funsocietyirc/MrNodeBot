@@ -10,6 +10,7 @@ const c = require('irc-colors');
 const xray = require('x-ray')();
 const Models = require('bookshelf-model-loader');
 const excuse = require('../generators/_simpleExcuse');
+const logger = require('../../lib/logger');
 
 module.exports = (app) => {
 
@@ -141,10 +142,7 @@ module.exports = (app) => {
                     call: mother
                 });
             })
-            .catch(err => {
-                console.log('Error Loading jeek mother quotes quotes');
-                console.dir(err);
-            });
+            .catch(err => logger.error('Error Loading jeek mother quotes quotes', {err}));
     };
     // Load Initial set of quotes
     getMother();

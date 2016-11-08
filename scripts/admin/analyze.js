@@ -206,7 +206,6 @@ const analyze = (to, from, text, message) => {
     let nick = txtArray.shift();
     let subCommand = txtArray.shift();
     let argument = txtArray.shift();
-    console.log(txtArray, nick, subCommand, argument);
 
     if (!subCommand || !nick) {
         app.say(to, 'Both a Sub Command and a Nick are required');

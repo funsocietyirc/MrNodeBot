@@ -20,7 +20,6 @@ module.exports = (url, to, from, text, message, is) => new Promise((resolve, rej
 
     // Grab the cached result
     let result = resultsCache.get(url);
-    console.dir(result);
 
     // Build up history
     result.history.push({

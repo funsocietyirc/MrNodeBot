@@ -10,6 +10,7 @@ const scriptInfo = {
 const _ = require('lodash');
 const Models = require('bookshelf-model-loader');
 const sampleSize = 1000;
+const logger = require('../../lib/logger');
 
 module.exports = app => {
     if (!app.Database || !Models.Logging) return scriptInfo;
@@ -45,8 +46,7 @@ module.exports = app => {
                 app.say(to, buffer);
             })
             .catch(err => {
-                console.log('Guess Sex Error');
-                console.dir(err);
+                logger.error('Guess Sex Error', {err})
                 app.say(to, err);
             });
     };

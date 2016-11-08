@@ -6,7 +6,7 @@ const scriptInfo = {
 };
 
 const Models = require('bookshelf-model-loader');
-const conLogger = require('../../lib/consoleLogger');
+const logger = require('../../lib/logger');
 const c = require('irc-colors');
 
 /** Log all incoming channel messages to a Sql Database **/
@@ -16,7 +16,7 @@ module.exports = app => {
         return;
     }
 
-    const _handleError = e => conLogger(e, 'error');
+    const _handleError = e => logger.error(e);
 
     // Log Messages
     const msgCmd = (to, from, text, message) => {

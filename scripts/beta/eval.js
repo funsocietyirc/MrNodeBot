@@ -8,18 +8,16 @@ const scriptInfo = {
 
 const _ = require('lodash');
 const util = require('util');
-const conLogger = require('../../lib/consoleLogger.js');
+const logger = require('../../lib/logger.js');
 
 module.exports = app => {
 
   const evaluate = (to, from, text, message) => {
     try {
       let result = eval(text);
-      conLogger(`Cval result:`,'success');
-      conLogger(util.inspect(result, null, 4), 'success');
-    } catch (e) {
-      conLogger('Cval command failed:','error');
-      conLogger(util.inspect(e, null, 4), 'error');
+      logger.info(`Cval result:`, {result:result});
+    } catch (err) {
+      logger.error('Cval command failed:', {err});
     }
   };
   app.Commands.set('eval', {

@@ -3,6 +3,7 @@
 const _ = require('lodash');
 const gen = require('../generators/_youTubeVideoData');
 const apiKey = require('../../config').apiKeys.google;
+const logger = require('../../lib/logger');
 
 // get metadata from YouTube -- Requires a api key
 module.exports = (key, results) => !apiKey || !key || _.isEmpty(key) ? results :
@@ -24,7 +25,6 @@ module.exports = (key, results) => !apiKey || !key || _.isEmpty(key) ? results :
         return results;
     })
     .catch(err => {
-        console.log('Youtube API Link Error');
-        console.dir(err);
+        logger.error('Error in YouTube link function', {err});
         return results;
     });

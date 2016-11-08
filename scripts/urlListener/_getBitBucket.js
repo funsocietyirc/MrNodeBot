@@ -1,6 +1,7 @@
 'use strict';
 
 const rp = require('request-promise-native');
+const logger = require('../../lib/logger');
 
 module.exports = (user, repo, results) => rp({
         uri: `https://api.bitbucket.org/2.0/repositories/${user}/${repo}`,
@@ -24,7 +25,6 @@ module.exports = (user, repo, results) => rp({
         return results;
     })
     .catch(err => {
-        console.log('Error in getBitbucket link function');
-        console.dir(err);
+        logger.error('Error in getBitbucket link function', {err});
         return results;
     });

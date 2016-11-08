@@ -13,6 +13,7 @@ var PersonalityInsightsV3 = require('watson-developer-cloud/personality-insights
 
 const Models = require('bookshelf-model-loader');
 const helpers = require('../../helpers');
+const logger = require('../../lib/logger');
 const moment = require('moment');
 const _ = require('lodash');
 
@@ -62,20 +63,11 @@ module.exports = app => {
                         language: 'en',
                     });
                 });
-                console.dir(contentItems);
                 pI.profile({
                     contentItems: contentItems
-                }, (error, response) => {
-                    if (error)
-                        console.log('error:', error);
-                    else
-                        console.log(JSON.stringify(response, null, 2));
-                });
+                }, (error, response) => logger.error('Watson personality error:', {error: error || response}));
             })
-            .catch(err => {
-                console.log('Personify Error:');
-                console.dir(err);
-            });
+            .catch(err => logger.error('Watson personality error:', {err}));
     };
     app.Commands.set('personify', {
         desc: '[Nick] Get a detailed Personal report',

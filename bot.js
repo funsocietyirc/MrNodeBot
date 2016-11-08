@@ -13,7 +13,7 @@ const HashMap = require('hashmap');
 
 // Project libs
 const helpers = require('./helpers');
-const conLogger = require('./lib/consoleLogger');
+const logger = require('./lib/logger');
 const scheduler = require('./lib/scheduler');
 const randomString = require('./lib/randomString');
 
@@ -82,17 +82,17 @@ class MrNodeBot {
 
     // Init the Web Server
     _initWebServer() {
-        conLogger('Starting Web Server...', 'info');
+        logger.info('Starting Web Server...');
         this.WebServer = require('./web/server')(this);
-        conLogger(`Web Server started on port ${this.Config.express.port}`, 'success');
+        logger.info(`Web Server started on port ${this.Config.express.port}`);
     };
 
     // Init the IRC Bot
     _initIrc() {
-        conLogger('Connecting to IRC', 'info');
+        logger.info('Connecting to IRC');
         // Connect the Bot to the irc network
         return new Promise((resolve, reject) => this._ircClient.connect(20, () => {
-                conLogger(`Connected to ${this.Config.irc.server} as ${this._ircClient.nick}`, 'success');
+                logger.info(`Connected to ${this.Config.irc.server} as ${this._ircClient.nick}`);
                 resolve();
             }))
             // If there is a password and we are on the same nick we were configured for, identify
@@ -106,7 +106,7 @@ class MrNodeBot {
             .then(() => this._loadDynamicAssets(false))
             // Initialize the listeners
             .then(() => {
-                conLogger('Initializing Listeners', 'info');
+                logger.info('Initializing Listeners');
                 _({
                         // Handle On First Line recieved from IRC Client
                         'registered': message => this._handleRegistered(message),
@@ -141,7 +141,7 @@ class MrNodeBot {
                 try {
                     x.call();
                 } catch (e) {
-                    conLogger(e, 'error');
+                    logger.error(e);
                 }
             }))
             // Run The callback
@@ -154,21 +154,21 @@ class MrNodeBot {
     _initDbSubSystem() {
         // We have a Database available
         if (this.Config.knex.enabled) {
-            conLogger('Initializing Database Sub System', 'info');
+            logger.info('Initializing Database Sub System');
             this.Database = require('./database/client');
-            conLogger('Database Sub System Initialized', 'success');
+            logger.info('Database Sub System Initialized');
             return;
         }
 
         // We haave no Database available
-        conLogger('No Database system found, features limited', 'error');
+        logger.error('No Database system found, features limited');
         this.Database = false;
     };
 
     // Initialize the user manager
     _initUserManager() {
         if (!this.Database) {
-            conLogger('Database not present, UserManager disabled');
+            logger.info('Database not present, UserManager disabled');
             return;
         }
 
@@ -187,7 +187,7 @@ class MrNodeBot {
     _loadScriptsFromDir(dir, clearCache) {
         let normalizedPath = path.join(__dirname, dir);
 
-        conLogger(`Loading all scripts from ${dir}`, 'loading');
+        logger.info(`Loading all scripts from ${dir}`);
 
         // Require In the scripts
         // Load all files with .js extension
@@ -203,14 +203,14 @@ class MrNodeBot {
                     }
                     // If we are not dealing with a partial file _something.js
                     if (file[0] != '_' && _.endsWith(file, '.js')) {
-                        conLogger(`Loading Script: ${file} `, 'success');
+                        logger.info(`Loading Script: ${file}`);
                         this.LoadedScripts.push({
                             fullPath: fullPath,
                             info: require(`./${dir}/${file}`)(this)
                         });
                     }
                 } catch (err) {
-                    conLogger(`[${err}] in: ${fullPath}`.replace(`${path.sep}${path.sep}`, `${path.sep}`), 'error');
+                    logger.error(`[${err}] in: ${fullPath}`.replace(`${path.sep}${path.sep}`, `${path.sep}`));
                 }
             });
     };
@@ -223,7 +223,7 @@ class MrNodeBot {
         // Load the Ignore list
         storage.getItem('ignored', (err, value) => {
             this.Ignore = value || this.Ignore;
-            conLogger(`Total Ignored: ${this.Ignore.length}`, 'info');
+            logger.info(`Total Ignored: ${this.Ignore.length}`);
         });
 
         // Load the Admin list
@@ -236,10 +236,10 @@ class MrNodeBot {
                 this.Admins = [_.toLower(this.Config.owner.nick)];
                 storage.setItemSync('admins', this.Admins);
             }
-            conLogger(`Total Administrators: ${this.Admins.length}`, 'info');
+            logger.info(`Total Administrators: ${this.Admins.length}`);
         });
 
-        conLogger('Application State Initialized', 'success');
+        logger.info('Application State Initialized');
     };
 
     // Read the configuration and alias any commands specified
@@ -249,15 +249,15 @@ class MrNodeBot {
 
         this.Config.commandBindings.forEach(commandBinding => {
             if (!commandBinding.alias || !commandBinding.command) {
-                conLogger(`Improper structure in config.js for commandBindings`, 'error');
+                logger.error(`Improper structure in config.js for commandBindings`);
                 return;
             }
             if (!this.Commands.has(commandBinding.command)) {
-                conLogger(`The command ${commandBinding.command} for alias ${commandBinding.alias} does not exist`, 'error');
+                logger.error(`The command ${commandBinding.command} for alias ${commandBinding.alias} does not exist`);
                 return;
             }
             if (this.Commands.has(commandBinding.alias)) {
-                conLogger(`The alias ${commandBinding.alias} for the command ${commandBinding.command} already exists`, 'error');
+                logger.error(`The alias ${commandBinding.alias} for the command ${commandBinding.command} already exists`);
                 return;
             }
             this.Commands.set(commandBinding.alias, this.Commands.get(commandBinding.command));
@@ -295,11 +295,11 @@ class MrNodeBot {
     Bootstrap(hard) {
         hard = hard || false;
         if (hard) {
-            conLogger('Rebooting...', 'info');
+            logger.info('Rebooting...');
             this._ircClient.disconnect();
             process.exit();
         } else {
-            conLogger('Reloading...', 'info');
+            logger.info('Reloading...');
             this._loadDynamicAssets(true);
         }
     };
@@ -307,8 +307,8 @@ class MrNodeBot {
     // Handle Nick changes
     _handleNickChanges(oldnick, newnick, channels, message) {
         // track if the bots nick was changed
-        if (oldnick === this._ircClient.nick) {
-            this._ircClient.nick = newnick;
+        if (oldnick === this.nick) {
+            this.nick = newnick;
         }
 
         // Run events
@@ -316,73 +316,83 @@ class MrNodeBot {
             try {
                 value.call(oldnick, newnick, channels, message);
             } catch (e) {
-                conLogger(e, 'error');
+                logger.error(e);
             }
         });
     };
 
     // Handle On Joins
     _handleOnJoin(channel, nick, message) {
+        if(nick == this.nick) logger.info(`Joined channel ${channel}`);
+
         this.OnJoin.forEach((value, key) => {
             try {
                 value.call(channel, nick, message);
             } catch (e) {
-                conLogger(e, 'error');
+                logger.error(e);
             }
         });
     };
 
     // Handle On Part
     _handleOnPart(channel, nick, reason, message) {
+        if(nick == this.nick) logger.info(`Parted channel ${channel}: ${reason}`);
         this.OnPart.forEach((value, key) => {
             try {
                 value.call(channel, nick, reason, message);
             } catch (e) {
-                conLogger(e, 'error');
+                logger.error(e);
             }
         });
     };
 
     // Handle On Kick
     _handleOnKick(channel, nick, by, reason, message) {
+        if(nick == this.nick) logger.info(`Kicked from ${channel} by ${by}: ${reason}`);
+        if(by == this.nick) logger.info(`Kicked ${nick} from ${channel}: ${reason}`);
         this.OnKick.forEach((value, key) => {
             try {
                 value.call(channel, nick, by, reason, message);
             } catch (e) {
-                conLogger(e, 'error');
+                logger.error(e);
             }
         });
     };
 
     // Handle On Quit
     _handleOnQuit(nick, reason, channels, message) {
+        if(nick == this.nick) logger.info(`Quit server and left ${channels.join(', ')} because ${reason}`);
         this.OnQuit.forEach((value, key) => {
             try {
                 value.call(nick, reason, channels, message);
             } catch (e) {
-                conLogger(e, 'error');
+                logger.error(e);
             }
         });
     };
 
     // Handle Topic changes
     _handleOnTopic(channel, topic, nick, message) {
+        if(nick == this.nick) logger.info(`Changed topic of ${channel} to ${topic}`);
+
         this.OnTopic.forEach((value, key) => {
             try {
                 value.call(channel, topic, nick, message);
             } catch (e) {
-                conLogger(e, 'error');
+                logger.error(e);
             }
         });
     };
 
     // Fired when the bot connects to the network
     _handleRegistered(message) {
+        logger.info('Registerd to IRC server');
+
         this.Registered.forEach((value, key) => {
             try {
                 value.call(message);
             } catch (e) {
-                conLogger(e, 'error');
+                logger.error(e);
             }
         });
     };
@@ -411,7 +421,7 @@ class MrNodeBot {
                 try {
                     value.call(to, from, text, message, is);
                 } catch (e) {
-                    conLogger(e, 'error');
+                    logger.error(e);
                 }
             });
         }
@@ -471,14 +481,14 @@ class MrNodeBot {
                     if (unauthorized) {
                         let group = helpers.AccessString(admCall.access);
                         this.say(admCall.from, `You are not a member of the ${group} access list.`);
-                        conLogger(`${admCall.from} on ${admCall.to} tried to use the ${group} command ${admCall.cmd}`, 'error');
+                        logger.error(`${admCall.from} on ${admCall.to} tried to use the ${group} command ${admCall.cmd}`);
                         return;
                     }
 
                     try {
                         this.Commands.get(admCall.cmd).call(admCall.to, admCall.from, output, admCall.message, admCall.is);
                     } catch (e) {
-                        conLogger(e, 'error');
+                        logger.error(e);
                     }
                 }
                 // Is not identified
@@ -501,16 +511,19 @@ class MrNodeBot {
 
     // Send a message to the target
     say(target, message) {
+        logger.info(`Message: ${target}: ${message}`);
         this._ircClient.say(target, randomString(message));
     };
 
     // Send a action to the target
     action(target, message) {
+        logger.info(`Action: ${target}: ${message}`);
         this._ircClient.action(target, randomString(message));
     };
 
     // Send notice to the target
     notice(target, message) {
+        logger.info(`Notice: ${target}: ${message}`)
         this._ircClient.notice(target, randomString(message));
     };
 
@@ -521,6 +534,8 @@ class MrNodeBot {
 
     // Reload the configruation
     reloadConfiguration() {
+        logger.info('Reloading Configuration object');
+
         this._clearCache('./config.js');
         this.Config = require('./config.js');
         // Assure AutoConnect flag is not reset
@@ -534,11 +549,14 @@ class MrNodeBot {
     get nick() {
         return this._ircClient.nick;
     };
+
     set nick(newNick) {
         // If we do not have a provided nick, use the settings default
         newNick = newNick || this.Config.irc.nick;
+        logger.info(`Changed Nickname from ${this.nick} to ${newNick}`);
         this._ircClient.send('nick', newNick);
         this._ircClient.nick = newNick;
+
     };
 
     // Bots IRC Channels

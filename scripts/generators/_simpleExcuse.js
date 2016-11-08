@@ -162,6 +162,5 @@ module.exports = size => new Promise(resolve => {
   size = _.isSafeInteger(size) && size > 0 ? size : 1;
   let output = [];
   _.times(size, output.push(`${_.sample(firstArray)} ${_.sample(secondArray)} ${_.sample(thirdArray)} ${_.random(1, true) > 0.8 ? _.sample(optionalFourthArray) : ''}`));
-  console.dir(output)
   resolve(output);
 });

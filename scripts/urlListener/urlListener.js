@@ -22,7 +22,7 @@ const scriptInfo = {
 const _ = require('lodash');
 
 const extractUrls = require('../../lib/extractUrls');
-const conLogger = require('../../lib/consoleLogger');
+const logger = require('../../lib/logger');
 
 // Build
 const startChain = require('./_startChain.js'); // Begin the chain
@@ -82,10 +82,7 @@ module.exports = app => {
                 .then(sendToPusher) // Then broadcast to pusher
             )
             .then(endChain) // End the chain, cache results
-            .catch(err => {
-                conLogger('Error in URL Listener chain:', 'error');
-                console.dir(err);
-            });
+            .catch(err => logger.warn('Error in URL Listener chain', {err}));
     };
 
     // Handler
@@ -111,7 +108,7 @@ module.exports = app => {
       hour:[0,4,8,12,16,20],
       minute:15
     }, () => {
-        conLogger('Clearing The Url Result Cache', 'info');
+        logger.info('Clearing The Url Result Cache');
         resultsCache.clear();
     });
 

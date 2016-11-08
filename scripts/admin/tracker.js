@@ -9,6 +9,7 @@ const scriptInfo = {
 const _ = require('lodash');
 const gen = require('../generators/_ipLocationData');
 const helpers = require('../../helpers');
+const logger = require('../../lib/logger');
 
 /**
   Try and get the location of a user using geoip
@@ -39,8 +40,7 @@ module.exports = app => {
                             app.say(to, `I have tracked ${user} down to ${results.city}, ${results.region_name}, ${results.country_name} (${results.latitude}, ${results.longitude}) ${zipString} ${metroString} ${timezoneString}`);
                         })
                         .catch(err => {
-                            console.log('Tracker Error:');
-                            console.dir(err);
+                            logger.error('Tracker Error', {err})
                             app.action(to, 'tinkers with his satellite uplink');
                         });
             })

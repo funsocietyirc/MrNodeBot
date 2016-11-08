@@ -9,7 +9,7 @@ const scriptInfo = {
 const _ = require('lodash');
 const rp = require('request-promise-native');
 const scheduler = require('../../lib/scheduler');
-const conLogger = require('../../lib/consoleLogger');
+const logger = require('../../lib/logger');
 const type = require('../lib/_ircTypography');
 
 module.exports = app => {
@@ -73,15 +73,15 @@ module.exports = app => {
 
     // Run on load
     loadPosts()
-        .then(result => conLogger(`Grabbing first ${argReddit} post for ${argChannel}`, 'info'))
-        .catch(err => console.dir(err));
+        .then(result => logger.info(`Grabbing first ${argReddit} post for ${argChannel}`))
+        .catch(err => logger.error(err));
 
 
     // Assoicate the cron job for every 15 mins
     const cronTime = new scheduler.RecurrenceRule();
     cronTime.minute = [0, 15, 30, 45];
     const update = scheduler.schedule(`${argReddit}${argChannel}`, cronTime, () => {
-        conLogger(`Running Reddit for ${argChannel}`, 'info');
+        logger.info(`Running Reddit for ${argChannel}`);
         // We are not in the arg society channel
         if (!app.isInChannel(argChannel)) return;
         loadPosts()
@@ -94,9 +94,6 @@ module.exports = app => {
                     x * (delayInSeconds * 1000)
                 ));
             })
-            .catch(err => {
-                console.log(`${argReddit} reddit error`);
-                console.dir(err);
-            });
+            .catch(err => logger.error(`${argReddit} reddit error`, err));
     });
 };

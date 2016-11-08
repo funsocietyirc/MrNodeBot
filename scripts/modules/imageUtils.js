@@ -10,7 +10,7 @@ const Models = require('bookshelf-model-loader');
 const extractUrls = require('../../lib/extractUrls');
 const fileType = require('file-type');
 const rp = require('request-promise-native');
-const conLogger = require('../../lib/consoleLogger');
+const logger = require('../../lib/logger');
 const scheduler = require('../../lib/scheduler');
 
 // Display a list of images in the Web Front end
@@ -78,7 +78,7 @@ module.exports = app => {
 
     // Clean the DB of broken URLS
     const cleanImages = () => {
-        conLogger('Running Clean Images', 'info');
+        logger.info('Running Clean Images');
         Models.Url.query(qb => {
                 // Build Up Query
                 qb.where(whereImages);
@@ -105,11 +105,11 @@ module.exports = app => {
                                 return;
                             }
 
-                            conLogger(`Removing Non Image link ${url}`,'info');
+                            logger.info(`Removing Non Image link ${url}`);
                             Models.Url.where('url', url).destroy();
                         })
                         .catch(err => {
-                          conLogger(`Removing Dead Image link ${url}`,'info');
+                          logger.info(`Removing Dead Image link ${url}`);
                           Models.Url.where('url', url).destroy();
                         });
                 });

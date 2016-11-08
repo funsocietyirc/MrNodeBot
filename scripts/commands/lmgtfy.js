@@ -5,8 +5,9 @@ const scriptInfo = {
     createdBy: 'Dave Richer'
 };
 
-const ircTypography = require('../lib/_ircTypography');
 const gen = require('../generators/_isGdShortUrl');
+const logger = require('../../lib/logger');
+const ircTypography = require('../lib/_ircTypography');
 
 module.exports = app => {
     const lmgtfy = (to, from, text, message) => {
@@ -22,10 +23,7 @@ module.exports = app => {
                 }
                 app.say(to, `${ircTypography.logos.lmgtfy} ${result}`);
             })
-            .catch(err => {
-                console.log('LMGTFY Error');
-                console.dir(err);
-            });
+            .catch(err => logger.error('LMGTFY Error', {err}));
     };
 
     app.Commands.set('lmgtfy', {

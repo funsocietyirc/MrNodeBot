@@ -12,6 +12,7 @@ const scriptInfo = {
 
 const _ = require('lodash');
 const Models = require('bookshelf-model-loader');
+const logger = require('../../lib/logger');
 
 module.exports = app => {
     // More readable inline leet speak
@@ -65,9 +66,7 @@ module.exports = app => {
                             nick: nick,
                             host: host
                         })
-                        .catch(err => {
-                            console.dir(err);
-                        });
+                        .catch(err => logger.error('Error in greeter', {err}));
                     if (_.isFunction(callback)) {
                         callback();
                     }
@@ -113,7 +112,7 @@ module.exports = app => {
             })
             .catch(err => {
                 app.say(from, `Something went wrong clearing the greet cache for ${channel}`);
-                console.dir(err);
+                logger.error('Error in greet chache clear command', {err});
             });
     };
 
@@ -132,7 +131,7 @@ module.exports = app => {
             })
             .catch(err => {
                 app.say(from, `Something went wrong fetching the greet total for ${channel}`);
-                console.dir(err);
+                logger.error('Error in getting greet total', {err});
             });
     };
 

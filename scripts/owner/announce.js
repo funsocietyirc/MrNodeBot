@@ -5,7 +5,7 @@ const scriptInfo = {
     createdBy: 'Dave Richer'
 };
 
-const conLogger = require('../../lib/consoleLogger');
+const logger = require('../../lib/logger');
 const pusherApi = require('../../lib/pusher');
 
 module.exports = app => {
@@ -47,7 +47,7 @@ module.exports = app => {
             status: text
         }, (error, tweet, response) => {
             if (error) {
-                conLogger('Twitter Error: ' + error, 'error');
+                logger.error('Twitter Error', {error});
                 return;
             }
         });

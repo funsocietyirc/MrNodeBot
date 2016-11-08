@@ -7,6 +7,7 @@ const scriptInfo = {
 
 const _ = require('lodash');
 const gen = require('../generators/_imdbData');
+const logger = require('../../lib/logger');
 const ircTypography = require('../lib/_ircTypography');
 
 module.exports = app => {
@@ -27,8 +28,7 @@ module.exports = app => {
                 );
             })
             .catch(err => {
-                console.log('IMDB Command Issue');
-                console.dir(err);
+                logger.error('IMDB Command Issue', {err});
                 app.say(to, 'Something went wrong with the IMDB API');
             });
     };

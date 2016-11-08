@@ -5,13 +5,13 @@ const _ = require('lodash');
 const fs = require('fs');
 const Bot = require('./bot');
 const args = require('minimist')(process.argv.slice(2));
-const conLogger = require('./lib/consoleLogger');
+const logger = require('./lib/logger');
 
 // Check if specified config file exists
 if (_.isObject(args.config)) {
     fs.access(args.config, fs.F_OK, err => {
         if (err) {
-            conLogger('The config file you specified does not exist, defaulting to config.js', 'danger');
+            logger.warn('The config file you specified does not exist, defaulting to config.js');
             return;
         }
     });

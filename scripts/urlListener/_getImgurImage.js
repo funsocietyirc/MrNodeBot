@@ -1,6 +1,7 @@
 const _ = require('lodash');
 const rp = require('request-promise-native');
 const config = require('../../config');
+const logger = require('../../lib/logger');
 
 module.exports = (type, key, results) => new Promise((resolve,reject) => {
   let clientId = config.apiKeys.imgur.clientId;
@@ -29,7 +30,6 @@ module.exports = (type, key, results) => new Promise((resolve,reject) => {
 
 })
 .catch(err => {
-    console.log('Error In Imgur link chain:');
-    console.dir(err);
+    logger.error('Error in Imgur link function', {err});
     return results;
 });

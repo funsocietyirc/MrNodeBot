@@ -3,6 +3,7 @@
 const _ = require('lodash');
 const rp = require('request-promise-native');
 const gen = require('../generators/_imdbData');
+const logger = require('../../lib/logger');
 
 module.exports = (key, results) => !key || _.isEmpty(key) ? results :
 gen(key, 'id')
@@ -34,7 +35,6 @@ gen(key, 'id')
         return results;
     })
     .catch(err => {
-        console.log('Error In getImdb URL Chain');
-        console.dir(err);
+        logger.error('Error in getImdb URL function', {err});
         return results;
     });
