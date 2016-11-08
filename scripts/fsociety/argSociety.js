@@ -16,6 +16,7 @@ module.exports = app => {
     const argChannel = '##mrRobotARG';
     const argReddit = 'argsociety';
     const redditStream = 'new';
+    const delayInSeconds = 2;
 
     // Hold on to the posts
     let lastPosts = [];
@@ -55,7 +56,7 @@ module.exports = app => {
 
             // See if it was updated
             if (!_.isEqual(posts, lastPosts)) {
-                let diff = _.differenceWith(posts,lastPosts,_.isEqual);
+                let diff = _.differenceWith(posts, lastPosts, _.isEqual);
                 lastPosts = posts;
                 resolve({
                     updated: true,
@@ -85,8 +86,13 @@ module.exports = app => {
         if (!app.isInChannel(argChannel)) return;
         loadPosts()
             .then(results => {
-                if (!results.updated) return; // No updates, bail
-                _.each(results.posts, post => app.say(argChannel, `${type.logos.reddit} ${type.icons.sideArrow} ${post.author} ${type.icons.sideArrow} ${post.title} ${type.icons.sideArrow} ${post.url}`));
+                // No updates
+                if (!results.updated) return;
+                // Iterate each update, and send it back at a specified delay
+                _.each(results.posts, (post, x) => setTimeout(
+                    app.say(argChannel, `${type.logos.reddit} ${type.icons.sideArrow} ${post.author} ${type.icons.sideArrow} ${post.title} ${type.icons.sideArrow} ${post.url}`),
+                    x * (delayInSeconds * 1000)
+                ));
             })
             .catch(err => {
                 console.log(`${argReddit} reddit error`);

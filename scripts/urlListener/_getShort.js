@@ -10,7 +10,7 @@ module.exports = results => !apiKey || _.isEmpty(apiKey) ? results :
         shortUrl: url
     }))
     .catch(err => {
-        console.log('Error in Google Shortner');
+        console.log('Error in Shortner');
         console.dir(err);
         return results;
     });
