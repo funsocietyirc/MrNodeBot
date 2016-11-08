@@ -103,8 +103,8 @@ module.exports = (results) => {
           append(`${logos.imgur} Image`);
           if(imgur.title && imgur.title != 'null') append(imgur.title);
           append(_.capitalize(imgur.type))
-            (moment.unix(imgur.datetime).fromNow())
-            (imgur.section);
+            (moment.unix(imgur.datetime).fromNow());
+            if(imgur.section && imgur.section != 'null') append(imgur.section);
             if(imgur.description && imgur.description != 'null') append(imgur.description);
             append(`${imgur.width}x${imgur.height}`);
             if(imgur.animated) append('Animated');
@@ -118,8 +118,8 @@ module.exports = (results) => {
           if(imgur.title && imgur.title != 'null') append(imgur.title);
           append(moment.unix(imgur.datetime).fromNow());
           if(imgur.description && imgur.description != null) append(imgur.description);
-          if(imgur.topic) append(imgur.topic);
-          if(imgur.section) append(imgur.section);
+          if(imgur.topic && imgur.topic != 'null') append(imgur.topic);
+          if(imgur.section && imgur.section != 'null') append(imgur.section);
           append(`${imgur.images_count} ${imgur.images_count > 1 ? 'Images' : 'Image'}`)
           append(`${icons.views} ${c.navy(helpers.NumberWithCommas(imgur.views))}`)
             (`${icons.happy} ${c.green(helpers.NumberWithCommas(imgur.ups))}`)
