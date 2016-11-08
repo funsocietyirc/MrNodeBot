@@ -56,7 +56,7 @@ module.exports = app => {
                 app.say(user, helpers.ColorHelpArgs('Hey there, you are now an Administrator. use [admin help] to get commands'));
                 break;
             case 'del':
-                let cappedUser = _.capFirst(user);
+                let cappedUser = _.capitalize(user);
                 // Exit if already an administrator
                 if (!_.includes(app.Admins, user)) {
                     app.say(from, `${cappedUser} is not currently an Administrator`);
