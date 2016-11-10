@@ -157,7 +157,7 @@ module.exports = app => {
                     let output = `${nick} is interested in concepts like: ${concepts}`;
                     output = output + space() + `Most of the time ${nick} is ${response.docSentiment.type}`;
                     output = output + space() + `They are also interested in: ${taxonomy}`;
-                    output = output + space() + `There emotional state is: `;
+                    output = output + space() + `Their emotional state is: `;
                     _.each(response.docEmotions, (value, key) => {
                         output = output + ` ${_.capitalize(key)}: ${helpers.RoundNumber(value * 100)}%`
                     });

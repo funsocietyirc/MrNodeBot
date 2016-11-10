@@ -400,6 +400,9 @@ class MrNodeBot {
 
     // Process the commands
     _handleCommands(from, to, text, message) {
+        // Strip formatting
+        text == c.stripColorsAndStyle(text);
+        
         // Build the is object to pass along to the command router
         let is = {
             ignored: _.includes(this.Ignore, _.toLower(from)),
