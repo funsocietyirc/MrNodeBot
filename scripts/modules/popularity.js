@@ -115,7 +115,7 @@ module.exports = app => {
                 });
                 app.say(to, `Populairty for candidate ${nick} on ${channel} has been messaged to you ${from}`);
                 app.say(from, `Popularity for candidate ${nick} on ${channel}`);
-                _(finalResults).orderBy(['total', 'votes'], ['desc', 'desc']).forEach((value, key) => app.say(to, `[${key+1}] Voter: ${value.voter} Score: ${value.total} Votes: ${value.votes}`));
+                _(finalResults).orderBy(['total', 'votes'], ['desc', 'desc']).forEach((value, key) => app.say(from, `[${key+1}] Voter: ${value.voter} Score: ${value.total} Votes: ${value.votes}`));
                 app.say(from, `Total Score: ${computed.sumBy('result')} Total Votes: ${computed.value().length}`);
             })
             .catch(err => logger.error('Error in whoLikes', {
