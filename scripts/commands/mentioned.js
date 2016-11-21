@@ -6,6 +6,7 @@ const scriptInfo = {
     createdBy: 'Dave Richer'
 };
 
+const _ = require('lodash');
 const Moment = require('moment');
 const Models = require('bookshelf-model-loader');
 const logger = require('../../lib/logger');
@@ -54,18 +55,21 @@ module.exports = app => {
       let [terms, channel, nicks] = text.split(' ');
 
       channel = channel || to;
-      terms = terms.split('|');
-      nicks = nicks.split('|');
-
-      if(!terms) {
+      terms = _.without(terms.split('|'),'');
+      nicks = !_.isUndefined(nicks) ? _.without(nicks.split('|'),'') : [];
+      if(!terms.length) {
         app.say(to, `You have not presented any search terms`);
         return;
       }
       loggingModel
         .query(qb => {
           qb.where('to', 'like', channel)
-          terms.forEach(term => qb.andWhere('text','like',`%${term}%`));
-          nicks.forEach(nick => qb.andWhere('from', 'like', `${nick}`));
+          qb.andWhere(clause => {
+            terms.forEach(term => clause.andWhere('text','like',`%${term}%`));
+          });
+          qb.andWhere(clause => {
+            nicks.forEach(nick => clause.andWhere('from', 'like', nick));            
+          });
           qb.orderBy('timestamp','desc');
         })
         .fetchAll()
