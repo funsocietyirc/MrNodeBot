@@ -8,7 +8,7 @@ const scriptInfo = {
 
 const Moment = require('moment');
 const Models = require('bookshelf-model-loader');
-const logger = require('../../lib/lodash');
+const logger = require('../../lib/logger');
 
 /**
     Database Specific Commands
@@ -62,6 +62,7 @@ module.exports = app => {
           qb.where('to', 'like', channel)
           terms.forEach(term => qb.andWhere('text','like',`%${term}%`));
           qb.andWhere('text','not like','s/%');
+          qb.andWhere('text','not like', `${app.nick}%`);
           qb.orderBy('timestamp','desc');
         })
         .fetchAll()
@@ -73,15 +74,19 @@ module.exports = app => {
           app.say(to, `Sending ${results.length} result(s) for your search on ${terms.join(', ')} in ${channel}`);
           app.say(from, `Providing ${results.length} result(s) for term(s) ${terms.join(', ')} in ${channel}`);
           let delay = 0;
+
           results.forEach(result => {
             delay = delay + 1;
             setTimeout(
-              app.say(from,`${result.attributes.from} ${Moment(result.attributes.timestamp).fromNow()} - ${result.attributes.text}`),
-              delay * 2000
+              () => app.say(from,`[${delay}] ${result.attributes.from} ${Moment(result.attributes.timestamp).fromNow()} - ${result.attributes.text}`),
+              delay * 2000,
+              result,
+              from
             );
-          })
+          });
         })
-        .catch(err => logger.error('Error in searchTerms', {err}));
+        .catch(err => console.dir(err));
+        // .catch(err => logger.error('Error in searchTerms', {err}));
     };
 
     // Total Messages command
