@@ -15,6 +15,31 @@ module.exports = app => {
     // Database not available
     if (!Models.Upvote) return scriptInfo;
 
+    const popularityPurge = (to, from, text, message) => {
+        let [nick, channel] = text.split(' ');
+        if (!nick || !channel) {
+            app.say(to, `Please provide me with both a nick and channel`);
+            return;
+        }
+        Models.Upvote.query(qb => qb
+                .where(q => q
+                    .where('voter', 'like', nick)
+                    .orWhere('candidate', 'like', nick)
+                )
+                .andWhere('channel', 'like', channel)
+            )
+            .destroy()
+            .then(result => app.say(to, `All popularity results for ${nick} on ${channel} have been removed`))
+            .catch(err => logger.error('Error in popularityPurge command', {
+                err
+            }));
+    };
+    app.Commands.set('popularity-purge', {
+        desc: '[nick] [channel] - Remove a users popularity information for specified channel',
+        access: app.Config.accessLevels.admin,
+        call: popularityPurge
+    });
+
     const popularityFeels = (to, from, text, message) => {
         let [voter, candidate, channel] = text.split(' ');
         if (!voter || !candidate) {
@@ -37,12 +62,12 @@ module.exports = app => {
             )
             .fetch()
             .then(result => {
-              if(!result) {
-                app.say(to, `${voter} has zero feels for ${candidate} in matters of ${channel}`);
-                return;
-              }
-              let status = result.get('result') > 0 ? true : false;
-              app.say(to, `${voter} feels ${status ? 'good' : 'bad'} (${result.get('result')} weighting) about ${candidate} in matters of ${channel} (${result.get('votes')} votes)`);
+                if (!result) {
+                    app.say(to, `${voter} has zero feels for ${candidate} in matters of ${channel}`);
+                    return;
+                }
+                let status = result.get('result') > 0 ? true : false;
+                app.say(to, `${voter} feels ${status ? 'good' : 'bad'} (${result.get('result')} weighting) about ${candidate} in matters of ${channel} (${result.get('votes')} votes)`);
             })
             .catch(err => console.dir(err));
     };

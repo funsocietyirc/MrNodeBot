@@ -15,7 +15,7 @@ module.exports = app => {
 
     // Primary Logic
     // Example IronY gives <nick> a plus or minus +1
-    const pattern = /gives (.*) (\+|\-)1/;
+    const pattern = /gives (.*) (\+|\-)1(?: (.*))?/;
     const upvote = (from, to, text, message) => {
         // See if we get a match
         let result = text.match(pattern);
@@ -41,7 +41,10 @@ module.exports = app => {
                 candidate: result[1],
                 voter: from,
                 channel: to,
-                result: result[2] == '+' ? 1 : -1
+                result: result[2] == '+' ? 1 : -1,
+                text: !_.isUndefined(result[3]) ? result[3] : null,
+                host: message.host,
+                user: message.user
             })
             .then(record => app.notice(from, `You have just given ${result[1]} a ${result[2]} vote on ${to}`))
             .catch(err => logger.error(`Error in upvote system`, {
