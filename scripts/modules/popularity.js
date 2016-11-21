@@ -31,8 +31,9 @@ module.exports = app => {
                     app.say(to, `There are no popularity statistics for ${channel}`);
                     return;
                 }
-                app.say(to,`Popularity Rankings for ${channel}`);
-                results.forEach((v, k) => app.say(to, `[${k+1}] Candidate: ${v.attributes.candidate} Score: ${v.attributes.result} Votes: ${v.attributes.votes}`));
+                app.say(to, `The Populairty Rankings have been messaged to you ${from}`);
+                app.say(from,`Popularity Rankings for ${channel}`);
+                results.forEach((v, k) => app.say(from, `[${k+1}] Candidate: ${v.attributes.candidate} Score: ${v.attributes.result} Votes: ${v.attributes.votes}`));
             })
             .catch(err => logger.error('Error in popularityRanking', {
                 err
