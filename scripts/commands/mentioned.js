@@ -77,8 +77,8 @@ module.exports = app => {
           results.forEach(result => {
             delay = delay + 1;
             setTimeout(
-              (currentIndex = delay) => {
-                app.say(from,`[${currentIndex}] ${result.attributes.from} ${Moment(result.attributes.timestamp).fromNow()} - ${result.attributes.text}`);
+              () => {
+                app.say(from,`[${delay}] ${result.attributes.from} ${Moment(result.attributes.timestamp).fromNow()} - ${result.attributes.text}`);
               },
               delay * 2000,
               result,
