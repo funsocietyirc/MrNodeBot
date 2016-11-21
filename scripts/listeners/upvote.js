@@ -10,7 +10,11 @@ const Models = require('bookshelf-model-loader');
 const logger = require('../../lib/logger');
 
 module.exports = app => {
+    // Database not available
+    if(!Models.Upvote) return scriptInfo;
+
     // Primary Logic
+    // Example IronY gives <nick> a plus or minus +1
     const pattern = /gives (.*) (\+|\-)1/;
     const upvote = (from, to, text, message) => {
         // See if we get a match
@@ -20,6 +24,7 @@ module.exports = app => {
         // No valid result, or candidate is not in channel, or invalid vote
         if (!result || !result[0] || !result[1] || !result[2] || result[1] == from) return;
 
+        // Create the record
         Models.Upvote.create({
                 candidate: result[1],
                 voter: from,
