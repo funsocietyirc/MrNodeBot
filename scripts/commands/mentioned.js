@@ -49,10 +49,14 @@ module.exports = app => {
             });
     };
 
+    // Search channel by search terms
     const searchTerms = (to, from, text, message) => {
-      let [terms, channel] = text.split(' ');
+      let [terms, channel, nicks] = text.split(' ');
+
       channel = channel || to;
       terms = terms.split('|');
+      nicks = nicks.split('|');
+
       if(!terms) {
         app.say(to, `You have not presented any search terms`);
         return;
@@ -61,6 +65,7 @@ module.exports = app => {
         .query(qb => {
           qb.where('to', 'like', channel)
           terms.forEach(term => qb.andWhere('text','like',`%${term}%`));
+          nicks.forEach(nick => qb.andWhere('from', 'like', `${nick}`));
           qb.andWhere('text','not like','s/%');
           qb.andWhere('text','not like', `${app.nick}%`);
           qb.orderBy('timestamp','desc');
