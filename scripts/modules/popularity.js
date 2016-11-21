@@ -44,6 +44,7 @@ module.exports = app => {
         call: popularityRanking
     });
 
+
     const popularityContest = (to, from, text, message) => {
         let [nick, channel] = text.split(' ');
 
@@ -51,7 +52,9 @@ module.exports = app => {
         nick = nick || from;
         channel = channel || to;
 
+
         Models.Upvote.query(qb => qb
+                .select()
                 .where('candidate', 'like', nick)
                 .andWhere('channel', 'like', channel)
             )
