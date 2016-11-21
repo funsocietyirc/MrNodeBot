@@ -25,6 +25,7 @@ require('./lib/uncache')(require);
 
 // Dynamic collections
 const dynCollections = _([
+    'Actions', // Action Listeners
     'AdmCallbacks', // Administrative commands
     'NickChanges', // Fired On Nick changes
     'Registered', // Fired on Server Register
@@ -109,6 +110,8 @@ class MrNodeBot {
             .then(() => {
                 logger.info('Initializing Listeners');
                 _({
+                        // Handle Actions
+                        action: (from, to, text, message) => this._handleAction(from, to, text, message),
                         // Handle On First Line recieved from IRC Client
                         'registered': message => this._handleRegistered(message),
                         // Handle Channel Messages
@@ -305,8 +308,23 @@ class MrNodeBot {
         }
     };
 
+    // Handle Action
+    _handleAction(from, to, text, message) {
+        // Do not handle our own actions, or those on the ignore list
+        if (from == this.nick || _.includes(this.Ignore, _.toLower(from))) return;
+        this.Actions.forEach((value, key) => {
+            try {
+                value.call(from, to, text, message);
+            } catch (e) {
+                logger.error(e);
+            }
+        });
+    };
+
     // Handle Nick changes
     _handleNickChanges(oldnick, newnick, channels, message) {
+        // Return if user is on ignore list
+        if (_.includes(this.Ignore, _.toLower(oldnick)) || _.includes(this.Ignore, _.toLower(newnick))) return;
         // track if the bots nick was changed
         if (oldnick === this.nick) {
             this.nick = newnick;
@@ -324,8 +342,10 @@ class MrNodeBot {
 
     // Handle On Joins
     _handleOnJoin(channel, nick, message) {
-        if(nick == this.nick) logger.info(`Joined channel ${channel}`);
+        // Handle Ignore
+        if (_.includes(this.Ignore, _.toLower(nick))) return;
 
+        if (nick == this.nick) logger.info(`Joined channel ${channel}`);
         this.OnJoin.forEach((value, key) => {
             try {
                 value.call(channel, nick, message);
@@ -337,7 +357,10 @@ class MrNodeBot {
 
     // Handle On Part
     _handleOnPart(channel, nick, reason, message) {
-        if(nick == this.nick) logger.info(`Parted channel ${channel}: ${reason}`);
+        // Handle Ignore
+        if (_.includes(this.Ignore, _.toLower(nick))) return;
+
+        if (nick == this.nick) logger.info(`Parted channel ${channel}: ${reason}`);
         this.OnPart.forEach((value, key) => {
             try {
                 value.call(channel, nick, reason, message);
@@ -349,8 +372,11 @@ class MrNodeBot {
 
     // Handle On Kick
     _handleOnKick(channel, nick, by, reason, message) {
-        if(nick == this.nick) logger.info(`Kicked from ${channel} by ${by}: ${reason}`);
-        if(by == this.nick) logger.info(`Kicked ${nick} from ${channel}: ${reason}`);
+        //  Handle Ignore
+        if (_.includes(this.Ignore, _.toLower(nick))) return;
+
+        if (nick == this.nick) logger.info(`Kicked from ${channel} by ${by}: ${reason}`);
+        if (by == this.nick) logger.info(`Kicked ${nick} from ${channel}: ${reason}`);
         this.OnKick.forEach((value, key) => {
             try {
                 value.call(channel, nick, by, reason, message);
@@ -362,7 +388,10 @@ class MrNodeBot {
 
     // Handle On Quit
     _handleOnQuit(nick, reason, channels, message) {
-        if(nick == this.nick) logger.info(`Quit server and left ${channels.join(', ')} because ${reason}`);
+        //  Handle Ignore
+        if (_.includes(this.Ignore, _.toLower(nick))) return;
+
+        if (nick == this.nick) logger.info(`Quit server and left ${channels.join(', ')} because ${reason}`);
         this.OnQuit.forEach((value, key) => {
             try {
                 value.call(nick, reason, channels, message);
@@ -374,7 +403,10 @@ class MrNodeBot {
 
     // Handle Topic changes
     _handleOnTopic(channel, topic, nick, message) {
-        if(nick == this.nick) logger.info(`Changed topic of ${channel} to ${topic}`);
+        //  Handle Ignore
+        if (_.includes(this.Ignore, _.toLower(nick))) return;
+
+        if (nick == this.nick) logger.info(`Changed topic of ${channel} to ${topic}`);
 
         this.OnTopic.forEach((value, key) => {
             try {
@@ -506,29 +538,36 @@ class MrNodeBot {
     // Handle CTCP commands
     // TODO handle ACL on ctcp commands
     _handleCtcpCommands(from, to, text, type, message) {
-        let textArray = text.split(' ');
+        //  Handle Ignore
+        if (_.includes(this.Ignore, _.toLower(from))) return;
         return;
     };
 
     // Send a message to the target
     say(target, message) {
         let msg = randomString(message);
-        logger.info(`Message: ${target}: ${c.stripColorsAndStyle(msg)}`, {original: msg});
+        logger.info(`Message: ${target}: ${c.stripColorsAndStyle(msg)}`, {
+            original: msg
+        });
         this._ircClient.say(target, msg);
     };
 
     // Send a action to the target
     action(target, message) {
         let msg = randomString(message);
-        logger.info(`Action: ${target}: ${c.stripColorsAndStyle(msg)}`, {original: msg});
+        logger.info(`Action: ${target}: ${c.stripColorsAndStyle(msg)}`, {
+            original: msg
+        });
         this._ircClient.action(target, msg);
     };
 
     // Send notice to the target
     notice(target, message) {
         let msg = randomString(message);
-        logger.info(`Notice: ${target}: ${c.stripColorsAndStyle(msg)}`, {original: msg});
-        this._ircClient.notice(target,msg);
+        logger.info(`Notice: ${target}: ${c.stripColorsAndStyle(msg)}`, {
+            original: msg
+        });
+        this._ircClient.notice(target, msg);
     };
 
     // Check if user is in channel
