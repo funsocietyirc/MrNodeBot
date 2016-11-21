@@ -23,9 +23,16 @@ module.exports = app => {
         // No valid result, or candidate is not in channel, or invalid vote
         if (!result || !result[0] || !result[1] || !result[2]) return;
 
+        // Channels mismatch
+
         // Trying to vote on yourself
         if(result[1] == from) {
           app.say(from, `It is considered incredibly condescending to cast a vote for yourself`);
+          return;
+        }
+
+        // Users are not in channel
+        if(!app.isInChannel(to, result[1]) || !app.isInChannel(to, from)) {
           return;
         }
 
