@@ -73,7 +73,7 @@ module.exports = app => {
           }
           app.say(to, `Sending ${results.length} result(s) for your search on ${terms.join(', ')} in ${channel}`);
           app.say(from, `Providing ${results.length} result(s) for term(s) ${terms.join(', ')} in ${channel}`);
-
+          let delay = 0;
           results.forEach(result => {
             delay = delay + 1;
             setTimeout(
