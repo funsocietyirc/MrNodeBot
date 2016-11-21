@@ -73,7 +73,7 @@ module.exports = app => {
                 }
                 app.say(to, `Sending ${results.length} result(s) for your search on ${terms.join(', ')} in ${channel}`);
                 app.say(from, `Providing ${results.length} result(s) for term(s) ${terms.join(', ')} in ${channel}`);
-                _.forEach(results.toJSON(), (result, k) => setTimeout(app.say(from, `[${k+1}] ${result.from} ${Moment(result.timestamp).fromNow()} - ${result.text}`), (k + 1) * 2000))
+                _.forEach(results.toJSON(), (result, k) => setTimeout(app.say(from, `[${k+1}] ${result.from} ${Moment(result.timestamp).fromNow()} - ${result.text}`), ((k + 1) * 2000)));
             })
             .catch(err => console.dir(err));
     };
