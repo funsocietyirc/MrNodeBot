@@ -2,14 +2,13 @@
 const scriptInfo = {
     name: 'mentioned',
     desc: 'Provides some interaction with the message logging model, such has total messages, random line' +
-        'and last mentioned',
+          'and last mentioned',
     createdBy: 'Dave Richer'
 };
 
-const _ = require('lodash');
 const Moment = require('moment');
 const Models = require('bookshelf-model-loader');
-const logger = require('../../lib/logger');
+const logger = require('../../lib/lodash');
 
 /**
     Database Specific Commands
@@ -51,31 +50,38 @@ module.exports = app => {
     };
 
     const searchTerms = (to, from, text, message) => {
-        let [terms, channel] = text.split(' ');
-        channel = channel || to;
-        terms = terms.split('|');
-        if (!terms) {
-            app.say(to, `You have not presented any search terms`);
+      let [terms, channel] = text.split(' ');
+      channel = channel || to;
+      terms = terms.split('|');
+      if(!terms) {
+        app.say(to, `You have not presented any search terms`);
+        return;
+      }
+      loggingModel
+        .query(qb => {
+          qb.where('to', 'like', channel)
+          terms.forEach(term => qb.andWhere('text','like',`%${term}%`));
+          qb.andWhere('text','not like','s/%');
+          qb.orderBy('timestamp','desc');
+        })
+        .fetchAll()
+        .then(results => {
+          if(!results.length) {
+            app.say(to,`No results found for terms ${terms.join(', ')} in ${channel}`);
             return;
-        }
-        loggingModel
-            .query(qb => {
-                qb.where('to', 'like', channel)
-                terms.forEach(term => qb.andWhere('text', 'like', `%${term}%`));
-                qb.andWhere('text', 'not like', 's/%');
-                qb.orderBy('timestamp', 'desc');
-            })
-            .fetchAll()
-            .then(results => {
-                if (!results.length) {
-                    app.say(to, `No results found for terms ${terms.join(', ')} in ${channel}`);
-                    return;
-                }
-                app.say(to, `Sending ${results.length} result(s) for your search on ${terms.join(', ')} in ${channel}`);
-                app.say(from, `Providing ${results.length} result(s) for term(s) ${terms.join(', ')} in ${channel}`);
-                _.forEach(results.toJSON(), (result, k) => setTimeout(app.say(from, `[${k+1}] ${result.from} ${Moment(result.timestamp).fromNow()} - ${result.text}`), ((k + 1) * 2000),result));
-            })
-            .catch(err => console.dir(err));
+          }
+          app.say(to, `Sending ${results.length} result(s) for your search on ${terms.join(', ')} in ${channel}`);
+          app.say(from, `Providing ${results.length} result(s) for term(s) ${terms.join(', ')} in ${channel}`);
+          let delay = 0;
+          results.forEach(result => {
+            delay = delay + 1;
+            setTimeout(
+              app.say(from,`${result.attributes.from} ${Moment(result.attributes.timestamp).fromNow()} - ${result.attributes.text}`),
+              delay * 2000
+            );
+          })
+        })
+        .catch(err => logger.error('Error in searchTerms', {err}));
     };
 
     // Total Messages command
