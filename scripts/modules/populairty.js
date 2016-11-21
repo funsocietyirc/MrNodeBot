@@ -27,7 +27,6 @@ module.exports = app => {
                 .select()
                 .where('candidate', 'like', nick)
                 .andWhere('channel', 'like', channel)
-                .orderBy('timestamp', 'desc')
             )
             .fetchAll()
             .then(results => {
@@ -50,7 +49,7 @@ module.exports = app => {
                       votes: computedVoter.value().length
                     });
                 });
-                _(finalResults).sortBy('total', 'desc').forEach((value, key) => {
+                _(finalResults).sortBy('total', 'asc').forEach((value, key) => {
                   app.say(to, `[${key+1}] Candidate: ${value.voter} Score: ${value.total} Votes: ${value.votes}`);
                 });
             })
