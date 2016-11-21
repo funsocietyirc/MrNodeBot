@@ -78,12 +78,11 @@ module.exports = app => {
             delay = delay + 1;
             setTimeout(
               () => {
-                app.say(from,`[${delay}] ${result.attributes.from} ${Moment(result.attributes.timestamp).fromNow()} - ${result.attributes.text}`);
+                app.say(from,`${result.attributes.from} ${Moment(result.attributes.timestamp).fromNow()} - ${result.attributes.text}`);
               },
               delay * 2000,
               result,
-              from,
-              delay
+              from
             );
           });
         })
