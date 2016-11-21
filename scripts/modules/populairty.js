@@ -49,7 +49,7 @@ module.exports = app => {
                       votes: computedVoter.value().length
                     });
                 });
-                _(finalResults).sortBy('total', 'asc').forEach((value, key) => {
+                _(finalResults).orderBy(['total','votes'],['desc','desc']).forEach((value, key) => {
                   app.say(to, `[${key+1}] Candidate: ${value.voter} Score: ${value.total} Votes: ${value.votes}`);
                 });
             })
