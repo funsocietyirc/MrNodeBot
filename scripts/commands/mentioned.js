@@ -73,18 +73,17 @@ module.exports = app => {
           }
           app.say(to, `Sending ${results.length} result(s) for your search on ${terms.join(', ')} in ${channel}`);
           app.say(from, `Providing ${results.length} result(s) for term(s) ${terms.join(', ')} in ${channel}`);
-          let delay = 0;
 
           results.forEach(result => {
             delay = delay + 1;
             setTimeout(
-              () => {
-                let currentIndex = delay;
+              (currentIndex = delay) => {
                 app.say(from,`[${currentIndex}] ${result.attributes.from} ${Moment(result.attributes.timestamp).fromNow()} - ${result.attributes.text}`);
               },
               delay * 2000,
               result,
-              from
+              from,
+              delay
             );
           });
         })
