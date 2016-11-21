@@ -69,9 +69,9 @@ module.exports = app => {
             app.say(to,`No results found for terms ${terms.join(', ')} in ${channel}`);
             return;
           }
-          console.dir(results.toJSON());
-          app.say(to, `Providing results for term(s) ${terms.join(', ')} in ${channel}`);
-          results.forEach(result => app.say(to,`${result.attributes.from} ${Moment(result.attributes.timestamp).fromNow()} - ${result.attributes.text}`))
+          app.say(to, `Sending ${results.length} result(s) for your search on ${terms.join(', ')} in ${channel}`);
+          app.say(from, `Providing ${results.length} result(s) for term(s) ${terms.join(', ')} in ${channel}`);
+          results.forEach(result => app.say(from,`${result.attributes.from} ${Moment(result.attributes.timestamp).fromNow()} - ${result.attributes.text}`))
         })
         .catch(err => logger.error('Error in searchTerms', {err}));
     };
