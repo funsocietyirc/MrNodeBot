@@ -42,7 +42,7 @@ module.exports = app => {
                 return;
               }
               let status = result.get('result') > 0 ? true : false;
-              app.say(to, `${voter} feels ${status ? 'good' : 'bad'} (${result.get('result')}) about ${candidate} in matters of ${channel} (${result.get('votes')})`);
+              app.say(to, `${voter} feels ${status ? 'good' : 'bad'} (${result.get('result')} weighting) about ${candidate} in matters of ${channel} (${result.get('votes')} votes)`);
             })
             .catch(err => console.dir(err));
     };
@@ -113,9 +113,10 @@ module.exports = app => {
                         votes: computedVoter.value().length
                     });
                 });
-                app.say(to, `Popularity for candidate ${nick} on ${channel}`);
+                app.say(to, `Populairty for candidate ${nick} on ${channel} has been messaged to you ${from}`);
+                app.say(from, `Popularity for candidate ${nick} on ${channel}`);
                 _(finalResults).orderBy(['total', 'votes'], ['desc', 'desc']).forEach((value, key) => app.say(to, `[${key+1}] Voter: ${value.voter} Score: ${value.total} Votes: ${value.votes}`));
-                app.say(to, `Total Score: ${computed.sumBy('result')} Total Votes: ${computed.value().length}`);
+                app.say(from, `Total Score: ${computed.sumBy('result')} Total Votes: ${computed.value().length}`);
             })
             .catch(err => logger.error('Error in whoLikes', {
                 err
