@@ -15,6 +15,36 @@ module.exports = app => {
     // Database not available
     if (!Models.Upvote) return scriptInfo;
 
+    const popularityRanking = (to, from, text, message) => {
+        let channel = text || to;
+        Models.Upvote.query(qb => qb
+                .select(['candidate'])
+                .count('result as votes')
+                .sum('result as result')
+                .where('channel', 'like', channel)
+                .groupBy('candidate')
+                .orderBy('result', 'desc')
+            )
+            .fetchAll()
+            .then(results => {
+                if (!results.length) {
+                    app.say(to, `There are no popularity statistics for ${channel}`);
+                    return;
+                }
+                app.say(to,`Popularity Rankings for ${channel}`);
+                results.forEach((v, k) => console.dir(app.say(to, `[${k+1}] Candidate: ${v.attributes.candidate} Score: ${v.attributes.result} Votes: ${v.attributes.votes}`)));
+            })
+            .catch(err => logger.error('Error in popularityRanking', {
+                err
+            }));
+    };
+    app.Commands.set('popularity-ranking', {
+        desc: '[channel?] - Get popularity ranking for a channel',
+        access: app.Config.accessLevels.identified,
+        call: popularityRanking
+    });
+
+
     const popularityContest = (to, from, text, message) => {
         let [nick, channel] = text.split(' ');
 
@@ -42,14 +72,14 @@ module.exports = app => {
                 _.forEach(voters, (voter, key) => {
                     let computedVoter = computed.filter(f => f.voter == voter);
                     finalResults.push({
-                      voter,
-                      total: computedVoter.sumBy('result'),
-                      votes: computedVoter.value().length
+                        voter,
+                        total: computedVoter.sumBy('result'),
+                        votes: computedVoter.value().length
                     });
                 });
                 app.say(to, `Popularity for candidate ${nick} on ${channel}`);
-                _(finalResults).orderBy(['total','votes'],['desc','desc']).forEach((value, key) => {
-                  app.say(to, `[${key+1}] Voter: ${value.voter} Score: ${value.total} Votes: ${value.votes}`);
+                _(finalResults).orderBy(['total', 'votes'], ['desc', 'desc']).forEach((value, key) => {
+                    app.say(to, `[${key+1}] Voter: ${value.voter} Score: ${value.total} Votes: ${value.votes}`);
                 });
                 app.say(to, `Total Score: ${computed.sumBy('result')} Total Votes: ${computed.value().length}`);
 

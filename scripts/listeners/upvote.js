@@ -19,7 +19,6 @@ module.exports = app => {
     const upvote = (from, to, text, message) => {
         // See if we get a match
         let result = text.match(pattern);
-        console.dir(result);
 
         // No valid result, or candidate is not in channel, or invalid vote
         if (!result || !result[0] || !result[1] || !result[2] || result[1] == from) return;
