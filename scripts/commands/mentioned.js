@@ -81,7 +81,8 @@ module.exports = app => {
               () => app.say(from,`[${delay}] ${result.attributes.from} ${Moment(result.attributes.timestamp).fromNow()} - ${result.attributes.text}`),
               delay * 2000,
               result,
-              from
+              from,
+              delay
             );
           });
         })
