@@ -48,6 +48,41 @@ module.exports = app => {
             });
     };
 
+    const searchTerms = (to, from, text, message) => {
+      let [terms, channel] = text.split(' ');
+      channel = channel || to;
+      terms = terms.split('|');
+      if(!terms) {
+        app.say(to, `You have not presented any search terms`);
+        return;
+      }
+      loggingModel
+        .query(qb => {
+          qb.where('to', 'like', channel)
+          terms.forEach(term => qb.andWhere('text','like',`%${term}%`));
+          qb.andWhere('text','not like','s/%');
+          qb.orderBy('timestamp','desc');
+        })
+        .fetchAll()
+        .then(results => {
+          if(!results.length) {
+            app.say(to,`No results found for terms ${terms.join(', ')} in ${channel}`);
+            return;
+          }
+          console.dir(results.toJSON());
+          app.say(to, `Providing results for term(s) ${terms.join(', ')} in ${channel}`);
+          results.forEach(result => app.say(to,`${result.attributes.from} ${Moment(result.attributes.timestamp).fromNow()} - ${result.attributes.text}`))
+        })
+        .catch(err => logger.error('Error in searchTerms', {err}));
+    };
+
+    // Total Messages command
+    app.Commands.set('search-terms', {
+        desc: '[terms] [channel?] - Search Buffer by terms',
+        access: app.Config.accessLevels.admin,
+        call: searchTerms
+    });
+
     const lastMentioned = (to, from, text, message) => {
         // No text was provided
         if (!text) {
@@ -57,7 +92,7 @@ module.exports = app => {
         loggingModel
             .query(qb => {
                 qb
-                    .where('to', '=', to)
+                    .where('to', 'like', to)
                     .andWhere('text', 'like', text)
                     .orderBy('id', 'desc')
                     .limit(1);
