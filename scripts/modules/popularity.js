@@ -42,7 +42,7 @@ module.exports = app => {
                 return;
               }
               let status = result.get('result') > 0 ? true : false;
-              app.say(to, `${voter} feels ${status ? 'good' : 'bad'} about ${candidate} in matters of ${channel} (${result.get('votes')})`);
+              app.say(to, `${voter} feels ${status ? 'good' : 'bad'} (${result.get('result')}) about ${candidate} in matters of ${channel} (${result.get('votes')})`);
             })
             .catch(err => console.dir(err));
     };
