@@ -15,6 +15,44 @@ module.exports = app => {
     // Database not available
     if (!Models.Upvote) return scriptInfo;
 
+    const popularityFeels = (to, from, text, message) => {
+        let [voter, candidate, channel] = text.split(' ');
+        if (!voter || !candidate) {
+            app.say(to, `I need more information to properly rate feels`);
+            return;
+        }
+
+        // Set current channel if we have none specified
+        channel = channel || to;
+
+        Models.Upvote.query(qb => qb
+                .select(['candidate'])
+                .sum('result as result')
+                .count('result as votes')
+                .where('candidate', 'like', candidate)
+                .andWhere('voter', 'like', voter)
+                .andWhere('channel', 'like', channel)
+                .groupBy('candidate')
+                .orderBy('result', 'desc')
+            )
+            .fetch()
+            .then(result => {
+              if(!result) {
+                app.say(to, `${voter} has zero feels for ${candidate} in matters of ${channel}`);
+                return;
+              }
+              let status = result.get('result') > 0 ? true : false;
+              app.say(to, `${voter} feels ${status ? 'good' : 'bad'} about ${candidate} in matters of ${channel} (${result.get('votes')})`);
+            })
+            .catch(err => console.dir(err));
+    };
+    app.Commands.set('feels', {
+        desc: '[voter] [candidate] [channel?] - Get someones feels on someone else',
+        access: app.Config.accessLevels.identified,
+        call: popularityFeels
+    });
+
+
     const popularityRanking = (to, from, text, message) => {
         let channel = text || to;
         Models.Upvote.query(qb => qb
@@ -32,7 +70,7 @@ module.exports = app => {
                     return;
                 }
                 app.say(to, `The Populairty Rankings have been messaged to you ${from}`);
-                app.say(from,`Popularity Rankings for ${channel}`);
+                app.say(from, `Popularity Rankings for ${channel}`);
                 results.forEach((v, k) => app.say(from, `[${k+1}] Candidate: ${v.attributes.candidate} Score: ${v.attributes.result} Votes: ${v.attributes.votes}`));
             })
             .catch(err => logger.error('Error in popularityRanking', {
