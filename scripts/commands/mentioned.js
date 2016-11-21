@@ -66,8 +66,6 @@ module.exports = app => {
           qb.where('to', 'like', channel)
           terms.forEach(term => qb.andWhere('text','like',`%${term}%`));
           nicks.forEach(nick => qb.andWhere('from', 'like', `${nick}`));
-          qb.andWhere('text','not like','s/%');
-          qb.andWhere('text','not like', `${app.nick}%`);
           qb.orderBy('timestamp','desc');
         })
         .fetchAll()
