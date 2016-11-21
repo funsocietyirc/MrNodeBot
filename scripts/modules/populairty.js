@@ -32,7 +32,7 @@ module.exports = app => {
                     return;
                 }
                 app.say(to,`Popularity Rankings for ${channel}`);
-                results.forEach((v, k) => console.dir(app.say(to, `[${k+1}] Candidate: ${v.attributes.candidate} Score: ${v.attributes.result} Votes: ${v.attributes.votes}`)));
+                results.forEach((v, k) => app.say(to, `[${k+1}] Candidate: ${v.attributes.candidate} Score: ${v.attributes.result} Votes: ${v.attributes.votes}`));
             })
             .catch(err => logger.error('Error in popularityRanking', {
                 err
@@ -78,12 +78,8 @@ module.exports = app => {
                     });
                 });
                 app.say(to, `Popularity for candidate ${nick} on ${channel}`);
-                _(finalResults).orderBy(['total', 'votes'], ['desc', 'desc']).forEach((value, key) => {
-                    app.say(to, `[${key+1}] Voter: ${value.voter} Score: ${value.total} Votes: ${value.votes}`);
-                });
+                _(finalResults).orderBy(['total', 'votes'], ['desc', 'desc']).forEach((value, key) => app.say(to, `[${key+1}] Voter: ${value.voter} Score: ${value.total} Votes: ${value.votes}`));
                 app.say(to, `Total Score: ${computed.sumBy('result')} Total Votes: ${computed.value().length}`);
-
-
             })
             .catch(err => logger.error('Error in whoLikes', {
                 err
@@ -129,7 +125,6 @@ module.exports = app => {
         access: app.Config.accessLevels.identified,
         call: popularity
     });
-
 
     return scriptInfo;
 };

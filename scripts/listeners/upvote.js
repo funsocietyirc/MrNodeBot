@@ -21,7 +21,13 @@ module.exports = app => {
         let result = text.match(pattern);
 
         // No valid result, or candidate is not in channel, or invalid vote
-        if (!result || !result[0] || !result[1] || !result[2] || result[1] == from) return;
+        if (!result || !result[0] || !result[1] || !result[2]) return;
+
+        // Trying to vote on yourself
+        if(result[1] == from) {
+          app.say(from, `It is considered incredibly condescending to cast a vote for yourself`);
+          return;
+        }
 
         // Create the record
         Models.Upvote.create({
