@@ -37,17 +37,22 @@ module.exports = app => {
                 }
                 let computed = _(results.toJSON());
 
+                app.say(to, `Popularity Contest for ${nick} on ${channel}`);
+
                 // Get a list of voters
                 let voters = computed.map('voter').uniq().value();
-
-                app.say(to, `Lets take a look at who likes ${nick} on ${channel}`);
-                let output = '';
+                let finalResults = [];
                 _.forEach(voters, (voter, key) => {
                     let computedVoter = computed.filter(f => f.voter == voter);
-                    output = output + `[${voter}]: ${computedVoter.sumBy('result')} `;
+                    finalResults.push({
+                      voter,
+                      total: computedVoter.sumBy('result'),
+                      votes: computedVoter.value().length
+                    });
                 });
-                app.say(to, output);
-
+                _(finalResults).orderBy('total').forEach((value, key) => {
+                  app.say(to, `[${key+1}] Candidate: ${value.voter} Score: ${value.total} Votes: ${value.votes}`);
+                });
             })
             .catch(err => logger.error('Error in whoLikes', {
                 err
