@@ -108,7 +108,7 @@ module.exports = app => {
                 }
                 let total = _(results.pluck('result')).sum();
 
-                app.say(to, `Popularity ${channel ? 'On ' + channel : ''} ${typo.icons.sideArrow} ${results.length} ${typo.icons.views} ${typo.icons.sideArrow} ${total} ${total > 0 ? typo.icons.happy : typo.icons.sad}`);
+                app.say(to, `Popularity of ${nick} ${channel ? 'On ' + channel : ''} ${typo.icons.sideArrow} ${results.length} ${typo.icons.views} ${typo.icons.sideArrow} ${total} ${total > 0 ? typo.icons.happy : typo.icons.sad}`);
             })
             .catch(err => logger.err('Error fetching record', {
                 err
