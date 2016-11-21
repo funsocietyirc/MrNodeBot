@@ -1,8 +1,8 @@
 'use strict';
 
 const scriptInfo = {
-    name: 'Image Utilitie Module',
-    desc: 'Tools to remove all images from the url table, rebuild them, and them should they die',
+    name: 'Popularity Analytic commands',
+    desc: 'Get report data on popularity metrics',
     createdBy: 'Dave Richer'
 };
 
@@ -91,11 +91,8 @@ module.exports = app => {
     // Get the total populairty of a user
     const popularity = (to, from, text, message) => {
         let [nick, channel] = text.split(' ');
-        // No nick available
-        if (!nick) {
-            app.say(to, `Could you possibly give me someone to rate?`);
-            return;
-        }
+        nick = nick || from;
+        channel = channel || to;
 
         Models.Upvote.query(qb => {
                 qb.where('candidate', 'like', nick);
