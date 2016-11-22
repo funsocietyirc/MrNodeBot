@@ -14,20 +14,17 @@ module.exports = app => {
     // No Database
     if (!Models.Logging) return;
 
-    const timeFormat = 'MMMM Do YYYY';
-
     // Get Usage Data over time
     const getUsageOverTime = (req, res) => {
         Models.Logging.query(qb => qb
                 .select([
                     'to as channel',
-                    'timestamp'
+                    Models.Bookshelf.knex.raw('DATE_FORMAT(timestamp,"%W %M %d %Y") as timestamp')
                 ])
                 .count('to as messages')
                 .where('to', 'like', req.params.channel.replace('%23', '#'))
                 .groupBy([
                     Models.Bookshelf.knex.raw('DATE(timestamp)'),
-                    'to'
                 ])
             )
             .fetchAll()
@@ -41,24 +38,17 @@ module.exports = app => {
                   return;
                 }
                 let computed = _(results.toJSON());
-                let final = computed.map(value => {
-                    return {
-                        channel: value.channel,
-                        messages: value.messages,
-                        date: Moment(new Date(value.timestamp)).format(timeFormat),
-                    }
-                });
-
-                let lowest = computed.minBy('messages');
-                lowest.timestamp = Moment(new Date(lowest.timestamp)).format(timeFormat);
-                let highest = computed.maxBy('messages');
-                highest.timestamp = Moment(new Date(highest.timestamp)).format(timeFormat);
-
                 res.json({
                     status: 'success',
-                    results: final,
-                    lowest,
-                    highest,
+                    results: computed.map(value => {
+                        return {
+                            channel: value.channel,
+                            messages: value.messages,
+                            date: value.timestamp,
+                        }
+                    }),
+                    lowest: computed.minBy('messages'),
+                    highest: computed.maxBy('messages'),
                 });
             })
             .catch(err => {
