@@ -45,14 +45,14 @@ module.exports = app => {
                     return {
                         channel: value.channel,
                         messages: value.messages,
-                        date: Moment(value.timestamp).format(timeFormat),
+                        date: Moment.unix(value.timestamp).format(timeFormat),
                     }
                 });
 
                 let lowest = computed.minBy('messages');
-                lowest.timestamp = Moment(lowest.timestamp).format(timeFormat);
+                lowest.timestamp = Moment.unix(lowest.timestamp).format(timeFormat);
                 let highest = computed.maxBy('messages');
-                highest.timestamp = Moment(highest.timestamp).format(timeFormat);
+                highest.timestamp = Moment.unix(highest.timestamp).format(timeFormat);
 
                 res.json({
                     status: 'success',
