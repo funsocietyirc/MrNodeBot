@@ -16,28 +16,31 @@ module.exports = app => {
 
     // Get Usage Data over time
     const getUsageOverTime = (req, res) => {
-        Models.Logging.query(qb => qb
-                .select([
-                    'to as channel',
-                    Models.Bookshelf.knex.raw('DATE_FORMAT(timestamp,"%W %M %d %Y") as timestamp'),
-                    Models.Bookshelf.knex.raw('DATE_FORMAT(timestamp,"%d %b %Y %T:%f") as raw')
+        Models.Logging.query(qb => {
+                qb
+                    .select([
+                        'to as channel',
+                        Models.Bookshelf.knex.raw('DATE_FORMAT(timestamp,"%W %M %d %Y") as timestamp'),
+                        Models.Bookshelf.knex.raw('DATE_FORMAT(timestamp,"%d %b %Y %T:%f") as raw')
 
-                ])
-                .count('to as messages')
-                .where('to', 'like', req.params.channel.replace('%23', '#'))
-                .groupBy([
-                    Models.Bookshelf.knex.raw('DATE(timestamp)'),
-                ])
-            )
+                    ])
+                    .count('to as messages')
+                    .where('to', 'like', req.params.channel.replace('%23', '#'));
+                    if(req.params.nick) qb.andWhere('from','like',req.params.nick);
+                    qb
+                      .groupBy([
+                        Models.Bookshelf.knex.raw('DATE(timestamp)'),
+                    ]);
+            })
             .fetchAll()
             .then(results => {
-                if(!results.length) {
-                  res.json({
-                    message: 'No results available',
-                    status:'error',
-                    results:[],
-                  });
-                  return;
+                if (!results.length) {
+                    res.json({
+                        message: 'No results available',
+                        status: 'error',
+                        results: [],
+                    });
+                    return;
                 }
                 let computed = _(results.toJSON());
                 res.json({
@@ -68,7 +71,7 @@ module.exports = app => {
     app.WebRoutes.set('api.usage.overtime', {
         handler: getUsageOverTime,
         desc: 'Get Usage Over Time',
-        path: '/api/usage/overtime/:channel',
+        path: '/api/usage/overtime/:channel/:nick?',
         name: 'api.usage.overtime',
         verb: 'get'
     });
