@@ -18,7 +18,6 @@ module.exports = (channel, nick) => new Promise((resolve, reject) => {
         return;
     }
     // Normalize Channel
-    channel = channel.replace('%23', '#');
     return Models.Logging.query(qb => {
             qb
                 .select([

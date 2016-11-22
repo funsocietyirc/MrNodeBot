@@ -16,7 +16,7 @@ module.exports = app => {
     if (!Models.Logging) return scriptInfo;
 
     const getUsageOverTime = (req,res) => {
-      gen(req.params.channel, req.params.nick)
+      gen(req.params.channel.replaceAll('%23','#'), req.params.nick)
         .then(results => {
           if (!results) {
               res.json({
