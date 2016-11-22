@@ -23,7 +23,7 @@ module.exports = (channel, nick) => new Promise((resolve, reject) => {
                 .select([
                     'to as channel',
                     Models.Bookshelf.knex.raw('DATE_FORMAT(timestamp,"%W %M %d %Y") as timestamp'),
-                    Models.Bookshelf.knex.raw('DATE_FORMAT(timestamp,"%d %b %Y %T:%f") as raw')
+                    Models.Bookshelf.knex.raw('DATE_FORMAT(timestamp,"%Y-%m-%d %T") as raw')
 
                 ])
                 .count('to as messages')
