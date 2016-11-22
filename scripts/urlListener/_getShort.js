@@ -6,7 +6,7 @@ const apiKey = require('../../config').apiKeys.google;
 const logger = require('../../lib/logger');
 
 module.exports = results => !apiKey || _.isEmpty(apiKey) ? results :
-    _.sample([isgd])(results.url)
+    _.sample([google])(results.url)
     .then(url => _.merge(results, {
         shortUrl: url
     }))
