@@ -61,7 +61,7 @@ module.exports = app => {
             // Get result from generator then return
             getChanPopRank(channel)
                 .then(result => {
-                    if (!result) {
+                    if (!result || !result.rankings || !result.rankings.length) {
                         app.say(to, `There are no popularity statistics for ${channel}`);
                         return;
                     }
