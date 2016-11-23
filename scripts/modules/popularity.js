@@ -69,7 +69,7 @@ module.exports = app => {
                     app.say(to, `The Populairty Rankings have been messaged to you ${from}`);
                     app.say(from, `Popularity Rankings for ${channel}`);
                     _.forEach(result.rankings, (v, k) => app.say(from, `[${k+1}] Candidate: ${v.candidate} Score: ${v.score} Votes: ${v.votes}`));
-                    app.say(from, `Mean Score: ${result.meanScore} Total Votes: ${result.totalVotes}`);
+                    app.say(from, `Mean Score: ${result.meanScore} Total Score: ${result.totalScore} Total Votes: ${result.totalVotes}`);
 
                 })
                 .catch(err => {
