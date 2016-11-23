@@ -103,7 +103,7 @@ module.exports = app => {
                         (value, key) => app.say(from, `[${key+1}] Voter: ${value.voter} Score: ${value.score} Votes: ${value.votes}`)
                     );
 
-                    app.say(from, `Mean Score: ${result.meanScore} Total Votes: ${result.totalVotes}`);
+                    app.say(from, `Mean Score: ${result.meanScore} Total Score: ${results.totalScore} Total Votes: ${result.totalVotes}`);
                 })
                 .catch(err => {
                   logger.error('Error in popularity-contest', {
