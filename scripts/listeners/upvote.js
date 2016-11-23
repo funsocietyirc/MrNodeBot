@@ -19,10 +19,10 @@ module.exports = app => {
 
     const timeouts = new HashMap();
     const pattern = /gives (.*) (\+|\-)1(?: (.*))?/;
-    const delayMins = _.isUndefined(app.Config.features.upvote.delayInMins) ? 30 : app.Config.features.upvote.delayInMins;
+    const delayMins = _.isUndefined(app.Config.features.upvote) || _.isUndefined(app.Config.features.upvote.delayInMins) ? 30 : app.Config.features.upvote.delayInMins;
     const delay = delayMins * 60 * 1000;
-    const cleanJobInMins = _.isUndefined(app.Config.features.upvote.cleanJobInMins) ? 30 : app.Config.features.upvote.cleanJobInMins;
-    const ignoredChannels = _.isUndefined(app.Config.features.upvote.ignoredChannels) && !_.isArray(app.Config.features.upvote.ignoredChannels) ? [] : app.Config.features.upvote.ignoredChannels;
+    const cleanJobInMins = _.isUndefined(app.Config.features.upvote) || _.isUndefined(app.Config.features.upvote.cleanJobInMins) ? 30 : app.Config.features.upvote.cleanJobInMins;
+    const ignoredChannels = _.isUndefined(app.Config.features.upvote) || _.isUndefined(app.Config.features.upvote.ignoredChannels) || !_.isArray(app.Config.features.upvote.ignoredChannels) ? [] : app.Config.features.upvote.ignoredChannels;
 
     // Clean empty results periodically
     const clean = scheduler.schedule('clean-upvote-data', {
