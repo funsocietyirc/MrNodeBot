@@ -15,6 +15,27 @@ module.exports = app => {
     // Database not available
     if (!Models.Upvote) return scriptInfo;
 
+    const popularityClear = (to, from, text, message) => {
+        let channel = text;
+        if (!channel) {
+            app.say(to, `Please provide me a channel to clear`);
+            return;
+        }
+        Models.Upvote.query(qb => qb
+                .where('channel', 'like', channel)
+            )
+            .destroy()
+            .then(result => app.say(to, `All popularity results for ${channel} have been removed`))
+            .catch(err => logger.error('Error in popularityClear command', {
+                err
+            }));
+    };
+    app.Commands.set('popularity-clear', {
+        desc: '[channel] - Remove popularity information for specified channel',
+        access: app.Config.accessLevels.owner,
+        call: popularityClear
+    });
+
     const popularityPurge = (to, from, text, message) => {
         let [nick, channel] = text.split(' ');
         if (!nick || !channel) {
@@ -36,7 +57,7 @@ module.exports = app => {
     };
     app.Commands.set('popularity-purge', {
         desc: '[nick] [channel] - Remove a users popularity information for specified channel',
-        access: app.Config.accessLevels.admin,
+        access: app.Config.accessLevels.owner,
         call: popularityPurge
     });
 
