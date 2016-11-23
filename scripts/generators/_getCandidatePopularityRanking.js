@@ -20,7 +20,6 @@ module.exports = (nick, channel) => new Promise((resolve, reject) => {
             qb
                 .select(['voter'])
                 .where('candidate', 'like', nick);
-
             if (channel) qb.andWhere('channel', 'like', channel);
             qb
                 .sum('result as score')

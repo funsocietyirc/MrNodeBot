@@ -128,7 +128,7 @@ module.exports = app => {
                         app.say(to, `There is no popularity data for ${nick}`);
                         return;
                     }
-                    app.say(to, `Popularity of ${nick} ${channel ? 'On ' + channel : ''} ${typo.icons.sideArrow} ${result.totalVotes} ${typo.icons.views} ${typo.icons.sideArrow} ${result.meanScore} ${result.meanScore > 0 ? typo.icons.happy : typo.icons.sad}`);
+                    app.say(to, `Popularity of ${nick}${channel ? ' On ' + channel : ''} ${typo.icons.sideArrow} ${result.totalVotes} ${typo.icons.views} ${typo.icons.sideArrow} ${result.meanScore} ${result.meanScore > 0 ? typo.icons.happy : typo.icons.sad}`);
                 })
                 .catch(err => {
                     logger.error('Error in pupularity command', {
