@@ -16,8 +16,6 @@ module.exports = app => {
         return;
     }
 
-    const _handleError = e => logger.error(e);
-
     // Log Messages
     const msgCmd = (to, from, text, message) => {
         if (!Models.Logging) {
@@ -30,11 +28,50 @@ module.exports = app => {
                 ident: message.user,
                 host: message.host
             })
-            .catch(e => _handleError(e));
+            .catch(logger.error);
     };
     app.Listeners.set('messageLogging', {
         name: 'messageLogging',
         call: msgCmd
+    });
+
+    // Log Channel Parts
+    const actionCmd = (from, to, text, message) => {
+      // We do not have database, or we are talking to ourselves
+        if (!Models.ActionLogging) {
+            return;
+        }
+        Models.ActionLogging.create({
+                from: from,
+                to: to,
+                text: text,
+                user: message.user,
+                host: message.host
+            })
+            .catch(logger.error);
+    };
+    app.OnAction.set('actionLogger', {
+        call: actionCmd,
+        name: 'actionLogger'
+    });
+
+    const noticeCmd = (from, to, text, message) => {
+      // We do not have database, or we are talking to ourselves
+        if (!Models.NoticeLogging) {
+            return;
+        }
+        Models.NoticeLogging.create({
+                from: from,
+                to: to,
+                text: text,
+                user: message.user,
+                host: message.host
+            })
+            .catch(logger.error);
+    };
+    app.OnNotice.set('noticeLogger', {
+        call: noticeCmd,
+        name: 'noticeLogger'
     });
 
     // Log Channel joins
@@ -48,7 +85,7 @@ module.exports = app => {
                 user: message.user,
                 host: message.host
             })
-            .catch(e => _handleError(e));
+            .catch(logger.error);
     };
     app.OnJoin.set('joinLogger', {
         call: joinCmd,
@@ -67,7 +104,7 @@ module.exports = app => {
                 user: message.user,
                 host: message.host
             })
-            .catch(e => _handleError(e));
+            .catch(logger.error);
     };
     app.OnPart.set('partLogger', {
         call: partCmd,
@@ -87,7 +124,7 @@ module.exports = app => {
                 user: message.user,
                 host: message.host
             })
-            .catch(e => _handleError(e));
+            .catch(logger.error);
     };
     app.OnKick.set('kickLogger', {
         call: kickCmd,
@@ -106,7 +143,7 @@ module.exports = app => {
                 user: message.user,
                 host: message.host
             })
-            .catch(e => _handleError(e));
+            .catch(logger.error);
     };
     app.OnQuit.set('quitLogger', {
         call: quitCmd,
@@ -126,7 +163,7 @@ module.exports = app => {
                 user: message.user,
                 host: message.host
             })
-            .catch(e => _handleError(e));
+            .catch(logger.error);
     };
     app.NickChanges.set('nickLogger', {
         name: 'nickLogger',
@@ -155,7 +192,7 @@ module.exports = app => {
                         nick: nick
                     });
             })
-            .catch(e => _handleError(e));
+            .catch(logger.error);
     };
     app.OnTopic.set('topicLogger', {
         call: topicCmd,

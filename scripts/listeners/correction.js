@@ -17,10 +17,33 @@ module.exports = app => {
     const loggingModel = Models.Logging;
 
     // Configuration
-    const totalDbResults = 50;
-    const triggerStart = 's';
+    const totalDbResults = (
+            _.isUndefined(app.Config.features.sed) ||
+            _.isUndefined(app.Config.features.sed.totalDbResults) ||
+            !_.isSafeInteger(app.Config.features.sed.totalDbResults) ||
+            app.Config.features.sed.totalDbResults < 1
+        ) ? 50 :
+        app.Config.features.sed.totalDbResults;
+
+      const triggerStart = (
+              _.isUndefined(app.Config.features.sed) ||
+              _.isUndefined(app.Config.features.sed.triggerStart) ||
+              !_.isString(app.Config.features.sed.triggerStart) ||
+              _.isEmpty(app.Config.features.sed.triggerStart)
+          ) ? 's' :
+          app.Config.features.sed.triggerStart;
+
+      const delimiter = (
+              _.isUndefined(app.Config.features.sed) ||
+              _.isUndefined(app.Config.features.sed.delimiter) ||
+              !_.isString(app.Config.features.sed.delimiter) ||
+              _.isEmpty(app.Config.features.sed.delimiter)
+          ) ? '/' :
+          app.Config.features.sed.delimiter;
+
+    // Internal
     const specialChar = ' ';
-    const delimiter = '/';
+
     // Computed
     const trigger = triggerStart + delimiter;
     const doubleDelimiter = delimiter + delimiter;
@@ -70,7 +93,7 @@ module.exports = app => {
                     // Where the same channel the message is recieved from
                     .where('to', to)
                     // Where the text is not another correction line
-                    .andWhere('text', 'not like', 's/%')
+                    .andWhere('text', 'not like', `${triggerStart}/%`)
                     // Order desc and limit
                     .orderBy('id', 'desc')
                     .limit(totalDbResults)

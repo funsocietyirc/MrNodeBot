@@ -25,7 +25,7 @@ require('./lib/uncache')(require);
 
 // Dynamic collections
 const dynCollections = _([
-    'Actions', // Action Listeners
+    'OnAction', // Action Listeners
     'AdmCallbacks', // Administrative commands
     'NickChanges', // Fired On Nick changes
     'Registered', // Fired on Server Register
@@ -39,6 +39,7 @@ const dynCollections = _([
     'OnQuit', // Fired when user quites network
     'OnTopic', // Fired when topic is changed
     'OnConnected', // Fired when Connection to IRC is established
+    'OnNotice', // Fired when a notice is received
 ]);
 
 class MrNodeBot {
@@ -110,7 +111,7 @@ class MrNodeBot {
             .then(() => {
                 logger.info('Initializing Listeners');
                 _({
-                        // Handle Actions
+                        // Handle OnAction
                         action: (from, to, text, message) => this._handleAction(from, to, text, message),
                         // Handle On First Line recieved from IRC Client
                         'registered': message => this._handleRegistered(message),
@@ -119,7 +120,11 @@ class MrNodeBot {
                         // Handle Private Messages
                         pm: (from, text, message) => this._handleCommands(from, from, text, message),
                         // Handle Notices, also used to check validation for NickServ requests
-                        notice: (from, text, message) => this._handleAuthenticatedCommands(from, text, message),
+                        notice: (nick, to, text, message) => {
+                            // Check for auth command, return if we have one
+                            if(this._handleAuthenticatedCommands(nick, to, text, message)) return;
+                            this._handleOnNotice(nick, to, text, message);
+                        },
                         // Handle CTCP Requests
                         ctcp: (from, to, text, type, message) => this._handleCtcpCommands(from, to, text, message),
                         // Handle Nick changes
@@ -312,7 +317,7 @@ class MrNodeBot {
     _handleAction(from, to, text, message) {
         // Do not handle our own actions, or those on the ignore list
         if (from == this.nick || _.includes(this.Ignore, _.toLower(from))) return;
-        this.Actions.forEach((value, key) => {
+        this.OnAction.forEach((value, key) => {
             try {
                 value.call(from, to, text, message);
             } catch (e) {
@@ -334,6 +339,20 @@ class MrNodeBot {
         this.NickChanges.forEach((value, key) => {
             try {
                 value.call(oldnick, newnick, channels, message);
+            } catch (e) {
+                logger.error(e);
+            }
+        });
+    };
+
+    // Handle On Notices
+    _handleOnNotice(from, to, text, message) {
+        // Do not handle our own actions, or those on the ignore list
+        if (from == this.nick || _.includes(this.Ignore, _.toLower(from))) return;
+
+        this.OnNotice.forEach((value, key) => {
+            try {
+                value.call(from, to, text, message);
             } catch (e) {
                 logger.error(e);
             }
@@ -489,50 +508,58 @@ class MrNodeBot {
 
     //noinspection JSMethodCanBeStatic
     _handleAuthenticatedCommands(nick, to, text, message) {
-        if (_.toLower(nick) === _.toLower(this.Config.nickserv.nick)) {
-            let [user, acc, code] = text.split(' ');
-            if (this.AdmCallbacks.has(user)) {
-                let admCall = this.AdmCallbacks.get(user),
-                    admCmd = this.Commands.get(admCall.cmd),
-                    admTextArray = admCall.text.split(' ');
+        // This is not an auth command
+        if (_.toLower(nick) !== _.toLower(this.Config.nickserv.nick)) return false;
 
-                // Check if the user is identified, pass it along in the is object
-                admCall.is.identified = code == this.Config.nickserv.accCode;
+        // Parse vars
+        let [user, acc, code] = text.split(' ');
 
-                // Clean the output
-                admTextArray.splice(0, admCall.to === admCall.from ? 1 : 2);
-                let output = admTextArray.join(' ');
+        // Does not exist in call back, return
+        if (!this.AdmCallbacks.has(user)) return true;
 
-                // Is Identified
-                if (admCall.is.identified) {
-                    let admFromLower = _.toLower(admCall.from);
-                    let unauthorized =
-                        (admCmd.access == this.Config.accessLevels.owner && admFromLower !== _.toLower(this.Config.owner.nick)) ||
-                        (admCmd.access === this.Config.accessLevels.admin && !_.includes(this.Admins, admFromLower));
+        let admCall = this.AdmCallbacks.get(user),
+            admCmd = this.Commands.get(admCall.cmd),
+            admTextArray = admCall.text.split(' ');
 
-                    // Log to the console if a user without access a command they are not privy too
-                    if (unauthorized) {
-                        let group = helpers.AccessString(admCall.access);
-                        this.say(admCall.from, `You are not a member of the ${group} access list.`);
-                        logger.error(`${admCall.from} on ${admCall.to} tried to use the ${group} command ${admCall.cmd}`);
-                        return;
-                    }
+        // Check if the user is identified, pass it along in the is object
+        admCall.is.identified = code == this.Config.nickserv.accCode;
 
-                    try {
-                        this.Commands.get(admCall.cmd).call(admCall.to, admCall.from, output, admCall.message, admCall.is);
-                    } catch (e) {
-                        logger.error(e);
-                    }
-                }
-                // Is not identified
-                else {
-                    this.say(admCall.from, 'You must be identified with NickServ to use this command');
-                }
+        // Clean the output
+        admTextArray.splice(0, admCall.to === admCall.from ? 1 : 2);
+        let output = admTextArray.join(' ');
 
-                // Remove the callback from the stack
-                this.AdmCallbacks.remove(user);
+        // Is Identified
+        if (admCall.is.identified) {
+            let admFromLower = _.toLower(admCall.from);
+            let unauthorized =
+                (admCmd.access == this.Config.accessLevels.owner && admFromLower !== _.toLower(this.Config.owner.nick)) ||
+                (admCmd.access === this.Config.accessLevels.admin && !_.includes(this.Admins, admFromLower));
+
+            // Log to the console if a user without access a command they are not privy too
+            if (unauthorized) {
+                let group = helpers.AccessString(admCall.access);
+                this.say(admCall.from, `You are not a member of the ${group} access list.`);
+                logger.error(`${admCall.from} on ${admCall.to} tried to use the ${group} command ${admCall.cmd}`);
+                return;
+            }
+
+            try {
+                this.Commands.get(admCall.cmd).call(admCall.to, admCall.from, output, admCall.message, admCall.is);
+            } catch (e) {
+                logger.error(e);
             }
         }
+        // Is not identified
+        else {
+            this.say(admCall.from, 'You must be identified with NickServ to use this command');
+        }
+
+        // Remove the callback from the stack
+        this.AdmCallbacks.remove(user);
+
+        // Return
+        return true;
+
     };
 
     // Handle CTCP commands

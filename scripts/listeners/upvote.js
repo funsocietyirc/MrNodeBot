@@ -102,7 +102,7 @@ module.exports = app => {
     };
 
     // Register with actions
-    app.Actions.set('upvote', {
+    app.OnAction.set('upvote', {
         desc: 'Provide a Upvote system',
         call: upvote
     });

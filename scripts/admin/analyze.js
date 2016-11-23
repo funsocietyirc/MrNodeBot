@@ -13,22 +13,13 @@ const getLocationData = require('../generators/_ipLocationData');
 
 module.exports = app => {
     // No Database Data available...
-    if (!app.Database && !Models.Logging) {
-        return;
-    }
+    if (!app.Database && !Models.Logging) return;
 
     /**
       Helpers
     **/
     const titleLine = text => c.underline.red.bgblack(text);
-    const contentLine = text => text
-        .replaceAll('|', c.red.bgblack.bold('|'))
-        .replaceAll('(', c.red.bgblack.bold('('))
-        .replaceAll(')', c.red.bgblack.bold(')'))
-        .replaceAll('#', c.white.bgblack('#'))
-        .replaceAll('@', c.blue.bgblack('@'))
-        .replaceAll('~', c.green.bgblack('~'))
-        .replaceAll('!', c.yellow.bgblack('!'));
+
     /**
       Render the data object
     **/
@@ -79,7 +70,7 @@ module.exports = app => {
     const reportToIrc = (to, data) => {
         const sayHelper = (header, content) => {
             let paddedResult = _.padEnd(`${header}${header ? ':' : ' '}`, pad, ' ');
-            app.notice(to, `${titleLine(paddedResult)} ${contentLine(content)}`);
+            app.notice(to, `${titleLine(paddedResult)} ${content}`);
         };
         let firstDateActive = Moment(data.firstResult.timestamp);
         let lastDateActive = Moment(data.lastResult.timestamp);
@@ -113,7 +104,7 @@ module.exports = app => {
             sayHelper('Location Data', `${city}${regionName}${countryName}${postal}${timeZone}${lat}${long}`);
         }
 
-        sayHelper('Total Lines', `${contentLine(data.totalLines)}`);
+        sayHelper('Total Lines', `${data.totalLines}`);
     };
 
     // Handle info verbiage

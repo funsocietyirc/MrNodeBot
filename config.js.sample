@@ -190,11 +190,15 @@ module.exports = {
     },
     // Feature Configuration
     features: {
+        sed: {
+            totalDbResults: 50,
+            triggerStart: 's',
+            delimiter: '/',
+        },
         upvote: {
-          delayInMins: 30,
-          cleanJobInMins: 30,
-          ignoredChannels: [
-          ],
+            delayInMins: 30,
+            cleanJobInMins: 30,
+            ignoredChannels: [],
         },
         urls: {
             loggingIgnore: [],
