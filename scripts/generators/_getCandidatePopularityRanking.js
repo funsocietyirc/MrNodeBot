@@ -39,7 +39,7 @@ module.exports = (nick, channel) => new Promise((resolve, reject) => {
             let scores = results.pluck('score');
             return {
                 meanScore: +((_.mean(scores)).toFixed(2)),
-                totalScore: _sum(scores),
+                totalScore: _.sum(scores),
                 totalVotes: _.sum(results.pluck('votes')),
                 rankings: results.toJSON()
             };
