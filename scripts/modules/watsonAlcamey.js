@@ -109,7 +109,7 @@ module.exports = app => {
     };
     app.Commands.set('whatsup', {
         desc: '[Channel?] Get the combined information for a specified channel (defaults to current channel)',
-        access: app.Config.accessLevels.admin,
+        access: app.Config.accessLevels.identified,
         call: whatsup
     });
 
@@ -170,11 +170,9 @@ module.exports = app => {
     };
     app.Commands.set('combined', {
         desc: '[Nick] [Channel] Get the combined information for a specified user',
-        access: app.Config.accessLevels.admin,
+        access: app.Config.accessLevels.identified,
         call: combined
     });
-
-
 
     return scriptInfo;
 };

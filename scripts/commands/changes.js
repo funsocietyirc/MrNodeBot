@@ -34,10 +34,7 @@ module.exports = app => {
             ));
 
             // List the commits
-            commits.forEach(commit => {
-                app.say(from, helpers.RedSlashes(
-                    `${commit.abbrevHash} / ${commit.authorName} / ${commit.subject} / ${commit.authorDateRel}`));
-            });
+            commits.forEach(commit => app.say(from, helpers.RedSlashes(`${commit.abbrevHash} / ${commit.authorName} / ${commit.subject} / ${commit.authorDateRel}`)));
 
             // Last commit link
             if (commits && commits[0]) {

@@ -116,7 +116,7 @@ module.exports = app => {
 
     // Get a quick popularity summary for a nick with an optional channel
     app.Commands.set('popularity', {
-        desc: 'Get a users popularity',
+        desc: '[nick?] [channel?] Get a users popularity',
         access: app.Config.accessLevels.identified,
         call: (to, from, text, message) => {
             let [nick, channel] = text.split(' ');
