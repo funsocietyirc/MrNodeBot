@@ -18,10 +18,14 @@ if (_.isObject(args.config)) {
 }
 
 const bot = new Bot(app => {
-  // Set the ENV Flag for Request strict TLS
-  if(!_.isUndefined(app.Config.bot.strictTLS) || !app.Config.bot.strictTLS) {
-    process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
-  }
+    // Set the ENV Flag for Request strict TLS
+    if (!_.isUndefined(app.Config.bot.strictTLS) || !app.Config.bot.strictTLS) {
+        process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
+    }
+
+    // Extend the max socket listeners
+    process.setMaxListeners(0);
+
     // Code here will be executed after the bot is finished connecting
     if (process.stdin.setRawMode) {
         process.stdin.setRawMode(true);

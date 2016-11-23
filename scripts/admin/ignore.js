@@ -21,8 +21,7 @@ module.exports = app => {
             return;
         }
 
-        let textArray = text.split(' ');
-        let [nick] = textArray;
+        let [nick] = text.split(' ');
         let lowerCaseNick = _.toLower(nick);
         if (!_.includes(app.Admins, lowerCaseNick) && !_.includes(app.Ignore, lowerCaseNick)) {
             app.say(to, `${nick} has been muted. May there be peace.`);
@@ -38,8 +37,8 @@ module.exports = app => {
             app.say(to, 'You need to specify a user');
             return;
         }
-        let textArray = text.split(' ');
-        let [nick] = textArray;
+
+        let [nick] = text.split(' ');
         let lowerCaseNick = _.toLower(nick);
         if (_.includes(app.Ignore, lowerCaseNick)) {
             app.say(to, `${nick} has been unmuted`);

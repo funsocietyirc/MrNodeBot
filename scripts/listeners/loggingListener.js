@@ -35,6 +35,26 @@ module.exports = app => {
         call: msgCmd
     });
 
+    // Log Ctcp
+    const ctcpCmd = (from, to, text, type, message) => {
+        if (!Models.CtcpLogging) {
+            return;
+        }
+        Models.CtcpLogging.create({
+                from: from,
+                to: to,
+                text: c.stripColorsAndStyle(text),
+                type:type,
+                user: message.user,
+                host: message.host
+            })
+            .catch(logger.error);
+    };
+    app.OnCtcp.set('ctcpLogging', {
+        name: 'ctcpLogging',
+        call: ctcpCmd
+    });
+
     // Log Channel Parts
     const actionCmd = (from, to, text, message) => {
       // We do not have database, or we are talking to ourselves
@@ -44,7 +64,7 @@ module.exports = app => {
         Models.ActionLogging.create({
                 from: from,
                 to: to,
-                text: text,
+                text: c.stripColorsAndStyle(text),
                 user: message.user,
                 host: message.host
             })
@@ -63,7 +83,7 @@ module.exports = app => {
         Models.NoticeLogging.create({
                 from: from,
                 to: to,
-                text: text,
+                text: c.stripColorsAndStyle(text),
                 user: message.user,
                 host: message.host
             })

@@ -1,9 +1,6 @@
 /** MrNodeBot IRC Bot By IronY */
 'use strict';
 
-// Extend the max socket listeners
-process.setMaxListeners(0);
-
 // Node Libs
 const _ = require('lodash');
 const c = require('irc-colors');
@@ -25,7 +22,6 @@ require('./lib/uncache')(require);
 
 // Dynamic collections
 const dynCollections = _([
-    'OnAction', // Action Listeners
     'AdmCallbacks', // Administrative commands
     'NickChanges', // Fired On Nick changes
     'Registered', // Fired on Server Register
@@ -33,6 +29,7 @@ const dynCollections = _([
     'WebRoutes', // Express JS Web routes
     'Commands', // IRC Trigger commands
     'Stats', // Basic usage stats
+    'OnAction', // Action Listeners
     'OnJoin', // Fired when user joins channel
     'OnKick', // Fired when user is kicked from channel
     'OnPart', // Fired when user parts channel
@@ -40,6 +37,7 @@ const dynCollections = _([
     'OnTopic', // Fired when topic is changed
     'OnConnected', // Fired when Connection to IRC is established
     'OnNotice', // Fired when a notice is received
+    'OnCtcp', // Fired when a ctcp is received
 ]);
 
 class MrNodeBot {
@@ -112,21 +110,24 @@ class MrNodeBot {
                 logger.info('Initializing Listeners');
                 _({
                         // Handle OnAction
-                        action: (from, to, text, message) => this._handleAction(from, to, text, message),
+                        action: (nick, to, text, message) => this._handleAction(nick, to, text, message),
                         // Handle On First Line recieved from IRC Client
                         'registered': message => this._handleRegistered(message),
                         // Handle Channel Messages
-                        'message#': (from, to, text, message) => this._handleCommands(from, to, text, message),
+                        'message#': (nick, to, text, message) => this._handleCommands(nick, to, text, message),
                         // Handle Private Messages
-                        pm: (from, text, message) => this._handleCommands(from, from, text, message),
+                        pm: (nick, text, message) => this._handleCommands(nick, nick, text, message),
                         // Handle Notices, also used to check validation for NickServ requests
                         notice: (nick, to, text, message) => {
                             // Check for auth command, return if we have one
-                            if(this._handleAuthenticatedCommands(nick, to, text, message)) return;
-                            this._handleOnNotice(nick, to, text, message);
+                            if (_.toLower(nick) === _.toLower(this.Config.nickserv.nick)) {
+                              this._handleAuthenticatedCommands(nick, to, text, message);
+                            } else {
+                              this._handleOnNotice(nick, to, text, message);
+                            };
                         },
                         // Handle CTCP Requests
-                        ctcp: (from, to, text, type, message) => this._handleCtcpCommands(from, to, text, message),
+                        ctcp: (nick, to, text, type, message) => this._handleCtcpCommands(nick, to, text, type, message),
                         // Handle Nick changes
                         nick: (oldnick, newnick, channels, message) => this._handleNickChanges(oldnick, newnick, channels, message),
                         // Handle Joins
@@ -436,6 +437,20 @@ class MrNodeBot {
         });
     };
 
+    // Handle CTCP commands
+    _handleCtcpCommands(from, to, text, type, message) {
+        //  Bail on self or ignore
+        if (from == this.nick || _.includes(this.Ignore, _.toLower(from)) || (type == 'privmsg' && text.startsWith('ACTION'))) return;
+
+        this.OnCtcp.forEach((value, key) => {
+            try {
+                value.call(from, to, text, type, message);
+            } catch (e) {
+                logger.error(e);
+            }
+        });
+    };
+
     // Fired when the bot connects to the network
     _handleRegistered(message) {
         logger.info('Registerd to IRC server');
@@ -508,14 +523,12 @@ class MrNodeBot {
 
     //noinspection JSMethodCanBeStatic
     _handleAuthenticatedCommands(nick, to, text, message) {
-        // This is not an auth command
-        if (_.toLower(nick) !== _.toLower(this.Config.nickserv.nick)) return false;
 
         // Parse vars
         let [user, acc, code] = text.split(' ');
 
         // Does not exist in call back, return
-        if (!this.AdmCallbacks.has(user)) return true;
+        if (!this.AdmCallbacks.has(user)) return;
 
         let admCall = this.AdmCallbacks.get(user),
             admCmd = this.Commands.get(admCall.cmd),
@@ -556,18 +569,6 @@ class MrNodeBot {
 
         // Remove the callback from the stack
         this.AdmCallbacks.remove(user);
-
-        // Return
-        return true;
-
-    };
-
-    // Handle CTCP commands
-    // TODO handle ACL on ctcp commands
-    _handleCtcpCommands(from, to, text, type, message) {
-        //  Handle Ignore
-        if (_.includes(this.Ignore, _.toLower(from))) return;
-        return;
     };
 
     // Send a message to the target
