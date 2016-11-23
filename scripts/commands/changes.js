@@ -19,11 +19,11 @@ module.exports = app => {
 
             // Exit on error
             if (error) {
-                app.say(from, helpers.TitleLine(
-                    'Something has gone wrong retrieving the change log'
-                ));
+                app.say(to, 'Something has gone wrong retrieving the change log');
                 return;
             }
+
+            app.say(to, `I have messaged you the change log ${from}, you can view the last commit at ${app.Config.project.repository.url}/commit/${commits[0].abbrevHash}`);
 
             app.say(from, helpers.TitleLine(
                 `${app._ircClient.nick} Change log, last ${app._ircClient.nick} changes:`
