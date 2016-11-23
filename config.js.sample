@@ -1,12 +1,21 @@
 module.exports = {
+    // We are using a local version of the IRC client
+    // To use this you must have a node-irc directory at a child level
+    // of the MrNodeBot directory
+    ircClientDebug: false,
     // Project Config
     project: require('./package.json'),
     // Bot specific
     bot: {
-            debug: true,
-            disableScripts: false,
-            // Script Directories
-            scripts: [
+        debug: true,
+        debugLevel: 'info',
+        webDebug: true,
+        webDebugLevel: 'info',
+        disableScripts: false,
+        // Effects SSL on Requests
+        strictTLS: false,
+        // Script Directories
+        scripts: [
             // Core Libs
             '/scripts/lib',
             // Data Generators (Promises)
@@ -28,14 +37,18 @@ module.exports = {
             // URL Listener feature
             '/scripts/urlListener',
             // Only load in development
-            // '/scripts/beta',
+            //'/scripts/beta',
+        ],
+        // Model Directories
+        models: [
+            'models'
         ],
         // Currently running Environment
         env: 'devel'
     },
     // User Manager configuration
     userManager: {
-        salt: 'hellofriends',
+        salt: 'samplesalt',
         keyLength: 64
     },
     // Command aliasinging
@@ -52,12 +65,8 @@ module.exports = {
     // Owner configuration
     owner: {
         nick: 'IronY',
-        host: 'unaffiliated/irony'
+        host: ''
     },
-    // We are using a local version of the IRC client
-    // To use this you must have a node-irc directory at a child level
-    // of the MrNodeBot directory
-    ircClientDebug: false,
     // Irc Client Configuration see https://node-irc.readthedocs.io/en/latest/API.html#client
     irc: {
         nick: 'MrNodeBot',
@@ -67,9 +76,9 @@ module.exports = {
         realName: 'MrNodeBot',
         port: 6665,
         localAddress: null,
-        debug: true,
+        debug: false,
         showErrors: true,
-        autoRejoin: false,
+        autoRejoin: true,
         channels: [
             '#MrNodeBot'
         ],
@@ -77,7 +86,7 @@ module.exports = {
         selfSigned: false,
         certExpired: false,
         floodProtection: true,
-        floodProtectionDelay: 2000,
+        floodProtectionDelay: 500,
         sasl: false,
         retryCount: 100,
         retryDelay: 2000,
@@ -89,23 +98,32 @@ module.exports = {
     // Knex configuration http://knexjs.org/#Installation-client
     knex: {
         enabled: true,
-        engine: 'sqlite',
+        engine: 'mysql',
         mysql: {
             client: 'mysql',
             connection: {
                 host: '127.0.0.1',
-                user: '',
-                password: '',
-                database: ''
+                user: 'MrNodeBot',
+                password: 'MrNodeBot',
+                database: 'MrNodeBot'
             },
         },
         sqlite: {
             client: 'sqlite3',
+            database: 'mrnodebot',
             connection: {
                 filename: "./data.sqlite"
             }
         }
     },
+    // Log.io Information
+    logio: {
+        enabled: true,
+        nodeName: 'MrNodeBot',
+        port: 28777,
+        host: '127.0.0.1'
+    },
+    // Pusher.io Information
     pusher: {
         enabled: true,
         config: {
@@ -123,9 +141,13 @@ module.exports = {
     },
     // API Keys
     apiKeys: {
+        imgur: {
+            clientId: '',
+            clientSecret: '',
+        },
         google: '',
         twitter: {
-            consumerKey: '', // Fill these in from https://apps.twitter.com/
+            consumerKey: '',
             consumerSecret: '',
             tokenKey: '',
             tokenSecret: ''
@@ -134,6 +156,11 @@ module.exports = {
             "alchemy": {
                 "url": "https://gateway-a.watsonplatform.net/calls",
                 "apikey": ""
+            },
+            "personality": {
+                "url": "https://gateway.watsonplatform.net/personality-insights/api",
+                "password": "",
+                "userName": ""
             }
         }
     },
@@ -158,10 +185,17 @@ module.exports = {
     // Express Configuration
     express: {
         port: 8084,
-        address: 'http://localhost:8084'
+        address: 'http://127.0.0.1:8084',
+        forwarded: false,
     },
     // Feature Configuration
     features: {
+        upvote: {
+          delayInMins: 30,
+          cleanJobInMins: 30,
+          ignoredChannels: [
+          ],
+        },
         urls: {
             loggingIgnore: [],
             announceIgnore: [],
@@ -171,21 +205,21 @@ module.exports = {
             }
         },
         fsociety: {
-            mainChannel: '#mrnodebot',
+            mainChannel: '#MrNodeBot',
             totalChannels: 0,
             report: false,
             delay: 5, // In seconds,
             additionalChannels: [
-                '#mrnodebot2'
+                // '#th3g3ntl3man',
             ],
-            greetIgnore: [],
+            greetIgnore: ['#MrNodeBot'],
             greeterDealy: 20,
-            idleChat: 5 // Mins
+            idleChat: 15, // Mins
         },
         twitter: {
-            enabled: true,
-            followers: 'whoismrrobot, samesmail, mrrobotquotes',
-            channels: ['#mrnodebot']
+            enabled: false,
+            followers: 'funsocietyirc',
+            channels: ['#MrNodeBot']
         },
         conversational: {
             randomChange: 5000,
