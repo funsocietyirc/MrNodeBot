@@ -49,5 +49,6 @@ module.exports = (channel, nick) => new Promise((resolve, reject) => {
                 lowest: computed.minBy('messages'),
                 highest: computed.maxBy('messages'),
             });
-        });
+        })
+        .catch(reject);
 });

@@ -8,46 +8,70 @@ const scriptInfo = {
 const _ = require('lodash');
 const logger = require('../../lib/logger');
 const Models = require('bookshelf-model-loader');
-const Moment = require('moment');
-const gen = require('../generators/_getUsageOverTime');
+
+const getUsageOverTime = require('../generators/_getUsageOverTime');
+const getUsageChansAvail = require('../generators/_getUsageChannelsAvailable');
 
 module.exports = app => {
     // No Database
     if (!Models.Logging) return scriptInfo;
 
-    const getUsageOverTime = (req,res) => {
-      gen(req.params.channel.replaceAll('%23','#'), req.params.nick)
-        .then(results => {
-          if (!results) {
-              res.json({
-                  message: 'No results available',
-                  status: 'error',
-                  results: [],
-              });
-              return;
-          }
-
-          results.status = 'success';
-          res.json(results);
-        })
-        .catch(err => {
-            logger.error('Error fetching usage stats', {
-                err
-            });
-            res.json({
-                status: 'error',
-                results: []
-            });
-        });
-    };
+    // Provide a list of channels we have logging information on
+    app.WebRoutes.set('api.usage.channels.available', {
+        desc: 'Get a list of channels available',
+        path: '/api/usage/channels/available',
+        name: 'api.usage.channels.available',
+        verb: 'get',
+        handler: (req, res) => {
+            getUsageChansAvail()
+                .then(results => {
+                    res.json({
+                        status: 'success',
+                        channels: results
+                    });
+                })
+                .catch(err => {
+                    logger.error('Error in api.usage.channels.available', {
+                        err
+                    });
+                    console.dir(err);
+                    res.json({
+                        status: 'error'
+                    });
+                });
+        }
+    });
 
     // Subscribe to web service
-    app.WebRoutes.set('api.usage.overtime', {
-        handler: getUsageOverTime,
+    app.WebRoutes.set('api.usage.channels.overtime', {
         desc: 'Get Usage Over Time',
-        path: '/api/usage/overtime/:channel/:nick?',
-        name: 'api.usage.overtime',
-        verb: 'get'
+        path: '/api/usage/channels/overtime/:channel/:nick?',
+        name: 'api.usage.channels.overtime',
+        verb: 'get',
+        handler: (req, res) => {
+            getUsageOverTime(req.params.channel.replaceAll('%23', '#'), req.params.nick)
+                .then(results => {
+                    if (!results) {
+                        res.json({
+                            message: 'No results available',
+                            status: 'error',
+                            results: [],
+                        });
+                        return;
+                    }
+                    results.status = 'success';
+                    res.json(results);
+                })
+                .catch(err => {
+                    logger.error('Error fetching usage stats', {
+                        err
+                    });
+                    res.json({
+                        status: 'error',
+                        results: []
+                    });
+                });
+        },
     });
 
     return scriptInfo;
