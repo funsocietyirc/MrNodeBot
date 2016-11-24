@@ -6,7 +6,7 @@ const Models = require('bookshelf-model-loader');
 const getChanPopRank = require('../generators/_getChannelPopularityRanking');
 const chanParticipation = require('../lib/_channelParticipation');
 
-module.exports = app => new Promise((resolve, reject) => {
+module.exports = (app, channel) => new Promise((resolve, reject) => {
     // Database Not available
     if (!Models.Logging || !Models.Topics) {
         reject(new Error('Database not available'));
@@ -14,16 +14,20 @@ module.exports = app => new Promise((resolve, reject) => {
     };
     return Models.Logging
         // Get Results from the logging database
-        .query(qb => qb
-            .select(['to as channel'])
-            .count('to as messages')
-            .groupBy('to')
-            .orderBy('to')
-            .where(clause => {
-                let prefixes = _.compact(app.Config.irc.channelPrefixes.split('')) || ['#'];
-                clause.where('to', 'like', `${prefixes.shift()}%`);
-                _.forEach(prefixes, prefix => clause.orWhere('to', 'like', `${prefix}%`));
-            }))
+        .query(qb => {
+          qb
+              .select(['to as channel'])
+              .count('to as messages')
+              .groupBy('to')
+              .orderBy('to')
+              .where(clause => {
+                  let prefixes = _.compact(app.Config.irc.channelPrefixes.split('')) || ['#'];
+                  clause.where('to', 'like', `${prefixes.shift()}%`);
+                  _.forEach(prefixes, prefix => clause.orWhere('to', 'like', `${prefix}%`));
+              });
+              // Optionally sort on channel
+              if(channel) qb.andWhere('to','like',channel);
+        })
         .fetchAll()
         .then(results => results.toJSON())
         // Format the database results
@@ -81,18 +85,18 @@ module.exports = app => new Promise((resolve, reject) => {
                 );
                 // Get the popularity rankings
                 steps.push(
-                  getChanPopRank(value).then(ranking => {
-                    if(!_.isEmpty(ranking)) channelsObject[value].popularityRanking = ranking;
-                  })
+                    getChanPopRank(value).then(ranking => {
+                        if (!_.isEmpty(ranking)) channelsObject[value].popularityRanking = ranking;
+                    })
                 );
                 // Get channel participation
                 steps.push(
-                  chanParticipation(value, {
-                    threshold: 1,
-                    limit: 10,
-                  }).then(participation => {
-                    channelsObject[value].topMonthlyParticipants = participation;
-                  })
+                    chanParticipation(value, {
+                        threshold: 1,
+                        limit: 10,
+                    }).then(participation => {
+                        channelsObject[value].topMonthlyParticipants = participation;
+                    })
                 );
 
                 channelsObject[value].currentParticipants = [];
@@ -100,17 +104,17 @@ module.exports = app => new Promise((resolve, reject) => {
                 channelsObject[value].currentVoices = [];
 
                 // Get current participants and seperate them into participants / voices / op
-                if(channelsObject[value].isWatching) {
-                  let users = app._ircClient.getUsers(value);
-                  _.forEach(users, user => {
-                    if(app._ircClient.isOpInChannel(value, user)) {
-                      channelsObject[value].currentOps.push(user);
-                    } else if(app._ircClient.isVoiceInChannel(value, user)) {
-                      channelsObject[value].currentVoices.push(user);
-                    } else {
-                      channelsObject[value].currentParticipants.push(user);
-                    }
-                  })
+                if (channelsObject[value].isWatching) {
+                    let users = app._ircClient.getUsers(value);
+                    _.forEach(users, user => {
+                        if (app._ircClient.isOpInChannel(value, user)) {
+                            channelsObject[value].currentOps.push(user);
+                        } else if (app._ircClient.isVoiceInChannel(value, user)) {
+                            channelsObject[value].currentVoices.push(user);
+                        } else {
+                            channelsObject[value].currentParticipants.push(user);
+                        }
+                    })
                 }
 
             });

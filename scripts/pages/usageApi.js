@@ -19,11 +19,12 @@ module.exports = app => {
     // Provide a list of channels we have logging information on
     app.WebRoutes.set('api.usage.channels.available', {
         desc: 'Get a list of channels available',
-        path: '/api/usage/channels/available',
+        path: '/api/usage/channels/available/:channel?',
         name: 'api.usage.channels.available',
         verb: 'get',
         handler: (req, res) => {
-            getUsageChansAvail(app)
+            let channel = req.params.channel && _.isString(req.params.channel) ? req.params.channel.replaceAll('%23','#') : null;
+            getUsageChansAvail(app, channel)
                 .then(results => {
                     res.json({
                         status: 'success',
