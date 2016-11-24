@@ -38,9 +38,18 @@ module.exports = app => new Promise((resolve, reject) => {
         .then(channelsObject => {
             // A stack of promises
             let steps = [];
-            // Get the title for each channel
+
+            // Iterate through each logged channel
             _.forEach(channelsObject, (key, value) => {
-                let step = Models.Topics
+                // Is this channel currently being watched
+                channelsObject[value].isWatching = app._ircClient.isInChannel(value, app.nick);
+                // Are we an Admin in said channel
+                channelsObject[value].isOperator = app._ircClient.isOpInChannel(value, app.nick);
+                // Are we voiced in said channel
+                channelsObject[value].isVoice = app._ircClient.isVoiceInChannel(value, app.nick);
+
+                // Create topic steps
+                steps.push(Models.Topics
                     .query(qb => qb
                         .select(['nick', 'topic', 'timestamp'])
                         .where('channel', 'like', value)
@@ -55,10 +64,22 @@ module.exports = app => new Promise((resolve, reject) => {
                                 on: subResult.attributes.timestamp
                             }
                         }
-                    });
-                // Add step to stack
-                steps.push(step);
+                    }));
+                // Add the step to get actions count
+                steps.push(
+                    Models.ActionLogging.query(qb => qb.where('to', 'like', value)).count().then(count => {
+                        channelsObject[value].actions = count || 0;
+                    })
+                );
+                // Add the step to get kick count
+                steps.push(
+                  Models.KickLogging.query(qb => qb.where('channel','like',value)).count().then(count => {
+                    channelsObject[value].kicks = count || 0;
+                  })
+                );
+
             });
+
             // Complete all the steps and return result
             return Promise.all(steps).then(() => {
                 return channelsObject
