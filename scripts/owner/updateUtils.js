@@ -67,7 +67,7 @@ module.exports = app => {
         access: app.Config.accessLevels.owner,
         call: (to, from, text, message) => {
             app.Bootstrap(false);
-            app.action(to, 'Is feeling so fresh and so clean');
+            app.action(to, 'is feeling so fresh and so clean');
         }
     });
 
