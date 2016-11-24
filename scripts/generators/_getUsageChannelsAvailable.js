@@ -3,6 +3,8 @@
 const _ = require('lodash');
 const logger = require('../../lib/logger');
 const Models = require('bookshelf-model-loader');
+const getChanPopRank = require('../generators/_getChannelPopularityRanking');
+const chanParticipation = require('../lib/_channelParticipation');
 
 module.exports = app => new Promise((resolve, reject) => {
     // Database Not available
@@ -73,11 +75,25 @@ module.exports = app => new Promise((resolve, reject) => {
                 );
                 // Add the step to get kick count
                 steps.push(
-                  Models.KickLogging.query(qb => qb.where('channel','like',value)).count().then(count => {
-                    channelsObject[value].kicks = count || 0;
+                    Models.KickLogging.query(qb => qb.where('channel', 'like', value)).count().then(count => {
+                        channelsObject[value].kicks = count || 0;
+                    })
+                );
+                // Get the popularity rankings
+                steps.push(
+                  getChanPopRank(value).then(ranking => {
+                    if(!_.isEmpty(ranking)) channelsObject[value].popularityRanking = ranking;
                   })
                 );
-
+                // Get channel participation
+                steps.push(
+                  chanParticipation(value, {
+                    threshold: 1,
+                    limit: 10,
+                  }).then(participation => {
+                    channelsObject[value].topParticipants = participation;
+                  })
+                );
             });
 
             // Complete all the steps and return result
