@@ -94,6 +94,25 @@ module.exports = app => new Promise((resolve, reject) => {
                     channelsObject[value].topMonthlyParticipants = participation;
                   })
                 );
+
+                channelsObject[value].currentParticipants = [];
+                channelsObject[value].currentOps = [];
+                channelsObject[value].currentVoices = [];
+
+                // Get current participants and seperate them into participants / voices / op
+                if(channelsObject[value].isWatching) {
+                  let users = app._ircClient.getUsers(value);
+                  _.forEach(users, user => {
+                    if(app._ircClient.isOpInChannel(value, user)) {
+                      channelsObject[value].currentOps.push(user);
+                    } else if(app._ircClient.isVoiceInChannel(value, user)) {
+                      channelsObject[value].currentVoices.push(user);
+                    } else {
+                      channelsObject[value].currentParticipants.push(user);
+                    }
+                  })
+                }
+
             });
 
             // Complete all the steps and return result
