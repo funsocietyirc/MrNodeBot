@@ -23,7 +23,7 @@ module.exports = app => {
         name: 'api.usage.channels.available',
         verb: 'get',
         handler: (req, res) => {
-            getUsageChansAvail()
+            getUsageChansAvail(app)
                 .then(results => {
                     res.json({
                         status: 'success',
