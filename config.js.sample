@@ -190,12 +190,20 @@ module.exports = {
     },
     // Feature Configuration
     features: {
+        voiceRegulars: {
+            // Auto voice anyone who comes into the channel, or at a specified time interval
+            autoVoice: true,
+            autoVoiceTimeInMins: 40,
+            autoVoiceChannelIgnore: [],
+            // Message threshold: used in both auto voice and manual voiceRegulars
+            threshold: 250,
+        },
         sed: {
             totalDbResults: 50,
             triggerStart: 's',
             delimiter: '/',
         },
-        upvote: {
+        popularity: {
             delayInMins: 30,
             cleanJobInMins: 30,
             ignoredChannels: [],

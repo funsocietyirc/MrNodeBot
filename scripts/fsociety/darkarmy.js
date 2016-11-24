@@ -11,11 +11,11 @@ const scriptInfo = {
 };
 
 const _ = require('lodash');
-const voiceUsers = require('../lib/_voiceUsersInChannel');
 const logger = require('../../lib/logger');
-const scheduler = require('../../lib/scheduler')
 
 module.exports = app => {
+    // Get threshold
+
     // Check to see if a main channel has been Set, if not bail out
     if (_.isEmpty(app.Config.features.fsociety.mainChannel)) {
         return;
@@ -24,32 +24,6 @@ module.exports = app => {
     // Join main channel
     if (!_.includes(app.channels, app.Config.features.fsociety.mainChannel)) {
         app._ircClient.join(app.Config.features.fsociety.mainChannel);
-    }
-
-    // DB Required functionaity
-    // Voice users in the main channel
-    if(app.Database) {
-
-      // Voice Users every hour if they meet a certain threshold
-      let cronTime = new scheduler.RecurrenceRule();
-      cronTime.minute = 40;
-      scheduler.schedule('inviteRegularsInFsociety', cronTime, () =>
-          voiceUsers(app.Config.features.fsociety.mainChannel, 250, app)
-          .then(result => logger.info(`Running Voice Regulars in ${app.Config.features.fsociety.mainChannel}`))
-          .catch(err => logger.error(`Error in Voice Regulars: ${err.message}`))
-      );
-
-      // Voice Users on join if they meet a certain threshold
-      app.OnJoin.set('fsociety-voicer', {
-          call: (channel, nick, message) => {
-            if(channel != app.Config.features.fsociety.mainChannel || nick == app.nick) return;
-            voiceUsers(app.Config.features.fsociety.mainChannel, 250, app,{
-              nicks: [nick]
-            })
-            .catch(err => logger.error(`fsoceity-voicer: ${err.message}`));
-          },
-          name: 'fsociety-greetr'
-      });
     }
 
     // Join the dark army channels

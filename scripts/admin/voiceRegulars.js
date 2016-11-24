@@ -7,10 +7,13 @@ const scriptInfo = {
 
 const _ = require('lodash');
 const gen = require('../lib/_voiceUsersInChannel');
-const threshold = 250;
 
 module.exports = app => {
+    // No Database
     if (!app.Database) return scriptInfo;
+
+    // Get threshold
+    const threshold = (_.isUndefined(app.Config.features.voiceRegulars) || !_.isSafeInteger(app.Config.features.voiceRegulars) || app.Config.features.voiceRegulars < 1) ?  app.Config.features.voiceRegulars.threshold : 250;
 
     const voiceRegulars = (to, from, text, message) => {
         let txtArray = text.split(' ');

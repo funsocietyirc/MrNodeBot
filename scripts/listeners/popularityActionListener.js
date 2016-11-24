@@ -1,7 +1,7 @@
 'use strict';
 const scriptInfo = {
-    name: 'Upvote',
-    desc: 'Upvote action listener',
+    name: 'Popularity Listener',
+    desc: 'Popularity Action listener',
     createdBy: 'Dave Richer'
 };
 
@@ -18,11 +18,31 @@ module.exports = app => {
     if(!Models.Upvote) return scriptInfo;
 
     const timeouts = new HashMap();
-    const pattern = /gives (.*) (\+|\-)1(?: (.*))?/;
-    const delayMins = _.isUndefined(app.Config.features.upvote) || _.isUndefined(app.Config.features.upvote.delayInMins) ? 30 : app.Config.features.upvote.delayInMins;
+    const defaultPattern = /gives (.*) (\+|\-)1(?: (.*))?/;
+
+    const pattern = (
+      _.isUndefined(app.Config.features.popularity) ||
+      _.isUndefined(app.Config.features.popularity.pattern) ||
+      !_.isString(app.Config.features.popularity.pattern)
+    ) ? defaultPattern : app.Config.features.popularity.pattern;
+
+    const delayMins = (
+      _.isUndefined(app.Config.features.popularity) ||
+      _.isUndefined(app.Config.features.popularity.delayInMins)
+    ) ? 30 : app.Config.features.popularity.delayInMins;
+
     const delay = delayMins * 60 * 1000;
-    const cleanJobInMins = _.isUndefined(app.Config.features.upvote) || _.isUndefined(app.Config.features.upvote.cleanJobInMins) ? 30 : app.Config.features.upvote.cleanJobInMins;
-    const ignoredChannels = _.isUndefined(app.Config.features.upvote) || _.isUndefined(app.Config.features.upvote.ignoredChannels) || !_.isArray(app.Config.features.upvote.ignoredChannels) ? [] : app.Config.features.upvote.ignoredChannels;
+
+    const cleanJobInMins = (
+      _.isUndefined(app.Config.features.popularity) ||
+      _.isUndefined(app.Config.features.popularity.cleanJobInMins)
+    ) ? 30 : app.Config.features.popularity.cleanJobInMins;
+
+    const ignoredChannels = (
+      _.isUndefined(app.Config.features.popularity) ||
+      _.isUndefined(app.Config.features.popularity.ignoredChannels) ||
+     !_.isArray(app.Config.features.popularity.ignoredChannels)
+    ) ? [] : app.Config.features.popularity.ignoredChannels;
 
     // Clean empty results periodically
     const clean = scheduler.schedule('clean-upvote-data', {
@@ -34,7 +54,7 @@ module.exports = app => {
         });
     });
 
-    const upvote = (from, to, text, message) => {
+    const popularity = (from, to, text, message) => {
         // Ignored channel
         if(_.includes(ignoredChannels,to)) return;
 
@@ -96,15 +116,15 @@ module.exports = app => {
 
               app.notice(from, `You have just given ${result[1]} a ${result[2]} vote on ${to}`)
             })
-            .catch(err => logger.error(`Error in upvote system`, {
+            .catch(err => logger.error(`Error in Popularity Listener`, {
                 err: err
             }));
     };
 
     // Register with actions
-    app.OnAction.set('upvote', {
+    app.OnAction.set('popularity-listener', {
         desc: 'Provide a Upvote system',
-        call: upvote
+        call: popularity
     });
 
     return scriptInfo;
