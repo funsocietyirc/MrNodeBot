@@ -91,7 +91,7 @@ module.exports = app => new Promise((resolve, reject) => {
                     threshold: 1,
                     limit: 10,
                   }).then(participation => {
-                    channelsObject[value].topParticipants = participation;
+                    channelsObject[value].topMonthlyParticipants = participation;
                   })
                 );
             });

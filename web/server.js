@@ -63,6 +63,8 @@ module.exports = (app) => {
     router.extendExpress(webServer);
     router.registerAppHelpers(webServer);
 
+    // Pretty Print json
+    webServer.set('json spaces', 4);
     // Set the view engine
     webServer.set('view engine', 'pug');
     webServer.set('views', __dirname + '/views');
