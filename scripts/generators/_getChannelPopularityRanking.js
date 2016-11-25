@@ -22,7 +22,7 @@ module.exports = channel => new Promise((resolve, reject) => {
             .sum('result as score')
             .where('channel', 'like', channel)
             .groupBy('candidate')
-            .orderBy('votes', 'desc')
+            .orderBy('score', 'desc')
             .orderBy('result', 'desc')
 
         )
