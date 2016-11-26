@@ -5,8 +5,6 @@ const scriptInfo = {
     createdBy: 'Dave Richer'
 };
 
-
-
 module.exports = app => {
     // No Database available
     if(!app.Database) return scriptInfo;

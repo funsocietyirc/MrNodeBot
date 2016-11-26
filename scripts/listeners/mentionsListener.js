@@ -1,6 +1,6 @@
 'use strict';
 const scriptInfo = {
-    name: 'Mention Logging',
+    name: 'Mention Listener',
     desc: 'Keep track of mentions',
     createdBy: 'Dave Richer'
 };
@@ -8,6 +8,7 @@ const scriptInfo = {
 const _ = require('lodash');
 const Models = require('bookshelf-model-loader');
 const logger = require('../../lib/logger');
+// Special Thanks to [mbm] for this wonderful regex
 const pattern = /\B@((?!\w*\.\w)[\w\[\]|\-`\\{}\^]{1,16}(?!\w))/gi;
 
 
