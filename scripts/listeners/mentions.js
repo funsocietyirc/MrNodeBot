@@ -33,9 +33,9 @@ module.exports = app => {
 
         // Filter out duplicates, and verify the users are in the channel
         results = _(results)
-          .uniqBy(r => r.toLowerCase())
-          .filter(r => app.isInChannel(to, r) && r.toLowerCase() != from.toLowerCase())
-          .value();
+            .uniqBy(r => r.toLowerCase())
+            .filter(r => app.isInChannel(to, r) && r.toLowerCase() != from.toLowerCase())
+            .value();
 
         // No results after filtering, bail
         if (_.isEmpty(results)) return;
@@ -56,12 +56,19 @@ module.exports = app => {
                 return Promise.all(mentionStack);
             })
             .then(() => logger.info(`Mention recorded on ${to} by ${from} mentioning ${results.join(', ')}`))
-            .catch(err => logger.error('Error recording mention', {err}));
+            .catch(err => logger.error('Error recording mention', {
+                err
+            }));
     };
     // Listen and Correct
     app.Listeners.set('mentions', {
         desc: 'Mentions',
         call: mentions
+    });
+
+    app.OnAction.set('mentions', {
+        call: (from, to, text, message) => mention(to, from, text, message),
+        name: 'actionLogger'
     });
 
     // All went OK
