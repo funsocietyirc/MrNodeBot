@@ -11,7 +11,7 @@ const c = require('irc-colors');
 
 module.exports = app => {
     // Assure the database and logging table exists
-    if (!app.Database && !Models.Logging) return;
+    if (!app.Database && !Models.Logging) return scriptInfo;
 
     // Logging Model
     const loggingModel = Models.Logging;
