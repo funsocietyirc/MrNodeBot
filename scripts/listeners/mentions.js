@@ -67,8 +67,8 @@ module.exports = app => {
     });
 
     app.OnAction.set('mentions', {
-        call: (from, to, text, message) => mention(to, from, text, message),
-        name: 'actionLogger'
+        call: (from, to, text, message) => mentions(to, from, text, message),
+        name: 'mentions'
     });
 
     // All went OK
