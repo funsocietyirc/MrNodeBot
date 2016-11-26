@@ -16,8 +16,8 @@ module.exports = app => {
     if (!Models.Mention || !Models.Mentioned) return scriptInfo;
     // Parse for mentions
     const mentions = (to, from, text, message) => {
-        // Empty string, bail
-        if (!_.trim(text)) return;
+        // Priv message or empty string, bail
+        if (to === from || !_.trim(text)) return;
 
         // Setup variables
         let match = null;
@@ -60,12 +60,12 @@ module.exports = app => {
                 err
             }));
     };
-    // Listen and Correct
+    // Listen to messages
     app.Listeners.set('mentions', {
         desc: 'Mentions',
         call: mentions
     });
-
+    // Listen to Actions
     app.OnAction.set('mentions', {
         call: (from, to, text, message) => mentions(to, from, text, message),
         name: 'mentions'

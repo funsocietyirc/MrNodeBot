@@ -38,7 +38,7 @@ module.exports = app => {
             })
     };
 
-    // Register IMDB Command
+    // Register Mention Command
     app.Commands.set('mentions', {
         desc: 'Get the last 10 mentions',
         access: app.Config.accessLevels.identified,
