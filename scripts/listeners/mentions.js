@@ -41,17 +41,17 @@ module.exports = app => {
         if (_.isEmpty(results)) return;
 
         Models.Mention.create({
-                text: text
+                text: text,
+                by: from,
+                channel: to,
+                user: message.user,
+                host: message.host,
             })
             .then(mention => {
                 let mentionStack = [];
                 _.forEach(results, nick => mentionStack.push(Models.Mentioned.create({
                     nick: nick,
-                    by: from,
-                    channel: to,
                     mention_id: mention.id,
-                    user: message.user,
-                    host: message.host,
                 })));
                 return Promise.all(mentionStack);
             })

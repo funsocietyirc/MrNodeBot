@@ -33,7 +33,7 @@ module.exports = app => {
                 app.say(from, `Sending your last ${results.length} mentions`);
                 _.forEach(results.toJSON(), (result, key) => app.say(
                     from,
-                    `[${key+1}] - ${Moment(result.timestamp).fromNow()} - By ${result.by} - On ${result.channel}: ${result.mention.text}`
+                    `[${key+1}] - ${Moment(result.timestamp).fromNow()} - By ${result.mention.by} - On ${result.mention.channel}: ${result.mention.text}`
                 ));
             })
     };
