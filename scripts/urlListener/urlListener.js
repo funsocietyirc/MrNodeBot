@@ -39,7 +39,6 @@ const ircUrlFormatter = require('./_ircUrlFormatter'); // IRC Formatter
 const scheduler = require('../../lib/scheduler');
 // Cache URLS to prevent unnecessary API calls
 const resultsCache = require('./_resultsCacheStore');
-const c = require('irc-colors');
 
 module.exports = app => {
 
@@ -70,9 +69,6 @@ module.exports = app => {
     const processUrl = (url, to, from, text, message, is) => {
         let isCached = resultsCache.has(url); // Check if it is Cached
         let chain = isCached ? startCachedChain : startChain; // Load appropriate start method
-
-        // Normalize text
-        text = ((c.stripColorsAndStyle(text || '')));
 
         chain(url, to, from, text, message, is) // Begin Chain
             .then(results => results.isCached ? results : // If we Have a cached object, continue in chain

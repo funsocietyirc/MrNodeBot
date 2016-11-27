@@ -314,8 +314,16 @@ class MrNodeBot {
         }
     };
 
+
+    // Drop non ascii and color code/style information
+    _normalizeText(text) {
+      if(_.isUndefined(text) || !_.isString(text)) return;
+      return  c.stripColorsAndStyle(text.replace(/[^\x00-\x7F]/g, ""));
+    };
+
     // Handle Action
     _handleAction(from, to, text, message) {
+      text = this._normalizeText(text);
         // Do not handle our own actions, or those on the ignore list
         if (from == this.nick || _.includes(this.Ignore, _.toLower(from))) return;
         this.OnAction.forEach((value, key) => {
@@ -348,6 +356,8 @@ class MrNodeBot {
 
     // Handle On Notices
     _handleOnNotice(from, to, text, message) {
+        text = this._normalizeText(text);
+
         // Do not handle our own actions, or those on the ignore list
         if (from == this.nick || _.includes(this.Ignore, _.toLower(from))) return;
 
@@ -377,6 +387,8 @@ class MrNodeBot {
 
     // Handle On Part
     _handleOnPart(channel, nick, reason, message) {
+        reason = this._normalizeText(reason);
+
         // Handle Ignore
         if (_.includes(this.Ignore, _.toLower(nick))) return;
 
@@ -392,6 +404,8 @@ class MrNodeBot {
 
     // Handle On Kick
     _handleOnKick(channel, nick, by, reason, message) {
+        reason = this._normalizeText(reason);
+
         //  Handle Ignore
         if (_.includes(this.Ignore, _.toLower(nick))) return;
 
@@ -408,6 +422,7 @@ class MrNodeBot {
 
     // Handle On Quit
     _handleOnQuit(nick, reason, channels, message) {
+        reason = this._normalizeText(reason);
         //  Handle Ignore
         if (_.includes(this.Ignore, _.toLower(nick))) return;
 
@@ -423,6 +438,7 @@ class MrNodeBot {
 
     // Handle Topic changes
     _handleOnTopic(channel, topic, nick, message) {
+        topic = this._normalizeText(topic);
         //  Handle Ignore
         if (_.includes(this.Ignore, _.toLower(nick))) return;
 
@@ -439,6 +455,8 @@ class MrNodeBot {
 
     // Handle CTCP commands
     _handleCtcpCommands(from, to, text, type, message) {
+        text = this._normalizeText(text);
+
         //  Bail on self or ignore
         if (from == this.nick || _.includes(this.Ignore, _.toLower(from)) || (type == 'privmsg' && text.startsWith('ACTION'))) return;
 
@@ -466,6 +484,9 @@ class MrNodeBot {
 
     // Process the commands
     _handleCommands(from, to, text, message) {
+        // Normalize text
+        text = this._normalizeText(text);
+
         // Build the is object to pass along to the command router
         let is = {
             ignored: _.includes(this.Ignore, _.toLower(from)),
@@ -523,6 +544,7 @@ class MrNodeBot {
 
     //noinspection JSMethodCanBeStatic
     _handleAuthenticatedCommands(nick, to, text, message) {
+        text = this._normalizeText(text);
 
         // Parse vars
         let [user, acc, code] = text.split(' ');
