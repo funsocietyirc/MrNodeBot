@@ -61,6 +61,7 @@ module.exports = app => {
 
         let token = randToken.generate(8);
 
+        // TODO Do not just update token, delete, and recreate
         tokenModel
             .query(qb => {
                 qb
@@ -86,10 +87,11 @@ module.exports = app => {
                     tokenModel
                         .where({
                             user: from,
-                            channel: to
+                            channel: to,
                         })
                         .save({
-                            token: token
+                            token: token,
+                            timestamp: Models.Bookshelf.knex.fn.now(),
                         }, {
                             patch: true
                         })

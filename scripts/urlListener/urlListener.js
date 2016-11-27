@@ -39,6 +39,7 @@ const ircUrlFormatter = require('./_ircUrlFormatter'); // IRC Formatter
 const scheduler = require('../../lib/scheduler');
 // Cache URLS to prevent unnecessary API calls
 const resultsCache = require('./_resultsCacheStore');
+const c = require('irc-colors');
 
 module.exports = app => {
 
@@ -69,7 +70,7 @@ module.exports = app => {
     const processUrl = (url, to, from, text, message, is) => {
         let isCached = resultsCache.has(url); // Check if it is Cached
         let chain = isCached ? startCachedChain : startChain; // Load appropriate start method
-        chain(url, to, from, text, message, is) // Begin Chain
+        chain(url, to, from, c.stripColorsAndStyle(text || ''), message, is) // Begin Chain
             .then(results => results.isCached ? results : // If we Have a cached object, continue in chain
                 getDocument(results) // Make a request, verify the site exists, and grab metadata
                 .then(results => results.unreachable ? results : // If the site is no up, continue the chain
