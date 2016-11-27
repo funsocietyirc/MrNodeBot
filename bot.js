@@ -121,9 +121,9 @@ class MrNodeBot {
                         notice: (nick, to, text, message) => {
                             // Check for auth command, return if we have one
                             if (_.toLower(nick) === _.toLower(this.Config.nickserv.nick)) {
-                              this._handleAuthenticatedCommands(nick, to, text, message);
+                                this._handleAuthenticatedCommands(nick, to, text, message);
                             } else {
-                              this._handleOnNotice(nick, to, text, message);
+                                this._handleOnNotice(nick, to, text, message);
                             };
                         },
                         // Handle CTCP Requests
@@ -317,13 +317,14 @@ class MrNodeBot {
 
     // Drop non ascii and color code/style information
     _normalizeText(text) {
-      if(_.isUndefined(text) || !_.isString(text)) return;
-      return  c.stripColorsAndStyle(text.replace(/[^\x00-\x7F]/g, "")).trim();
+        if (_.isUndefined(text) || !_.isString(text)) return;
+        if (!_.isUndefined(this.Config.disableNormalizeText) && this.Config.disableNormalizeText === true) return text;
+        return c.stripColorsAndStyle(text.replace(/[^ -~]+/g, "")).trim();
     };
 
     // Handle Action
     _handleAction(from, to, text, message) {
-      text = this._normalizeText(text);
+        text = this._normalizeText(text);
         // Do not handle our own actions, or those on the ignore list
         if (from == this.nick || _.includes(this.Ignore, _.toLower(from))) return;
         this.OnAction.forEach((value, key) => {
