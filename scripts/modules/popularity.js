@@ -66,7 +66,7 @@ module.exports = app => {
                         return;
                     }
 
-                    app.say(to, `The Populairty Rankings have been messaged to you ${from}`);
+                    app.say(to, `The  Rankings have been messaged to you ${from}`);
                     app.say(from, `Popularity Rankings for ${channel}`);
                     _.forEach(result.rankings, (v, k) => app.say(from, `[${k+1}] Candidate: ${v.candidate} Score: ${v.score} Votes: ${v.votes}`));
                     app.say(from, `Mean Score: ${result.meanScore} Total Score: ${result.totalScore} Total Votes: ${result.totalVotes}`);
@@ -97,7 +97,7 @@ module.exports = app => {
                         app.say(to, `There are no results available for ${nick}${inChan}`);
                         return;
                     }
-                    app.say(to, `Populairty for candidate ${nick}${inChan} has been messaged to you ${from}`);
+                    app.say(to, ` for candidate ${nick}${inChan} has been messaged to you ${from}`);
                     app.say(from, `Popularity for candidate ${nick}${inChan}`);
                     _.forEach(result.rankings,
                         (value, key) => app.say(from, `[${key+1}] Voter: ${value.voter} Score: ${value.score} Votes: ${value.votes}`)
