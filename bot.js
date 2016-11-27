@@ -318,8 +318,7 @@ class MrNodeBot {
     // Drop non ascii and color code/style information
     _normalizeText(text) {
         if (_.isUndefined(text) || !_.isString(text)) return;
-        if (!_.isUndefined(this.Config.disableNormalizeText) && this.Config.disableNormalizeText === true) return text;
-        return c.stripColorsAndStyle(text.replace(/[^ -~]+/g, "")).trim();
+        return text.replace(helpers.RemoveNonPrintChars, '').trim();
     };
 
     // Handle Action
