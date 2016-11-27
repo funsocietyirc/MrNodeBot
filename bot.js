@@ -318,7 +318,7 @@ class MrNodeBot {
     // Drop non ascii and color code/style information
     _normalizeText(text) {
       if(_.isUndefined(text) || !_.isString(text)) return;
-      return  c.stripColorsAndStyle(text.replace(/[^\x00-\x7F]/g, ""));
+      return  c.stripColorsAndStyle(text.replace(/[^\x00-\x7F]/g, "")).trim();
     };
 
     // Handle Action
