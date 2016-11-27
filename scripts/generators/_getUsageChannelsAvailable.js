@@ -21,7 +21,7 @@ module.exports = (app, channel) => new Promise((resolve, reject) => {
               .groupBy('to')
               .orderBy('to')
               .where(clause => {
-                  let prefixes = _.compact(app.Config.irc.channelPrefixes.split('')) || ['#'];
+                  let prefixes = app._ircClient._getChannelPrefixArray();
                   clause.where('to', 'like', `${prefixes.shift()}%`);
                   _.forEach(prefixes, prefix => clause.orWhere('to', 'like', `${prefix}%`));
               });
