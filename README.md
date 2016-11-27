@@ -1,6 +1,5 @@
-![Mr. NodeBot](https://cdn.irony.online/bot.png)
-
-By: IronY
+->![Mr. NodeBot](https://cdn.irony.online/bot.png)<-
+-> By IronY on #fsociety -- Freenode <-
 
 # Install Steps
 
