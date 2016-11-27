@@ -70,6 +70,8 @@ module.exports = app => {
     const processUrl = (url, to, from, text, message, is) => {
         let isCached = resultsCache.has(url); // Check if it is Cached
         let chain = isCached ? startCachedChain : startChain; // Load appropriate start method
+        // Normalize text
+        text = ((c.stripColorsAndStyle(text || '')));
         chain(url, to, from, text, message, is) // Begin Chain
             .then(results => results.isCached ? results : // If we Have a cached object, continue in chain
                 getDocument(results) // Make a request, verify the site exists, and grab metadata
