@@ -184,9 +184,10 @@ module.exports = {
     },
     // Express Configuration
     express: {
-        port: 8084,
-        address: 'http://127.0.0.1:8084',
-        forwarded: false,
+        port: 8084, // Bind Port
+        address: 'http://127.0.0.1:8084', // Bind address
+        forwarded: false, // Indiciate the site is behind a Http proxy
+        noFollow: true, // Prevent the express routes from being indexed by spiders
     },
     // Feature Configuration
     features: {

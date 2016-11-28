@@ -50,6 +50,15 @@ module.exports = (app) => {
             } // optional: allows to skip some log messages based on request and/or response
     }));
 
+    // Prevent the web server from being indexed by spiders
+    if (config.express.noFollow) {
+        webServer.use(function(req, res, next) {
+            res.header('X-Robots-Tag', 'noindex, nofollow');
+            next();
+        });
+    }
+
+    // Create a router
     let router = new Router();
 
     // Body parser
@@ -68,6 +77,7 @@ module.exports = (app) => {
     // Set the view engine
     webServer.set('view engine', 'pug');
     webServer.set('views', __dirname + '/views');
+
     // Serve Favicon
     webServer.use(favicon(__dirname + '/assets/favicon.ico'));
 
