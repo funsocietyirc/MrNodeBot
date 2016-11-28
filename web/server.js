@@ -51,7 +51,7 @@ module.exports = (app) => {
     }));
 
     // Prevent the web server from being indexed by spiders
-    if (config.express.noFollow) {
+    if (app.Config.express.noFollow) {
         webServer.use(function(req, res, next) {
             res.header('X-Robots-Tag', 'noindex, nofollow');
             next();
