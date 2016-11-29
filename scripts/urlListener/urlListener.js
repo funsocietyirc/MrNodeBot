@@ -83,7 +83,9 @@ module.exports = app => {
                 .then(sendToPusher) // Then broadcast to pusher
             )
             .then(endChain) // End the chain, cache results
-            .catch(err => logger.warn('Error in URL Listener chain', {err}));
+            .catch(err => logger.warn('Error in URL Listener chain', {
+                err
+            }));
     };
 
     // Handler
@@ -94,8 +96,7 @@ module.exports = app => {
         // Url Processing chain
         _(extractUrls(text))
             .uniq() // Assure No Duplicated URLS on the same line return multiple results
-            .filter(_.isEmpty)
-            .reject(url => url.startsWith('ftp')) // We do not deal with FTP
+            .reject(url => url.startsWith('ftp') || _.isEmpty(url)) // We do not deal with FTP
             .each(url => processUrl(url, to, from, text, message, is));
     };
 
@@ -107,8 +108,8 @@ module.exports = app => {
 
     // Clear cache every four hours on the 30 min mark
     const clean = scheduler.schedule('urlResultCache', {
-      hour:[0,4,8,12,16,20],
-      minute:15
+        hour: [0, 4, 8, 12, 16, 20],
+        minute: 15
     }, () => {
         logger.info('Clearing The Url Result Cache');
         resultsCache.clear();
