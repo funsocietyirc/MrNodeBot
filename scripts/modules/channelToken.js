@@ -47,9 +47,10 @@ module.exports = app => {
             result: null
         };
         let token = req.body.token;
-        if (!token) {
-            return res.json(error);
-        }
+
+        // No token available
+        if (!token) return res.json(error);
+
         tokenModel.query(qb => {
                 qb
                     .where('token', token)
