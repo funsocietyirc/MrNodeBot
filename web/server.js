@@ -1,4 +1,5 @@
 'use strict';
+const _ = require('lodash');
 const Express = require('express');
 const Router = require('named-routes');
 const favicon = require('serve-favicon');
@@ -7,6 +8,7 @@ const bodyParser = require('body-parser');
 const winston = require('winston');
 const expressWinston = require('express-winston');
 const rotate = require('winston-daily-rotate-file');
+const RateLimit = require('express-rate-limit');
 
 /*
   Web Server component:
@@ -56,6 +58,24 @@ module.exports = (app) => {
             res.header('X-Robots-Tag', 'noindex, nofollow');
             next();
         });
+    }
+
+    // Set Express powered by header to MrNodeBot
+    webServer.use((req,res,next) => {
+      res.header('X-powered-by', 'MrNodeBot');
+      next();
+    });
+
+    // Set up rate limiting for api routes
+    if(!_.isUndefined(app.Config.express.rateLimit) && _.isBoolean(app.Config.express.rateLimit.enabled) && app.Config.express.rateLimit.enabled) {
+      if(app.Config.express.forwarded) webServer.enable('trust proxy');
+      const rateLimiter = new RateLimit({
+        windowMs: (app.Config.express.rateLimit.limitInMins || 15) * 60 * 100,
+        max: app.Config.express.rateLimit.max || 100,
+        delayMs: app.Config.express.rateLimit.delayMs || 0,
+        headers: app.Config.express.rateLimit.headers || false,
+      });
+      webServer.use('/api/', rateLimiter);
     }
 
     // Create a router

@@ -188,6 +188,14 @@ module.exports = {
         address: 'http://127.0.0.1:8084', // Bind address
         forwarded: false, // Indiciate the site is behind a Http proxy
         noFollow: true, // Prevent the express routes from being indexed by spiders
+        // Rate limiter for routes in the /api/ uir space
+        rateLimit: {
+          enabled: true,
+          limitInMins: 15,  // The amount of mins for the rate limiter
+          max: 100,         // The Max amount of requests
+          delayMs: 0,       // The delay in ms (0 to indicate no delay until max)
+          headers: true,    // Inject HTTP headers to show usage remaining
+        },
     },
     // Feature Configuration
     features: {
