@@ -96,7 +96,7 @@ module.exports = app => {
         // Url Processing chain
         _(extractUrls(text))
             .uniq() // Assure No Duplicated URLS on the same line return multiple results
-            .reject(url => url.startsWith('ftp')) // We do not deal with FTP
+            .reject(url => url.startsWith('ftp') || !_.isEmpty(url)) // We do not deal with FTP
             .each(url => processUrl(url, to, from, text, message, is));
     };
 
