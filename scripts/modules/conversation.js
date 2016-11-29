@@ -2,7 +2,7 @@
 const scriptInfo = {
     name: 'conversation',
     desck: 'Allow the bot to be conversational in private messages, or randomly in channels',
-    createdBy: 'Dave Richer'
+    createdBy: 'IronY'
 };
 
 const _ = require('lodash');

@@ -2,7 +2,7 @@
 const scriptInfo = {
     name: 'help',
     desc: 'Dynamically created help system',
-    createdBy: 'Dave Richer'
+    createdBy: 'IronY'
 };
 
 const color = require('irc-colors');
@@ -51,27 +51,41 @@ module.exports = app => {
         }
     };
 
-    // Web front end
-    const frontEnd = (req, res) => {
-        let results = [];
-        app.Commands.forEach((value, key) => {
-            results.push({
-                desc: value.desc,
-                command: key,
-                access: helpers.AccessString(value.access)
-            });
-        });
-
-        res.render('commands', {
-            results: _.sortBy(results, 'access')
-        });
-    };
-
+    // Provide Web Route for a command listing
     app.WebRoutes.set('commands', {
-        handler: frontEnd,
-        desc: 'Image Front End',
+        desc: 'Command Listing',
         path: '/commands',
-        name: 'commands'
+        name: 'commands',
+        handler: (req, res) => {
+            let results = [];
+            app.Commands.forEach((value, key) => {
+                results.push({
+                    desc: value.desc,
+                    command: key,
+                    access: helpers.AccessString(value.access)
+                });
+            });
+
+            res.render('commands', {
+                results: _.sortBy(results, ['access','command'])
+            });
+        },
+    });
+
+    // Provide Web Route for script listing
+    app.WebRoutes.set('scripts', {
+      desc: 'Script Listing',
+      path: '/scripts',
+      name: 'scripts',
+      handler: (req, res) => {
+          // Return sorted result
+          let results = _(app.LoadedScripts).map('info').compact().sortBy('name').value();
+          console.dir(results);
+          res.render('scripts', {
+              // Do not expose full path
+              results
+          });
+      },
     });
 
     // List of available commands

@@ -2,7 +2,7 @@
 const scriptInfo = {
     name: 'Guess Sex',
     desc: 'Guess the sex of a user based on their chat history',
-    createdBy: 'Dave Richer'
+    createdBy: 'IronY'
 };
 
 // Original concept credited to http://www.hackerfactor.com/GenderGuesser.php

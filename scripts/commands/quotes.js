@@ -2,7 +2,7 @@
 const scriptInfo = {
     name: 'quotes',
     desc: 'Privates add-quote, del-qutote, and quote. Allows rudenemntary quote system',
-    createdBy: 'Dave Richer'
+    createdBy: 'IronY'
 };
 
 const HashMap = require('hashmap');

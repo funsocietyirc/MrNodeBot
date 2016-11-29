@@ -2,7 +2,7 @@
 const scriptInfo = {
     name: 'Imdb',
     desc: 'Get IMDB info by title',
-    createdBy: 'Dave Richer'
+    createdBy: 'IronY'
 };
 
 const _ = require('lodash');

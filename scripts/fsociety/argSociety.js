@@ -3,7 +3,7 @@
 const scriptInfo = {
     name: 'argSociety',
     desc: 'Misc functionality for ##mrRobotARG on freenode',
-    createdBy: 'Dave Richer'
+    createdBy: 'IronY'
 };
 
 const _ = require('lodash');
@@ -96,4 +96,6 @@ module.exports = app => {
             })
             .catch(err => logger.error(`${argReddit} reddit error`, err));
     });
+
+    return scriptInfo;
 };

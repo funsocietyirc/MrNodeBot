@@ -2,7 +2,7 @@
 const scriptInfo = {
     name: 'flip',
     desc: 'Simulate a coin toss, Random Engine test script',
-    createdBy: 'Dave Richer'
+    createdBy: 'IronY'
 };
 
 const random = require('../../lib/randomEngine');

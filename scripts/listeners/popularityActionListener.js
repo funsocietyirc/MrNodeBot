@@ -2,7 +2,7 @@
 const scriptInfo = {
     name: 'Popularity Listener',
     desc: 'Popularity Action listener',
-    createdBy: 'Dave Richer'
+    createdBy: 'IronY'
 };
 
 const _ = require('lodash');

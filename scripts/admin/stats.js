@@ -2,7 +2,7 @@
 const scriptInfo = {
     name: 'stats',
     desc: 'Provide very basic command usage stats',
-    createdBy: 'Dave Richer'
+    createdBy: 'IronY'
 };
 
 const helpers = require('../../helpers');

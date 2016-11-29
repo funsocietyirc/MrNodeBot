@@ -2,7 +2,7 @@
 const scriptInfo = {
     name: 'lastActive',
     desc: 'Get stats on the last activity of a IRC user',
-    createdBy: 'Dave Richer'
+    createdBy: 'IronY'
 };
 
 const Moment = require('moment');

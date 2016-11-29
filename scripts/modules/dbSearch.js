@@ -3,7 +3,7 @@ const scriptInfo = {
     name: 'dbSearch',
     desc: 'Provides some interaction with the message logging model, such has total messages, random line' +
           'and last mentioned',
-    createdBy: 'Dave Richer'
+    createdBy: 'IronY'
 };
 
 const _ = require('lodash');

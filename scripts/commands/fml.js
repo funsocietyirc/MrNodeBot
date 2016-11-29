@@ -2,7 +2,7 @@
 const scriptInfo = {
   name: 'FML',
   desc: 'Get FML Quote',
-  createdBy: 'Dave Richer'
+  createdBy: 'IronY'
 };
 
 const _ = require('lodash');

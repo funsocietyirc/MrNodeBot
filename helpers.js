@@ -1,5 +1,6 @@
 'use strict';
 const moment = require('moment');
+const logger = require('./lib/logger');
 const c = require('irc-colors');
 const _ = require('lodash');
 const startTime = moment();
@@ -31,15 +32,16 @@ const timeFormat = exports.timeFormat = d => {
 // String representation of access level
 const AccessString = exports.AccessString = str => {
     switch (str) {
-        case 0:
+        case '0':
             return 'Guest';
-        case 1:
+        case '1':
             return 'Identified';
-        case 2:
+        case '2':
             return 'Administrator';
-        case 3:
+        case '3':
             return 'Owner';
         default:
+            logger.error('Unknown command type used', {command: str})
             return 'Unknown';
     }
 };

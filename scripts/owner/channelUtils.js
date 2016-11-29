@@ -2,7 +2,7 @@
 const scriptInfo = {
     name: 'Channels',
     desc: 'Channel Utilities',
-    createdBy: 'Dave Richer'
+    createdBy: 'IronY'
 };
 
 const _ = require('lodash');

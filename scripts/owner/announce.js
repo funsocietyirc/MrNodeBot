@@ -2,7 +2,7 @@
 const scriptInfo = {
     name: 'Announce',
     desc: 'Announce to all active channels, and to Twitter',
-    createdBy: 'Dave Richer'
+    createdBy: 'IronY'
 };
 
 const logger = require('../../lib/logger');

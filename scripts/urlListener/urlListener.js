@@ -16,7 +16,7 @@
 const scriptInfo = {
     name: 'urlListener',
     desc: 'Listen for URLS, append them to a DB table, clean them if they expire, and other stuff including pulling proper meta data',
-    createdBy: 'Dave Richer'
+    createdBy: 'IronY'
 };
 
 const _ = require('lodash');

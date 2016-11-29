@@ -2,7 +2,7 @@
 const scriptInfo = {
     name: 'SED Correction',
     desc: 'Listen for SED like corrections',
-    createdBy: 'Dave Richer'
+    createdBy: 'IronY'
 };
 
 const Models = require('bookshelf-model-loader');

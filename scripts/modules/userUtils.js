@@ -2,7 +2,7 @@
 const scriptInfo = {
     name: 'User Utilities',
     desc: 'Provides Registration and other User management functionality',
-    createdBy: 'Dave Richer'
+    createdBy: 'IronY'
 };
 
 const logger = require('../../lib/logger');

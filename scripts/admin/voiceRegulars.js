@@ -2,7 +2,7 @@
 const scriptInfo = {
     name: 'Voice Regulars',
     desc: 'Voice users by participation',
-    createdBy: 'Dave Richer'
+    createdBy: 'IronY'
 };
 
 const _ = require('lodash');
@@ -28,7 +28,7 @@ module.exports = app => {
             case 2:
                 channel = txtArray[0];
                 thresh = txtArray[1] % 1 === 0 ? txtArray[1] : threshold;
-                break
+                break;
         }
 
         gen(channel, thresh, app)

@@ -7,7 +7,7 @@ const scriptInfo = {
     name: 'darkarmy',
     desc: 'Just a list of Dark Army Random channels, Topic Lock advertisements for main channel,' +
         'Provide a list of currently joined Darm Army channels',
-    createdBy: 'Dave Richer'
+    createdBy: 'IronY'
 };
 
 const _ = require('lodash');

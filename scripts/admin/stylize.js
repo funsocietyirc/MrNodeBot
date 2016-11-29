@@ -2,7 +2,7 @@
 const scriptInfo = {
     name: 'stylize',
     desc: 'Super colorized version of tell',
-    createdBy: 'Dave Richer'
+    createdBy: 'IronY'
 };
 
 const color = require('irc-colors');

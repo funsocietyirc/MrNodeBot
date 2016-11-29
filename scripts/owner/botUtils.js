@@ -2,7 +2,7 @@
 const scriptInfo = {
     name: 'Bot Utilities',
     desc: 'Bot administrative commands',
-    createdBy: 'Dave Richer'
+    createdBy: 'IronY'
 };
 
 module.exports = app => {

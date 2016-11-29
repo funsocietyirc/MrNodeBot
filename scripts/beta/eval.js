@@ -3,7 +3,7 @@
 const scriptInfo = {
     name: 'Evaluate',
     desc: 'Allow for inline JS Evaluation via IRC for easier debugging',
-    createdBy: 'Dave Richer'
+    createdBy: 'IronY'
 };
 
 const _ = require('lodash');

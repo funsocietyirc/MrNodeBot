@@ -2,7 +2,7 @@
 const scriptInfo = {
     name: 'Channel Token',
     desc: 'Give a IRC user a unique token that identifies them to a channel',
-    createdBy: 'Dave Richer'
+    createdBy: 'IronY'
 };
 
 const moment = require('moment');

@@ -2,7 +2,7 @@
 const scriptInfo = {
     name: 'Also Known As',
     desc: 'Get information from the nick change table',
-    createdBy: 'Dave Richer'
+    createdBy: 'IronY'
 };
 
 const Models = require('bookshelf-model-loader');

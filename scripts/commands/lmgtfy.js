@@ -2,7 +2,7 @@
 const scriptInfo = {
     name: 'Let me google that for you',
     desc: 'Grab a let me google that for you link',
-    createdBy: 'Dave Richer'
+    createdBy: 'IronY'
 };
 
 const gen = require('../generators/_isGdShortUrl');

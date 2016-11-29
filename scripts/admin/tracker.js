@@ -3,7 +3,7 @@
 const scriptInfo = {
     name: 'tracker',
     desc: 'Get GEO IP info on a IRC user',
-    createdBy: 'Dave Richer'
+    createdBy: 'IronY'
 };
 
 const _ = require('lodash');

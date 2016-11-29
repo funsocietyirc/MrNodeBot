@@ -1,0 +1,24 @@
+extends ./includes/layout.pug
+block title
+	title Scripts
+block content
+	div.row
+		div.col-md-12
+			div.text-center
+				div.page-header
+					h1 Scripts
+				table.table.table-bordered.table-striped
+					tbody
+						tr.info
+							th Name
+							th Description
+							th Creator
+					tbody
+						each script in results
+							tr.text-left
+								td #{script.name}
+								td #{script.desc}
+								td #{script.createdBy}
+block body
+	script(src='/assets/moment.min.js')
+	script(src='/assets/bootstrap-sortable.js')

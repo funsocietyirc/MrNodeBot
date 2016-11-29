@@ -2,7 +2,7 @@
 const scriptInfo = {
     name: 'hello',
     desc: 'Display a salutation to a IRC user, randomText test script',
-    createdBy: 'Dave Richer'
+    createdBy: 'IronY'
 };
 
 const color = require('irc-colors');

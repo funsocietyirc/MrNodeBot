@@ -3,7 +3,7 @@
 const scriptInfo = {
     name: 'changes',
     desc: 'Allow users to see git changes from IRC',
-    createdBy: 'Dave Richer'
+    createdBy: 'IronY'
 };
 
 const gitlog = require('gitlog');

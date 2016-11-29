@@ -17,7 +17,7 @@ query params:
 const scriptInfo = {
     name: 'urlApi',
     desc: 'The URL Express API',
-    createdBy: 'Dave Richer'
+    createdBy: 'IronY'
 };
 
 const Models = require('bookshelf-model-loader');

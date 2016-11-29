@@ -2,7 +2,7 @@
 const scriptInfo = {
     name: 'mentions',
     desc: 'Get Last mentions',
-    createdBy: 'Dave Richer'
+    createdBy: 'IronY'
 };
 
 const _ = require('lodash');

@@ -195,9 +195,10 @@ class MrNodeBot {
     // Read all JS files in the scripts directory and evaluate them
     // During the update process this updates the script portions of the code
     _loadScriptsFromDir(dir, clearCache) {
-        let normalizedPath = path.join(__dirname, dir);
-
         logger.info(`Loading all scripts from ${dir}`);
+
+        // Get a normalized path to the script
+        let normalizedPath = path.join(__dirname, dir);
 
         // Require In the scripts
         // Load all files with .js extension
@@ -214,10 +215,13 @@ class MrNodeBot {
                     // If we are not dealing with a partial file _something.js
                     if (file[0] != '_' && _.endsWith(file, '.js')) {
                         logger.info(`Loading Script: ${file}`);
-                        this.LoadedScripts.push({
+                        let scriptInfo = {
                             fullPath: fullPath,
                             info: require(`./${dir}/${file}`)(this)
-                        });
+                        };
+                        // If we have a name field, run it through a start case filter
+                        if (scriptInfo.info.name) scriptInfo.info.name = _.startCase(scriptInfo.info.name);
+                        this.LoadedScripts.push(scriptInfo);
                     }
                 } catch (err) {
                     logger.error(`[${err}] in: ${fullPath}`.replace(`${path.sep}${path.sep}`, `${path.sep}`));
@@ -283,6 +287,8 @@ class MrNodeBot {
             scheduler.clear();
             // Clear Dynamic Collections
             dynCollections.each(v => this[v].clear());
+            // Clear Loaded Scripts
+            this.LoadedScripts = [];
         }
 
         // Load in the Scripts

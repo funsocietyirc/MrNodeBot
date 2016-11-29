@@ -2,7 +2,7 @@
 const scriptInfo = {
     name: 'BOFH Excuse',
     desc: 'Provider Bastard Operator from hell excuses',
-    createdBy: 'Dave Richer'
+    createdBy: 'IronY'
 };
 
 const gen = require('../generators/_bofhExcuse');

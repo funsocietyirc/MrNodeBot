@@ -2,7 +2,7 @@
 const scriptInfo = {
     name: 'usageApi',
     desc: 'The Usage Express API',
-    createdBy: 'Dave Richer'
+    createdBy: 'IronY'
 };
 
 const _ = require('lodash');

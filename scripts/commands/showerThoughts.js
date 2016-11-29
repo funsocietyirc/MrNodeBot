@@ -2,7 +2,7 @@
 const scriptInfo = {
   name: 'Shower Thoughts',
   desc: 'Get a REDDIT shower thought',
-  createdBy: 'Dave Richer'
+  createdBy: 'IronY'
 };
 
 const _ = require('lodash');

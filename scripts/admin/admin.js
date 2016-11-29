@@ -2,7 +2,7 @@
 const scriptInfo = {
     name: 'admin',
     desc: 'Private Admin help, and Admin User management',
-    createdBy: 'Dave Richer'
+    createdBy: 'IronY'
 };
 
 const _ = require('lodash');

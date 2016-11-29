@@ -3,7 +3,7 @@
 const scriptInfo = {
     name: 'Static Pages',
     desc: 'Static Express Pages',
-    createdBy: 'Dave Richer'
+    createdBy: 'IronY'
 };
 
 module.exports = app => {

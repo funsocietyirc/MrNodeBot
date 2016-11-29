@@ -2,7 +2,7 @@
 const scriptInfo = {
     name: 'FSociety Peoples',
     desc: 'Commands for certain #fsociety members',
-    createdBy: 'Dave Richer'
+    createdBy: 'IronY'
 };
 
 const _ = require('lodash');

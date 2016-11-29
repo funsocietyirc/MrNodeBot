@@ -2,7 +2,7 @@
 const scriptInfo = {
     name: 'Topic Utilities',
     desc: 'Utilites to view and manipulate the channel topic',
-    createdBy: 'Dave Richer'
+    createdBy: 'IronY'
 };
 
 const Models = require('bookshelf-model-loader');

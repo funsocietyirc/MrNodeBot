@@ -2,7 +2,7 @@
 const scriptInfo = {
     name: 'Converse',
     desc: 'Converse with the bot',
-    createdBy: 'Dave Richer'
+    createdBy: 'IronY'
 };
 
 const gen = require('../generators/_chatBotLine');

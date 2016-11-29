@@ -3,7 +3,7 @@ const scriptInfo = {
     name: 'ignore',
     desc: 'Private mute, unmute, and ignored commands. Prevents the bot from seeing messages from ' +
           'specified IRC users',
-    createdBy: 'Dave Richer'
+    createdBy: 'IronY'
 };
 
 const storage = require("node-persist");

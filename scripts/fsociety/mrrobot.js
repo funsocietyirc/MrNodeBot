@@ -2,7 +2,7 @@
 const scriptInfo = {
     name: 'mrrobot',
     desc: 'Watch for quotes from the MrRobot bot, log them, clean them, and allow for announcement of them',
-    createdBy: 'Dave Richer'
+    createdBy: 'IronY'
 };
 
 const _ = require('lodash');

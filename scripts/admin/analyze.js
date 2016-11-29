@@ -2,7 +2,7 @@
 const scriptInfo = {
     name: 'analyze',
     desc: 'Get a summary of information from a online IRC user',
-    createdBy: 'Dave Richer'
+    createdBy: 'IronY'
 };
 
 const _ = require('lodash');

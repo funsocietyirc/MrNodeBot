@@ -2,7 +2,7 @@
 const scriptInfo = {
     name: 'Database Utilities',
     desc: 'Bot database administrative commands',
-    createdBy: 'Dave Richer'
+    createdBy: 'IronY'
 };
 
 module.exports = app => {

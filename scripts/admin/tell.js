@@ -2,7 +2,7 @@
 const scriptInfo = {
     name: 'tell',
     desc: 'Have the Bot give a channel or user a message',
-    createdBy: 'Dave Richer'
+    createdBy: 'IronY'
 };
 
 const _ = require('lodash');

@@ -7,7 +7,7 @@ const scriptInfo = {
     name: 'greeter',
     desc: 'Send a message to users joining mr robot sub channels based on certain conditions, ' +
         'letting them know and inviting them to #fsociety',
-    createdBy: 'Dave Richer'
+    createdBy: 'IronY'
 };
 
 const _ = require('lodash');

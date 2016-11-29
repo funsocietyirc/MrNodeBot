@@ -2,7 +2,7 @@
 const scriptInfo = {
     name: 'echo',
     desc: 'Echo text back to the IRC user, a simple test script',
-    createdBy: 'Dave Richer'
+    createdBy: 'IronY'
 };
 
 module.exports = app => {

@@ -2,7 +2,7 @@
 const scriptInfo = {
     name: 'Update Utilities',
     desc: 'Provides refresh (reloads scripts), update (pulls from git hub), and halt (terminates bot)',
-    createdBy: 'Dave Richer'
+    createdBy: 'IronY'
 };
 
 const shell = require('shelljs');

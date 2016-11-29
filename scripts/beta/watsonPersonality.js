@@ -6,7 +6,7 @@
 const scriptInfo = {
     name: 'Waston Personality',
     desc: 'Test Script for watson personality',
-    createdBy: 'Dave Richer'
+    createdBy: 'IronY'
 };
 
 var PersonalityInsightsV3 = require('watson-developer-cloud/personality-insights/v3');

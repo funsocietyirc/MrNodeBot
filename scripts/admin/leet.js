@@ -2,7 +2,7 @@
 const scriptInfo = {
     name: 'leet',
     desc: 'The leet speak version of tell',
-    createdBy: 'Dave Richer'
+    createdBy: 'IronY'
 };
 
 

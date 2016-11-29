@@ -3,7 +3,7 @@
 const scriptInfo = {
   name: 'showImageLink',
   desc: 'Announce a Image link for the user triggering the command',
-  createdBy: 'Dave Richer'
+  createdBy: 'IronY'
 };
 
 module.exports = app => {
@@ -21,5 +21,7 @@ module.exports = app => {
       access: app.Config.accessLevels.identified,
       call: showImageLink
   });
+
+  return scriptInfo;
 
 };

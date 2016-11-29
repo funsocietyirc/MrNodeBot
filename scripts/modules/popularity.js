@@ -3,7 +3,7 @@
 const scriptInfo = {
     name: 'Popularity Analytic commands',
     desc: 'Get report data on popularity metrics',
-    createdBy: 'Dave Richer'
+    createdBy: 'IronY'
 };
 
 const _ = require('lodash');

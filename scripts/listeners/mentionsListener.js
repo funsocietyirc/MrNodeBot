@@ -2,7 +2,7 @@
 const scriptInfo = {
     name: 'Mention Listener',
     desc: 'Keep track of mentions',
-    createdBy: 'Dave Richer'
+    createdBy: 'IronY'
 };
 
 const _ = require('lodash');

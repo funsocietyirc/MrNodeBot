@@ -3,7 +3,7 @@
 const scriptInfo = {
     name: 'Image Upload Web Front End',
     desc: 'Provides a PUG form for uploading photos',
-    createdBy: 'Dave Richer'
+    createdBy: 'IronY'
 };
 
 const path = require('path');

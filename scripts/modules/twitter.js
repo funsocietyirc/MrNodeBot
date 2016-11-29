@@ -1,7 +1,7 @@
 'use strict';
 const scriptInfo = {
     name: 'robotTweet',
-    createdBy: 'Dave Richer'
+    createdBy: 'IronY'
 };
 
 const _ = require('lodash');

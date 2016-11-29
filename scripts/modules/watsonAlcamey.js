@@ -3,7 +3,7 @@
 const scriptInfo = {
     name: 'Waston Alcamey',
     desc: 'Test Script for watson analytics',
-    createdBy: 'Dave Richer'
+    createdBy: 'IronY'
 };
 
 const AlchemyLanguageV1 = require('watson-developer-cloud/alchemy-language/v1');

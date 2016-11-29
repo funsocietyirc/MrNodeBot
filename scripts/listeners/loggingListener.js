@@ -2,7 +2,7 @@
 const scriptInfo = {
     name: 'loggingListener',
     desc: 'Log IRC evets to the database',
-    createdBy: 'Dave Richer'
+    createdBy: 'IronY'
 };
 
 const Models = require('bookshelf-model-loader');
