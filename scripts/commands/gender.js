@@ -36,6 +36,13 @@ module.exports = app => {
     const displaySexGuess = (to, from, text, message) => {
         let [nick] = text.split(' ');
         nick = nick || from;
+
+        // We are gendering the bot
+        if(nick === app.nick) {
+          app.say(to, `{I am clearly a Male|I am clearly a female|I am obviously an apache attack helicopter|I can be what ever you want me to be} ${from}`);
+          return;
+        }
+
         getResults(nick)
             .then(r => {
                 let t = r.results.Combined;
