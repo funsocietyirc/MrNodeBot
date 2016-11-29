@@ -578,7 +578,7 @@ class MrNodeBot {
 
             // Log to the console if a user without access a command they are not privy too
             if (unauthorized) {
-                let group = helpers.AccessString(admCall.access);
+                let group = helpers.AccessString(admCmd.access);
                 this.say(admCall.from, `You are not a member of the ${group} access list.`);
                 logger.error(`${admCall.from} on ${admCall.to} tried to use the ${group} command ${admCall.cmd}`);
                 return;
