@@ -39,7 +39,7 @@ module.exports = app => {
 
         // We are gendering the bot
         if(nick === app.nick) {
-          app.say(to, `{I am clearly a Male|I am clearly a female|I am obviously an apache attack helicopter|I can be what ever you want me to be} ${from}`);
+          app.say(to, `I am clearly {a male|a female|an Apache attack helicopter|what ever you want me to be} ${from}`);
           return;
         }
 

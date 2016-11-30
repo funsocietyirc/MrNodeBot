@@ -82,15 +82,16 @@ module.exports = app => {
     cronTime.minute = [0, 15, 30, 45];
     const update = scheduler.schedule(`${argReddit}${argChannel}`, cronTime, () => {
         logger.info(`Running Reddit for ${argChannel}`);
-        // We are not in the arg society channel
-        if (!app.isInChannel(argChannel)) return;
+        // We are not in the arg society channel and results object exists
+        if (!results || !app.isInChannel(argChannel)) return;
         loadPosts()
             .then(results => {
                 // No updates
-                if (!results.updated) return;
                 // Iterate each update, and send it back at a specified delay
-                _.each(results.posts, (post, x) => setTimeout(
-                    app.say(argChannel, `${type.logos.reddit} ${type.icons.sideArrow} ${post.author} ${type.icons.sideArrow} ${post.title} ${type.icons.sideArrow} ${post.url}`),
+                _.forEach(results.posts, (post, x) => setTimeout(() => {
+                        if(!app.say) return; // Make sure the say command is available
+                        app.say(argChannel, `${type.logos.reddit} ${type.icons.sideArrow} ${post.author} ${type.icons.sideArrow} ${post.title} ${type.icons.sideArrow} ${post.url}`);
+                    },
                     x * (delayInSeconds * 1000)
                 ));
             })

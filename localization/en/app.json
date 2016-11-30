@@ -1,0 +1,56 @@
+{
+    "irc": {
+        "initializing": "Connecting to IRC",
+        "connected": "Connected to {{server}} as {{nick}}"
+    },
+    "listeners": {
+        "init": "Initializing Listeners"
+    },
+    "database": {
+        "initializing": "Initializing Database Sub System",
+        "initialized": "Database Sub System initialized",
+        "missing": "No Database system found, {{feature}} limited/disabled"
+    },
+    "scripts": {
+        "initializing": "Initializing scripts from {{- dir}}",
+        "loaded": "Loaded Script: {{- file}}",
+        "error": "Error Loading Script in {{- path}}"
+    },
+    "storage": {
+        "initialized": "Storage Initialized",
+        "ignored": "Total Ignored: {{total}}",
+        "admins": "Total Admins: {{total}}"
+    },
+    "aliases": {
+        "imporperStructure": "Improper structure in config.js for commandBindings",
+        "doesNotExist": "The Alias {{alias}} for the command {{command}} does not exists",
+        "alreadyExists": "The Alias {{alias}} for the command {{command}} already exists"
+    },
+    "bootstrap": {
+        "rebooting": "Rebooting...",
+        "reloading": "Reloading...",
+        "reloadConfig": "Reloading Configuration Object"
+    },
+    "events": {
+        "channelJoined": "Joined channel {{channel}}",
+        "channelParted": "Parted channel {{channel}}: {{reason}}",
+        "kickLoggingBy": "Kicked from {{channel}} by {{by}}: {{reason}}",
+        "kickLoggingFrom": "Kicked {{nick}} from {{channel}}: {{reason}}",
+        "quitLogging": "Quit server and left {{channels}} because {{reason}}",
+        "topicLogging": "Changed Topic of {{channel}} to {{topic}}",
+        "registeredToIrc": "Registered to IRC server",
+        "sentMessage": "Message: {{target}} {{message}}",
+        "sentAction": "Action: {{target}} {{message}}",
+        "sentNotice": "Notice: {{target}} {{message}}",
+        "nickChanged": "Changed Nickname from {{oldnick}} to {{newnick}}"
+    },
+    "auth": {
+      "notMemberOfGroup": "You are not a member of the group {{group}}. Access Denied",
+      "notMemberOfGroupLogging": "{{nick}} on {{channel}} tried to use the {{group}} command {{type}}",
+      "notIdentified": "You must be identified with NickServ to use this command"
+    },
+    "webServer": {
+      "starting": "Starting Web Server...",
+      "started": "Web Server started on {{port}}"
+    }
+}

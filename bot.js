@@ -14,6 +14,7 @@ const helpers = require('./helpers');
 const logger = require('./lib/logger');
 const scheduler = require('./lib/scheduler');
 const randomString = require('./lib/randomString');
+const t = require('./lib/localize');
 
 // Extend for project
 require('./extensions');
@@ -83,17 +84,22 @@ class MrNodeBot {
 
     // Init the Web Server
     _initWebServer() {
-        logger.info('Starting Web Server...');
+        logger.info(t('webServer.starting'));
         this.WebServer = require('./web/server')(this);
-        logger.info(`Web Server started on port ${this.Config.express.port}`);
+        logger.info(t('webServer.started', {
+            port: this.Config.express.port
+        }));
     };
 
     // Init the IRC Bot
     _initIrc() {
-        logger.info('Connecting to IRC');
+        logger.info(t('irc.initializing'));
         // Connect the Bot to the irc network
         return new Promise((resolve, reject) => this._ircClient.connect(20, () => {
-                logger.info(`Connected to ${this.Config.irc.server} as ${this._ircClient.nick}`);
+                logger.info(t('irc.connected', {
+                    server: this.Config.irc.server,
+                    nick: this.nick
+                }));
                 resolve();
             }))
             // If there is a password and we are on the same nick we were configured for, identify
@@ -107,7 +113,7 @@ class MrNodeBot {
             .then(() => this._loadDynamicAssets(false))
             // Initialize the listeners
             .then(() => {
-                logger.info('Initializing Listeners');
+                logger.info(t('listeners.init'));
                 _({
                         // Handle OnAction
                         action: (nick, to, text, message) => this._handleAction(nick, to, text, message),
@@ -164,21 +170,25 @@ class MrNodeBot {
     _initDbSubSystem() {
         // We have a Database available
         if (this.Config.knex.enabled) {
-            logger.info('Initializing Database Sub System');
+            logger.info(t('database.initializing'));
             this.Database = require('./database/client');
-            logger.info('Database Sub System Initialized');
+            logger.info(t('database.initialized'));
             return;
         }
 
         // We haave no Database available
-        logger.error('No Database system found, features limited');
+        logger.error(t('database.missing', {
+            feature: 'Database Core'
+        }));
         this.Database = false;
     };
 
     // Initialize the user manager
     _initUserManager() {
         if (!this.Database) {
-            logger.info('Database not present, UserManager disabled');
+            logger.info(t('database.missing', {
+                feature: 'User Manager'
+            }));
             return;
         }
 
@@ -195,8 +205,9 @@ class MrNodeBot {
     // Read all JS files in the scripts directory and evaluate them
     // During the update process this updates the script portions of the code
     _loadScriptsFromDir(dir, clearCache) {
-        logger.info(`Loading all scripts from ${dir}`);
-
+        logger.info(t('scripts.initializing', {
+            dir
+        }));
         // Get a normalized path to the script
         let normalizedPath = path.join(__dirname, dir);
 
@@ -214,7 +225,9 @@ class MrNodeBot {
                     }
                     // If we are not dealing with a partial file _something.js
                     if (file[0] != '_' && _.endsWith(file, '.js')) {
-                        logger.info(`Loading Script: ${file}`);
+                        logger.info(t('scripts.loaded', {
+                            file
+                        }));
                         let scriptInfo = {
                             fullPath: fullPath,
                             info: require(`./${dir}/${file}`)(this)
@@ -224,7 +237,11 @@ class MrNodeBot {
                         this.LoadedScripts.push(scriptInfo);
                     }
                 } catch (err) {
-                    logger.error(`[${err}] in: ${fullPath}`.replace(`${path.sep}${path.sep}`, `${path.sep}`));
+                    logger.error(t('scripts.error', {
+                        path: fullPath
+                    }), {
+                        err
+                    });
                 }
             });
     };
@@ -237,7 +254,9 @@ class MrNodeBot {
         // Load the Ignore list
         storage.getItem('ignored', (err, value) => {
             this.Ignore = value || this.Ignore;
-            logger.info(`Total Ignored: ${this.Ignore.length}`);
+            logger.info(t('storage.ignored', {
+                total: this.Ignore.length
+            }));
         });
 
         // Load the Admin list
@@ -250,10 +269,11 @@ class MrNodeBot {
                 this.Admins = [_.toLower(this.Config.owner.nick)];
                 storage.setItemSync('admins', this.Admins);
             }
-            logger.info(`Total Administrators: ${this.Admins.length}`);
+            logger.info(t('storage.admins', {
+                total: this.Admins.length
+            }));
         });
-
-        logger.info('Application State Initialized');
+        logger.info(t('storage.initialized'));
     };
 
     // Read the configuration and alias any commands specified
@@ -263,15 +283,21 @@ class MrNodeBot {
 
         this.Config.commandBindings.forEach(commandBinding => {
             if (!commandBinding.alias || !commandBinding.command) {
-                logger.error(`Improper structure in config.js for commandBindings`);
+                logger.error(t('aliases.improperStricture'));
                 return;
             }
             if (!this.Commands.has(commandBinding.command)) {
-                logger.error(`The command ${commandBinding.command} for alias ${commandBinding.alias} does not exist`);
+                logger.error(t('aliases.doesNotExist', {
+                    alias: commandBinding.command,
+                    command: commandBinding.alias
+                }));
                 return;
             }
             if (this.Commands.has(commandBinding.alias)) {
-                logger.error(`The alias ${commandBinding.alias} for the command ${commandBinding.command} already exists`);
+                logger.error(t('aliases.alreadyExists', {
+                    alias: commandBinding.command,
+                    command: commandBinding.alias
+                }));
                 return;
             }
             this.Commands.set(commandBinding.alias, this.Commands.get(commandBinding.command));
@@ -311,11 +337,11 @@ class MrNodeBot {
     Bootstrap(hard) {
         hard = hard || false;
         if (hard) {
-            logger.info('Rebooting...');
+            logger.info(t('bootstrap.rebooting'));
             this._ircClient.disconnect();
             process.exit();
         } else {
-            logger.info('Reloading...');
+            logger.info(t('bootstrap.reloading'));
             this._loadDynamicAssets(true);
         }
     };
@@ -345,10 +371,9 @@ class MrNodeBot {
     _handleNickChanges(oldnick, newnick, channels, message) {
         // Return if user is on ignore list
         if (_.includes(this.Ignore, _.toLower(oldnick)) || _.includes(this.Ignore, _.toLower(newnick))) return;
+
         // track if the bots nick was changed
-        if (oldnick === this.nick) {
-            this.nick = newnick;
-        }
+        if (oldnick === this.nick) this.nick = newnick;
 
         // Run events
         this.NickChanges.forEach((value, key) => {
@@ -381,7 +406,10 @@ class MrNodeBot {
         // Handle Ignore
         if (_.includes(this.Ignore, _.toLower(nick))) return;
 
-        if (nick == this.nick) logger.info(`Joined channel ${channel}`);
+        if (nick == this.nick) logger.info(t('events.channelJoined', {
+            channel
+        }));
+
         this.OnJoin.forEach((value, key) => {
             try {
                 value.call(channel, nick, message);
@@ -398,7 +426,11 @@ class MrNodeBot {
         // Handle Ignore
         if (_.includes(this.Ignore, _.toLower(nick))) return;
 
-        if (nick == this.nick) logger.info(`Parted channel ${channel}: ${reason}`);
+        if (nick == this.nick) logger.info(t('events.channelParted', {
+            channel,
+            reason
+        }));
+
         this.OnPart.forEach((value, key) => {
             try {
                 value.call(channel, nick, reason, message);
@@ -415,8 +447,18 @@ class MrNodeBot {
         //  Handle Ignore
         if (_.includes(this.Ignore, _.toLower(nick))) return;
 
-        if (nick == this.nick) logger.info(`Kicked from ${channel} by ${by}: ${reason}`);
-        if (by == this.nick) logger.info(`Kicked ${nick} from ${channel}: ${reason}`);
+        if (nick == this.nick) logger.info(t('events.kickLoggingBy', {
+            channel,
+            by,
+            reason
+        }));
+
+        if (by == this.nick) logger.info(t('events.kickLoggingFrom', {
+            nick,
+            channel,
+            reason
+        }));
+
         this.OnKick.forEach((value, key) => {
             try {
                 value.call(channel, nick, by, reason, message);
@@ -432,7 +474,11 @@ class MrNodeBot {
         //  Handle Ignore
         if (_.includes(this.Ignore, _.toLower(nick))) return;
 
-        if (nick == this.nick) logger.info(`Quit server and left ${channels.join(', ')} because ${reason}`);
+        if (nick == this.nick) logger.info(t('events.quitLogging', {
+            channels: channels.join(', '),
+            reason
+        }));
+
         this.OnQuit.forEach((value, key) => {
             try {
                 value.call(nick, reason, channels, message);
@@ -448,7 +494,10 @@ class MrNodeBot {
         //  Handle Ignore
         if (_.includes(this.Ignore, _.toLower(nick))) return;
 
-        if (nick == this.nick) logger.info(`Changed topic of ${channel} to ${topic}`);
+        if (nick == this.nick) logger.info(t('events.topicLogging', {
+            channel,
+            topic
+        }));
 
         this.OnTopic.forEach((value, key) => {
             try {
@@ -477,7 +526,7 @@ class MrNodeBot {
 
     // Fired when the bot connects to the network
     _handleRegistered(message) {
-        logger.info('Registerd to IRC server');
+        logger.info(t('events.registeredToIrc'));
 
         this.Registered.forEach((value, key) => {
             try {
@@ -579,8 +628,15 @@ class MrNodeBot {
             // Log to the console if a user without access a command they are not privy too
             if (unauthorized) {
                 let group = helpers.AccessString(admCmd.access);
-                this.say(admCall.from, `You are not a member of the ${group} access list.`);
-                logger.error(`${admCall.from} on ${admCall.to} tried to use the ${group} command ${admCall.cmd}`);
+                this.say(admCall.from, t('auth.notMemberOfGroup'));
+
+                logger.error(t('auth.nonMemberOfGroupLogging', {
+                    nick: admCall.from,
+                    channel: admCall.to,
+                    group: group,
+                    type: admCall.cmd
+                }));
+
                 return;
             }
 
@@ -591,9 +647,7 @@ class MrNodeBot {
             }
         }
         // Is not identified
-        else {
-            this.say(admCall.from, 'You must be identified with NickServ to use this command');
-        }
+        else this.say(admCall.from, t('auth.notIdentified'));
 
         // Remove the callback from the stack
         this.AdmCallbacks.remove(user);
@@ -602,27 +656,41 @@ class MrNodeBot {
     // Send a message to the target
     say(target, message) {
         let msg = randomString(message);
-        logger.info(`Message: ${target}: ${c.stripColorsAndStyle(msg)}`, {
+        logger.info(t('events.sentMessage', {
+            target: target,
+            message: c.stripColorsAndStyle(msg)
+        }), {
             original: msg
         });
+
         this._ircClient.say(target, msg);
     };
 
     // Send a action to the target
     action(target, message) {
         let msg = randomString(message);
-        logger.info(`Action: ${target}: ${c.stripColorsAndStyle(msg)}`, {
+
+        logger.info(t('events.sentAction', {
+            target: target,
+            message: c.stripColorsAndStyle(msg)
+        }), {
             original: msg
         });
+
         this._ircClient.action(target, msg);
     };
 
     // Send notice to the target
     notice(target, message) {
         let msg = randomString(message);
-        logger.info(`Notice: ${target}: ${c.stripColorsAndStyle(msg)}`, {
+
+        logger.info(t('events.sentNotice', {
+            target: target,
+            message: c.stripColorsAndStyle(msg)
+        }), {
             original: msg
         });
+
         this._ircClient.notice(target, msg);
     };
 
@@ -633,7 +701,7 @@ class MrNodeBot {
 
     // Reload the configruation
     reloadConfiguration() {
-        logger.info('Reloading Configuration object');
+        logger.info(t('bootstrap.reloadConfig'));
 
         this._clearCache('./config.js');
         this.Config = require('./config.js');
@@ -652,10 +720,12 @@ class MrNodeBot {
     set nick(newNick) {
         // If we do not have a provided nick, use the settings default
         newNick = newNick || this.Config.irc.nick;
-        logger.info(`Changed Nickname from ${this.nick} to ${newNick}`);
+        logger.info(t('events.nickChanged', {
+            oldNick: this.nick,
+            newNick
+        }));
         this._ircClient.send('nick', newNick);
         this._ircClient.nick = newNick;
-
     };
 
     // Bots IRC Channels

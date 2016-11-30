@@ -36,6 +36,7 @@
     "freeport": "^1.0.5",
     "gitlog": "^2.0.1",
     "hashmap": "^2.0.3",
+    "i18next": "^4.1.0",
     "irc": "git://github.com/funsocietyirc/node-irc.git",
     "irc-colors": "^1.3.*",
     "knex": "^0.12.6",

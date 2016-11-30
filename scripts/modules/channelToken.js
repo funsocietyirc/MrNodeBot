@@ -20,7 +20,8 @@ module.exports = app => {
 
     // Go through the users tokens and remove them if they are over a week old
     const cleanTokens = scheduler.schedule('cleanTokens', {
-        hour: 0
+        hour: 0,
+        minute: 0
     }, () => {
         let now = moment();
 

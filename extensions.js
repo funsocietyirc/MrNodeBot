@@ -23,7 +23,7 @@ exports = function() {
             var target = this;
             // No valid input, return string, log
             if(!target) {
-              logger.error('Invalid input detected in Replace All Extension', {data: this});
+              logger.error(t('libraries:invalidReplaceInput'), {data: this});
               return '';
             }
             return target.replace(new RegExp(search, 'g'), replacement);
