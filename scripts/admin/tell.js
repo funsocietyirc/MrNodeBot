@@ -6,26 +6,39 @@ const scriptInfo = {
 };
 
 const _ = require('lodash');
+const t = require('../../lib/localize');
 
-/*
-    Send a message
-    tell <nick> <message>
-*/
+// Localizations
+const i18next = require('../../lib/i18next');
+i18next.addResources('en', 'tell', {
+    help: 'tell [nick] [message] : Reach out and touch somebody',
+    reportBack: 'I have told {{- nick} {{- body}}}'
+});
+
 module.exports = app => {
     const tell = (to, from, text, message) => {
         let textArray = text.split(' ');
         let [nick] = textArray;
         let body = _.without(textArray, nick).join(' ');
+
         if (!nick || !body) {
-            app.say(to, 'I need some more information...');
+            app.say(to, t('errors.information', {
+                nick: to
+            }));
             return;
         }
+
         app.say(nick, body);
-        app.say(to, 'I have told ' + nick + '  ' + body);
+
+        // Report back
+        if (nick != to) app.say(t('admin:reportBack', {
+            nick,
+            body
+        }));
     };
     // Terminate the bot and the proc watcher that keeps it up
     app.Commands.set('tell', {
-        desc: 'tell [nick] [message] : Reach out and touch somebody',
+        desc: t('tell:help'),
         access: app.Config.accessLevels.admin,
         call: tell
     });

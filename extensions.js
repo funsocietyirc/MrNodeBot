@@ -1,6 +1,7 @@
 'use strict';
 
 const logger = require('./lib/logger');
+const _ = require('lodash');
 
 // Primitive Prototype Shims
 exports = function() {
@@ -16,17 +17,11 @@ exports = function() {
     // Replace all instances of a string with another string
     // Third optional argument for ignore
     if (!String.prototype.replaceAll) {
-        // String.prototype.replaceAll = function(str1, str2, ignore) {
-        //     return this.replace(new RegExp(str1.replace(/([\/\,\!\\\^\$\{\}\[\]\(\)\.\*\+\?\|\<\>\-\&])/g, '\\$&'), (ignore ? 'gi' : 'g')), (typeof(str2) == "string") ? str2.replace(/\$/g, '$$$$') : str2);
-        // };
-        String.prototype.replaceAll = function(search, replacement) {
-            var target = this;
-            // No valid input, return string, log
-            if(!target) {
-              logger.error(t('libraries:invalidReplaceInput'), {data: this});
-              return '';
-            }
-            return target.replace(new RegExp(search, 'g'), replacement);
+        String.prototype.replaceAll = function(str1, str2, ignore) {
+            let target = _.isString(this) ? this : '';
+            str1 = _.isString(str1) ? str1 : '';
+            str2 = _.isString(str2) ? str2 : '';
+            return target.replace(new RegExp(str1.replace(/([\/\,\!\\\^\$\{\}\[\]\(\)\.\*\+\?\|\<\>\-\&])/g, '\\$&'), (ignore ? 'gi' : 'g')), str2.replace(/\$/g, '$$$$'));
         };
     }
 }();

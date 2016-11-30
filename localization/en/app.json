@@ -52,5 +52,8 @@
     "webServer": {
       "starting": "Starting Web Server...",
       "started": "Web Server started on {{port}}"
+    },
+    "errors": {
+      "moreInformation":  "I need some more information {{- nick}}"
     }
 }

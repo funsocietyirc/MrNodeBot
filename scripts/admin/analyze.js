@@ -90,10 +90,10 @@ module.exports = app => {
 
         sayHelper('Nicks', data.nicks.join(' | '));
         sayHelper('Past Channels', data.pastChannels.join(' | '));
-        if(!_.isEmpty(data.currentChannels)) sayHelper('Current Channels', data.currentChannels.join(' | '));
+        if (!_.isEmpty(data.currentChannels)) sayHelper('Current Channels', data.currentChannels.join(' | '));
         sayHelper('Hosts', data.hosts.join(' | '));
         sayHelper('Idents', data.idents.join(' | '));
-        if(data.currentServer) sayHelper('Server', `${data.currentServer} ` + (data.secureServer ? '(SSL)' : '(Plain Text)'));
+        if (data.currentServer) sayHelper('Server', `${data.currentServer} ` + (data.secureServer ? '(SSL)' : '(Plain Text)'));
         sayHelper('First Active', `as ${data.firstResult.from} on ${firstDateActive.format('h:mma MMM Do')} (${firstDateActive.fromNow()}) On: ${data.firstResult.to}`);
         sayHelper('First Message', data.firstResult.text);
         sayHelper('Last Active', `as ${data.lastResult.from} on ${lastDateActive.format('h:mma MMM Do')} (${lastDateActive.fromNow()}) On: ${data.lastResult.to}`);
@@ -133,91 +133,91 @@ module.exports = app => {
 
     const init = (to, nick, subCommand, argument, processor) => {
 
-            // Verify Info object
-            if (!nick) {
-                app.say(to, `A Nick is required`);
-                return;
-            }
+        // Verify Info object
+        if (!nick) {
+            app.say(to, `A Nick is required`);
+            return;
+        }
 
-            // Send Whois Command
-            app._ircClient.whoisPromise(nick)
-                .then(whoisResults => {
-                        if(!whoisResults.user && subCommand == 'ident') {
-                            app.say(to, 'Not enough information');
-                            return;
-                        }
+        // Send Whois Command
+        app._ircClient.whoisPromise(nick)
+            .then(whoisResults => {
+                if (!whoisResults.user && subCommand == 'ident') {
+                    app.say(to, 'Not enough information');
+                    return;
+                }
 
-                        whoisResults.host = whoisResults.host || argument;
-                        whoisResults.user = whoisResults.user || nick;
+                whoisResults.host = whoisResults.host || argument;
+                whoisResults.user = whoisResults.user || nick;
 
-                        if (!whoisResults.host || !whoisResults.user) {
-                            return Models.Logging.query(qb => qb
-                                    .where('from', 'like', whoisResults.user)
-                                    .orderBy('timestamp', 'desc')
-                                    .limit(1)
-                                )
-                                .fetch()
-                                .then(results => new Promise((resolve, reject) => {
-                                        if (!results) {
-                                            reject(new Error('No Results available'));
-                                            return;
-                                        }
+                if (!whoisResults.host || !whoisResults.user) {
+                    return Models.Logging.query(qb => qb
+                            .where('from', 'like', whoisResults.user)
+                            .orderBy('timestamp', 'desc')
+                            .limit(1)
+                        )
+                        .fetch()
+                        .then(results => new Promise((resolve, reject) => {
+                            if (!results) {
+                                reject(new Error('No Results available'));
+                                return;
+                            }
 
-                                        whoisResults.host = whoisResults.host || results.get('host');
-                                        whoisResults.user = whoisResults.user || results.get('ident');
+                            whoisResults.host = whoisResults.host || results.get('host');
+                            whoisResults.user = whoisResults.user || results.get('ident');
 
-                                        resolve(queryBuilder(convertSubFrom(subCommand), whoisResults[convertSubInfo(subCommand)])
-                                            .then(dbResults => {
-                                                return getLocationData(whoisResults.host)
-                                                    .then(locResults => {
-                                                        processor(to, renderData(nick, subCommand, dbResults.toJSON(), whoisResults, locResults));
-                                                    });
-                                            }));
+                            resolve(queryBuilder(convertSubFrom(subCommand), whoisResults[convertSubInfo(subCommand)])
+                                .then(dbResults => {
+                                    return getLocationData(whoisResults.host)
+                                        .then(locResults => {
+                                            processor(to, renderData(nick, subCommand, dbResults.toJSON(), whoisResults, locResults));
+                                        });
                                 }));
-                    }
+                        }));
+                }
 
-                    return queryBuilder(convertSubFrom(subCommand), whoisResults[convertSubInfo(subCommand)])
-                        .then(dbResults => {
-                            whoisResults.host = whoisResults.host || _.last(dbResults).get('host');
-                            return getLocationData(whoisResults.host)
-                                .then(locResults => {
-                                    processor(to, renderData(nick, subCommand, dbResults.toJSON(), whoisResults, locResults));
-                                })
-                        })
-                })
-        .catch(err => app.say(to, err.message));
-};
+                return queryBuilder(convertSubFrom(subCommand), whoisResults[convertSubInfo(subCommand)])
+                    .then(dbResults => {
+                        whoisResults.host = whoisResults.host || _.last(dbResults).get('host');
+                        return getLocationData(whoisResults.host)
+                            .then(locResults => {
+                                processor(to, renderData(nick, subCommand, dbResults.toJSON(), whoisResults, locResults));
+                            })
+                    })
+            })
+            .catch(err => app.say(to, err.message));
+    };
 
-/**
-  Trigger command for advanced active tracking
-**/
-const analyze = (to, from, text, message) => {
-    // Parse Text
-    let txtArray = text.split(' ');
-    let nick = txtArray.shift();
-    let subCommand = txtArray.shift();
-    let argument = txtArray.shift();
+    /**
+      Trigger command for advanced active tracking
+    **/
+    const analyze = (to, from, text, message) => {
+        // Parse Text
+        let txtArray = text.split(' ');
+        let nick = txtArray.shift();
+        let subCommand = txtArray.shift();
+        let argument = txtArray.shift();
 
-    if (!subCommand || !nick) {
-        app.say(to, 'Both a Sub Command and a Nick are required');
-        return;
-    }
+        if (!subCommand || !nick) {
+            app.say(to, 'Both a Sub Command and a Nick are required');
+            return;
+        }
 
-    // Check for valid commands
-    if (!_.includes(['ident', 'host', 'nick'], subCommand)) {
-        app.say(to, 'That is not a valid Sub Command silly');
-        return;
-    }
+        // Check for valid commands
+        if (!_.includes(['ident', 'host', 'nick'], subCommand)) {
+            app.say(to, 'That is not a valid Sub Command silly');
+            return;
+        }
 
-    init(to, nick, subCommand, argument, reportToIrc);
-};
+        init(to, nick, subCommand, argument, reportToIrc);
+    };
 
-app.Commands.set('analyze', {
-    desc: '[Nick] [Sub Command] - Advanced Analytics tool',
-    access: app.Config.accessLevels.admin,
-    call: analyze
-});
+    app.Commands.set('analyze', {
+        desc: '[Nick] [Sub Command] - Advanced Analytics tool',
+        access: app.Config.accessLevels.admin,
+        call: analyze
+    });
 
-// Return the script info
-return scriptInfo;
+    // Return the script info
+    return scriptInfo;
 };

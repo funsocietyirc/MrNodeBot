@@ -304,8 +304,6 @@ class MrNodeBot {
         });
     };
 
-
-
     _loadDynamicAssets(clearCache = false) {
         // Clear dynamic assets
         if (clearCache) {
@@ -655,6 +653,7 @@ class MrNodeBot {
 
     // Send a message to the target
     say(target, message) {
+        if (!_.isString(message) || _.isEmpty(message.trim())) return;
         let msg = randomString(message);
         logger.info(t('events.sentMessage', {
             target: target,
@@ -668,8 +667,8 @@ class MrNodeBot {
 
     // Send a action to the target
     action(target, message) {
+        if (!_.isString(message) || _.isEmpty(message.trim())) return;
         let msg = randomString(message);
-
         logger.info(t('events.sentAction', {
             target: target,
             message: c.stripColorsAndStyle(msg)
@@ -682,6 +681,7 @@ class MrNodeBot {
 
     // Send notice to the target
     notice(target, message) {
+        if (!_.isString(message) || _.isEmpty(message.trim())) return;
         let msg = randomString(message);
 
         logger.info(t('events.sentNotice', {
