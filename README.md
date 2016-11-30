@@ -18,3 +18,6 @@ By: IronY
 Have questions? Looking to chat? Join us on #fsociety on irc.freenode.net
 
 Pull Requests Welcome
+
+## If using mysql you will need to create a schema first, make sure to give it a utf8mb4_unicode_ci charset
+CREATE DATABASE db_name CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;

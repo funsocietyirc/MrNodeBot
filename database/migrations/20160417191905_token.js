@@ -1,9 +1,10 @@
 exports.up = function(knex, Promise) {
-    return knex.schema.createTableIfNotExists('token', function(table) {
+    return knex.schema.createTable('token', function(table) {
+        table.collate('utf8mb4_unicode_ci');
         table.increments('id').primary();
-        table.string('user').collate('utf8_unicode_ci');
-        table.string('channel').collate('utf8_unicode_ci');
-        table.string('token').collate('utf8_unicode_ci');
+        table.string('user').collate('utf8mb4_unicode_ci');
+        table.string('channel').collate('utf8mb4_unicode_ci');
+        table.string('token').collate('utf8mb4_unicode_ci');
         table.timestamp('timestamp').defaultTo(knex.fn.now());
     });
 };
