@@ -1,7 +1,7 @@
 
 exports.up = function(knex, Promise) {
   return knex.schema.table('greeter', function(table) {
-    table.string('host', 1000).nullable().defaultTo(null);
+    table.string('host', 1000).nullable().defaultTo(null).collate('utf8_unicode_ci');
   });
 };
 

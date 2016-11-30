@@ -1,13 +1,13 @@
 exports.up = function(knex, Promise) {
     return knex.schema.createTable('mention', function(table) {
         table.increments('id').primary();
-        table.string('text', 550);
-        table.string('by');
-        table.string('channel');
+        table.string('text', 550).collate('utf8_unicode_ci');
+        table.string('by').collate('utf8_unicode_ci');
+        table.string('channel').collate('utf8_unicode_ci');
         table.timestamp('timestamp').defaultTo(knex.fn.now());
     }).createTable('mentioned', function(table) {
         table.increments('id').primary();
-        table.string('nick');
+        table.string('nick').collate('utf8_unicode_ci');
         table.timestamp('timestamp').defaultTo(knex.fn.now());
         table.integer('mention_id').references('mention_id');
     });

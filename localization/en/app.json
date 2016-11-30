@@ -1,7 +1,7 @@
 {
     "irc": {
         "initializing": "Connecting to IRC",
-        "connected": "Connected to {{server}} as {{nick}}"
+        "connected": "Connected to {{- server}} as {{- nick}}"
     },
     "listeners": {
         "init": "Initializing Listeners"
@@ -32,21 +32,21 @@
         "reloadConfig": "Reloading Configuration Object"
     },
     "events": {
-        "channelJoined": "Joined channel {{channel}}",
-        "channelParted": "Parted channel {{channel}}: {{reason}}",
-        "kickLoggingBy": "Kicked from {{channel}} by {{by}}: {{reason}}",
-        "kickLoggingFrom": "Kicked {{nick}} from {{channel}}: {{reason}}",
-        "quitLogging": "Quit server and left {{channels}} because {{reason}}",
-        "topicLogging": "Changed Topic of {{channel}} to {{topic}}",
+        "channelJoined": "Joined channel {{- channel}}",
+        "channelParted": "Parted channel {{- channel}}: {{- reason}}",
+        "kickLoggingBy": "Kicked from {{channel}} by {{- by}}: {{- reason}}",
+        "kickLoggingFrom": "Kicked {{- nick}} from {{- channel}}: {{- reason}}",
+        "quitLogging": "Quit server and left {{- channels}} because {{- reason}}",
+        "topicLogging": "Changed Topic of {{- channel}} to {{topic}}",
         "registeredToIrc": "Registered to IRC server",
-        "sentMessage": "Message: {{target}} {{message}}",
-        "sentAction": "Action: {{target}} {{message}}",
-        "sentNotice": "Notice: {{target}} {{message}}",
-        "nickChanged": "Changed Nickname from {{oldnick}} to {{newnick}}"
+        "sentMessage": "Message: {{- target}} {{- message}}",
+        "sentAction": "Action: {{- target}} {{- message}}",
+        "sentNotice": "Notice: {{- target}} {{- message}}",
+        "nickChanged": "Changed Nickname from {{- oldnick}} to {{- newnick}}"
     },
     "auth": {
       "notMemberOfGroup": "You are not a member of the group {{group}}. Access Denied",
-      "notMemberOfGroupLogging": "{{nick}} on {{channel}} tried to use the {{group}} command {{type}}",
+      "notMemberOfGroupLogging": "{{- nick}} on {{- channel}} tried to use the {{group}} command {{type}}",
       "notIdentified": "You must be identified with NickServ to use this command"
     },
     "webServer": {

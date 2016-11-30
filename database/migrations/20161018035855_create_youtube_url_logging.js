@@ -1,12 +1,12 @@
 exports.up = function(knex, Promise) {
     return knex.schema.createTableIfNotExists('youTubeLink', function(table) {
         table.increments('id').primary();
-        table.string('to');
-        table.string('from');
-        table.string('title',1000);
-        table.string('url');
-        table.string('user');
-        table.string('host');
+        table.string('to').collate('utf8_unicode_ci');
+        table.string('from').collate('utf8_unicode_ci');
+        table.string('title',1000).collate('utf8_unicode_ci');
+        table.string('url').collate('utf8_unicode_ci');
+        table.string('user').collate('utf8_unicode_ci');
+        table.string('host').collate('utf8_unicode_ci');
         table.timestamp('timestamp').defaultTo(knex.fn.now());
     });
 };

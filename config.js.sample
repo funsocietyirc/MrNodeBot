@@ -93,7 +93,7 @@ module.exports = {
         stripColors: false,
         channelPrefixes: '&#',
         messageSplit: '512',
-        encoding: 'UTF-8',
+        encoding: 'utf8',
     },
     // Knex configuration http://knexjs.org/#Installation-client
     knex: {
@@ -105,7 +105,8 @@ module.exports = {
                 host: '127.0.0.1',
                 user: 'MrNodeBot',
                 password: 'MrNodeBot',
-                database: 'MrNodeBot'
+                database: 'MrNodeBot',
+                charset: 'utf8mb4',
             },
         },
         sqlite: {

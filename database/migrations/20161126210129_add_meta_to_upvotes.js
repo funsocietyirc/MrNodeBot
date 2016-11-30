@@ -1,12 +1,18 @@
 exports.up = function(knex, Promise) {
     return knex.schema.table('upvotes', function(table) {
-        table.string('user');
-        table.string('host');
+        return Promise.all([
+            knex.schema.hasColumn('upvotes', 'user').then(exists => {
+                if (!exists) knex.schema.table('upvotes', t => t.string('user').collate('utf8_unicode_ci'));
+            }),
+            knex.schema.hasColumn('upvotes', 'host').then(exists => {
+                if (!exists) knex.schema.table('upvotes', t => t.string('host').collate('utf8_unicode_ci'));
+            }),
+        ]);
     });
 };
 
 exports.down = function(knex, Promise) {
     return knex.schema.table('upvotes', function(table) {
-        table.dropColumns('user','host');
+        table.dropColumns('user', 'host');
     });
 };

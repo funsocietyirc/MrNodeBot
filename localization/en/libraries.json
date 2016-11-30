@@ -1,5 +1,5 @@
 {
-    "whoisFailed": "Unable to whois {{nick}}",
+    "whoisFailed": "Unable to whois {{- nick}}",
     "userDoesNotExist": "User does not exist",
     "invalidReplaceInput": "Invalid input detected in Replace All Extension",
     "scheduler": {
