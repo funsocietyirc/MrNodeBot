@@ -76,7 +76,6 @@ module.exports = app => {
         .then(result => logger.info(`Grabbing first ${argReddit} post for ${argChannel}`))
         .catch(err => logger.error(err));
 
-
     // Assoicate the cron job for every 15 mins
     const cronTime = new scheduler.RecurrenceRule();
     cronTime.minute = [0, 15, 30, 45];

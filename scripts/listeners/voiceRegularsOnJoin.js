@@ -48,7 +48,7 @@ module.exports = app => {
     app.OnJoin.set('voice-regulars', {
         call: (channel, nick, message) => {
             // we are not an op in said channel
-            if (_.includes(autoVoiceChannelIgnore, channel) || !app._ircClient.isOpInChannel(channel, app.nick) || nick == app.nick) return;
+            if (nick == app.nick || _.includes(autoVoiceChannelIgnore, channel) || !app._ircClient.isOpInChannel(channel, app.nick)) return;
             voiceUsers(channel, threshold, app, {
                     nicks: [nick]
                 })
