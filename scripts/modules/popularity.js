@@ -106,10 +106,10 @@ module.exports = app => {
                     app.say(from, `Mean Score: ${result.meanScore} Total Score: ${result.totalScore} Total Votes: ${result.totalVotes}`);
                 })
                 .catch(err => {
-                  logger.error('Error in popularity-contest', {
-                      err
-                  });
-                  app.say(to, `An Error has occured with your popularity-contest command`);
+                    logger.error('Error in popularity-contest', {
+                        err
+                    });
+                    app.say(to, `An Error has occured with your popularity-contest command`);
                 });
         }
     });
@@ -124,11 +124,12 @@ module.exports = app => {
 
             getCanPopRank(nick, channel)
                 .then(result => {
-                    if (!result) {
+                    if (!result || !result.totalVotes) {
                         app.say(to, `There is no popularity data for ${nick}`);
                         return;
                     }
-                    app.say(to, `Popularity of ${nick}${channel ? ' On ' + channel : ''} ${typo.icons.sideArrow} ${result.totalVotes} ${typo.icons.views} ${typo.icons.sideArrow} ${result.meanScore} ${result.meanScore > 0 ? typo.icons.happy : typo.icons.sad}`);
+                    app.say(to, `Popularity of ${nick}${channel ? ' On ' + channel : ''} ${typo.icons.sideArrow} ${result.totalVotes} ${typo.icons.views} ${typo.icons.sideArrow} Total ${typo.colorSignedNumber(result.totalScore)} ` +
+                    `${result.totalScore > 0 ? typo.icons.happy : typo.icons.sad} ${typo.icons.sideArrow} Mean ${result.meanScore} ${result.meanScore > 0 ? typo.icons.happy : typo.icons.sad}`);
                 })
                 .catch(err => {
                     logger.error('Error in pupularity command', {

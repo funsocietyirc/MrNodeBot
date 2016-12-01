@@ -1,4 +1,5 @@
 const c = require('irc-colors');
+const _ = require('lodash');
 
 const icons = {
     upArrow: c.green.bold('↑'),
@@ -27,11 +28,28 @@ const logos = {
     imgur: c.green.bold('IMGUR'),
 };
 
+// Return Green color number for numbers less then 50
+// Return Red color number for numbers over 50
+// Return Blue color number for number at 50
 const colorNumber = num => {
+  if(!_.isSafeInteger(num)) {
+    num = _.parseInt(num);
+    if(!_.isSafeInteger(num)) return num;
+  }
   if(num > 50) return c.green(num);
   if(num < 50) return c.red(num);
   return c.blue(num);
 };
+
+const colorSignedNumber = num => {
+  if(!_.isSafeInteger(num)) {
+    num = _.parseInt(num);
+    if(!_.isSafeInteger(num)) return num;
+  }
+  if(num > 0) return c.green(num);
+  if(num < 50) return c.red(num);
+  return c.blue(num);
+}
 
 const title = text => c.bold(text);
 
@@ -39,5 +57,6 @@ module.exports = {
   logos,
   icons,
   title,
-  colorNumber
+  colorNumber,
+  colorSignedNumber
 };
