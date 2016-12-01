@@ -30,7 +30,7 @@ module.exports = app => {
         access: app.Config.accessLevels.owner,
         call: (to, from, text, message) => {
             app.Bootstrap(false);
-            app.action(to, 'has finished reloading this thoughts');
+            app.action(to, 'has finished reloading his thoughts');
         }
     });
 

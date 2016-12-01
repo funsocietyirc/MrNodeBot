@@ -80,7 +80,7 @@ module.exports = app => {
             .then(sendToIrc) // Send Results to IRC
             .then(results => results.unreachable ? results : // If the site is unreachable, carry on in chain
                 sendToDb(results) // Otherwise Log To Database
-                .then(sendToPusher) // Then broadcast to pusher
+                .then(sendToPusher) // Then broadcast to Pusher
             )
             .then(endChain) // End the chain, cache results
             .catch(err => logger.warn('Error in URL Listener chain', {
