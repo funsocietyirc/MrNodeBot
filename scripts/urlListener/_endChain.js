@@ -1,7 +1,7 @@
 'use strict';
 const config = require('../../config');
 const logger = require('../../lib/logger');
-const resultsCache = require('./_resultsCacheStore');
+const resultsCache = require('../../lib/hashedCacheStore');
 module.exports = (results) => {
 
   // Cache results

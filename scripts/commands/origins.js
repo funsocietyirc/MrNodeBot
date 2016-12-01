@@ -38,6 +38,7 @@ module.exports = app => {
                 `you can learn all about me at ${app.Config.project.repository.url}, or better yet contact me directly at ${app.Config.project.author} `;
             // Say
             app.say(from, out);
+            if(to !== from) app.say(to, `I have private messaged you my origin story ${from}`);
         }
     });
     return scriptInfo;

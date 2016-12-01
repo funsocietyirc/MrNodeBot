@@ -13,6 +13,5 @@ exports.up = function(knex, Promise) {
 
 exports.down = function(knex, Promise) {
     return knex.schema.table('upvotes', function(table) {
-        table.dropColumns('user', 'host');
     });
 };

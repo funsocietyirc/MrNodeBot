@@ -7,6 +7,7 @@ const scriptInfo = {
 };
 
 module.exports = app => {
+    if (!app.WebServer) return scriptInfo;
     app.Commands.set('images', {
         desc: 'Show users the link to images',
         access: app.Config.accessLevels.identified,

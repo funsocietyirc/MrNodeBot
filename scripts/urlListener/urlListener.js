@@ -31,14 +31,17 @@ const getDocument = require('./_getDocument'); // Get the title
 const matcher = require('././_linkMatcher'); // Link Matcher
 const getShorten = require('./_getShort'); // Shorten the URL
 const endChain = require('./_endChain'); // Finish the chain
+
 // Report
 const sendToDb = require('./_sendToDb'); // Log Urls to the Database
 const sendToPusher = require('./_sendToPusher'); // Send To Pusher
+
 // Libs
 const ircUrlFormatter = require('./_ircUrlFormatter'); // IRC Formatter
 const scheduler = require('../../lib/scheduler');
+
 // Cache URLS to prevent unnecessary API calls
-const resultsCache = require('./_resultsCacheStore');
+const resultsCache = require('../../lib/hashedCacheStore');
 
 module.exports = app => {
 

@@ -1,6 +1,6 @@
 'use strict';
 const _ = require('lodash');
-const resultsCache = require('./_resultsCacheStore');
+const resultsCache = require('../../lib/hashedCacheStore');
 const startChain = require('./_startChain');
 
 module.exports = (url, to, from, text, message, is) => new Promise((resolve, reject) => {
