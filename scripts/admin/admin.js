@@ -47,10 +47,11 @@ module.exports = app => {
         switch (cmd) {
             // List administrators
             case 'list':
-                app.say(from, helpers.TitleLine(t('admin:administrators')));
-                app.Admins.forEach(admin => {
-                    app.say(from, admin);
-                });
+                if(!app.Admins.length) {
+                  app.say(from, 'There are currently no Administrators listed');
+                  return;
+                }
+                app.say(from,`${helpers.TitleLine(t('admin:administrators'))} ${_.map(app.Admins, _.startCase).join(', ')}`);
                 break;
                 // Get Administrative commands
             case 'help':
