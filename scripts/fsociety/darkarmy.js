@@ -22,25 +22,26 @@ module.exports = app => {
     // Join main channel
     if (!_.includes(app.channels, app.Config.features.fsociety.mainChannel)) app._ircClient.join(app.Config.features.fsociety.mainChannel);
 
-    // Join the dark army channels
+    // Fetch the dark army channels
     const darkChannels = app.Config.features.fsociety.additionalChannels.concat(require('./_darkChannels')(app.Config.features.fsociety.totalChannels));
+
+    // Join the dark army channel
     const joinChannels = () => {
         if (!darkChannels.length) return;
-        
+
         const interval = app.Config.features.fsociety.delay * 1000; // In seconds
         const timeMessage = `I am joining the Dark Army! It will take me ` + app.Config.features.fsociety.delay * darkChannels.length + ` seconds...`;
 
         logger.info(timeMessage);
 
-        _.each(darkChannels, (channel, i) => {
-            if (!_.includes(app.channels, channel)) {
+          // Join any channels we are not already on
+        _(darkChannels)
+            .reject(dc => _.includes(app.channels, dc))
+            .each((channel, i) =>
                 setTimeout(
-                    () => {
-                        app.channels = channel;
-                    },
-                    interval * i, i);
-            }
-        });
+                    () => app.channels = channel,
+                    interval * i, i)
+            );
     };
     // Provide a OnConnected provider, this will fire when the bot connects to the network
     app.OnConnected.set('darkarmy', {
@@ -51,11 +52,12 @@ module.exports = app => {
 
     // Topic lock if possible
     const topicLock = (channel, topic, nick, message) => {
-        if (_.includes(darkChannels, channel) && !app._ircClient.isTopicLocked(channel)) {
-            if (!_.includes(topic, app.Config.features.fsociety.mainChannel) || topic == '') {
-                app._ircClient.send('topic', channel, `${topic} | ${app.Config.features.fsociety.mainChannel}`);
-            }
-        }
+        setTimeout(() => {
+            if (
+                _.includes(darkChannels, channel) && (!app._ircClient.isTopicLocked(channel) || app._ircClient.isOpInChannel(channel)) &&
+                (!_.includes(topic, app.Config.features.fsociety.mainChannel) || topic == '')
+            ) app._ircClient.send('topic', channel, `${topic} | ${app.Config.features.fsociety.mainChannel}`);
+        }, 5000);
     };
     // Try to lock down a topic if possible
     app.OnTopic.set('topicjacking', {

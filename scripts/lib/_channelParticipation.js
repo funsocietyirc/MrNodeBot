@@ -28,14 +28,17 @@ const defaultUsageOptions = {
 };
 
 module.exports = (channel, options) => new Promise((resolve, reject) => {
+    // No Database available
     if (!Models.Logging) {
         reject(new Error('No database connectivity available'));
         return;
-    } else if (!_.isString(channel)) {
+    }
+
+    // No Channel provided
+    if (!_.isString(channel) || _.isEmpty(channel)) {
         reject(new Error('No channel provided'));
         return;
     }
-
 
     options = _.isObject(options) ? _.defaultsDeep(options, defaultUsageOptions, {
         compiledTime: moment()
@@ -45,6 +48,7 @@ module.exports = (channel, options) => new Promise((resolve, reject) => {
 
     // Query
     Models.Logging.query(qb => {
+            // Starty The query
             qb
                 .select([
                     'from as nick',
@@ -69,17 +73,15 @@ module.exports = (channel, options) => new Promise((resolve, reject) => {
                 })
                 .groupBy('nick')
                 .orderBy('total', 'desc');
+
             // Optional Limit
-            if (!_.isNull(options.limit) && !isNaN(options.limit)) {
-                qb.limit(options.limit);
-            }
+            if (!_.isNull(options.limit) && !isNaN(options.limit)) qb.limit(options.limit);
         })
         .fetchAll()
         .then(models => {
             let results = models.toJSON();
-            if (!_.isNull(options.threshold) && !isNaN(options.threshold)) {
-                results = _.filter(results, r => r.total >= options.threshold);
-            }
+            // Filter results
+            if (!_.isNull(options.threshold) && !isNaN(options.threshold)) results = _.filter(results, r => r.total >= options.threshold);
             resolve(results);
         })
         .catch(err => {
