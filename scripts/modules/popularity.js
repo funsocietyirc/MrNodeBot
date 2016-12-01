@@ -37,7 +37,7 @@ module.exports = app => {
                         return;
                     }
 
-                    let output = `${result.voter} feels ${result.adjective} (${result.score} score) about ${result.candidate}`;
+                    let output = `${result.voter} feels ${result.adjective} (${typo.colorSignedNumber(result.score)} score) about ${result.candidate}`;
                     if (channel) output = output + ` in matters of ${result.channel}`;
                     output = output + ` (${result.votes} votes)`;
                     app.say(to, output);
@@ -68,8 +68,8 @@ module.exports = app => {
 
                     app.say(to, `The  Rankings have been messaged to you ${from}`);
                     app.say(from, `Popularity Rankings for ${channel}`);
-                    _.forEach(result.rankings, (v, k) => app.say(from, `[${k+1}] Candidate: ${v.candidate} Score: ${v.score} Votes: ${v.votes}`));
-                    app.say(from, `Mean Score: ${result.meanScore} Total Score: ${result.totalScore} Total Votes: ${result.totalVotes}`);
+                    _.forEach(result.rankings, (v, k) => app.say(from, `[${k+1}] Candidate: ${v.candidate} Score: ${typo.colorSignedNumber(v.score)} Votes: ${v.votes}`));
+                    app.say(from, `Mean Score: ${result.meanScore} Total Score: ${typo.colorSignedNumber(result.totalScore)} Total Votes: ${result.totalVotes}`);
 
                 })
                 .catch(err => {
@@ -100,10 +100,10 @@ module.exports = app => {
                     app.say(to, ` for candidate ${nick}${inChan} has been messaged to you ${from}`);
                     app.say(from, `Popularity for candidate ${nick}${inChan}`);
                     _.forEach(result.rankings,
-                        (value, key) => app.say(from, `[${key+1}] Voter: ${value.voter} Score: ${value.score} Votes: ${value.votes}`)
+                        (value, key) => app.say(from, `[${key+1}] Voter: ${value.voter} Score: ${typo.colorSignedNumber(value.score)} Votes: ${value.votes}`)
                     );
 
-                    app.say(from, `Mean Score: ${result.meanScore} Total Score: ${result.totalScore} Total Votes: ${result.totalVotes}`);
+                    app.say(from, `Mean Score: ${result.meanScore} Total Score: ${typo.colorSignedNumber(result.totalScore)} Total Votes: ${result.totalVotes}`);
                 })
                 .catch(err => {
                     logger.error('Error in popularity-contest', {
