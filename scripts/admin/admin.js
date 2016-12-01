@@ -51,7 +51,7 @@ module.exports = app => {
                   app.say(from, 'There are currently no Administrators listed');
                   return;
                 }
-                app.say(from,`${helpers.TitleLine(t('admin:administrators'))} ${_.map(app.Admins, _.startCase).join(', ')}`);
+                app.say(from,`${helpers.TitleLine(t('admin:administrators'))} ${_.map(app.Admins, _.capitalize).join(', ')}`);
                 break;
                 // Get Administrative commands
             case 'help':
