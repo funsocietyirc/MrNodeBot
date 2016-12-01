@@ -348,7 +348,11 @@ class MrNodeBot {
     // Drop non ascii and color code/style information
     _normalizeText(text) {
         if (_.isUndefined(text) || !_.isString(text)) return;
-        return c.stripColorsAndStyle(text).replace(helpers.RemoveNonPrintChars, '').trim();
+        return c
+            .stripColorsAndStyle(text) // Strip styles and color
+            .replace(helpers.RemoveNonPrintChars, '') // Remove non printable characters
+            .replace(/\u00c2/g, '\u0020') // Replace non breaking space with space
+            .trim() // Trim;
     };
 
     // Handle Action
