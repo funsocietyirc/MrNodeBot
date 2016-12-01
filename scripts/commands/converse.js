@@ -8,15 +8,10 @@ const scriptInfo = {
 const gen = require('../generators/_chatBotLine');
 
 module.exports = app => {
-    const converse = (to, from, text, message) => {
-        gen(text).then(result => app.say(to, `${from}, ${result}`));
-    };
-
     app.Commands.set('converse', {
         desc: '[Text?] Talk to the bot',
         access: app.Config.accessLevels.identified,
-        call: converse
+        call: (to, from, text, message) => gen(text).then(result => app.say(to, `${from}, ${result}`))
     });
-
     return scriptInfo;
 };

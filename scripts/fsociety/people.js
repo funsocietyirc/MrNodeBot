@@ -60,7 +60,7 @@ module.exports = (app) => {
     // Say Hello To Fr1end
     app.OnJoin.set('fsociety-fr1end', {
         call: (channel, nick, message) => {
-          if(nick == 'fr1end') app.say(channel, `Hello fr1end...`);
+            if (nick == 'fr1end') app.say(channel, `Hello fr1end...`);
         },
         name: 'Hello fr1end'
     });
@@ -70,15 +70,15 @@ module.exports = (app) => {
         desc: 'Show a Red Wheelbarrow',
         access: app.Config.accessLevels.admin,
         call: (to, from, text, message) => _.each([
-          "                                   _______",
-          "      ___________________________.'.------`",
-          "     '---------------------------.'",
-          "       `.       #FSOCIETY      .'",
-          "     .-//`.                  .'",
-          "  .' .//.'/`================'",
-          " =[=:====:=]=           \\||",
-          "  '. `--' .'             \_|",
-          "    `-  -'",
+            "                                   _______",
+            "      ___________________________.'.------`",
+            "     '---------------------------.'",
+            "       `.       #FSOCIETY      .'",
+            "     .-//`.                  .'",
+            "  .' .//.'/`================'",
+            " =[=:====:=]=           \\||",
+            "  '. `--' .'             \_|",
+            "    `-  -'",
         ], line => app.say(to, c.red(line)))
     });
 
@@ -108,41 +108,39 @@ module.exports = (app) => {
                 motherQuotes = _(results.pluck('text')).uniq().shuffle().value();
                 // Bail if we have no quotes
                 if (!motherQuotes.length) return;
-                // Expose mother quotes command
-                const mother = (to, from, text, message) => {
-                    let commands = text.split(' ');
-                    // Arguments
-                    if (commands.length) {
-                        switch (commands[0]) {
-                            // Report back stack statistics
-                            case 'total':
-                                app.say(to, `On Stack: ${motherQuotes.length} Used: ${usedQuoteCount} Total: ${motherQuotes.length + usedQuoteCount}`);
-                                return;
-                        }
-                    }
-                    // Get a random quote then omit the quote from the collection
-                    let say = () => {
-                        // We have run out of quotes, reload!
-                        if (!motherQuotes.length) {
-                            return getMother().then(() => say());
-                        }
-                        // Take a quote form the stack
-                        quote = motherQuotes.pop();
-                        // Increase used quotes counter
-                        usedQuoteCount = usedQuoteCount + 1;
-                        // Report to IRC
-                        app.say(to, quote);
-                    };
-                    say();
-                };
                 // Expose the mother command to IRC
                 app.Commands.set('mother', {
                     desc: 'Get a your mother line care of Jeek',
                     access: app.Config.accessLevels.identified,
-                    call: mother
+                    call: (to, from, text, message) => {
+                        let [commands] = text.split(' ');
+                        // Arguments
+                        if (commands.length) {
+                            switch (commands) {
+                                // Report back stack statistics
+                                case 'total':
+                                    app.say(to, `On Stack: ${motherQuotes.length} Used: ${usedQuoteCount} Total: ${motherQuotes.length + usedQuoteCount}`);
+                                    return;
+                            }
+                        }
+                        // Get a random quote then omit the quote from the collection
+                        let say = () => {
+                            // We have run out of quotes, reload!
+                            if (!motherQuotes.length) return getMother().then(() => say());
+                            // Take a quote form the stack
+                            quote = motherQuotes.pop();
+                            // Increase used quotes counter
+                            usedQuoteCount = usedQuoteCount + 1;
+                            // Report to IRC
+                            app.say(to, quote);
+                        };
+                        say();
+                    }
                 });
             })
-            .catch(err => logger.error('Error Loading jeek mother quotes quotes', {err}));
+            .catch(err => logger.error('Error Loading jeek mother quotes quotes', {
+                err
+            }));
     };
     // Load Initial set of quotes
     getMother();

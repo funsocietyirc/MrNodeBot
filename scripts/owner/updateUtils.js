@@ -20,7 +20,29 @@ module.exports = app => {
         access: app.Config.accessLevels.owner,
         call: (to, from, text, message) => {
             app.reloadConfiguration();
-            app.say(to, 'The configuration object has been reloaded');
+            app.action(to, 'has finished changing his mind');
+        }
+    });
+
+    // Live reload the scripts
+    app.Commands.set('reload-scripts', {
+        desc: 'Live reload the Bot from local storage',
+        access: app.Config.accessLevels.owner,
+        call: (to, from, text, message) => {
+            app.Bootstrap(false);
+            app.action(to, 'has finished reloading this thoughts');
+        }
+    });
+
+    // Reload both the scripts and the Config
+    // Live reload the scripts
+    app.Commands.set('reload', {
+        desc: 'Live reload the Bot from local storage',
+        access: app.Config.accessLevels.owner,
+        call: (to, from, text, message) => {
+            app.reloadConfiguration();
+            app.Bootstrap(false);
+            app.action(to, 'is feeling so fresh and so clean');
         }
     });
 
@@ -58,16 +80,6 @@ module.exports = app => {
                     app.Bootstrap(false);
                     break;
             }
-        }
-    });
-
-    // Live reload the scripts
-    app.Commands.set('reload', {
-        desc: 'Live reload the Bot from local storage',
-        access: app.Config.accessLevels.owner,
-        call: (to, from, text, message) => {
-            app.Bootstrap(false);
-            app.action(to, 'is feeling so fresh and so clean');
         }
     });
 

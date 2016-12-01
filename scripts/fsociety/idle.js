@@ -12,39 +12,44 @@ const shower = require('../generators/_showerThoughts');
 
 module.exports = app => {
     // We do not have the configuration needed
-    if(!app.Config.features.fsociety.mainChannel || !app.Config.features.fsociety.idleChat) return;
+    if (
+        _.isUndefined(app.Config.features.fsociety) ||
+        !_.isSafeInteger(_.parseInt(app.Config.features.fsociety.idleChat)) ||
+        !_.isString(app.Config.features.fsociety.mainChannel) ||
+        _.isEmpty(app.Config.features.fsociety.mainChannel)
+    ) return scriptInfo;
+
+    // Hold delay
+    let delayInMins = app.Config.features.fsociety.idleChat * 60000;
 
     // Set Initial states
     let active = false;
     let initial = true;
 
     // Increment by min
-    const minTimer =  () => {
-        if(!active) {
-            if(!initial) {
-                _.sample([fml,bofh,shower])(1)
-                  .then(message => app.notice(app.Config.features.fsociety.mainChannel, _.first(message)));
+    const minTimer = () => {
+        if (!active) {
+            if (!initial) {
+                _.sample([fml, bofh, shower])(1)
+                    .then(message => app.notice(app.Config.features.fsociety.mainChannel, _.first(message)));
             } else {
                 initial = false;
             }
         }
-        active = false;
-        setTimeout(minTimer, app.Config.features.fsociety.idleChat *  60000);
-    };
-    minTimer();
 
-    //  check for active
-    const setActive = (channel,topic,nick,message) => {
-        // TODO make this open to other channels
-        if(channel == app.Config.features.fsociety.mainChannel) {
-            active = true;
-        }
+        active = false;
+        setTimeout(minTimer, delayInMins);
     };
+
+    // Set off first cycle
+    minTimer();
 
     // Add the channel listener
     app.Listeners.set('fsocietyActive', {
-        call: setActive,
-        desc: 'fsocietyActive'
+        desc: 'fsocietyActive',
+        call: (channel, topic, nick, message) => {
+            active = (channel == app.Config.features.fsociety.mainChannel);
+        }
     });
 
     // Return the script info

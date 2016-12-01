@@ -13,8 +13,11 @@ const Moment = require('moment');
 module.exports = app => {
     if (!Models.Mention || !Models.Mentioned) return scriptInfo;
 
-    const mentions = (to, from, text, message) => {
-        Models.Mentioned.query(qb => qb
+    // Register Mention Command
+    app.Commands.set('mentions', {
+        desc: 'Get the last 10 mentions',
+        access: app.Config.accessLevels.identified,
+        call: (to, from, text, message) => Models.Mentioned.query(qb => qb
                 .where('nick', 'like', from)
                 .orderBy('timestamp', 'desc')
                 .limit(10)
@@ -36,13 +39,6 @@ module.exports = app => {
                     `[${key+1}] - ${Moment(result.timestamp).fromNow()} - By ${result.mention.by} - On ${result.mention.channel}: ${result.mention.text}`
                 ));
             })
-    };
-
-    // Register Mention Command
-    app.Commands.set('mentions', {
-        desc: 'Get the last 10 mentions',
-        access: app.Config.accessLevels.identified,
-        call: mentions
     });
 
     return scriptInfo;

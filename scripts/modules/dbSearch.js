@@ -2,7 +2,7 @@
 const scriptInfo = {
     name: 'dbSearch',
     desc: 'Provides some interaction with the message logging model, such has total messages, random line' +
-          'and last mentioned',
+        'and last mentioned',
     createdBy: 'IronY'
 };
 
@@ -17,24 +17,15 @@ const logger = require('../../lib/logger');
 **/
 module.exports = app => {
     // Only enabled if there is a database available
-    if (!app.Database && !Models.Logging) {
-        return
-    }
+    if (!Models.Logging) return scriptInfo;
 
-    // Grab the model
-    const loggingModel = Models.Logging;
-
-    const total = (to, from, text, message) => {
-        loggingModel
-            .where('to', '=', to)
-            .count()
-            .then(result => {
-                app.say(to, `Total Messages from ${to}: ${result}`);
-            });
-    };
+    const total = (to, from, text, message) => Models.Logging
+        .where('to', '=', to)
+        .count()
+        .then(result => app.say(to, `Total Messages from ${to}: ${result}`));
 
     const randomLine = (to, from, text, message) => {
-        loggingModel.query(qb => {
+        Models.Logging.query(qb => {
                 qb.select('from', 'text').where('to', to).orderByRaw('rand()').limit(1);
                 if (text) {
                     qb.andWhere('text', 'like', text);
@@ -52,49 +43,45 @@ module.exports = app => {
 
     // Search channel by search terms
     const searchTerms = (to, from, text, message) => {
-      let [terms, channel, nicks] = text.split(' ');
+        let [terms, channel, nicks] = text.split(' ');
 
-      channel = channel || to;
-      terms = _.without(terms.split('|'),'');
-      nicks = !_.isUndefined(nicks) ? _.without(nicks.split('|'),'') : [];
-      if(!terms.length) {
-        app.say(to, `You have not presented any search terms`);
-        return;
-      }
-      loggingModel
-        .query(qb => {
-          qb.where('to', 'like', channel)
-          qb.andWhere(clause => {
-            terms.forEach(term => clause.andWhere('text','like',`%${term}%`));
-          });
-          qb.andWhere(clause => {
-            nicks.forEach(nick => clause.andWhere('from', 'like', nick));
-          });
-          qb.orderBy('timestamp','desc');
-        })
-        .fetchAll()
-        .then(results => {
-          if(!results.length) {
-            app.say(to,`No results found for terms ${terms.join(', ')} in ${channel}`);
+        channel = channel || to;
+        terms = _.without(terms.split('|'), '');
+        nicks = !_.isUndefined(nicks) ? _.without(nicks.split('|'), '') : [];
+        if (!terms.length) {
+            app.say(to, `You have not presented any search terms`);
             return;
-          }
-          app.say(to, `Sending ${results.length} result(s) for your search on ${terms.join(', ')} in ${channel}`);
-          app.say(from, `Providing ${results.length} result(s) for term(s) ${terms.join(', ')} in ${channel}`);
-          let delay = 0;
-          results.forEach(result => {
-            delay = delay + 1;
-            setTimeout(
-              () => {
-                app.say(from,`${result.attributes.from} ${Moment(result.attributes.timestamp).fromNow()} - ${result.attributes.text}`);
-              },
-              delay * 2000,
-              result,
-              from
-            );
-          });
-        })
-        .catch(err => console.dir(err));
-        // .catch(err => logger.error('Error in searchTerms', {err}));
+        }
+        Models.Logging
+            .query(qb => qb
+                .where('to', 'like', channel).andWhere(clause => terms.forEach(term => clause.andWhere('text', 'like', `%${term}%`)))
+                .andWhere(clause => nicks.forEach(nick => clause.andWhere('from', 'like', nick)))
+                .orderBy('timestamp', 'desc')
+            )
+            .fetchAll()
+            .then(results => {
+                if (!results.length) {
+                    app.say(to, `No results found for terms ${terms.join(', ')} in ${channel}`);
+                    return;
+                }
+                app.say(to, `Sending ${results.length} result(s) for your search on ${terms.join(', ')} in ${channel}`);
+                app.say(from, `Providing ${results.length} result(s) for term(s) ${terms.join(', ')} in ${channel}`);
+                let delay = 0;
+                results.forEach(result => {
+                    delay = delay + 1;
+                    setTimeout(
+                        () => {
+                            app.say(from, `${result.attributes.from} ${Moment(result.attributes.timestamp).fromNow()} - ${result.attributes.text}`);
+                        },
+                        delay * 2000,
+                        result,
+                        from
+                    );
+                });
+            })
+            .catch(err => logger.error('Error in searchTerms', {
+                err
+            }));
     };
 
     // Total Messages command
@@ -110,14 +97,13 @@ module.exports = app => {
             app.say(to, 'You did not enter in a word silly');
             return;
         }
-        loggingModel
-            .query(qb => {
-                qb
-                    .where('to', 'like', to)
-                    .andWhere('text', 'like', text)
-                    .orderBy('id', 'desc')
-                    .limit(1);
-            })
+        Models.Logging
+            .query(qb => qb
+                .where('to', 'like', to)
+                .andWhere('text', 'like', text)
+                .orderBy('id', 'desc')
+                .limit(1)
+            )
             .fetch()
             .then(result => {
                 if (!result) {
@@ -130,17 +116,11 @@ module.exports = app => {
 
                 if (resTo === resFrom) {
                     // The request is from the originator of the private message
-                    if (resfrom !== from) {
-                        app.say(to, 'The last utterance of that was told to me in private and I am not willing to share');
-                    }
+                    if (resfrom !== from) app.say(to, 'The last utterance of that was told to me in private and I am not willing to share');
                     // Request is from someone other then who sent the message
-                    else {
-                        app.say(from, `You said "${result.get('text')}" ${Moment(result.get('timestamp')).fromNow()} in a private message`);
-                    }
-                } else {
-                    // If it was not a private message
-                    app.say(to, `${resFrom} said "${result.get('text')}" on ${Moment(result.get('timestamp')).fromNow()} in this channel`);
-                }
+                    else app.say(from, `You said "${result.get('text')}" ${Moment(result.get('timestamp')).fromNow()} in a private message`);
+                } else app.say(to, `${resFrom} said "${result.get('text')}" on ${Moment(result.get('timestamp')).fromNow()} in this channel`);
+
             });
     };
 

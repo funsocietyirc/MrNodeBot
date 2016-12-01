@@ -9,21 +9,15 @@ const gen = require('../generators/_bofhExcuse');
 const ircTypography = require('../lib/_ircTypography');
 
 module.exports = app => {
-    const bofh = (to, from, text, message) => {
-      let [chan] = text.split(' ');
-      gen()
-        .then(excuse => {
-          app.say(chan || to, `${ircTypography.logos.bofh} ${excuse}`);
-        });
-    };
-
     // Random BOFH Excuse
     app.Commands.set('bofh', {
         desc: '[Channel?] Send a BOFH excuse',
         access: app.Config.accessLevels.identified,
-        call: bofh
+        call: (to, from, text, message) => gen()
+            .then(excuse => {
+                app.say(text.split(' ')[0] || to, `${ircTypography.logos.bofh} ${excuse}`);
+            })
     });
-
     // Return the script info
     return scriptInfo;
 };

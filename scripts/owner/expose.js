@@ -30,7 +30,6 @@ module.exports = app => {
             message: 'Not Found',
             type: 'notfound'
         });
-        return;
     };
     app.WebRoutes.set('expose', {
         handler: exposeRoute,

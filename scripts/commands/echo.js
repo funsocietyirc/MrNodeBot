@@ -6,15 +6,14 @@ const scriptInfo = {
 };
 
 module.exports = app => {
-    const echo = (to, from, text, message) => {
-        app.say(to, text);
-    };
 
     // Echo Test command
     app.Commands.set('echo', {
         desc: '[text] Exactly what it sounds like',
         access: app.Config.accessLevels.admin,
-        call: echo
+        call: (to, from, text, message) => {
+            app.say(to, text);
+        }
     });
 
     // Return the script info

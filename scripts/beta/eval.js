@@ -11,20 +11,22 @@ const util = require('util');
 const logger = require('../../lib/logger.js');
 
 module.exports = app => {
+    app.Commands.set('eval', {
+        desc: '[valid js] will return value to console',
+        access: app.Config.accessLevels.owner,
+        call: (to, from, text, message) => {
+            try {
+                let result = eval(text);
+                logger.info(`Eval result:`, {
+                    result: result
+                });
+            } catch (err) {
+                logger.error('Eval command failed:', {
+                    err
+                });
+            }
+        }
+    });
 
-  const evaluate = (to, from, text, message) => {
-    try {
-      let result = eval(text);
-      logger.info(`Cval result:`, {result:result});
-    } catch (err) {
-      logger.error('Cval command failed:', {err});
-    }
-  };
-  app.Commands.set('eval', {
-    desc: '[valid js] will return value to console',
-    access: app.Config.accessLevels.owner,
-    call: evaluate
-  });
-
-  return scriptInfo;
+    return scriptInfo;
 };

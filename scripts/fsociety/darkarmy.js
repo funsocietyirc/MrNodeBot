@@ -17,21 +17,16 @@ module.exports = app => {
     // Get threshold
 
     // Check to see if a main channel has been Set, if not bail out
-    if (_.isEmpty(app.Config.features.fsociety.mainChannel)) {
-        return;
-    }
+    if (_.isEmpty(app.Config.features.fsociety.mainChannel)) return scriptInfo;
 
     // Join main channel
-    if (!_.includes(app.channels, app.Config.features.fsociety.mainChannel)) {
-        app._ircClient.join(app.Config.features.fsociety.mainChannel);
-    }
+    if (!_.includes(app.channels, app.Config.features.fsociety.mainChannel)) app._ircClient.join(app.Config.features.fsociety.mainChannel);
 
     // Join the dark army channels
     const darkChannels = app.Config.features.fsociety.additionalChannels.concat(require('./_darkChannels')(app.Config.features.fsociety.totalChannels));
     const joinChannels = () => {
-        if (!darkChannels.length) {
-            return;
-        }
+        if (!darkChannels.length) return;
+        
         const interval = app.Config.features.fsociety.delay * 1000; // In seconds
         const timeMessage = `I am joining the Dark Army! It will take me ` + app.Config.features.fsociety.delay * darkChannels.length + ` seconds...`;
 

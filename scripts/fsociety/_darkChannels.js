@@ -16,21 +16,13 @@ const shift = (letter, dic) => dic[dic.indexOf(letter) + 1] ? dic[dic.indexOf(le
 
 const fn = (l) => {
     // Nothing to see here
-    if (l == '_') {
-        return l;
-    }
+    if (l == '_') return l;
     // Letter is in fact not a letter at all
-    if (!isNaN(l)) {
-        return shift(l, digits);
-    }
+    if (!isNaN(l)) return shift(l, digits);
     // Letter is upercase
-    if (l == l.toUpperCase()) {
-        return shift(l, upperCaseLetters);
-    }
+    if (l == l.toUpperCase()) return shift(l, upperCaseLetters);
     // Letter is lowercase
-    if (l == l.toLowerCase()) {
-        return shift(l, lowerCaseLetters);
-    }
+    if (l == l.toLowerCase()) return shift(l, lowerCaseLetters);
 };
 
 // Return a channel name

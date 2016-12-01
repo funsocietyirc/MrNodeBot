@@ -16,16 +16,13 @@ const scheduler = require('../../lib/scheduler');
 // Display a list of images in the Web Front end
 module.exports = app => {
     // Bailout if we do not have database
-    if (!app.Database || !Models.Url) {
-        return;
-    }
+    if (!Models.Url) return scriptInfo;
 
     // Where image helpers
     const whereImages = (clause, field) => {
         // Default to the URL field if none specified
         field = field || 'url';
         return clause
-            // TODO Readd the leading %
             .where(field, 'like', '%.jpeg')
             .orWhere(field, 'like', '%.jpg')
             .orWhere(field, 'like', '%.gif')
@@ -34,29 +31,23 @@ module.exports = app => {
 
     // Rebuild all images inside the URL table from the Logging table resource
     const buildImages = (to, from, text, message) => {
-        Models.Logging.query(qb => {
-                qb
-                    .where(clause => whereImages(clause, 'text'))
-                    .orderBy('timestamp', 'desc');
-            })
+        Models.Logging.query(qb => qb
+                .where(clause => whereImages(clause, 'text'))
+                .orderBy('timestamp', 'desc')
+            )
             .fetchAll()
-            .then(logResults => {
-                // Grab the URLS from the line, make sure they are images again
-                // This needs to be done incase a image link and a non image link were included
-                // On the same line
-                logResults.forEach(logResult => {
+            .then(logResults => logResults
+                .forEach(logResult => {
                     _(extractUrls(logResult.get('text')))
                         .filter(url => (_.includes(url, '.jpeg') || _.includes(url, '.jpg') || _.includes(url, '.gif') || _.includes(url, '.png')) && url.startsWith('http'))
-                        .each(url => {
-                            Models.Url.create({
-                                url: url,
-                                to: logResult.get('to'),
-                                from: logResult.get('from'),
-                                timestamp: logResult.get('timestamp')
-                            });
-                        });
-                });
-            })
+                        .each(url => Models.Url.create({
+                            url: url,
+                            to: logResult.get('to'),
+                            from: logResult.get('from'),
+                            timestamp: logResult.get('timestamp')
+                        }));
+                })
+            )
             .then(() => {
                 // Clean up when done
                 cleanImages();
@@ -64,28 +55,24 @@ module.exports = app => {
             })
     };
 
-
     // Destory All images in the URL Table
     const destroyImages = (to, from, text, message) => {
-        Models.Url.query(qb => {
-                qb.where(whereImages);
-            })
+        Models.Url.query(qb => qb
+                .where(whereImages)
+            )
             .destroy()
-            .then(results => {
-                app.say(from, 'The images from the URL Database have been successfully purged');
-            });
+            .then(results => app.say(from, 'The images from the URL Database have been successfully purged'));
     };
 
     // Clean the DB of broken URLS
     const cleanImages = () => {
         logger.info('Running Clean Images');
-        Models.Url.query(qb => {
-                // Build Up Query
-                qb.where(whereImages);
-            })
+        Models.Url.query(qb => qb
+                .where(whereImages)
+            )
             .fetchAll()
-            .then(results => {
-                results.pluck('url').forEach(url => {
+            .then(results => results
+                .pluck('url').forEach(url => {
                     rp({
                             uri: url,
                             method: 'GET',
@@ -96,37 +83,30 @@ module.exports = app => {
 
                             // Get extension
                             let ext = '';
-                            if (type && type.ext) {
-                                ext = type.ext;
-                            }
+                            if (type && type.ext) ext = type.ext;
 
                             // If Valid image extension bailout
-                            if (ext === 'png' || ext === 'gif' || ext === 'jpg' || ext === 'jpeg') {
-                                return;
-                            }
+                            if (ext === 'png' || ext === 'gif' || ext === 'jpg' || ext === 'jpeg') return;
 
                             logger.info(`Removing Non Image link ${url}`);
                             Models.Url.where('url', url).destroy();
                         })
                         .catch(err => {
-                          logger.info(`Removing Dead Image link ${url}`);
-                          Models.Url.where('url', url).destroy();
+                            logger.info(`Removing Dead Image link ${url}`);
+                            Models.Url.where('url', url).destroy();
                         });
-                });
-            });
+                })
+            );
     };
 
     // Web Front End (Pug View)
     const imagesView = (req, res) => {
         Models.Url.query(qb => {
                 // If there is a channel in the query string
-                if (req.params.channel) {
-                    qb.where('to', req.params.channel.replaceAll('%23', '#'));
-                }
+                if (req.params.channel) qb.where('to', req.params.channel.replaceAll('%23', '#'));
+
                 // If there is a from in the query string
-                if (req.params.user) {
-                    qb.where('from', req.params.user);
-                }
+                if (req.params.user) qb.where('from', req.params.user);
 
                 // Build Up Query
                 qb
@@ -183,9 +163,7 @@ module.exports = app => {
     // Scheduler automatic cleanup
     let cronTime = new scheduler.RecurrenceRule();
     cronTime.minute = 45;
-    scheduler.schedule('cleanImages', cronTime, () => {
-        cleanImages();
-    });
+    scheduler.schedule('cleanImages', cronTime, () => cleanImages());
 
     // Return the script info
     return scriptInfo;

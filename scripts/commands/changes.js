@@ -14,9 +14,10 @@ const helpers = require('../../helpers');
   Commands: changes
 **/
 module.exports = app => {
-    const changes = (to, from, text, message) => {
-        gitlog(app.Config.gitLog, function(error, commits) {
-
+    app.Commands.set('changes', {
+        desc: 'Review the bots change log',
+        access: app.Config.accessLevels.guest,
+        call: (to, from, text, message) => gitlog(app.Config.gitLog, function(error, commits) {
             // Exit on error
             if (error) {
                 app.say(to, 'Something has gone wrong retrieving the change log');
@@ -40,13 +41,7 @@ module.exports = app => {
             if (commits && commits[0]) {
                 app.say(from, `Last Commit: ${app.Config.project.repository.url}/commit/${commits[0].abbrevHash}`);
             }
-        });
-    };
-
-    app.Commands.set('changes', {
-        desc: 'Review the bots change log',
-        access: app.Config.accessLevels.guest,
-        call: changes
+        })
     });
 
     // Return the script info

@@ -11,9 +11,7 @@ const Models = require('bookshelf-model-loader');
 module.exports = app => {
 
     // If we have Database availability
-    if (!app.Database || !Models.Logging) {
-        return;
-    }
+    if (!app.Database || !Models.Logging) return;
 
     const logging = Models.Logging;
 
@@ -21,7 +19,8 @@ module.exports = app => {
         Show the last known activity of a given username
     **/
     const lastActive = (to, from, text, message) => {
-        let user = text.split(' ')[0];
+        // Grab user
+        let [user] = text.split(' ');
 
         // We have no user
         if (!user) {
@@ -30,22 +29,19 @@ module.exports = app => {
         }
 
         logging
-            .query(qb => {
-                qb
-                    .select('to', 'from', 'text', 'timestamp')
-                    .where('from', user)
-                    .orderBy('timestamp', 'desc')
-                    .limit(1);
-            })
+            .query(qb => qb
+                .select('to', 'from', 'text', 'timestamp')
+                .where('from', user)
+                .orderBy('timestamp', 'desc')
+                .limit(1)
+            )
             .fetch()
             .then(result => {
                 if (!result) {
                     app.say(to, `${from}, I have never seen ${user} active`);
                     return;
                 }
-                let timeString = Moment(result.get('timestamp')).fromNow();
-
-                app.say(to, `${result.get('from')} was last active ${timeString} on ${result.get('to')} saying: ${result.get('text')}`);
+                app.say(to, `${result.get('from')} was last active ${Moment(result.get('timestamp')).fromNow()} on ${result.get('to')} saying: ${result.get('text')}`);
             });
     };
 
