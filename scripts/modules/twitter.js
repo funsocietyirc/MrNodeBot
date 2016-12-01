@@ -17,11 +17,7 @@ const tweetStreamUrl = 'https://twitter.com/funsocietyirc/status';
 let currentStream = null;
 
 module.exports = app => {
-    if (!app._twitterClient) {
-        return;
-    }
-
-    let twitterEnabled = (_.isUndefined(app.Config.features.twitter.enabled) || app.Config.features.twitter.enabled);
+    if (!app._twitterClient) return scriptInfo;
 
     const say = (tweet, shortUrl) => {
         console.dir(tweet);
@@ -33,11 +29,8 @@ module.exports = app => {
     };
 
     const push = (tweet) => {
-        if (!twitterEnabled) return;
-        // Load in pusher if it is active
-        if (!pusher) {
-            return;
-        }
+        if (!app._twitterClient || !pusher) return;
+
         let timestamp = Date.now();
         pusher.trigger('public', 'tweets', {
             tweet,
@@ -59,7 +52,8 @@ module.exports = app => {
 
     // the Main twitter watcher
     const watcher = () => {
-        if (!twitterEnabled) return;
+        if (!app._twitterClient) return;
+
         let newStream = app._twitterClient.stream('user', {
             with: app.Config.features.twitter.followers
         });
@@ -76,7 +70,8 @@ module.exports = app => {
 
     // Tweet a message
     const tweetCmd = (to, from, text, message) => {
-        if (!twitterEnabled) return;
+        if (!app._twitterClient) return;
+
         if (!text) {
             app.say(from, 'Cannot tweet nothing champ...');
             return;

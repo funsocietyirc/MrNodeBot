@@ -5,6 +5,7 @@ const scriptInfo = {
     createdBy: 'IronY'
 };
 
+const _ = require('lodash');
 const logger = require('../../lib/logger');
 const pusherApi = require('../../lib/pusher');
 
@@ -30,8 +31,8 @@ module.exports = app => {
         }
         app.channels.forEach(channel => {
             if (channel === to) {
-              app.say(channel, 'Your announcement has been made successfully.');
-              return;
+                app.say(channel, 'Your announcement has been made successfully.');
+                return;
             };
             app.say(channel, text);
         });
@@ -47,7 +48,9 @@ module.exports = app => {
             status: text
         }, (error, tweet, response) => {
             if (error) {
-                logger.error('Twitter Error', {error});
+                logger.error('Twitter Error', {
+                    error
+                });
                 return;
             }
         });
@@ -56,7 +59,10 @@ module.exports = app => {
     // Handle IRC Command
     const handler = (to, from, text, message) => {
         const timestamp = Date.now();
-        [irc, pusher, twitter].forEach(chan => chan(to, from, text, message, timestamp));
+        let outputs = [irc];
+        if (app.Config.features.twitter.enabled === true) outputs.push(twitter);
+        if (app.Config.features.pusher.enabled === true) outputs.push(pusher);
+        outputs.forEach(chan => chan(to, from, text, message, timestamp));
     };
     // Terminate the bot and the proc watcher that keeps it up
     app.Commands.set('announce', {
