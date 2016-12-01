@@ -351,7 +351,7 @@ class MrNodeBot {
         return c
             .stripColorsAndStyle(text) // Strip styles and color
             .replace(helpers.RemoveNonPrintChars, '') // Remove non printable characters
-            .replace(/\u00c2/g, '\u0020') // Replace non breaking space with space
+            .replace(/\u00A0/g, ' ') // Replace non breaking space with space
             .trim() // Trim;
     };
 
