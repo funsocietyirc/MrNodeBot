@@ -4,12 +4,12 @@ const config = require('../config');
 // TODO Localize
 
 // Do not load ORM if we have a disabled database
-if (!config.knex.enabled) {
-    return;
-}
+if (!config.knex.enabled) return;
+
 // Switch between engines
 const knexConfig = config.knex.engine === 'sqlite' ? config.knex.sqlite : config.knex.mysql;
 
+// Knex configuration object
 const knexBuilder = {
     client: knexConfig.client,
     connection: knexConfig.connection,

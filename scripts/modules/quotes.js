@@ -23,10 +23,8 @@ module.exports = app => {
 
     // Grab the collection
     storage.getItem('quotes', (err, value) => {
-        if (value)
-            quotes = new HashMap(value);
-        else
-            quotes = new HashMap();
+        if (value) quotes = new HashMap(value);
+        else quotes = new HashMap();
     });
 
     const addQuote = (to, from, text, message) => {

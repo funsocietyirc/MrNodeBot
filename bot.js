@@ -283,7 +283,7 @@ class MrNodeBot {
 
         this.Config.commandBindings.forEach(commandBinding => {
             if (!commandBinding.alias || !commandBinding.command) {
-                logger.error(t('aliases.improperStricture'));
+                logger.error(t('aliases.improperStructure'));
                 return;
             }
             if (!this.Commands.has(commandBinding.command)) {

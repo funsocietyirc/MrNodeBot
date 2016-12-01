@@ -88,7 +88,6 @@ module.exports = app => {
 
         let token = randToken.generate(8);
 
-        // TODO Do not just update token, delete, and recreate
         tokenModel
             .query(qb => {
                 qb

@@ -57,10 +57,10 @@ module.exports = (channel, options) => new Promise((resolve, reject) => {
                 .where(clause => {
                     // Filter on channel
                     clause.where('to', 'like', channel);
+                    
                     // Filter on text
-                    if (_.isString(options.contains) && !_.isEmpty(options.contains)) {
-                        clause.andWhere('text', 'like', `%${options.contains}%`);
-                    }
+                    if (_.isString(options.contains) && !_.isEmpty(options.contains)) clause.andWhere('text', 'like', `%${options.contains}%`);
+
                     // Filter on timeUnit
                     clause.andWhere('timestamp', options.timeOperator, options.compiledTime);
                 })
