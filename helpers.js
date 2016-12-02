@@ -40,6 +40,14 @@ const AccessString = exports.AccessString = str => {
             return 'Administrator';
         case 3:
             return 'Owner';
+        case 4:
+            return 'ChannelOp';
+        case 5:
+            return 'ChannelVoice';
+        case 6:
+            return 'ChannelOpIdentified';
+        case 7:
+            return 'ChannelVoiceIdentified';
         default:
             logger.error(`Unknown command type ${str} used`);
             return 'Unknown';

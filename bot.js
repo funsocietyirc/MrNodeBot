@@ -156,8 +156,10 @@ class MrNodeBot {
             .then(() => this.OnConnected.forEach(x => {
                 try {
                     x.call();
-                } catch (e) {
-                    logger.error(e);
+                } catch (err) {
+                    logger.error('Error in onConnected', {
+                        err
+                    });
                 }
             }))
             // Run The callback
@@ -363,8 +365,10 @@ class MrNodeBot {
         this.OnAction.forEach((value, key) => {
             try {
                 value.call(from, to, text, message);
-            } catch (e) {
-                logger.error(e);
+            } catch (err) {
+                logger.error(`Error with action`, {
+                    err
+                });
             }
         });
     };
@@ -381,8 +385,10 @@ class MrNodeBot {
         this.NickChanges.forEach((value, key) => {
             try {
                 value.call(oldnick, newnick, channels, message);
-            } catch (e) {
-                logger.error(e);
+            } catch (err) {
+                logger.error(`Error with NickChange`, {
+                    err
+                });
             }
         });
     };
@@ -397,8 +403,10 @@ class MrNodeBot {
         this.OnNotice.forEach((value, key) => {
             try {
                 value.call(from, to, text, message);
-            } catch (e) {
-                logger.error(e);
+            } catch (err) {
+                logger.error(`Error with On Notice`, {
+                    err
+                });
             }
         });
     };
@@ -415,8 +423,10 @@ class MrNodeBot {
         this.OnJoin.forEach((value, key) => {
             try {
                 value.call(channel, nick, message);
-            } catch (e) {
-                logger.error(e);
+            } catch (err) {
+                logger.error(`Error with OnJoin`, {
+                    err
+                });
             }
         });
     };
@@ -436,8 +446,10 @@ class MrNodeBot {
         this.OnPart.forEach((value, key) => {
             try {
                 value.call(channel, nick, reason, message);
-            } catch (e) {
-                logger.error(e);
+            } catch (err) {
+                logger.error('Error in OnPart', {
+                    err
+                });
             }
         });
     };
@@ -464,8 +476,10 @@ class MrNodeBot {
         this.OnKick.forEach((value, key) => {
             try {
                 value.call(channel, nick, by, reason, message);
-            } catch (e) {
-                logger.error(e);
+            } catch (err) {
+                logger.error('Error in OnKick', {
+                    err
+                });
             }
         });
     };
@@ -484,8 +498,10 @@ class MrNodeBot {
         this.OnQuit.forEach((value, key) => {
             try {
                 value.call(nick, reason, channels, message);
-            } catch (e) {
-                logger.error(e);
+            } catch (err) {
+                logger.error('Error in OnQuit', {
+                    err
+                });
             }
         });
     };
@@ -504,8 +520,10 @@ class MrNodeBot {
         this.OnTopic.forEach((value, key) => {
             try {
                 value.call(channel, topic, nick, message);
-            } catch (e) {
-                logger.error(e);
+            } catch (err) {
+                logger.error('Error in OnTopic', {
+                    err
+                });
             }
         });
     };
@@ -520,8 +538,10 @@ class MrNodeBot {
         this.OnCtcp.forEach((value, key) => {
             try {
                 value.call(from, to, text, type, message);
-            } catch (e) {
-                logger.error(e);
+            } catch (err) {
+                logger.error('Error in CtcpCommands', {
+                    err
+                });
             }
         });
     };
@@ -533,8 +553,10 @@ class MrNodeBot {
         this.Registered.forEach((value, key) => {
             try {
                 value.call(message);
-            } catch (e) {
-                logger.error(e);
+            } catch (err) {
+                logger.error('Error in handleRegistered', {
+                    err
+                });
             }
         });
     };
@@ -565,38 +587,70 @@ class MrNodeBot {
             this.Listeners.forEach((value, key) => {
                 try {
                     value.call(to, from, text, message, is);
-                } catch (e) {
-                    logger.error(e);
+                } catch (err) {
+                    logger.error('Error in onCommand onListeners', {
+                        err
+                    });
                 }
             });
+
+            // Bail
+            return;
         }
 
-        // If triggered, not ignored, and not a self message
-        if (is.triggered && !is.ignored && !is.self) {
-            // Check if the command exists
-            if (this.Commands.has(cmd)) {
-                // Make sure its not admin only
-                if (this.Commands.get(cmd).access === this.Config.accessLevels.guest) {
-                    // Record Stats
-                    this.Stats.set(cmd, this.Stats.has(cmd) ? this.Stats.get(cmd) + 1 : 1);
-                    // Run the callback, give it the text array without the command
-                    this.Commands.get(cmd).call(to, from, output, message, is);
-                } else {
-                    this.AdmCallbacks.set(from, {
-                        cmd: cmd,
-                        from: from,
-                        to: to,
-                        text: text,
-                        message: message,
-                        is: is
-                    });
-                    // Send a check to nickserv to see if the user is registered
-                    // Will spawn the notice listener to do the rest of the work
-                    let first = this.Config.nickserv.host ? `@${this.Config.nickserv.host}` : '';
-                    this.say(`${this.Config.nickserv.nick}${first}`, `acc ${from}`);
-                }
+        // Nothing to see here
+        if (!is.triggered || is.ignored || is.self || !this.Commands.has(cmd)) return;
+
+        // Grab Command
+        let command = this.Commands.get(cmd);
+
+        // The user is the owner, them them throught
+        if (
+            // User is the owner, let them through
+            (from === this.Config.owner.nick && message.host === this.Config.owner.host) ||
+            // This is a guest account command, let it happen
+            (command.access === this.Config.accessLevels.guest) ||
+            // This is a channelVoice command and the user is voiced in the channel
+            (command.access === this.Config.accessLevels.channelVoice && this._ircClient.isVoiceInChannel(to, from)) ||
+            // This is a channelOp command and the user is oped in the channel
+            (command.access === this.Config.accessLevels.channelOp && this._ircClient.isOpOrVoiceInChannel(to, from))
+        ) {
+            try {
+                // Call Function
+                command.call(to, from, output, message, is);
+                // Record Stats
+                this.Stats.set(cmd, this.Stats.has(cmd) ? this.Stats.get(cmd) + 1 : 1);
+                // Log
+                logger.info(`${from} on ${to} has triggered the ${cmd} command from the ${helpers.AccessString(command.access)} group`);
+
+            } catch (err) {
+                logger.error(`Error processing Command ${cmd}`, {
+                    err
+                });
             }
         }
+        // The following administration levels piggy back on services, thus we check the acc status of the account and defer
+        else if (
+            command.access === this.Config.accessLevels.identified ||
+            command.access === this.Config.accessLevels.admin ||
+            command.access === this.Config.accessLevels.channelVoiceIdentified ||
+            command.access === this.Config.accessLevels.channelOpIdentified
+        ) {
+            this.AdmCallbacks.set(from, {
+                cmd: cmd,
+                from: from,
+                to: to,
+                text: text,
+                message: message,
+                is: is
+            });
+            // Send a check to nickserv to see if the user is registered
+            // Will spawn the notice listener to do the rest of the work
+            let first = this.Config.nickserv.host ? `@${this.Config.nickserv.host}` : '';
+            this.say(`${this.Config.nickserv.nick}${first}`, `acc ${from}`);
+        }
+        // Invalid Command
+        else this.say(to, `I am sorry ${from}, I am unable to do that. Let me clarify ${cmd} is an invalid Command`);
     };
 
     //noinspection JSMethodCanBeStatic
@@ -620,36 +674,48 @@ class MrNodeBot {
         admTextArray.splice(0, admCall.to === admCall.from ? 1 : 2);
         let output = admTextArray.join(' ');
 
-        // Is Identified
-        if (admCall.is.identified) {
-            let admFromLower = _.toLower(admCall.from);
-            let unauthorized =
-                (admCmd.access == this.Config.accessLevels.owner && admFromLower !== _.toLower(this.Config.owner.nick)) ||
-                (admCmd.access === this.Config.accessLevels.admin && !_.includes(this.Admins, admFromLower));
-
-            // Log to the console if a user without access a command they are not privy too
-            if (unauthorized) {
-                let group = helpers.AccessString(admCmd.access);
-                this.say(admCall.from, t('auth.notMemberOfGroup'));
-
-                logger.error(t('auth.nonMemberOfGroupLogging', {
-                    nick: admCall.from,
-                    channel: admCall.to,
-                    group: group,
-                    type: admCall.cmd
-                }));
-
-                return;
-            }
-
-            try {
-                this.Commands.get(admCall.cmd).call(admCall.to, admCall.from, output, admCall.message, admCall.is);
-            } catch (e) {
-                logger.error(e);
-            }
+        // This is a identified command and the user is not identified
+        if (!admCall.is.identified) {
+            this.say(admCall.from, t('auth.notIdentified'));
+            this.AdmCallbacks.remove(user);
+            return;
         }
-        // Is not identified
-        else this.say(admCall.from, t('auth.notIdentified'));
+
+        // Gate
+        if (
+            // This is an admin command, and the user is not on the admin list
+            (admCmd.access === this.Config.accessLevels.admin && !_.includes(this.Admins, _.toLower(admCall.from))) ||
+            // This is a channelOpIdentified command, and the user is not opped in the channel
+            (admCmd.access === this.Config.accessLevels.channelOpIdentified && !this._ircClient.isOpInChannel(admCall.to, admCall.from)) ||
+            // This is a channelVoiceIdentified command, and the user is not voiced or opped in the channel
+            (admCmd.access === this.Config.accessLevels.channelVoiceIdentified && !this._ircClient.isOpOrVoiceInChannel(admCall.to, admCall.from))
+        ) {
+            let group = helpers.AccessString(admCmd.access);
+            this.say(admCall.to, t('auth.notMemberOfGroup', {
+                group
+            }));
+            logger.error(t('auth.notMemberOfGroupLogging', {
+                nick: admCall.from,
+                channel: admCall.to,
+                group: group,
+                type: admCall.cmd
+            }));
+            this.AdmCallbacks.remove(user);
+            return;
+        }
+
+        // Launch the command
+        try {
+            // Call the command
+            let command = this.Commands.get(admCall.cmd);
+            command.call(admCall.to, admCall.from, output, admCall.message, admCall.is);
+            // Record Stats
+            this.Stats.set(admCall.cmd, this.Stats.has(admCall.cmd) ? this.Stats.get(admCall.cmd) + 1 : 1);
+            // Log
+            logger.info(`${admCall.from} on ${admCall.to} has triggered the ${admCall.cmd} command from the ${helpers.AccessString(command.access)} group`);
+        } catch (err) {
+            logger.error(logger.error(`Error with Identified command ${admCall.cmd} from ${admCall.from} to ${admCall.to}`));
+        }
 
         // Remove the callback from the stack
         this.AdmCallbacks.remove(user);
