@@ -198,6 +198,11 @@ module.exports = app => {
         let subCommand = txtArray.shift();
         let argument = txtArray.shift();
 
+        if(from == app.nick) {
+          app.say(from, 'I have never really been good at self analysis');
+          return;
+        }
+
         if (!subCommand || !nick) {
             app.say(to, 'Both a Sub Command and a Nick are required');
             return;
