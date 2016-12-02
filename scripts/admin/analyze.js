@@ -198,7 +198,7 @@ module.exports = app => {
         let subCommand = txtArray.shift();
         let argument = txtArray.shift();
 
-        if(from == app.nick) {
+        if(nick == app.nick) {
           app.say(from, 'I have never really been good at self analysis');
           return;
         }
