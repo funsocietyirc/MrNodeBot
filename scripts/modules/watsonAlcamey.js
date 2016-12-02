@@ -56,17 +56,20 @@ module.exports = app => {
             )
             .fetchAll()
             .then(results => {
-                if (!results) {
+                // No Results available
+                if (!results.length) {
                     app.say(to, 'I do not have have any data on this channel');
                     return;
                 }
 
+                // Verify input
                 let data = _(results.pluck('text')).uniq().reverse().value();
                 if (!data) {
                     app.say(to, 'Something went wrong completing your combined command');
                     return;
                 }
 
+                // Run the Alchemy combined command
                 aL.combined({
                     text: data.join(' '),
                     //showSourceText: 1, // Show Source Text for debugging
@@ -85,11 +88,7 @@ module.exports = app => {
 
                     // Prepare the taxonomy
                     let taxonomy = [];
-                    _(response.taxonomy).map('label').map(value => _.filter(value.split('/')), n => true).uniq().each(value => {
-                        _.each(value, item => {
-                            taxonomy.push(item);
-                        });
-                    });
+                    _(response.taxonomy).map('label').map(value => _.filter(value.split('/')), n => true).uniq().each(value => _.each(value, item => taxonomy.push(item)));
 
                     taxonomy = _.uniq(taxonomy).join(', ');
 
@@ -98,9 +97,7 @@ module.exports = app => {
                     output = output + space() + `Most of the time ${channel} is ${response.docSentiment.type}`;
                     output = output + space() + `They are also interested in: ${taxonomy}`;
                     output = output + space() + `The emotional state of ${channel} is: `;
-                    _.each(response.docEmotions, (value, key) => {
-                        output = output + ` ${_.capitalize(key)}: ${helpers.RoundNumber(value * 100)}%`
-                    });
+                    _.each(response.docEmotions, (value, key) => output = output + ` ${_.capitalize(key)}: ${helpers.RoundNumber(value * 100)}%`);
 
                     // Report back to IRC
                     app.say(to, output);
@@ -151,11 +148,7 @@ module.exports = app => {
 
                     // Prepare the taxonomy
                     let taxonomy = [];
-                    _(response.taxonomy).map('label').map(value => _.filter(value.split('/')), n => true).uniq().each(value => {
-                        _.each(value, item => {
-                            taxonomy.push(item);
-                        });
-                    });
+                    _(response.taxonomy).map('label').map(value => _.filter(value.split('/')), n => true).uniq().each(value => _.each(value, item => taxonomy.push(item)));
 
                     taxonomy = _.uniq(taxonomy).join(', ');
 
@@ -164,9 +157,7 @@ module.exports = app => {
                     output = output + space() + `Most of the time ${nick} is ${response.docSentiment.type}`;
                     output = output + space() + `They are also interested in: ${taxonomy}`;
                     output = output + space() + `Their emotional state is: `;
-                    _.each(response.docEmotions, (value, key) => {
-                        output = output + ` ${_.capitalize(key)}: ${helpers.RoundNumber(value * 100)}%`
-                    });
+                    _.each(response.docEmotions, (value, key) => output = output + ` ${_.capitalize(key)}: ${helpers.RoundNumber(value * 100)}%`);
 
                     // Report back to IRC
                     app.say(to, output);
