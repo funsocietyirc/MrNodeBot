@@ -50,7 +50,7 @@ const AccessString = exports.AccessString = str => {
 const TimeDiff = exports.TimeDiff = time => moment.duration(moment(time, 'DD/MM/YYYY').diff(moment()));
 
 /* Get the current uptime */
-const UpTime = exports.Uptime = () => startTime.toString();
+const StartTime = exports.StartTime = startTime;
 
 /* Color stuffs */
 const ColorHelpArgs = exports.ColorHelpArgs = text => text.replaceAll('[', c.red.bold('[')).replaceAll(']', c.red.bold(']'));
