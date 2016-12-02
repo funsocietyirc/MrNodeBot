@@ -698,11 +698,6 @@ class MrNodeBot {
         this._ircClient.notice(target, msg);
     };
 
-    // Check if user is in channel
-    isInChannel(channel, nick) {
-        return this._ircClient.isInChannel(channel, nick);
-    };
-
     // Reload the configruation
     reloadConfiguration() {
         logger.info(t('bootstrap.reloadConfig'));
@@ -738,17 +733,18 @@ class MrNodeBot {
     };
 
     // Getting to allow quick setting of channels
+    // Warning: Refactoring this down for some odd reason breaks it
     set channels(value) {
         // Given an array
         if (_.isArray(value)) value.forEach(channel => {
-            if (!this.isInChannel(channel)) {
+            if (!this._ircClient.isInChannel(channel)) {
                 this._ircClient.join(channel);
             }
         });
         // Given a string
         else if (_.isString(value)) {
             value.split(' ').forEach(channel => {
-                if (!this.isInChannel(channel)) {
+                if (!this._ircClient.isInChannel(channel)) {
                     this._ircClient.join(channel);
                 }
             });

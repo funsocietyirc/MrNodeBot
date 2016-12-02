@@ -4,7 +4,7 @@ const _ = require('lodash');
 const participation = require('./_channelParticipation');
 
 module.exports = (channel, thresh, app, options) => new Promise((resolve, reject) => {
-    if (!app.isInChannel(channel) || !app._ircClient.isOpInChannel(channel)) {
+    if (!app._ircClient.isInChannel(channel) || !app._ircClient.isOpInChannel(channel)) {
         reject(new Error(`I am not in, or I am not an op in ${channel}`));
         return;
     }
@@ -14,7 +14,7 @@ module.exports = (channel, thresh, app, options) => new Promise((resolve, reject
 
     return participation(channel, options)
         .then(results => {
-            let actions = _.filter(results, v => app.isInChannel(channel, v.nick) && !app._ircClient.isOpOrVoiceInChannel(channel, v.nick));
+            let actions = _.filter(results, v => app._ircClient.isInChannel(channel, v.nick) && !app._ircClient.isOpOrVoiceInChannel(channel, v.nick));
             _(actions)
                 .chunk(4)
                 .each((v, k) => {

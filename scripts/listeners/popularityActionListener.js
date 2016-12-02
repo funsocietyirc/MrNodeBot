@@ -73,7 +73,7 @@ module.exports = app => {
         }
 
         // Users are not in channel
-        if(!app.isInChannel(to, result[1]) || !app.isInChannel(to, from)) {
+        if(!app._ircClient.isInChannel(to, result[1]) || !app._ircClient.isInChannel(to, from)) {
           return;
         }
 

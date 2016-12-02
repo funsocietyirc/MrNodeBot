@@ -1,5 +1,7 @@
 'use strict'
 
+// TODO This does not work in sqlite
+
 /**
   Returns a promise with Channel participation statistics.
   Requires: The channel to get statistics for, and a optional options object
@@ -57,7 +59,7 @@ module.exports = (channel, options) => new Promise((resolve, reject) => {
                 .where(clause => {
                     // Filter on channel
                     clause.where('to', 'like', channel);
-                    
+
                     // Filter on text
                     if (_.isString(options.contains) && !_.isEmpty(options.contains)) clause.andWhere('text', 'like', `%${options.contains}%`);
 

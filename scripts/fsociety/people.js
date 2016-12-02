@@ -26,7 +26,7 @@ module.exports = (app) => {
                     return;
                 }
                 // If he is in the channel
-                if (app.isInChannel(to, 'jeek')) {
+                if (app._ircClient.isInChannel(to, 'jeek')) {
                     app.action(to, 'points to jeek');
                 }
                 app.say(to, `Is Jeek Alive? ${results[1]}`);
@@ -39,7 +39,7 @@ module.exports = (app) => {
         access: app.Config.accessLevels.identified,
         call: (to, from, text, message) => {
             // If he is in the channel
-            if (app.isInChannel(to, 'RaptorJesus')) {
+            if (app._ircClient.isInChannel(to, 'RaptorJesus')) {
                 app.action(to, 'prays to RaptorJesus');
             }
             // Report back to IRC

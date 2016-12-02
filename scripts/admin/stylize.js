@@ -26,7 +26,7 @@ module.exports = app => {
         let output = _.without(txtArray, chan, style).join(' ');
 
         // Quit if not on the channel
-        if (!app.isInChannel(chan)) {
+        if (!app._ircClient.isInChannel(chan)) {
             app.say(to, `I am not on channel ${chan}`);
             return;
         }

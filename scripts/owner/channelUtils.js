@@ -17,7 +17,7 @@ module.exports = app => {
         }
         let textArray = text.split(' ');
         let [channel] = textArray;
-        if (!app.isInChannel(channel)) {
+        if (!app._ircClient.isInChannel(channel)) {
             app.say(from, `I am not in the channel ${channel}`);
             return
         }
@@ -42,15 +42,13 @@ module.exports = app => {
         let textArray = text.split(' ');
         let [channel] = textArray;
 
-        if (app.isInChannel(channel)) {
+        if (app._ircClient.isInChannel(channel)) {
             app.say(from, `I am already in that channel channel ${channel}`);
             return;
         }
 
         // Join the channel
-        app._ircClient.join(channel, () => {
-            app.say(from, `I have joined ${channel}`);
-        });
+        app._ircClient.join(channel, () => app.say(from, `I have joined ${channel}`));
 
     };
     app.Commands.set('join', {
@@ -67,7 +65,7 @@ module.exports = app => {
             return;
         }
         let [channel, nick] = textArray;
-        if (!app.isInChannel(channel) || !app.isInChannel(channel, nick)) {
+        if (!app._ircClient.isInChannel(channel) || !app._ircClient.isInChannel(channel, nick)) {
             app.say(from, `Either I or ${nick} am not in ${channel}, so no one is getting ops..`);
             return;
         }

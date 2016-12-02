@@ -55,7 +55,7 @@ module.exports = app => {
             }
 
             // See if it was updated
-            if (!_.isEqual(posts, lastPosts)) {
+            if (!_.isEqual(posts, lastPosts) && !_.isEmpty(lastPosts)) {
                 let diff = _.differenceWith(posts, lastPosts, _.isEqual);
                 lastPosts = posts;
                 resolve({
@@ -85,7 +85,7 @@ module.exports = app => {
             .then(results => {
                 // No updates
                 // We are not in the arg society channel and results object exists
-                if (!results || !app.isInChannel(argChannel)) return;
+                if (!results || !app._ircClient.isInChannel(argChannel)) return;
 
                 // Iterate each update, and send it back at a specified delay
                 _.forEach(results.posts, (post, x) => setTimeout(() => {
