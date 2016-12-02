@@ -25,7 +25,8 @@ i18next.addResources('en', 'admin', {
     cannotRemove: 'You cannot remove {{- nick}} because {{- nick}} is my owner',
     add: 'Hey there, you are now an Administrator. use [admin help] to get commands',
     help: '[command] [user?] list add del help',
-    cannotAddBot: 'You cannot add me to the Administrator list, although I do appreciate it'
+    cannotAddBot: 'You cannot add me to the Administrator list, although I do appreciate it',
+    noAdmins: 'There are currently no Administrators listed'
 });
 
 /**
@@ -47,11 +48,11 @@ module.exports = app => {
         switch (cmd) {
             // List administrators
             case 'list':
-                if(!app.Admins.length) {
-                  app.say(from, 'There are currently no Administrators listed');
-                  return;
+                if (!app.Admins.length) {
+                    app.say(from, t('admin:noAdmins'));
+                    return;
                 }
-                app.say(from,`${helpers.TitleLine(t('admin:administrators'))} ${_.map(app.Admins, _.capitalize).join(', ')}`);
+                app.say(from, `${helpers.TitleLine(t('admin:administrators'))} ${_.map(app.Admins, _.capitalize).join(', ')}`);
                 break;
                 // Get Administrative commands
             case 'help':
@@ -61,12 +62,10 @@ module.exports = app => {
                     }));
 
                 app.Commands.forEach((value, key) => {
-                    if (app.Commands.get(key).access === app.Config.accessLevels.admin) {
-                        app.say(from, `${color.bgwhite.black.bold(key)} --- ${helpers.ColorHelpArgs(value.desc)}`);
-                    }
+                    if (app.Commands.get(key).access === app.Config.accessLevels.admin) app.say(from, `${color.bgwhite.black.bold(key)} --- ${helpers.ColorHelpArgs(value.desc)}`);
                 });
                 break;
-            // Add Administrator
+                // Add Administrator
             case 'add':
                 // Exit if already an administrator
                 if (_.includes(app.Admins, user)) {
@@ -91,7 +90,7 @@ module.exports = app => {
 
                 app.say(user, helpers.ColorHelpArgs(t('admin:add')));
                 break;
-            // Delete Administrator
+                // Delete Administrator
             case 'del':
                 if (user.toLowerCase() == app.nick.toLowerCase()) {
                     app.say(from, t('admin:cannotAddBot'));

@@ -16,9 +16,10 @@ const _ = require('lodash');
 
 module.exports = app => {
     // Make sure we have everything we need
-    if (!app.Config.apiKeys.watson.alchemy || !app.Config.apiKeys.watson.alchemy.apikey || !app.Database || !Models.Logging) {
-        return scriptInfo;
-    }
+    if (!Models.Logging || // Database
+        _.isUndefined(app.Config.apiKeys.watson.alchemy) || // configuration object
+        !_.isString(app.Config.apiKeys.watson.alchemy.apikey) || _.isEmpty(app.Config.apiKeys.watson.alchemy.apikey) // configuration key
+    ) return scriptInfo;
 
     // Space helper
     let space = () => ' - ';
@@ -31,81 +32,84 @@ module.exports = app => {
     });
 
     const getResults = (nick, channel, limit) =>
-        Models.Logging.query(qb => {
-            qb
-                .select(['text', 'timestamp'])
-                .distinct('text')
-                .where('from', 'like', nick)
-                .andWhere('to', 'like', channel)
-                .andWhere('text', 'not like', 's/%')
-                .orderBy('timestamp', 'desc')
-                .limit(limit || 500);
-        })
+        Models.Logging.query(qb => qb
+            .select(['text', 'timestamp'])
+            .distinct('text')
+            .where('from', 'like', nick)
+            .andWhere('to', 'like', channel)
+            .andWhere('text', 'not like', 's/%')
+            .orderBy('timestamp', 'desc')
+            .limit(limit || 500)
+        )
         .fetchAll();
 
     const whatsup = (to, from, text, message) => {
         let [channel] = text.split('. ');
         channel = channel || to;
         Models.Logging.query(qb =>
-            qb
-            .select(['text', 'timestamp'])
-            .distinct('text')
-            .where('to', 'like', channel)
-            .orderBy('timestamp', 'desc')
-            .limit(150)
-        )
-        .fetchAll()
-        .then(results => {
-          if(!results) {
-            app.say(to, 'I do not have have any data on this channel');
-            return;
-          }
+                qb
+                .select(['text', 'timestamp'])
+                .distinct('text')
+                .where('to', 'like', channel)
+                .orderBy('timestamp', 'desc')
+                .limit(150)
+            )
+            .fetchAll()
+            .then(results => {
+                if (!results) {
+                    app.say(to, 'I do not have have any data on this channel');
+                    return;
+                }
 
-          let data = _(results.pluck('text')).uniq().reverse().value();
-          if (!data) {
-              app.say(to, 'Something went wrong completing your combined command');
-              return;
-          }
+                let data = _(results.pluck('text')).uniq().reverse().value();
+                if (!data) {
+                    app.say(to, 'Something went wrong completing your combined command');
+                    return;
+                }
 
-          aL.combined({
-              text: data.join(' '),
-              //showSourceText: 1, // Show Source Text for debugging
-              extract: 'taxonomy,concept,doc-sentiment,doc-emotion'
-          }, (err, response) => {
-            if (err || !response || response.status != 'OK') {
-                app.say(to, 'Something went wrong completing your combined command');
-                logger.error('Sentiment Error', {err});
-                return;
-            }
+                aL.combined({
+                    text: data.join(' '),
+                    //showSourceText: 1, // Show Source Text for debugging
+                    extract: 'taxonomy,concept,doc-sentiment,doc-emotion'
+                }, (err, response) => {
+                    if (err || !response || response.status != 'OK') {
+                        app.say(to, 'Something went wrong completing your combined command');
+                        logger.error('Sentiment Error', {
+                            err
+                        });
+                        return;
+                    }
 
-            // Prepare the concepts
-            let concepts = _.map(response.concepts, 'text').join(', ');
+                    // Prepare the concepts
+                    let concepts = _.map(response.concepts, 'text').join(', ');
 
-            // Prepare the taxonomy
-            let taxonomy = [];
-            _(response.taxonomy).map('label').map(value => _.filter(value.split('/')), n => true).uniq().each(value => {
-                _.each(value, item => {
-                    taxonomy.push(item);
+                    // Prepare the taxonomy
+                    let taxonomy = [];
+                    _(response.taxonomy).map('label').map(value => _.filter(value.split('/')), n => true).uniq().each(value => {
+                        _.each(value, item => {
+                            taxonomy.push(item);
+                        });
+                    });
+
+                    taxonomy = _.uniq(taxonomy).join(', ');
+
+                    // Prepare the output
+                    let output = `${channel} is interested in concepts like: ${concepts}`;
+                    output = output + space() + `Most of the time ${channel} is ${response.docSentiment.type}`;
+                    output = output + space() + `They are also interested in: ${taxonomy}`;
+                    output = output + space() + `The emotional state of ${channel} is: `;
+                    _.each(response.docEmotions, (value, key) => {
+                        output = output + ` ${_.capitalize(key)}: ${helpers.RoundNumber(value * 100)}%`
+                    });
+
+                    // Report back to IRC
+                    app.say(to, output);
                 });
-            });
 
-            taxonomy = _.uniq(taxonomy).join(', ');
-
-            // Prepare the output
-            let output = `${channel} is interested in concepts like: ${concepts}`;
-            output = output + space() + `Most of the time ${channel} is ${response.docSentiment.type}`;
-            output = output + space() + `They are also interested in: ${taxonomy}`;
-            output = output + space() + `The emotional state of ${channel} is: `;
-            _.each(response.docEmotions, (value, key) => {
-                output = output + ` ${_.capitalize(key)}: ${helpers.RoundNumber(value * 100)}%`
-            });
-
-            // Report back to IRC
-            app.say(to, output);
-          });
-
-        })
-        .catch(err => logger.error('Error In Whats Up', {err}));
+            })
+            .catch(err => logger.error('Error In Whats Up', {
+                err
+            }));
     };
     app.Commands.set('whatsup', {
         desc: '[Channel?] Get the combined information for a specified channel (defaults to current channel)',
@@ -136,7 +140,9 @@ module.exports = app => {
                 }, (err, response) => {
                     if (err || !response || response.status != 'OK') {
                         app.say(to, 'Something went wrong completing your combined command');
-                        logger.error('Sentiment Error', {err});
+                        logger.error('Sentiment Error', {
+                            err
+                        });
                         return;
                     }
 
@@ -166,7 +172,9 @@ module.exports = app => {
                     app.say(to, output);
                 });
             })
-            .catch(err => logger.error('Combined Error', {err}));
+            .catch(err => logger.error('Combined Error', {
+                err
+            }));
     };
     app.Commands.set('combined', {
         desc: '[Nick] [Channel] Get the combined information for a specified user',
