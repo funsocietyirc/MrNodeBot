@@ -11,6 +11,7 @@ const AlchemyLanguageV1 = require('watson-developer-cloud/alchemy-language/v1');
 const Models = require('bookshelf-model-loader');
 const helpers = require('../../helpers');
 const logger = require('../../lib/logger');
+const typo = require('../lib/_ircTypography');
 
 const _ = require('lodash');
 
@@ -22,7 +23,7 @@ module.exports = app => {
     ) return scriptInfo;
 
     // Space helper
-    let space = () => ' - ';
+    let space = ` ${typo.icons.sideArrow} `;
 
     const aL = new AlchemyLanguageV1({
         headers: {
@@ -94,9 +95,9 @@ module.exports = app => {
 
                     // Prepare the output
                     let output = `${channel} is interested in concepts like: ${concepts}`;
-                    output = output + space() + `Most of the time ${channel} is ${response.docSentiment.type}`;
-                    output = output + space() + `They are also interested in: ${taxonomy}`;
-                    output = output + space() + `The emotional state of ${channel} is: `;
+                    output = output + space + `Most of the time ${channel} is ${response.docSentiment.type}`;
+                    output = output + space + `They are also interested in: ${taxonomy}`;
+                    output = output + space + `The emotional state of ${channel} is: `;
                     _.each(response.docEmotions, (value, key) => output = output + ` ${_.capitalize(key)}: ${helpers.RoundNumber(value * 100)}%`);
 
                     // Report back to IRC
@@ -154,9 +155,9 @@ module.exports = app => {
 
                     // Prepare the output
                     let output = `${nick} is interested in concepts like: ${concepts}`;
-                    output = output + space() + `Most of the time ${nick} is ${response.docSentiment.type}`;
-                    output = output + space() + `They are also interested in: ${taxonomy}`;
-                    output = output + space() + `Their emotional state is: `;
+                    output = output + space + `Most of the time ${nick} is ${response.docSentiment.type}`;
+                    output = output + space + `They are also interested in: ${taxonomy}`;
+                    output = output + space + `Their emotional state is: `;
                     _.each(response.docEmotions, (value, key) => output = output + ` ${_.capitalize(key)}: ${helpers.RoundNumber(value * 100)}%`);
 
                     // Report back to IRC
