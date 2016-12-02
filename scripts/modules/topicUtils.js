@@ -53,6 +53,11 @@ module.exports = app => {
 
     // Revert to the last known topic
     const revertTopic = (to, from, text, message) => {
+        if (!app._ircClient.isOpInChannel(to) && app._ircClient.isTopicLocked(to)) {
+            app.say(to, `I am unable to change the topic in this channel ${from}`);
+            return;
+        }
+
         getTopics(to, 2)
             .then(results => {
                 if (results.length < 2) {
@@ -75,7 +80,10 @@ module.exports = app => {
             app.say(to, 'You need to give me something to work with here...');
             return;
         }
-
+        if (!app._ircClient.isOpInChannel(to) && app._ircClient.isTopicLocked(to)) {
+            app.say(to, `I am unable to change the topic in this channel ${from}`);
+            return;
+        }
         getTopics(to, 1)
             .then(results => {
                 if (!results.length) {
@@ -96,6 +104,11 @@ module.exports = app => {
 
     // Subtract a topic segment
     const subtractTopic = (to, from, text, message) => {
+        if (!app._ircClient.isOpInChannel(to) && app._ircClient.isTopicLocked(to)) {
+            app.say(to, `I am unable to change the topic in this channel ${from}`);
+            return;
+        }
+
         getTopics(to, 1)
             .then(results => {
                 if (!results.length) {

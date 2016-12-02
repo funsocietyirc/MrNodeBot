@@ -15,18 +15,18 @@ module.exports = (app, channel) => new Promise((resolve, reject) => {
     return Models.Logging
         // Get Results from the logging database
         .query(qb => {
-          qb
-              .select(['to as channel'])
-              .count('to as messages')
-              .groupBy('to')
-              .orderBy('to')
-              .where(clause => {
-                  let prefixes = app._ircClient._getChannelPrefixArray();
-                  clause.where('to', 'like', `${prefixes.shift()}%`);
-                  _.forEach(prefixes, prefix => clause.orWhere('to', 'like', `${prefix}%`));
-              });
-              // Optionally sort on channel
-              if(channel) qb.andWhere('to','like',channel);
+            qb
+                .select(['to as channel'])
+                .count('to as messages')
+                .groupBy('to')
+                .orderBy('to')
+                .where(clause => {
+                    let prefixes = app._ircClient._getChannelPrefixArray();
+                    clause.where('to', 'like', `${prefixes.shift()}%`);
+                    _.forEach(prefixes, prefix => clause.orWhere('to', 'like', `${prefix}%`));
+                });
+            // Optionally sort on channel
+            if (channel) qb.andWhere('to', 'like', channel);
         })
         .fetchAll()
         .then(results => results.toJSON())
@@ -61,7 +61,8 @@ module.exports = (app, channel) => new Promise((resolve, reject) => {
                         .where('channel', 'like', value)
                         .orderBy('timestamp', 'desc')
                         .limit(1)
-                    ).fetch()
+                    )
+                    .fetch()
                     .then(subResult => {
                         if (subResult && subResult.attributes && subResult.attributes.topic && subResult.attributes.nick && subResult.attributes.timestamp) {
                             channelsObject[value].topic = {
