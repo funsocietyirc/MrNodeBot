@@ -17,7 +17,7 @@ module.exports = app => {
 
     app.Commands.set('safe-check', {
         desc: '[urls] Safe Check a URL',
-        access: app.Config.accessLevels.identified,
+        access: app.Config.accessLevels.admin,
         call: (to, from, text, message) => {
             // No Data given
             if (!_.isString(text) || _.isEmpty(text)) {
