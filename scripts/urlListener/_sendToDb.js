@@ -10,9 +10,7 @@ const urlLoggerIgnore = require('../../config').features.urls.loggingIgnore || [
 module.exports = results => new Promise(resolve => {
     // Filter the ignore list
     let ignored = urlLoggerIgnore.some(hash => {
-        if (_.includes(hash, _.toLower(results.to))) {
-            return true;
-        }
+        if (_.includes(hash, _.toLower(results.to))) return true;
     });
 
     // Gate

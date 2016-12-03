@@ -23,10 +23,7 @@ module.exports = results => new Promise((resolve, reject) => rp({
         results.realUrl = response.request.uri.href;
 
         // We did not recieve enough information from the request
-        if (!contentType) {
-            resolve(results);
-            return;
-        }
+        if (!contentType) return resolve(results);
 
         // We have valid HTML
         if (_.includes(contentType, 'text/html')) {
@@ -40,8 +37,7 @@ module.exports = results => new Promise((resolve, reject) => rp({
                     return;
                 }
                 results.title = helpers.StripNewLine(_.trim(title));
-                resolve(results);
-                return;
+                return resolve(results);
             });
         }
 

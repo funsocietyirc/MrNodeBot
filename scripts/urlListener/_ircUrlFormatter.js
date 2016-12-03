@@ -41,16 +41,13 @@ module.exports = (results) => {
         }
 
         // Print real URL
-        if (results.realUrl && results.url != results.realUrl && results.realUrl.length < 160) {
-            append(`${icons.anchor} ${c.navy(results.realUrl)}`);
-        } else if(results.realUrl && results.url != results.realUrl) {
-            append(`${icons.anchor} ${c.red('URL Redirected')}`)
-        }
+        if (results.realUrl && results.url != results.realUrl && results.realUrl.length < 160) append(`${icons.anchor} ${c.navy(results.realUrl)}`);
+        else if (results.realUrl && results.url != results.realUrl) append(`${icons.anchor} ${c.red('URL Redirected')}`);
+
 
         // We have a Short URL
-        if (!_.isUndefined(results.shortUrl) && !_.isEmpty(results.shortUrl) && results.url.length > config.features.urls.titleMin) {
+        if (!_.isUndefined(results.shortUrl) && !_.isEmpty(results.shortUrl) && results.url.length > config.features.urls.titleMin)
             append(`${icons.anchor} ${c.navy(results.shortUrl)}`);
-        }
 
         // We have a YouTube video response
         if (!_.isUndefined(results.youTube)) {
@@ -128,10 +125,8 @@ module.exports = (results) => {
             (`${icons.comments} ${imgur.comment_count}`);
           if(imgur.nswf) append(c.red('NSFW'));
         }
-        else {
-          // We have a Title
-          if (results.title && results.title != '') append(results.title);
-        }
+        // We have title
+        else if (results.title && results.title != '') append(results.title);
 
         // Finished
         return output ? `${c[results.cached ? 'green' : 'red']('*')} ${results.from} ${icons.sideArrow} ` + output : '';

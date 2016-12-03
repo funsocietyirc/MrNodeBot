@@ -1,12 +1,10 @@
 'use strict';
 
 module.exports = (url, to, from, text, message, is) => new Promise((resolve, reject) => {
-    if (!url || !to || !from || !text || !message) {
-        reject({
-            message: 'You are missing a required argument'
-        });
-        return;
-    }
+    if (!url || !to || !from || !text || !message) return reject({
+        message: 'You are missing a required argument'
+    });
+
     resolve({
         url: url.startsWith('http') ? url : `http://${url}`,
         to,

@@ -5,18 +5,12 @@ const startChain = require('./_startChain');
 
 module.exports = (url, to, from, text, message, is) => new Promise((resolve, reject) => {
     // Validate required fields
-    if (!url || !to || !from || !text || !message) {
-        reject({
-            message: 'You are missing a required argument'
-        });
-        return;
-    }
+    if (!url || !to || !from || !text || !message) return reject({
+        message: 'You are missing a required argument'
+    });
 
     // Check Cache
-    if (!resultsCache.has(url)) {
-        resolve(startChain(url, to, from, text, message, is));
-        return;
-    }
+    if (!resultsCache.has(url)) return resolve(startChain(url, to, from, text, message, is));
 
     // Grab the cached result
     let result = resultsCache.get(url);

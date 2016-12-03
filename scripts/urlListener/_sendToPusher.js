@@ -5,11 +5,8 @@ const pusher = require('../../lib/pusher');
 
 module.exports = results => new Promise(resolve => {
     // Bail if we have no pusher or the result was unreachable
-    if (!pusher) {
-        resolve(results);
-        return;
-    }
-    
+    if (!pusher) return resulve(results);
+
     // Decide which pusher channel to push over
     let channel = /\.(gif|jpg|jpeg|tiff|png)$/i.test(results.url) ? 'image' : 'url';
 
@@ -24,14 +21,11 @@ module.exports = results => new Promise(resolve => {
         timestamp,
         title: results.title || ''
     };
+
     // Include an ID if we have one
-    if (results.id) {
-        output.id = results.id;
-    }
+    if (results.id) output.id = results.id;
     // Include a ShortUrl if we have one
-    if (results.shortUrl) {
-        output.shortUrl = results.shortUrl;
-    }
+    if (results.shortUrl) output.shortUrl = results.shortUrl;
 
     // Set output to Pusher
     pusher.trigger('public', channel, output);

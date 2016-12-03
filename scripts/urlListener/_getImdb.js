@@ -7,17 +7,12 @@ const logger = require('../../lib/logger');
 
 module.exports = (key, results) => new Promise(resolve => {
     // No Key provided, return the results
-    if (!_.isString(key) || _.isEmpty(key)) {
-        resolve(results);
-        return;
-    }
+    if (!_.isString(key) || _.isEmpty(key)) return resolve(results);
+
     return gen(key, 'id')
         .then(data => {
             // No Data, or malformed data, bail
-            if (!data || !data.Response || data.Response == 'False') {
-                resolve(results);
-                return;
-            }
+            if (!data || !data.Response || data.Response == 'False') return resolve(results);
 
             // Append Results
             results.imdb = {
