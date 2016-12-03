@@ -43,7 +43,7 @@ module.exports = url => new Promise((resolve, reject) => {
         })
         .then(results => resolve(results.matches || {}))
         .catch(err => {
-            logger.error('Error in Google URL Safe check', {
+            logger.error('Error in Google URL Safe check Generator', {
                 err
             });
             reject(new Error('Error Resolving safe check'));

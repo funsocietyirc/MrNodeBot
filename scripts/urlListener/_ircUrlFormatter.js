@@ -11,7 +11,7 @@ const logos = ircTypography.logos;
 const icons = ircTypography.icons;
 
 // Formatting Helper
-module.exports = (results) => {
+module.exports = (results, app) => {
         // Site is not live
         if (results.unreachable) {
             return `${c[results.cached ? 'green' : 'red']('*')} ${results.from} ${icons.sideArrow} ${c.blue(results.url)} ${icons.sideArrow} ${c.red.bold('Unverifiable Link')}`;
@@ -125,5 +125,19 @@ module.exports = (results) => {
         else if (results.title && results.title != '') append(results.title);
 
         // Finished
-        return output ? `${c[results.cached ? 'green' : 'red']('*')} ${results.from} ${icons.sideArrow} ` + output : '';
+        let finalOutput = output ? `${c[results.cached ? 'green' : 'red']('*')} ${results.from} ${icons.sideArrow} ` + output : '';
+
+        if(_.isEmpty(finalOutput)) return;
+
+        // Report back to IRC
+        app.say(results.to, finalOutput);
+
+        // Threats detected Report back First
+        if (results.threats.length)
+            _.each(results.threats, threat =>
+                app.say(
+                    results.to,
+                    c.red(`| Warning ${_.startCase(threat.type).toLowerCase()} threat detected on ${results.url} for ${_.startCase(threat.platform).toLowerCase()}`)
+                )
+            )
 };

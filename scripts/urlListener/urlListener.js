@@ -30,6 +30,7 @@ const startCachedChain = require('./_startCachedChain'); // Begin cache chain
 const getDocument = require('./_getDocument'); // Get the title
 const matcher = require('././_linkMatcher'); // Link Matcher
 const getShorten = require('./_getShort'); // Shorten the URL
+const safeCheck = require('./_googleSafeCheck'); // Google Safe Check
 const endChain = require('./_endChain'); // Finish the chain
 
 // Report
@@ -54,12 +55,7 @@ module.exports = app => {
     // Send Response to IRC
     const sendToIrc = results => {
         if (!_.includes(announceIgnore, results.to)) {
-            let output = ircUrlFormatter(results);
-            // Bail if we have no output
-            if (!_.isEmpty(output)) {
-                // Report back to IRC
-                app.say(results.to, output);
-            }
+            ircUrlFormatter(results, app);
             results.delivered.push({
                 protocol: 'irc',
                 on: Date.now()
@@ -70,13 +66,13 @@ module.exports = app => {
 
     // Individual URL Processing chain
     const processUrl = (url, to, from, text, message, is) => {
-        let isCached = resultsCache.has(url); // Check if it is Cached
-        let chain = isCached ? startCachedChain : startChain; // Load appropriate start method
+        let chain = resultsCache.has(url) ? startCachedChain : startChain; // Load appropriate start method based on cache
 
         chain(url, to, from, text, message, is) // Begin Chain
-            .then(results => results.isCached ? results : // If we Have a cached object, continue in chain
+            .then(results => results.cached ? results : // If we Have a cached object, continue in chain
                 getDocument(results) // Make a request, verify the site exists, and grab metadata
-                .then(results => results.unreachable ? results : // If the site is no up, continue the chain
+                .then(safeCheck)
+                .then(results => results.unreachable ? results : // If the site is not up, continue the chain
                     getShorten(results) // Otherwise grab the google SHORT Url
                     .then(matcher) // Then send it to the regex matcher
                 ))
@@ -86,6 +82,7 @@ module.exports = app => {
                 .then(sendToPusher) // Then broadcast to Pusher
             )
             .then(endChain) // End the chain, cache results
+            .catch(console.dir)
             .catch(err => logger.warn('Error in URL Listener chain', {
                 err
             }));
@@ -99,7 +96,8 @@ module.exports = app => {
         // Url Processing chain
         _(extractUrls(text))
             .uniq() // Assure No Duplicated URLS on the same line return multiple results
-            .reject(url => url.startsWith('ftp')) // We do not deal with FTP
+            .filter(url => url.match(/^(www|http[s]?)/im)) // Filter out undesired protocols
+            .map(url => url.startsWith('http') ? url : `http://${url}`)
             .each(url => processUrl(url, to, from, text, message, is));
     };
 

@@ -16,7 +16,6 @@ module.exports = results => new Promise((resolve, reject) => rp({
     })
     .then(response => {
         let contentType = response.headers['content-type'];
-
         // Hold on to the HTTP Headers
         results.headers = response.headers;
         // Hold on to the actual URL after all redirects

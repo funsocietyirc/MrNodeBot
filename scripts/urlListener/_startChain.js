@@ -4,9 +4,8 @@ module.exports = (url, to, from, text, message, is) => new Promise((resolve, rej
     if (!url || !to || !from || !text || !message) return reject({
         message: 'You are missing a required argument'
     });
-
     resolve({
-        url: url.startsWith('http') ? url : `http://${url}`,
+        url,
         to,
         from,
         text,
@@ -15,5 +14,6 @@ module.exports = (url, to, from, text, message, is) => new Promise((resolve, rej
         delivered: [],
         secure: url.startsWith('https://'),
         history: [],
+        threats: [],
     });
 });
