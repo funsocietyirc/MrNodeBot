@@ -20,15 +20,17 @@ module.exports = results => new Promise(resolve => {
     let imdbMatch = url.match(/(?:www\.)?imdb.com\/title\/(tt[^\/]+).*/);
     if (imdbMatch && imdbMatch[1]) return resolve(getImdb(imdbMatch[1], results));
 
-    // Check for Imgur
+    // Check for Imgur Image | Gallery
     let imgurMatch = url.match(/imgur\.com\/(image|gallery)\/(.*)/);
     if (imgurMatch && imgurMatch[1] && imgurMatch[2]) return resolve(getImgur(imgurMatch[1], imgurMatch[2], results));
 
+    // Check for Imgur Generic
     let imgurImageMatch = url.match(/(?:imgur\.com\/)(\w{3,7})/);
     if (imgurImageMatch && imgurImageMatch[1]) return resolve(getImgur('image', imgurImageMatch[1], results));
 
     // Get Generic Information
     let matches = url.match(/(?:git@(?![\w\.]+@)|https:\/{2}|http:\/{2})([\w\.@]+)[\/:]([\w,\-,\_]+)\/([\w,\-,\_]+)(?:\.git)?\/?/);
+
     // We have no further matches, bail
     if (!matches) return resolve(results);
 

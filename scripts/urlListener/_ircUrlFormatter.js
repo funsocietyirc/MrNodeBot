@@ -44,11 +44,9 @@ module.exports = (results) => {
         if (results.realUrl && results.url != results.realUrl && results.realUrl.length < 160) append(`${icons.anchor} ${c.navy(results.realUrl)}`);
         else if (results.realUrl && results.url != results.realUrl) append(`${icons.anchor} ${c.red('URL Redirected')}`);
 
-
         // We have a Short URL
         if (!_.isUndefined(results.shortUrl) && !_.isEmpty(results.shortUrl) && results.url.length > config.features.urls.titleMin)
             append(`${icons.anchor} ${c.navy(results.shortUrl)}`);
-
         // We have a YouTube video response
         if (!_.isUndefined(results.youTube)) {
             let yr = results.youTube;
@@ -56,7 +54,6 @@ module.exports = (results) => {
                 (yr.videoTitle)
                 (`${icons.views} ${c.navy(helpers.NumberWithCommas(yr.viewCount))} ${icons.upArrow} ${c.green(helpers.NumberWithCommas(yr.likeCount))} ${icons.downArrow} ${c.red(helpers.NumberWithCommas(yr.dislikeCount))} ${icons.comments} ${c.blue(helpers.NumberWithCommas(yr.commentCount))}`);
         }
-
         // We have IMDB data
         else if (!_.isUndefined(results.imdb)) {
             let imdb = results.imdb;
@@ -72,7 +69,6 @@ module.exports = (results) => {
             append(c[imdb.imdbRating < 5 ? 'red' : 'green'](`Rating: ${imdb.imdbRating}`))
                 (`${icons.views} ${c.navy(imdb.imdbVotes)}`);
         }
-
         // We Have GitHub data
         else if (!_.isUndefined(results.gitHub)) {
             let gh = results.gitHub;

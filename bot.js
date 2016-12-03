@@ -366,7 +366,7 @@ class MrNodeBot {
             try {
                 value.call(from, to, text, message);
             } catch (err) {
-                logger.error(t('error.genericError', {
+                logger.error(t('errors.genericError', {
                     command: 'onAction'
                 }), {
                     err
@@ -388,7 +388,7 @@ class MrNodeBot {
             try {
                 value.call(oldnick, newnick, channels, message);
             } catch (err) {
-                logger.error(t('error.genericError', {
+                logger.error(t('errors.genericError', {
                     command: 'nickChange'
                 }), {
                     err
@@ -408,7 +408,7 @@ class MrNodeBot {
             try {
                 value.call(from, to, text, message);
             } catch (err) {
-                logger.error(t('error.genericError', {
+                logger.error(t('errors.genericError', {
                     command: 'onNotice'
                 }), {
                     err
@@ -430,7 +430,7 @@ class MrNodeBot {
             try {
                 value.call(channel, nick, message);
             } catch (err) {
-                logger.error(t('error.genericError', {
+                logger.error(t('errors.genericError', {
                     command: 'onJoin'
                 }), {
                     err
@@ -455,7 +455,7 @@ class MrNodeBot {
             try {
                 value.call(channel, nick, reason, message);
             } catch (err) {
-                logger.error(t('error.genericError', {
+                logger.error(t('errors.genericError', {
                     command: 'onPart'
                 }), {
                     err
@@ -487,7 +487,7 @@ class MrNodeBot {
             try {
                 value.call(channel, nick, by, reason, message);
             } catch (err) {
-                logger.error(t('error.genericError', {
+                logger.error(t('errors.genericError', {
                     command: 'onKick'
                 }), {
                     err
@@ -511,7 +511,7 @@ class MrNodeBot {
             try {
                 value.call(nick, reason, channels, message);
             } catch (err) {
-                logger.error(t('error.genericError', {
+                logger.error(t('errors.genericError', {
                     command: 'onQuit'
                 }), {
                     err
@@ -535,7 +535,7 @@ class MrNodeBot {
             try {
                 value.call(channel, topic, nick, message);
             } catch (err) {
-                logger.error(t('error.genericError', {
+                logger.error(t('errors.genericError', {
                     command: 'opTopic'
                 }), {
                     err
@@ -555,7 +555,7 @@ class MrNodeBot {
             try {
                 value.call(from, to, text, type, message);
             } catch (err) {
-                logger.error(t('error.genericError', {
+                logger.error(t('errors.genericError', {
                     command: 'ctcpCommands'
                 }), {
                     err
@@ -572,7 +572,7 @@ class MrNodeBot {
             try {
                 value.call(message);
             } catch (err) {
-                logger.error(t('error.genericError', {
+                logger.error(t('errors.genericError', {
                     command: 'handleRegistered'
                 }), {
                     err
@@ -608,7 +608,7 @@ class MrNodeBot {
                 try {
                     value.call(to, from, text, message, is);
                 } catch (err) {
-                    logger.error(t('error.genericError', {
+                    logger.error(t('errors.genericError', {
                         command: 'onCommand onListeners'
                     }), {
                         err
