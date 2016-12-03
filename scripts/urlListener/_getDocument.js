@@ -49,6 +49,7 @@ module.exports = results => new Promise((resolve, reject) => rp({
             err
         });
         results.unreachable = true;
+
         resolve(results);
     })
 );

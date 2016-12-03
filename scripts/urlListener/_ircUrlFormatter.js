@@ -13,9 +13,8 @@ const icons = ircTypography.icons;
 // Formatting Helper
 module.exports = (results, app) => {
         // Site is not live
-        if (results.unreachable) {
-            return `${c[results.cached ? 'green' : 'red']('*')} ${results.from} ${icons.sideArrow} ${c.blue(results.url)} ${icons.sideArrow} ${c.red.bold('Unverifiable Link')}`;
-        }
+        if (results.unreachable)
+            app.say(results.to, `${c[results.cached ? 'green' : 'red']('*')} ${results.from} ${icons.sideArrow} ${c.blue(results.url)} ${icons.sideArrow} ${c.red.bold('Unverifiable Link')}`);
 
         // Output chain helper functions
         let output = '';
