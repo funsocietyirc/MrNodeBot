@@ -13,8 +13,10 @@ const icons = ircTypography.icons;
 // Formatting Helper
 module.exports = (results, app) => {
         // Site is not live
-        if (results.unreachable)
-            app.say(results.to, `${c[results.cached ? 'green' : 'red']('*')} ${results.from} ${icons.sideArrow} ${c.blue(results.url)} ${icons.sideArrow} ${c.red.bold('Unverifiable Link')}`);
+        if (results.unreachable) {
+          app.say(results.to, `${c[results.cached ? 'green' : 'red']('*')} ${results.from} ${icons.sideArrow} ${c.blue(results.url)} ${icons.sideArrow} ${c.red.bold('Unverifiable Link')}`);
+          return;
+        }
 
         // Output chain helper functions
         let output = '';
@@ -122,7 +124,8 @@ module.exports = (results, app) => {
         }
         // We have title
         else if (results.title && results.title != '') append(results.title);
-
+        // We have nothing but the malicious data
+        else if (results.threats.length) append(`posted a malicious Link`);
         // Finished
         let finalOutput = output ? `${c[results.cached ? 'green' : 'red']('*')} ${results.from} ${icons.sideArrow} ` + output : '';
 
