@@ -12,6 +12,9 @@ const safe = require('../generators/_getGoogleSafeUrlCheck');
 const extractUrls = require('../../lib/../lib/extractUrls');
 
 module.exports = app => {
+    // We require a google API Key for this command
+    if (_.isUndefined(app.Config.apiKeys.google) || !_.isString(app.Config.apiKeys.google) || _.isEmpty(app.Config.apiKeys.google)) return scriptInfo;
+
     app.Commands.set('safe-check', {
         desc: '[urls] Safe Check a URL',
         access: app.Config.accessLevels.identified,
@@ -46,6 +49,12 @@ module.exports = app => {
                         // say it back to irc
                         app.say(to, `Warning ${_.startCase(result.threatType).toLowerCase()} threat on ${result.threat.url} for ${_.startCase(result.platformType).toLowerCase()}`);
                     });
+                })
+                .catch(err => {
+                    logger.error('Error Completing a safe check request', {
+                        err
+                    });
+                    app.say(to, err.message ? err.message : `Something went wrong with the Safe Check request`);
                 });
         }
     });
