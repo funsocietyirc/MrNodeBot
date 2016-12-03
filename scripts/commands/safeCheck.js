@@ -47,7 +47,7 @@ module.exports = app => {
                         // Not enough information to provide a line
                         if (!result.threatType || !result.platformType || !result.threat.url) return;
                         // say it back to irc
-                        app.say(to, `Warning ${_.startCase(result.threatType).toLowerCase()} threat on ${result.threat.url} for ${_.startCase(result.platformType).toLowerCase()}`);
+                        app.say(to, `Warning ${_.startCase(result.threatType).toLowerCase()} threat detected on ${result.threat.url} for ${_.startCase(result.platformType).toLowerCase()}`);
                     });
                 })
                 .catch(err => {
