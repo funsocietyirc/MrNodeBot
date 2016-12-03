@@ -7,58 +7,87 @@ html {
     -o-background-size: cover;
     background-size: cover;
 }
+
 body {
-	min-height:calc(100% - 60px);
+    min-height: calc(100% - 60px);
     background: black;
-	background: rgba(0,0,0,0.8);
+    background: rgba(0, 0, 0, 0.8);
 }
+
 .padded {
-	padding-right: 5px;
-	padding-left: 5px;
-	margin-left: 0;
-	margin-right: 0;
+    padding-right: 5px;
+    padding-left: 5px;
+    margin-left: 0;
+    margin-right: 0;
 }
+
 .site-wrapper {
-	margin-top: 60px;
+    margin-top: 60px;
 }
+
 .channelLink {
-	display: inline-block;
-    margin-top:5px;
+    display: inline-block;
+    margin-top: 5px;
 }
+
 .channelLink:not(:only-of-type):not(:last-of-type):after {
-	margin-right:5px;
-	margin-left:5px;
-	content: '|';
-	display: inline-block;
+    margin-right: 5px;
+    margin-left: 5px;
+    content: '|';
+    display: inline-block;
 }
+
 .help-block {
-	color:#737373;
+    color: #737373;
 }
-.typed-cursor{
+
+.typed-cursor {
     opacity: 1;
     -webkit-animation: blink 0.7s infinite;
     -moz-animation: blink 0.7s infinite;
     animation: blink 0.7s infinite;
-    font-size:2em;
-    color:#00ff00 ;
+    font-size: 2em;
+    color: #00ff00;
 }
-@keyframes blink{
-    0% { opacity:1; }
-    50% { opacity:0; }
-    100% { opacity:1; }
+
+@keyframes blink {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
 }
-@-webkit-keyframes blink{
-    0% { opacity:1; }
-    50% { opacity:0; }
-    100% { opacity:1; }
+
+@-webkit-keyframes blink {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
 }
-@-moz-keyframes blink{
-    0% { opacity:1; }
-    50% { opacity:0; }
-    100% { opacity:1; }
+
+@-moz-keyframes blink {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
 }
+
 .message {
-    padding-top:calc(30% - 60px);
-    color:#00ff00 ;
-    font-size:2em;
+    padding-top: calc(15% - 60px);
+    color: #00ff00;
+    font-size: 2em;
 }

@@ -366,7 +366,9 @@ class MrNodeBot {
             try {
                 value.call(from, to, text, message);
             } catch (err) {
-                logger.error(`Error with action`, {
+                logger.error(t('error.genericError', {
+                    command: 'onAction'
+                }), {
                     err
                 });
             }
@@ -386,7 +388,9 @@ class MrNodeBot {
             try {
                 value.call(oldnick, newnick, channels, message);
             } catch (err) {
-                logger.error(`Error with NickChange`, {
+                logger.error(t('error.genericError', {
+                    command: 'nickChange'
+                }), {
                     err
                 });
             }
@@ -404,7 +408,9 @@ class MrNodeBot {
             try {
                 value.call(from, to, text, message);
             } catch (err) {
-                logger.error(`Error with On Notice`, {
+                logger.error(t('error.genericError', {
+                    command: 'onNotice'
+                }), {
                     err
                 });
             }
@@ -424,7 +430,9 @@ class MrNodeBot {
             try {
                 value.call(channel, nick, message);
             } catch (err) {
-                logger.error(`Error with OnJoin`, {
+                logger.error(t('error.genericError', {
+                    command: 'onJoin'
+                }), {
                     err
                 });
             }
@@ -447,7 +455,9 @@ class MrNodeBot {
             try {
                 value.call(channel, nick, reason, message);
             } catch (err) {
-                logger.error('Error in OnPart', {
+                logger.error(t('error.genericError', {
+                    command: 'onPart'
+                }), {
                     err
                 });
             }
@@ -477,7 +487,9 @@ class MrNodeBot {
             try {
                 value.call(channel, nick, by, reason, message);
             } catch (err) {
-                logger.error('Error in OnKick', {
+                logger.error(t('error.genericError', {
+                    command: 'onKick'
+                }), {
                     err
                 });
             }
@@ -499,7 +511,9 @@ class MrNodeBot {
             try {
                 value.call(nick, reason, channels, message);
             } catch (err) {
-                logger.error('Error in OnQuit', {
+                logger.error(t('error.genericError', {
+                    command: 'onQuit'
+                }), {
                     err
                 });
             }
@@ -521,7 +535,9 @@ class MrNodeBot {
             try {
                 value.call(channel, topic, nick, message);
             } catch (err) {
-                logger.error('Error in OnTopic', {
+                logger.error(t('error.genericError', {
+                    command: 'opTopic'
+                }), {
                     err
                 });
             }
@@ -539,7 +555,9 @@ class MrNodeBot {
             try {
                 value.call(from, to, text, type, message);
             } catch (err) {
-                logger.error('Error in CtcpCommands', {
+                logger.error(t('error.genericError', {
+                    command: 'ctcpCommands'
+                }), {
                     err
                 });
             }
@@ -554,7 +572,9 @@ class MrNodeBot {
             try {
                 value.call(message);
             } catch (err) {
-                logger.error('Error in handleRegistered', {
+                logger.error(t('error.genericError', {
+                    command: 'handleRegistered'
+                }), {
                     err
                 });
             }
@@ -588,7 +608,9 @@ class MrNodeBot {
                 try {
                     value.call(to, from, text, message, is);
                 } catch (err) {
-                    logger.error('Error in onCommand onListeners', {
+                    logger.error(t('error.genericError', {
+                        command: 'onCommand onListeners'
+                    }), {
                         err
                     });
                 }
@@ -621,10 +643,16 @@ class MrNodeBot {
                 // Record Stats
                 this.Stats.set(cmd, this.Stats.has(cmd) ? this.Stats.get(cmd) + 1 : 1);
                 // Log
-                logger.info(`${from} on ${to} has triggered the ${cmd} command from the ${helpers.AccessString(command.access)} group`);
-
+                logger.info(t('events.commandTriggered', {
+                    from,
+                    to,
+                    cmd,
+                    group: helpers.AccessString(command.access),
+                }));
             } catch (err) {
-                logger.error(`Error processing Command ${cmd}`, {
+                logger.error(t('error.procCommand', {
+                    command: cmd
+                }), {
                     err
                 });
             }
@@ -650,7 +678,10 @@ class MrNodeBot {
             this.say(`${this.Config.nickserv.nick}${first}`, `acc ${from}`);
         }
         // Invalid Command
-        else this.say(to, `I am sorry ${from}, I am unable to do that. Let me clarify ${cmd} is an invalid Command`);
+        else this.say(to, t('errors.invalidCommand', {
+            from,
+            cmd
+        }));
     };
 
     //noinspection JSMethodCanBeStatic
@@ -712,9 +743,18 @@ class MrNodeBot {
             // Record Stats
             this.Stats.set(admCall.cmd, this.Stats.has(admCall.cmd) ? this.Stats.get(admCall.cmd) + 1 : 1);
             // Log
-            logger.info(`${admCall.from} on ${admCall.to} has triggered the ${admCall.cmd} command from the ${helpers.AccessString(command.access)} group`);
+            logger.info(t('events.commandTriggered', {
+                from: admCall.from,
+                to: admCall.to,
+                cmd: admCall.cmd,
+                group: helpers.AccessString(command.access),
+            }));
         } catch (err) {
-            logger.error(logger.error(`Error with Identified command ${admCall.cmd} from ${admCall.from} to ${admCall.to}`));
+            logger.error(t('errors.invalidIdentCommand', {
+                cmd: admCall.cmd,
+                from: admCall.from,
+                to: admCall.to,
+            }));
         }
 
         // Remove the callback from the stack

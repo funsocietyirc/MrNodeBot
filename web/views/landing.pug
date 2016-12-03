@@ -3,24 +3,10 @@ block title
     title Hello Friends...
 block content
     div.row
-        div.col-md-12
-            div.message
+        div.col-md-12.message
+            img(src="/assets/bot.png", class="center-block")
 block body
     script(src='/assets/moment.min.js')
-    script(src='/assets/typed.min.js')
     script.
-        var lines = [
-            'Hello friend.',
-            "If you've come, you've come for a reason.",
-            "You may not be able to explain it yet, but there's a part of you that's exhausted with this world...",
-            "A world that decides where you work, who you see, and how you empty and fill your depressing bank account.",
-            "Even the Internet connection you're using to read this is costing you, slowly chipping away at your existence.",
-            "Soon I will give you a voice. Today your education begins. <a  href='/chat'>Connect to FreeNode</a>, and join us on <strong>#fsociety</strong>."
-        ];
         $(function(){
-            $(".message").typed({
-                strings: lines,
-                typeSpeed: 0,
-                contentType: 'html'
-            });
         });

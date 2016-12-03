@@ -86,10 +86,12 @@ module.exports = app => {
                 .then(sendToPusher) // Then broadcast to Pusher
             )
             .then(endChain) // End the chain, cache results
-            .catch(err => logger.warn('Error in URL Listener chain', {
-                err
-            }));
+            .catch(console.dir);
     };
+
+    // logger.warn('Error in URL Listener chain', {
+    //     err
+    // })
 
     // Handler
     const listener = (to, from, text, message, is) => {
