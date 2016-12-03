@@ -33,7 +33,7 @@
     "express": "^4.13.0",
     "express-fileupload": "git://github.com/pajtai/express-fileupload.git",
     "express-rate-limit": "^2.6.0",
-    "express-winston": "^2.0.0",
+    "express-winston": "^2.1.0",
     "file-type": "^3.9.0",
     "freeport": "^1.0.5",
     "gitlog": "^2.0.1",

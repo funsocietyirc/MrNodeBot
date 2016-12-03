@@ -2,14 +2,28 @@
 
 By: IronY
 
+# Deps
+
+-   Mysql || MariaDB || Postgres SQL || Sqlite3
+-   libiconv
+
+# Technologies
+
+-   Knex.js
+-   Bookshelf.js
+-   Lodash
+-   Express
+-   node-scheduler
+-   node-irc
+
 # Install Steps
 
--   npm install
--   copy config.js.sample to config.js
+-   ```npm install```
+-   ```cp config.js.sample config.js```
 -   go through configuration and adjust
--   By default the bot will use sqlite3, you will need to npm install sqlite3 in order for this to work
--   If instead you decide to use mysql, npm install mysql
--   node index.js [--config config.js-path]
+-   By default the bot will use sqlite3, you will need to ```npm install sqlite3``` in order for this to work
+-   If instead you decide to use mysql, ```npm install mysql```
+-   ```node index.js [--config config.js-path]``` or ```npm start```
 
 ## Due to this bot requiring NickServ for its validation of access levels
 
