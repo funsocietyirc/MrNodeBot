@@ -2,15 +2,19 @@
 
 const _ = require('lodash');
 const pusher = require('../../lib/pusher');
-module.exports = (results) => {
+
+module.exports = results => new Promise(resolve => {
     // Bail if we have no pusher or the result was unreachable
     if (!pusher) {
-      return results;
+        resolve(results);
+        return;
     }
     // Decide which pusher channel to push over
     let channel = /\.(gif|jpg|jpeg|tiff|png)$/i.test(results.url) ? 'image' : 'url';
+
     // Grab a timestamp
     let timestamp = Date.now();
+    
     // Prepare Output
     let output = {
         url: results.url,
@@ -38,5 +42,5 @@ module.exports = (results) => {
         on: timestamp
     });
 
-    return results;
-};
+    resolve(results);
+});

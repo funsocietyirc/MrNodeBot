@@ -33,7 +33,9 @@ module.exports = results => new Promise((resolve, reject) => rp({
             return xray(response.body, 'title')((err, title) => {
                 if (err || !title) {
                     // Something actually went wrong
-                    if (err) logger.error('Error in XRAY URL Chain', {err});
+                    if (err) logger.error('Error in XRAY URL Chain', {
+                        err
+                    });
                     resolve(results);
                     return;
                 }
@@ -48,7 +50,9 @@ module.exports = results => new Promise((resolve, reject) => rp({
         resolve(results);
     })
     .catch(err => {
-        logger.error('Error in URL Get Document function', {err});
+        logger.error('Error in URL Get Document function', {
+            err
+        });
         results.unreachable = true;
         resolve(results);
     })
