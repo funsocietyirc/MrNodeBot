@@ -1,4 +1,4 @@
-![Mr. NodeBot](https://cdn.irony.online/bot.png)
+![Mr. NodeBot](/web/assets/bot.png?raw=true "Mr. NodeBot")
 
 By: IronY
 
