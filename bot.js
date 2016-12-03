@@ -650,7 +650,7 @@ class MrNodeBot {
                     group: helpers.AccessString(command.access),
                 }));
             } catch (err) {
-                logger.error(t('error.procCommand', {
+                logger.error(t('errors.procCommand', {
                     command: cmd
                 }), {
                     err
