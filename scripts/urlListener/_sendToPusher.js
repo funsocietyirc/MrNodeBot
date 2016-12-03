@@ -9,12 +9,13 @@ module.exports = results => new Promise(resolve => {
         resolve(results);
         return;
     }
+    
     // Decide which pusher channel to push over
     let channel = /\.(gif|jpg|jpeg|tiff|png)$/i.test(results.url) ? 'image' : 'url';
 
     // Grab a timestamp
     let timestamp = Date.now();
-    
+
     // Prepare Output
     let output = {
         url: results.url,

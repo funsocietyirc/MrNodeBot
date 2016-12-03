@@ -55,7 +55,7 @@ module.exports = results => new Promise(resolve => {
             });
             return results;
         })
-        .then(results => resolve)
+        .then(resolve)
         .catch(err => {
             logger.error('Error in the DB URL function', {
                 err
