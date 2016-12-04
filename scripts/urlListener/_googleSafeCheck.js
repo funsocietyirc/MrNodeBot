@@ -27,7 +27,7 @@ module.exports = results => new Promise(resolve => {
             resolve(results);
         })
         .catch(err => {
-            logger.error('Error in URL Chain Safe Check', {
+            logger.warn('Error in URL Chain Safe Check', {
                 err
             });
             resolve(results);

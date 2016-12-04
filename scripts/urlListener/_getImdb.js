@@ -39,7 +39,7 @@ module.exports = (key, results) => new Promise(resolve => {
             resolve(results);
         })
         .catch(err => {
-            logger.error('Error in getImdb URL function', {
+            logger.warn('Error in getImdb URL function', {
                 err
             });
             resolve(results);

@@ -25,7 +25,7 @@ module.exports = (type, key, results) => new Promise((resolve, reject) => {
 
     })
     .catch(err => {
-        logger.error('Error in Imgur link function', {
+        logger.warn('Error in Imgur link function', {
             err
         });
         return results;

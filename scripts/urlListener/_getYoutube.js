@@ -25,7 +25,7 @@ module.exports = (key, results) => new Promise(resolve => {
             resolve(results);
         })
         .catch(err => {
-            logger.error('Error in YouTube link function', {
+            logger.warn('Error in YouTube link function', {
                 err
             });
             resolve(results);

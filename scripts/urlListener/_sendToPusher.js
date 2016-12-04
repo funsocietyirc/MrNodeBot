@@ -4,7 +4,7 @@ const _ = require('lodash');
 const pusher = require('../../lib/pusher');
 
 module.exports = results => new Promise(resolve => {
-    // Bail if we have no pusher or the result was unreachable
+    // Bail if we do not have pusher
     if (!pusher) return resulve(results);
 
     // Decide which pusher channel to push over
@@ -19,7 +19,8 @@ module.exports = results => new Promise(resolve => {
         to: results.to,
         from: results.from,
         timestamp,
-        title: results.title || ''
+        title: results.title || '',
+        threat: _.isEmpty(results.threats)
     };
 
     // Include an ID if we have one

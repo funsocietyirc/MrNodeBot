@@ -31,7 +31,7 @@ module.exports = (user, repo, results) => rp({
         return results;
     })
     .catch(err => {
-        logger.error('Error in getGitHub link function', {
+        logger.warn('Error in getGitHub link function', {
             err
         });
         return results;

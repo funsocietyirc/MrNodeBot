@@ -25,7 +25,7 @@ module.exports = (user, repo, results) => rp({
         return results;
     })
     .catch(err => {
-        logger.error('Error in getBitbucket link function', {
+        logger.warn('Error in getBitbucket link function', {
             err
         });
         return results;

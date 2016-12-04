@@ -17,7 +17,7 @@ module.exports = results => new Promise(resolve => {
             shortUrl: url
         })))
         .catch(err => {
-            logger.error('Error in URL Shortner function', {
+            logger.warn('Error in URL Shortner function', {
                 err
             });
             resolve(results);

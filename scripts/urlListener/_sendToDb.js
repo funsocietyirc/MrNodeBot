@@ -3,9 +3,10 @@
 const _ = require('lodash');
 const Models = require('bookshelf-model-loader');
 const logger = require('../../lib/logger');
+const config = require('../../config');
 
 // Ignore URL logging for specific channels
-const urlLoggerIgnore = require('../../config').features.urls.loggingIgnore || [];
+const urlLoggerIgnore = config.features.urls.loggingIgnore || [];
 
 module.exports = results => new Promise(resolve => {
     // Filter the ignore list
@@ -16,13 +17,20 @@ module.exports = results => new Promise(resolve => {
     // Gate
     if (!Models.Url || ignored) return resolve(results);
 
+    let data = {
+        url: results.url,
+        to: results.to,
+        from: results.from,
+        title: results.title
+    };
+
+    // If we have a google URL key
+    if (!_.isUndefined(config.apiKeys.google) && _.isString(config.apiKeys.google) && !_.isEmpty(config.apiKeys.google))
+        // And the threat array is not empty, record the link is malicious
+        data.threat = !_.isEmpty(results.threats) ? true : false;
+
     // Do the magic
-    return Models.Url.create({
-            url: results.url,
-            to: results.to,
-            from: results.from,
-            title: results.title
-        })
+    return Models.Url.create(data)
         .then(record => {
             results.id = record.id;
             results.delivered.push({
@@ -55,7 +63,7 @@ module.exports = results => new Promise(resolve => {
         })
         .then(resolve)
         .catch(err => {
-            logger.error('Error in the DB URL function', {
+            logger.warn('Error in the DB URL function', {
                 err
             });
             resolve(results);
