@@ -16,6 +16,9 @@ By: IronY
 -   node-scheduler
 -   node-irc
 
+# API Keys
+-   For most features a google api key with Shortener service, SafeSearch service, and youTube search service enable is required
+
 # Install Steps
 
 -   ```npm install```
