@@ -13,7 +13,6 @@ module.exports = (key, results) => new Promise(resolve => {
         .then(data => {
             // No Data, or malformed data, bail
             if (!data || !data.Response || data.Response == 'False') return resolve(results);
-
             // Append Results
             results.imdb = {
                 title: data.Title,
@@ -24,18 +23,22 @@ module.exports = (key, results) => new Promise(resolve => {
                 genre: data.Genre,
                 writer: data.Writer,
                 director: data.Director,
-                actors: data.Actors.split(', '),
                 plot: data.Plot,
-                language: data.Language.split(', '),
                 country: data.Country,
                 awards: data.Awards,
                 poster: data.Poster,
-                metaScore: _.isSafeInteger(data.Metascore) ? null : data.Metascore,
                 imdbRating: data.imdbRating,
                 imdbVotes: data.imdbVotes,
                 type: data.Type,
                 seasons: data.totalSeasons
             };
+            // Record language
+            results.imdb.language = !_.isUndefined(data.Language) && _.isString(data.Language) ? data.Language.split(', ') : [];
+            // Record Actors
+            results.imdb.actors = !_.isUndefined(data.Actors) && _.isString(data.Actors)  ? data.Actors.split(', ') : [];
+            // Record Metascore
+            results.imdb.metaScore = !_.isUndefined(data.Metascore) && _.isSafeInteger(data.Metascore) ? data.Metascore : null;
+            // return
             resolve(results);
         })
         .catch(err => {

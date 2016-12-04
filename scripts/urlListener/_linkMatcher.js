@@ -17,7 +17,7 @@ module.exports = results => new Promise(resolve => {
     if (ytMatch && ytMatch[2].length == 11) return resolve(getYoutube(ytMatch[2], results));
 
     // Check for IMDB
-    let imdbMatch = url.match(/(?:www\.)?imdb.com\/title\/(tt[^\/]+).*/);
+    let imdbMatch = url.match(/(?:www\.)?imdb.com\/.*title\/(tt\d+)/);
     if (imdbMatch && imdbMatch[1]) return resolve(getImdb(imdbMatch[1], results));
 
     // Check for Imgur Image | Gallery
