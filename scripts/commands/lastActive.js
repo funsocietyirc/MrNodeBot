@@ -90,15 +90,13 @@ module.exports = app => {
                 // Get the most recent result
                 results = _(results).maxBy(value => Moment(value[Object.keys(value)[0]].timestamp).unix());
 
-                console.dir(results);
-
                 // The last information we have was a post
                 if (results.log)
                     app.say(to, `${results.log.from} was last active ${Moment(results.log.timestamp).fromNow()} on ${results.log.to} Saying: ${results.log.text}`);
                 else if (results.part)
                     app.say(to, `${results.part.nick} was last active ${Moment(results.part.timestamp).fromNow()} on ${results.part.channel} Parting: ${results.part.reason || 'No reason given'}`);
                 else if (results.quit)
-                    app.say(to, `${results.quit.nick} was last active ${Moment(results.quit.timestamp).fromNow()} on ${results.kick.channels} Quitting: ${results.quit.reason || 'No reason given'}`);
+                    app.say(to, `${results.quit.nick} was last active ${Moment(results.quit.timestamp).fromNow()} on ${results.quit.channels} Quitting: ${results.quit.reason || 'No reason given'}`);
                 else if (results.kick)
                     app.say(to, `${results.kick.nick} was last active ${Moment(results.kick.timestamp).fromNow()} on ${results.kick.channel} Getting Kicked: ${results.kick.reason || 'No reason given'}`);
                 else if (results.join)
