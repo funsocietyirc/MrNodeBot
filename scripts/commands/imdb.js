@@ -16,7 +16,7 @@ module.exports = app => {
         desc: '[title] - Get IMDB info for a given title',
         access: app.Config.accessLevels.identified,
         call: (to, from, text, message) => {
-            if (!text || _.isEmpty(text)) {
+            if (!_.isString(text) || _.isEmpty(text)) {
                 app.say(to, 'I require something to actually look up');
                 return;
             }

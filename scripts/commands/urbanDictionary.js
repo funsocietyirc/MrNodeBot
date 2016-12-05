@@ -15,17 +15,15 @@ module.exports = app => {
     app.Commands.set('urban', {
         desc: '[term] - Urban Dictionary Lookup',
         access: app.Config.accessLevels.identified,
-        call: (to, from, text, message) => {
-            dict(text)
-                .then(results => {
-                    let definition = _.truncate(results.definition, {
-                        length: 200
-                    });
-                    return short(results.url)
-                        .then(shortUrl => app.say(to, `${results.term}: ${definition} - ${shortUrl}`));
-                })
-                .catch(err => app.say(to, `Urban Dictionary Error: ${err.message}`));
-        }
+        call: (to, from, text, message) => dict(text)
+            .then(results => {
+                let definition = _.truncate(results.definition, {
+                    length: 200
+                });
+                return short(results.url)
+                    .then(shortUrl => app.say(to, `${results.term}: ${definition} - ${shortUrl}`));
+            })
+            .catch(err => app.say(to, `Urban Dictionary Error: ${err.message}`))
     });
     return scriptInfo;
 };
