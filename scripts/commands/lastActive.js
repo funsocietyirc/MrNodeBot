@@ -29,7 +29,7 @@ module.exports = app => {
         // Grab Logging Data
         let logging = Models.Logging.query(qb => qb
             .select('to', 'from', 'text', 'timestamp')
-            .where('from', 'like', user)
+            .where('from', user)
             .orderBy('timestamp', 'desc')
             .limit(1)).fetch().then(result => {
             if (!result) return;
@@ -41,7 +41,7 @@ module.exports = app => {
         let joinLogging = Models.JoinLogging.query(qb => qb
             .select('nick', 'channel', 'timestamp')
             .where('nick', user)
-            .orderBy('timestamp', 'like', 'desc')
+            .orderBy('timestamp', 'desc')
             .limit(1)).fetch().then(result => {
             if (!result) return;
             return new Object({
@@ -52,7 +52,7 @@ module.exports = app => {
         let partLogging = Models.PartLogging.query(qb => qb
             .select('nick', 'channel', 'reason', 'timestamp')
             .where('nick', user)
-            .orderBy('timestamp', 'like', 'desc')
+            .orderBy('timestamp', 'desc')
             .limit(1)).fetch().then(result => {
             if (!result) return;
             return new Object({
@@ -62,7 +62,7 @@ module.exports = app => {
         // Gran Quit Logging Data
         let quitLogging = Models.QuitLogging.query(qb => qb
             .select('nick', 'channels', 'reason', 'timestamp')
-            .where('nick', 'like', user)
+            .where('nick', user)
             .orderBy('timestamp', 'desc')
             .limit(1)).fetch().then(result => {
             if (!result) return;
@@ -73,7 +73,7 @@ module.exports = app => {
         // Grab Kick Logging Data
         let kickLogging = Models.KickLogging.query(qb => qb
             .select('nick', 'channel', 'reason', 'timestamp')
-            .where('nick', 'like', user)
+            .where('nick', user)
             .orderBy('timestamp', 'desc')
             .limit(1)).fetch().then(result => {
             if (!result) return;
@@ -84,7 +84,7 @@ module.exports = app => {
         // Grab Nick Change notices (old)
         let aliasOld = Models.Alias.query(qb => qb
             .select('oldnick', 'newnick', 'channels')
-            .where('oldnick', 'like', user)
+            .where('oldnick', user)
             .orderBy('timestamp', 'desc')
             .limit(1)).fetch().then(result => {
             if (!result) return;
@@ -95,7 +95,7 @@ module.exports = app => {
         // Grab Nick Change notices (old)
         let aliasNew = Models.Alias.query(qb => qb
             .select('oldnick', 'newnick', 'channels')
-            .where('newnick', 'like', user)
+            .where('newnick', user)
             .orderBy('timestamp', 'desc')
             .limit(1)).fetch().then(result => {
             if (!result) return;
