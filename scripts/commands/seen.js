@@ -1,6 +1,6 @@
 'use strict';
 const scriptInfo = {
-    name: 'lastActive',
+    name: 'Seen',
     desc: 'Get stats on the last activity of a IRC user',
     createdBy: 'IronY'
 };
@@ -8,16 +8,17 @@ const scriptInfo = {
 const _ = require('lodash');
 const Moment = require('moment');
 const Models = require('bookshelf-model-loader');
+const logger = require('../../lib/logger')
 
 module.exports = app => {
 
     // If we have Database availability
-    if (!Models.Logging) return scriptInfo;
+    if (!Models.Logging || !Models.JoinLogging || !Models.PartLogging || !Models.QuitLogging || !Models.KickLogging || !Models.Alias) return scriptInfo;
 
     /**
         Show the last known activity of a given username
     **/
-    const lastActive = (to, from, text, message) => {
+    const seen = (to, from, text, message) => {
         // Grab user
         let [user] = text.split(' ');
 
@@ -26,7 +27,13 @@ module.exports = app => {
             app.say(to, 'you must specify a user');
             return;
         }
-        // Grab Logging Data
+        // Someone is trying to get the activity of the bot
+        if (app._ircClient.isBotNick(user)) {
+            app.say(to, `I am always active ${from}, always...`);
+            return;
+        }
+
+        //1 Grab Logging Data
         let logging = Models.Logging.query(qb => qb
             .select('to', 'from', 'text', 'timestamp')
             .where('from', user)
@@ -83,7 +90,7 @@ module.exports = app => {
         });
         // Grab Nick Change notices (old)
         let aliasOld = Models.Alias.query(qb => qb
-            .select('oldnick', 'newnick', 'channels','timestamp')
+            .select('oldnick', 'newnick', 'channels', 'timestamp')
             .where('oldnick', user)
             .orderBy('timestamp', 'desc')
             .limit(1)).fetch().then(result => {
@@ -94,7 +101,7 @@ module.exports = app => {
         });
         // Grab Nick Change notices (old)
         let aliasNew = Models.Alias.query(qb => qb
-            .select('oldnick', 'newnick', 'channels','timestamp')
+            .select('oldnick', 'newnick', 'channels', 'timestamp')
             .where('newnick', user)
             .orderBy('timestamp', 'desc')
             .limit(1)).fetch().then(result => {
@@ -114,39 +121,56 @@ module.exports = app => {
                     app.say(to, `I have no data on ${user}`);
                     return;
                 }
+
+                // Hold the output
+                let output = '';
+
+                // Check the last thing said
+                let lastSaid = _(results).map('log').compact().first();
+                if (lastSaid)
+                    output = `${lastSaid.from} was last seen saying ${lastSaid.text} on ${lastSaid.to} at ${Moment(lastSaid.timestamp).fromNow()}.`
+
+
+
                 // Get the most recent result
-                results = _(results).maxBy(value => Moment(value[Object.keys(value)[0]].timestamp).unix());
+                let lastResult = _(results).maxBy(value => Moment(value[Object.keys(value)[0]].timestamp).unix());
 
-                // Report based on the result we got back
-                if (results.log)
-                    app.say(to, `${results.log.from} was last active ${Moment(results.log.timestamp).fromNow()} on ${results.log.to} Saying: ${results.log.text}`);
-                else if (results.part)
-                    app.say(to, `${results.part.nick} was last active ${Moment(results.part.timestamp).fromNow()} on ${results.part.channel} Parting: ${results.part.reason || 'No reason given'}`);
-                else if (results.quit)
-                    app.say(to, `${results.quit.nick} was last active ${Moment(results.quit.timestamp).fromNow()} on ${results.quit.channels} Quitting: ${results.quit.reason || 'No reason given'}`);
-                else if (results.kick)
-                    app.say(to, `${results.kick.nick} was last active ${Moment(results.kick.timestamp).fromNow()} on ${results.kick.channel} Getting Kicked: ${results.kick.reason || 'No reason given'}`);
-                else if (results.join)
-                    app.say(to, `${results.join.nick} was last active ${Moment(results.join.timestamp).fromNow()} on ${results.join.channel} Joining`);
-                else if (results.aliasOld)
-                    app.say(to, `${results.aliasOld.oldnick} was last active ${Moment(results.aliasOld.timestamp).fromNow()} on ${results.aliasOld.channels} Changing Nick to ${results.aliasOld.newnick}`);
-                else if (results.aliasNew)
-                    app.say(to, `${results.aliasNew.newnick} was last active ${Moment(results.aliasNew.timestamp).fromNow()} on ${results.aliasNew.channels} Changing Nick from ${results.aliasNew.oldnick}`);
+                // Check other activity
+                if (lastResult.part)
+                    output = `${output} They last Parted ${lastResult.part.channel} on ${Moment(lastResult.part.timestamp).fromNow()} with the reason: ${lastResult.part.reason || 'No reason given'}`;
+                else if (lastResult.quit)
+                    output = `${output} They last Quit [${lastResult.quit.channels ? lastResult.quit.channels.replace(',', ', ') : ''}] on ${Moment(lastResult.quit.timestamp).fromNow()} with the reason: ${lastResult.quit.reason || 'No reason given'}`;
+                else if (lastResult.kick)
+                    output = `${output} They were last Kicked from ${lastResult.kick.channel} on ${Moment(lastResult.kick.timestamp).fromNow()} with the reason: ${lastResult.kick.reason || 'No reason given'}`;
+                else if (lastResult.join)
+                    output = `${output} They last Joined ${lastResult.join.channel} on ${Moment(lastResult.join.timestamp).fromNow()}`;
+                else if (lastResult.aliasOld)
+                    output = `${output} They last changed their Nick to ${lastResult.aliasOld.newnick} in [${lastResult.aliasOld.channels ? lastResult.aliasOld.channels.replace(',', ', ') : ''}] on ${Moment(lastResult.aliasOld.timestamp).fromNow()}`;
+                else if (lastResult.aliasNew)
+                    output = `${output} They last changed their Nick from ${lastResult.aliasNew.oldnick} in [${lastResult.aliasNew.channels ? lastResult.aliasNew.channels.replace(',', ', ') : ''}] on ${Moment(lastResult.aliasNew.timestamp).fromNow()}`;
 
+                // Trim output
+                output = output.trim();
+                // For Some reason our output is empty
+                if (_.isEmpty(output)) {
+                    app.say(to, `Something went wrong finding the active state for ${user}, ${from}`);
+                    return;
+                }
+                app.say(to, output);
             })
             .catch(err => {
                 logger.error('Error in the last active Promise.all chain', {
                     err
                 });
-                app.say(to, `Something went wrong finding the activing state for ${user}, ${from}`);
+                app.say(to, `Something went wrong finding the active state for ${user}, ${from}`);
             });
     };
 
     // Command
-    app.Commands.set('last-active', {
+    app.Commands.set('seen', {
         desc: '[user] shows the last activity of the user',
         access: app.Config.accessLevels.identified,
-        call: lastActive
+        call: seen
     });
 
     // Return the script info
