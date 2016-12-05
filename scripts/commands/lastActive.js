@@ -37,6 +37,16 @@ module.exports = app => {
                 log: result.toJSON()
             });
         });
+        let joinLogging = Models.JoinLogging.query(qb => qb
+            .select('nick', 'channel', 'timestamp')
+            .where('nick', user)
+            .orderBy('timestamp', 'desc')
+            .limit(1)).fetch().then(result => {
+            if (!result) return;
+            return new Object({
+                join: result.toJSON()
+            });
+        });
         let partLogging = Models.PartLogging.query(qb => qb
             .select('nick', 'channel', 'reason', 'timestamp')
             .where('nick', user)
@@ -68,7 +78,7 @@ module.exports = app => {
             });
         });
 
-        Promise.all([logging, partLogging, quitLogging, kickLogging])
+        Promise.all([logging, partLogging, quitLogging, kickLogging, joinLogging])
             .then(results => {
                 // Clean result
                 results = _.compact(results);
@@ -78,16 +88,19 @@ module.exports = app => {
                     return;
                 }
                 // Get the most recent result
-                results = _(results).sortBy(value => Moment(value[Object.keys(value)[0]].timestamp).unix()).first();
+                results = _(results).maxBy(value =>  Moment(value[Object.keys(value)[0]].timestamp).unix());
+
                 // The last information we have was a post
                 if (results.log)
                     app.say(to, `${results.log.from} was last active ${Moment(results.log.timestamp).fromNow()} on ${results.log.to} Saying: ${results.log.text}`);
                 else if (results.part)
-                    app.say(to, `${results.part.nick} was last active ${Moment(results.part.timestamp).fromNow()} on ${results.part.channel} Parting: ${results.part.reason}`);
+                    app.say(to, `${results.part.nick} was last active ${Moment(results.part.timestamp).fromNow()} on ${results.part.channel} Parting: ${results.part.reason || 'No reason given'}`);
                 else if (results.quit)
-                    app.say(to, `${results.quit.nick} was last active ${Moment(results.quit.timestamp).fromNow()} on ${results.kick.channels} Quitting: ${results.quit.reason}`);
+                    app.say(to, `${results.quit.nick} was last active ${Moment(results.quit.timestamp).fromNow()} on ${results.kick.channels} Quitting: ${results.quit.reason || 'No reason given'}`);
                 else if (results.kick)
-                    app.say(to, `${results.kick.nick} was last active ${Moment(results.kick.timestamp).fromNow()} on ${results.kick.channel} Getting Kicked: ${results.kick.reason}`);
+                    app.say(to, `${results.kick.nick} was last active ${Moment(results.kick.timestamp).fromNow()} on ${results.kick.channel} Getting Kicked: ${results.kick.reason || 'No reason given'}`);
+                else if (results.join)
+                    app.say(to, `${results.join.nick} was last active ${Moment(results.join.timestamp).fromNow()} on ${results.join.channel} Joining`);
 
             });
     };
