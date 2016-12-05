@@ -78,7 +78,7 @@ module.exports = app => {
                     return;
                 }
                 // Get the most recent result
-                results = _(results).sortBy(value => new Date(value.timestamp)).first();
+                results = _(results).sortBy(value => new Moment(value.timestamp).unix()).first();
 
                 // The last information we have was a post
                 if (results.log)
