@@ -11,9 +11,7 @@ const Models = require('bookshelf-model-loader');
 module.exports = app => {
 
     // If we have Database availability
-    if (!app.Database || !Models.Logging) return;
-
-    const logging = Models.Logging;
+    if (!Models.Logging) return scriptInfo;
 
     /**
         Show the last known activity of a given username
@@ -28,7 +26,7 @@ module.exports = app => {
             return;
         }
 
-        logging
+        Models.Logging
             .query(qb => qb
                 .select('to', 'from', 'text', 'timestamp')
                 .where('from', user)
