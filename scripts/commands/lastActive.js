@@ -94,7 +94,7 @@ module.exports = app => {
         });
 
         // Resolve all promises
-        Promise.all([logging, partLogging, quitLogging, kickLogging, joinLogging])
+        Promise.all([logging, partLogging, quitLogging, kickLogging, joinLogging, nickLogging])
             .then(results => {
                 // Clean results that are falsey / undefined
                 results = _.compact(results);
