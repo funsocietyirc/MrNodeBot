@@ -13,10 +13,7 @@ module.exports = count => new Promise(
     (resolve, reject) => xray('http://www.fmylife.com/random', ['a.fmllink'])
     (
         (err, results) => {
-            if (err) {
-                reject(err);
-                return;
-            }
+            if (err) return reject(err);
             resolve(_.sampleSize(results, count || 1));
         }
     )

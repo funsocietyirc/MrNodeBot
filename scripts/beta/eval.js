@@ -27,6 +27,6 @@ module.exports = app => {
             }
         }
     });
-
+    
     return scriptInfo;
 };
