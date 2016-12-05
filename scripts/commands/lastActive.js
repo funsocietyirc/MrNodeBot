@@ -81,20 +81,31 @@ module.exports = app => {
                 kick: result.toJSON()
             });
         });
-        // Grab Nick Change notices
-        let nickLogging = Models.Alias.query(qb => qb
+        // Grab Nick Change notices (old)
+        let aliasOld = Models.Alias.query(qb => qb
+            .select('oldnick', 'newnick', 'channels')
+            .where('oldnick', 'like', user)
+            .orderBy('timestamp', 'desc')
+            .limit(1)).fetch().then(result => {
+            if (!result) return;
+            return new Object({
+                aliasOld: result.toJSON()
+            });
+        });
+        // Grab Nick Change notices (old)
+        let aliasNew = Models.Alias.query(qb => qb
             .select('oldnick', 'newnick', 'channels')
             .where('newnick', 'like', user)
             .orderBy('timestamp', 'desc')
             .limit(1)).fetch().then(result => {
             if (!result) return;
             return new Object({
-                alias: result.toJSON()
+                aliasOld: result.toJSON()
             });
         });
 
         // Resolve all promises
-        Promise.all([logging, partLogging, quitLogging, kickLogging, joinLogging, nickLogging])
+        Promise.all([logging, partLogging, quitLogging, kickLogging, joinLogging, aliasOld, aliasNew])
             .then(results => {
                 // Clean results that are falsey / undefined
                 results = _.compact(results);
@@ -117,8 +128,10 @@ module.exports = app => {
                     app.say(to, `${results.kick.nick} was last active ${Moment(results.kick.timestamp).fromNow()} on ${results.kick.channel} Getting Kicked: ${results.kick.reason || 'No reason given'}`);
                 else if (results.join)
                     app.say(to, `${results.join.nick} was last active ${Moment(results.join.timestamp).fromNow()} on ${results.join.channel} Joining`);
-                else if (results.alias)
-                    app.say(to, `${results.alias.newnick} was last active ${Moment(results.alias.timestamp).fromNow()} on ${results.alias.channels} Changing Nick from ${results.alias.oldnick}`);
+                else if (results.aliasOld)
+                    app.say(to, `${results.aliasOld.oldnick} was last active ${Moment(results.aliasOld.timestamp).fromNow()} on ${results.aliasOld.channels} Changing Nick to ${results.aliasOld.newnick}`);
+                else if (results.aliasNew)
+                    app.say(to, `${results.aliasOld.newnick} was last active ${Moment(results.aliasOld.timestamp).fromNow()} on ${results.aliasOld.channels} Changing Nick from ${results.aliasOld.oldnick}`);
 
             })
             .catch(err => {
