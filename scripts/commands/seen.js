@@ -128,26 +128,24 @@ module.exports = app => {
                 // Check the last thing said
                 let lastSaid = _(results).map('log').compact().first();
                 if (lastSaid)
-                    output = `${lastSaid.from} was last seen saying ${lastSaid.text} on ${lastSaid.to} at ${Moment(lastSaid.timestamp).fromNow()}.`
-
-
+                    output = `${lastSaid.from} was last seen saying "${lastSaid.text}"" on ${lastSaid.to} ${Moment(lastSaid.timestamp).fromNow()}.`
 
                 // Get the most recent result
                 let lastResult = _(results).maxBy(value => Moment(value[Object.keys(value)[0]].timestamp).unix());
 
                 // Check other activity
                 if (lastResult.part)
-                    output = `${output} They last Parted ${lastResult.part.channel} on ${Moment(lastResult.part.timestamp).fromNow()} with the reason: ${lastResult.part.reason || 'No reason given'}`;
+                    output = `${output} They last Parted ${lastResult.part.channel} ${Moment(lastResult.part.timestamp).fromNow()} with the reason: ${lastResult.part.reason || 'No reason given'}`;
                 else if (lastResult.quit)
-                    output = `${output} They last Quit [${lastResult.quit.channels ? lastResult.quit.channels.replace(',', ', ') : ''}] on ${Moment(lastResult.quit.timestamp).fromNow()} with the reason: ${lastResult.quit.reason || 'No reason given'}`;
+                    output = `${output} They last Quit [${lastResult.quit.channels ? lastResult.quit.channels.replace(',', ', ') : ''}] ${Moment(lastResult.quit.timestamp).fromNow()} with the reason: ${lastResult.quit.reason || 'No reason given'}`;
                 else if (lastResult.kick)
-                    output = `${output} They were last Kicked from ${lastResult.kick.channel} on ${Moment(lastResult.kick.timestamp).fromNow()} with the reason: ${lastResult.kick.reason || 'No reason given'}`;
+                    output = `${output} They were last Kicked from ${lastResult.kick.channel} ${Moment(lastResult.kick.timestamp).fromNow()} with the reason: ${lastResult.kick.reason || 'No reason given'}`;
                 else if (lastResult.join)
-                    output = `${output} They last Joined ${lastResult.join.channel} on ${Moment(lastResult.join.timestamp).fromNow()}`;
+                    output = `${output} They last Joined ${lastResult.join.channel} ${Moment(lastResult.join.timestamp).fromNow()}`;
                 else if (lastResult.aliasOld)
-                    output = `${output} They last changed their Nick to ${lastResult.aliasOld.newnick} in [${lastResult.aliasOld.channels ? lastResult.aliasOld.channels.replace(',', ', ') : ''}] on ${Moment(lastResult.aliasOld.timestamp).fromNow()}`;
+                    output = `${output} They last changed their Nick to ${lastResult.aliasOld.newnick} in [${lastResult.aliasOld.channels ? lastResult.aliasOld.channels.replace(',', ', ') : ''}] ${Moment(lastResult.aliasOld.timestamp).fromNow()}`;
                 else if (lastResult.aliasNew)
-                    output = `${output} They last changed their Nick from ${lastResult.aliasNew.oldnick} in [${lastResult.aliasNew.channels ? lastResult.aliasNew.channels.replace(',', ', ') : ''}] on ${Moment(lastResult.aliasNew.timestamp).fromNow()}`;
+                    output = `${output} They last changed their Nick from ${lastResult.aliasNew.oldnick} in [${lastResult.aliasNew.channels ? lastResult.aliasNew.channels.replace(',', ', ') : ''}] ${Moment(lastResult.aliasNew.timestamp).fromNow()}`;
 
                 // Trim output
                 output = output.trim();
