@@ -128,7 +128,7 @@ module.exports = app => {
                 // Check the last thing said
                 let lastSaid = _(results).map('log').compact().first();
                 if (lastSaid)
-                    output = `${lastSaid.from} was last seen saying "${lastSaid.text}"" on ${lastSaid.to} ${Moment(lastSaid.timestamp).fromNow()}.`
+                    output = `${lastSaid.from} was last seen saying "${lastSaid.text}" on ${lastSaid.to} ${Moment(lastSaid.timestamp).fromNow()}.`
 
                 // Get the most recent result
                 let lastResult = _(results).maxBy(value => Moment(value[Object.keys(value)[0]].timestamp).unix());
