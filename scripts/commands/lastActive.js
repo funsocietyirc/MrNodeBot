@@ -81,6 +81,18 @@ module.exports = app => {
                 kick: result.toJSON()
             });
         });
+        // Grab Nick Change notices
+        let nickLogging = Models.Alias.query(qb => qb
+            .select('oldnick', 'newnick', 'reason', 'channels')
+            .where('oldnick', 'like', user)
+            .orderBy('timestamp', 'desc')
+            .limit(1)).fetch().then(result => {
+            if (!result) return;
+            return new Object({
+                alias: result.toJSON()
+            });
+        });
+
         // Resolve all promises
         Promise.all([logging, partLogging, quitLogging, kickLogging, joinLogging])
             .then(results => {
@@ -105,6 +117,8 @@ module.exports = app => {
                     app.say(to, `${results.kick.nick} was last active ${Moment(results.kick.timestamp).fromNow()} on ${results.kick.channel} Getting Kicked: ${results.kick.reason || 'No reason given'}`);
                 else if (results.join)
                     app.say(to, `${results.join.nick} was last active ${Moment(results.join.timestamp).fromNow()} on ${results.join.channel} Joining`);
+                else if (results.alias)
+                    app.say(to, `${results.alias.oldNick} was last active ${Moment(results.alias.timestamp).fromNow()} on ${results.alias.channels} Changing Nick to ${results.alias.newNick}`);
 
             })
             .catch(err => {
