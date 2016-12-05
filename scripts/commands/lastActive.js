@@ -83,7 +83,7 @@ module.exports = app => {
         });
         // Grab Nick Change notices
         let nickLogging = Models.Alias.query(qb => qb
-            .select('oldnick', 'newnick', 'reason', 'channels')
+            .select('oldnick', 'newnick', 'channels')
             .where('newnick', 'like', user)
             .orderBy('timestamp', 'desc')
             .limit(1)).fetch().then(result => {
