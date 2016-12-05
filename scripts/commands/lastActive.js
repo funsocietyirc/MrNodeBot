@@ -26,7 +26,7 @@ module.exports = app => {
             app.say(to, 'you must specify a user');
             return;
         }
-
+        // Grab Logging Data
         let logging = Models.Logging.query(qb => qb
             .select('to', 'from', 'text', 'timestamp')
             .where('from', 'like', user)
@@ -37,6 +37,7 @@ module.exports = app => {
                 log: result.toJSON()
             });
         });
+        // Grab Join Data
         let joinLogging = Models.JoinLogging.query(qb => qb
             .select('nick', 'channel', 'timestamp')
             .where('nick', user)
@@ -47,6 +48,7 @@ module.exports = app => {
                 join: result.toJSON()
             });
         });
+        // Grab Part Logging Data
         let partLogging = Models.PartLogging.query(qb => qb
             .select('nick', 'channel', 'reason', 'timestamp')
             .where('nick', user)
@@ -57,6 +59,7 @@ module.exports = app => {
                 part: result.toJSON()
             });
         });
+        // Gran Quit Logging Data
         let quitLogging = Models.QuitLogging.query(qb => qb
             .select('nick', 'channels', 'reason', 'timestamp')
             .where('nick', 'like', user)
@@ -67,6 +70,7 @@ module.exports = app => {
                 quit: result.toJSON()
             });
         });
+        // Grab Kick Logging Data
         let kickLogging = Models.KickLogging.query(qb => qb
             .select('nick', 'channel', 'reason', 'timestamp')
             .where('nick', 'like', user)
@@ -77,10 +81,10 @@ module.exports = app => {
                 kick: result.toJSON()
             });
         });
-
+        // Resolve all promises
         Promise.all([logging, partLogging, quitLogging, kickLogging, joinLogging])
             .then(results => {
-                // Clean result
+                // Clean results that are falsey / undefined
                 results = _.compact(results);
                 // No Data available for user
                 if (!_.isArray(results) || _.isEmpty(results)) {
@@ -90,7 +94,7 @@ module.exports = app => {
                 // Get the most recent result
                 results = _(results).maxBy(value => Moment(value[Object.keys(value)[0]].timestamp).unix());
 
-                // The last information we have was a post
+                // Report based on the result we got back
                 if (results.log)
                     app.say(to, `${results.log.from} was last active ${Moment(results.log.timestamp).fromNow()} on ${results.log.to} Saying: ${results.log.text}`);
                 else if (results.part)
