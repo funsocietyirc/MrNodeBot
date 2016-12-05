@@ -106,6 +106,12 @@ module.exports = app => {
                 else if (results.join)
                     app.say(to, `${results.join.nick} was last active ${Moment(results.join.timestamp).fromNow()} on ${results.join.channel} Joining`);
 
+            })
+            .catch(err => {
+                logger.error('Error in the last active Promise.all chain', {
+                    err
+                });
+                app.say(to, `Something went wrong finding the activing state for ${user}, ${from}`);
             });
     };
 
