@@ -131,7 +131,7 @@ module.exports = app => {
                 else if (results.aliasOld)
                     app.say(to, `${results.aliasOld.oldnick} was last active ${Moment(results.aliasOld.timestamp).fromNow()} on ${results.aliasOld.channels} Changing Nick to ${results.aliasOld.newnick}`);
                 else if (results.aliasNew)
-                    app.say(to, `${results.aliasOld.newnick} was last active ${Moment(results.aliasOld.timestamp).fromNow()} on ${results.aliasOld.channels} Changing Nick from ${results.aliasOld.oldnick}`);
+                    app.say(to, `${results.aliasNew.newnick} was last active ${Moment(results.aliasNew.timestamp).fromNow()} on ${results.aliasNew.channels} Changing Nick from ${results.aliasNew.oldnick}`);
 
             })
             .catch(err => {
