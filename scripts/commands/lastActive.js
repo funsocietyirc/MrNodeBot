@@ -78,8 +78,7 @@ module.exports = app => {
                     return;
                 }
                 // Get the most recent result
-                results = _(results).sortBy(value => new Moment(value.timestamp).unix()).first();
-
+                results = _(results).sortBy(value => Moment(value[Object.keys(value)[0]].timestamp).unix()).first();
                 // The last information we have was a post
                 if (results.log)
                     app.say(to, `${results.log.from} was last active ${Moment(results.log.timestamp).fromNow()} on ${results.log.to} Saying: ${results.log.text}`);
