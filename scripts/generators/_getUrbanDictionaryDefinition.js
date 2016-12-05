@@ -23,7 +23,7 @@ module.exports = term => new Promise((resolve, reject) => {
                 // Strip new lines out of the results
                 results = helpers.StripNewLine(results).trim();
                 resolve({
-                    url,
+                    url: encodeURI(url),
                     term: _.capitalize(term),
                     definition: results
                 });

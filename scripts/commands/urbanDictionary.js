@@ -18,9 +18,9 @@ module.exports = app => {
           dict(text)
               .then(results => {
                   let definition = _.truncate(results.definition, {
-                      length: 100
+                      length: 200
                   });
-                  app.say(to, `${results.term}: ${definition} -- ${results.url}` );
+                  app.say(to, `${results.term}: ${definition} - ${results.url}` );
               })
               .catch(err => app.say(to, `Urban Dictionary Error: ${err.message}`));
       }
