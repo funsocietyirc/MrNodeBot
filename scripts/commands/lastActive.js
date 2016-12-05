@@ -84,7 +84,7 @@ module.exports = app => {
         // Grab Nick Change notices
         let nickLogging = Models.Alias.query(qb => qb
             .select('oldnick', 'newnick', 'reason', 'channels')
-            .where('oldnick', 'like', user)
+            .where('newnick', 'like', user)
             .orderBy('timestamp', 'desc')
             .limit(1)).fetch().then(result => {
             if (!result) return;
@@ -118,7 +118,7 @@ module.exports = app => {
                 else if (results.join)
                     app.say(to, `${results.join.nick} was last active ${Moment(results.join.timestamp).fromNow()} on ${results.join.channel} Joining`);
                 else if (results.alias)
-                    app.say(to, `${results.alias.oldNick} was last active ${Moment(results.alias.timestamp).fromNow()} on ${results.alias.channels} Changing Nick to ${results.alias.newNick}`);
+                    app.say(to, `${results.alias.newnick} was last active ${Moment(results.alias.timestamp).fromNow()} on ${results.alias.channels} Changing Nick from ${results.alias.oldnick}`);
 
             })
             .catch(err => {
