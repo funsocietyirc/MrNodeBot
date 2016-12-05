@@ -29,7 +29,7 @@ module.exports = app => {
 
         let logging = Models.Logging.query(qb => qb
             .select('to', 'from', 'text', 'timestamp')
-            .where('from', user)
+            .where('from', 'like', user)
             .orderBy('timestamp', 'desc')
             .limit(1)).fetch().then(result => {
             if (!result) return;
@@ -40,7 +40,7 @@ module.exports = app => {
         let joinLogging = Models.JoinLogging.query(qb => qb
             .select('nick', 'channel', 'timestamp')
             .where('nick', user)
-            .orderBy('timestamp', 'desc')
+            .orderBy('timestamp', 'like', 'desc')
             .limit(1)).fetch().then(result => {
             if (!result) return;
             return new Object({
@@ -50,7 +50,7 @@ module.exports = app => {
         let partLogging = Models.PartLogging.query(qb => qb
             .select('nick', 'channel', 'reason', 'timestamp')
             .where('nick', user)
-            .orderBy('timestamp', 'desc')
+            .orderBy('timestamp', 'like', 'desc')
             .limit(1)).fetch().then(result => {
             if (!result) return;
             return new Object({
@@ -59,7 +59,7 @@ module.exports = app => {
         });
         let quitLogging = Models.QuitLogging.query(qb => qb
             .select('nick', 'channels', 'reason', 'timestamp')
-            .where('nick', user)
+            .where('nick', 'like', user)
             .orderBy('timestamp', 'desc')
             .limit(1)).fetch().then(result => {
             if (!result) return;
@@ -69,7 +69,7 @@ module.exports = app => {
         });
         let kickLogging = Models.KickLogging.query(qb => qb
             .select('nick', 'channel', 'reason', 'timestamp')
-            .where('nick', user)
+            .where('nick', 'like', user)
             .orderBy('timestamp', 'desc')
             .limit(1)).fetch().then(result => {
             if (!result) return;
@@ -88,7 +88,9 @@ module.exports = app => {
                     return;
                 }
                 // Get the most recent result
-                results = _(results).maxBy(value =>  Moment(value[Object.keys(value)[0]].timestamp).unix());
+                results = _(results).maxBy(value => Moment(value[Object.keys(value)[0]].timestamp).unix());
+
+                console.dir(results);
 
                 // The last information we have was a post
                 if (results.log)
