@@ -5,7 +5,7 @@ const scriptInfo = {
     createdBy: 'IronY'
 };
 
-const gen = require('../generators/_isGdShortUrl');
+const gen = require('../lib/_getShortService');
 const logger = require('../../lib/logger');
 const ircTypography = require('../lib/_ircTypography');
 
