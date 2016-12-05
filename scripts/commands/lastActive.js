@@ -100,7 +100,7 @@ module.exports = app => {
             .limit(1)).fetch().then(result => {
             if (!result) return;
             return new Object({
-                aliasOld: result.toJSON()
+                aliasNew: result.toJSON()
             });
         });
 
