@@ -83,7 +83,7 @@ module.exports = app => {
         });
         // Grab Nick Change notices (old)
         let aliasOld = Models.Alias.query(qb => qb
-            .select('oldnick', 'newnick', 'channels')
+            .select('oldnick', 'newnick', 'channels','timestamp')
             .where('oldnick', user)
             .orderBy('timestamp', 'desc')
             .limit(1)).fetch().then(result => {
@@ -94,7 +94,7 @@ module.exports = app => {
         });
         // Grab Nick Change notices (old)
         let aliasNew = Models.Alias.query(qb => qb
-            .select('oldnick', 'newnick', 'channels')
+            .select('oldnick', 'newnick', 'channels','timestamp')
             .where('newnick', user)
             .orderBy('timestamp', 'desc')
             .limit(1)).fetch().then(result => {
