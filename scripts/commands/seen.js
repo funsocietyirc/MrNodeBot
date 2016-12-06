@@ -137,7 +137,7 @@ module.exports = app => {
 
                 // Check other activity
                 if (lastResult.part)
-                    ouput.append(`parting ${lastResult.part.channel} ${Moment(lastResult.part.timestamp).fromNow()}`).append(lastResult.part.reason);
+                    output.append(`parting ${lastResult.part.channel} ${Moment(lastResult.part.timestamp).fromNow()}`).append(lastResult.part.reason);
                 else if (lastResult.quit)
                     output.append(`quitting [${lastResult.quit.channels ? lastResult.quit.channels.replace(',', ', ') : ''}] ${Moment(lastResult.quit.timestamp).fromNow()}`).append(lastResult.quit.reason);
                 else if (lastResult.kick)
@@ -162,7 +162,6 @@ module.exports = app => {
                 logger.error('Error in the last active Promise.all chain', {
                     err
                 });
-                console.dir(err);
                 app.say(to, `Something went wrong finding the active state for ${user}, ${from}`);
             });
     };
