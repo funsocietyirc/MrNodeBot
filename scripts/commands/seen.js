@@ -145,11 +145,11 @@ module.exports = app => {
                 else if (lastResult.join)
                     output.append(`joining ${lastResult.join.channel} ${Moment(lastResult.join.timestamp).fromNow()}`);
                 else if (lastResult.aliasOld) {
-                    output.append(`changing their nick to ${lastResult.aliasOld.newnick} in [${lastResult.aliasOld.channels ? lastResult.aliasOld.channels.replace(',', ', ') : ''}] ${Moment(lastResult.aliasOld.timestamp).fromNow()}`);
+                    output.append(`changing their nick to ${lastResult.aliasOld.newnick} in [${lastResult.aliasOld.channels}] ${Moment(lastResult.aliasOld.timestamp).fromNow()}`);
                     // Recurse on nick change
                     seen(to, from, lastResult.aliasOld.newnick, message);
                 } else if (lastResult.aliasNew)
-                    output.append(`changing their nick from ${lastResult.aliasNew.oldnick} in [${lastResult.aliasNew.channels ? lastResult.aliasNew.channels.replace(',', ', ') : ''}] ${Moment(lastResult.aliasNew.timestamp).fromNow()}`);
+                    output.append(`changing their nick from ${lastResult.aliasNew.oldnick} in [${lastResult.aliasNew.channels}] ${Moment(lastResult.aliasNew.timestamp).fromNow()}`);
 
                 // For Some reason our output is empty
                 if (_.isEmpty(output.text)) {
@@ -162,6 +162,7 @@ module.exports = app => {
                 logger.error('Error in the last active Promise.all chain', {
                     err
                 });
+                console.dir(err);
                 app.say(to, `Something went wrong finding the active state for ${user}, ${from}`);
             });
     };
