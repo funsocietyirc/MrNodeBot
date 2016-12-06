@@ -142,9 +142,11 @@ module.exports = app => {
                     output = `${output} They were last Kicked from ${lastResult.kick.channel} ${Moment(lastResult.kick.timestamp).fromNow()} with the reason: ${lastResult.kick.reason || 'No reason given'}`;
                 else if (lastResult.join)
                     output = `${output} They last Joined ${lastResult.join.channel} ${Moment(lastResult.join.timestamp).fromNow()}`;
-                else if (lastResult.aliasOld)
+                else if (lastResult.aliasOld) {
                     output = `${output} They last changed their Nick to ${lastResult.aliasOld.newnick} in [${lastResult.aliasOld.channels ? lastResult.aliasOld.channels.replace(',', ', ') : ''}] ${Moment(lastResult.aliasOld.timestamp).fromNow()}`;
-                else if (lastResult.aliasNew)
+                    // Recurse on nick change
+                    seen(to, from, lastResult.aliasOld.newnick, message);
+                } else if (lastResult.aliasNew)
                     output = `${output} They last changed their Nick from ${lastResult.aliasNew.oldnick} in [${lastResult.aliasNew.channels ? lastResult.aliasNew.channels.replace(',', ', ') : ''}] ${Moment(lastResult.aliasNew.timestamp).fromNow()}`;
 
                 // Trim output
