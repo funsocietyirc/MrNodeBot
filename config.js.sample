@@ -92,7 +92,7 @@ module.exports = {
         retryDelay: 2000,
         stripColors: false,
         channelPrefixes: '&#',
-        messageSplit: '512',
+        messageSplit: 512,
         encoding: 'utf8',
     },
     // Knex configuration http://knexjs.org/#Installation-client

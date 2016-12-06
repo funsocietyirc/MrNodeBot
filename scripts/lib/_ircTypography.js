@@ -7,7 +7,7 @@ const icons = {
     downArrow: c.red.bold('↓'),
     views: c.navy.bold('⚘'),
     comments: c.blue.bold('✍'),
-    sideArrow: c.bold('→'),
+    sideArrow: '→',
     anchor: c.navy.bold('⚓'),
     star: c.yellow('✡'),
     happy: c.green.bold('☺'),
@@ -80,23 +80,29 @@ class StringBuilder {
         this.buffer = !_.isString(this.buffer) || _.isEmpty(this.buffer) ? text : `${this.buffer} ${this.options.divider} ${text}`;
         return this;
     };
-    // Append an icon
-    appendIcon(icon) {
-        if (!_.isUndefined(icon) && _.isString(icon) && !_isEmpty(string) && _.has(icons, icon)) this.buffer = `${this.buffer} ${icons[icon]}`;
+    // Insert into buffer
+    insert(text) {
+        if (_.isUndefined(text) || _.isEmpty(text)) return this;
+        this.buffer = this.buffer + text;
         return this;
     };
-    // Return color number
-    colorNumber(num, title) {
+    // Append an icon
+    insertIcon(icon, spaceBetween = true) {
+        if (!_.isUndefined(icon) && _.isString(icon) && !_isEmpty(string) && _.has(icons, icon)) this.buffer = `${this.buffer}${spaceBetween ? ' ': ''}${icons[icon]}`;
+        return this;
+    };
+    // Append color number
+    appendColorNumber(num, title) {
         if (!_.isUndefined(num) && !_.isEmpty(num)) return _.isString(title) && !_.isEmpty(title) ? `${title} ${this.append(colorNumber(num))}` : this.append(colorNumber(num));
         return this;
     };
     // Return color signed number
-    colorSignedNumber(num, title) {
+    appendColorSignedNumber(num, title) {
         if (!_.isUndefined(num) && !_.isEmpty(num)) return _.isString(title) && !_.isEmpty(title) ? `${title} ${this.append(colorSignedNumber(num))}` : this.append(colorSignedNumber(num));
         return this;
     };
     // Add a Title
-    bold(text) {
+    appendBold(text) {
         if (!_.isUndefined(text) && _.isString(text) && !_.isEmpty(text)) return this.append(c.bold(text));
         return this;
     };

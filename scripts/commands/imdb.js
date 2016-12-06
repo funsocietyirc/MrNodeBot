@@ -30,6 +30,7 @@ module.exports = app => {
                     let output = new ircTypography.StringBuilder({
                         logo: 'imdb',
                     });
+                    console.dir(app._ircClient.supported)
                     return short(`https://www.imdb.com/title/${data.imdbID}`)
                         .then(shortUrl => {
                             output
@@ -43,13 +44,11 @@ module.exports = app => {
                                 .append(`Cast: ${data.Actors}`).append(`Rating: ${data.imdbRating}`)
                                 .append(`Votes: ${data.imdbVotes}`)
                                 .append(`MetaScore ${data.Metascore}`);
-
                             app.say(to, output.text);
-                            app.say(to, `${ircTypography.c.bold('Plot')} ${ircTypography.icons.sideArrow} ${data.Plot}`);
+                            app.say(to, `${ircTypography.c.bold('Plot:')} ${data.Plot}`);
                         });
                 })
                 .catch(err => {
-                    console.dir(err);
                     logger.error('IMDB Command Issue', {
                         err
                     });

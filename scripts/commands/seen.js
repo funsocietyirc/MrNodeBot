@@ -125,12 +125,12 @@ module.exports = app => {
 
                 // Hold the output
                 let output = new typo.StringBuilder();
-                output.bold('Seen');
+                output.appendBold(`Seen ${user}`);
 
                 // Check the last thing said
                 let lastSaid = _(results).map('log').compact().first();
                 if (lastSaid)
-                    output.append(`${lastSaid.from} saying`).append(`${lastSaid.text}`).append(`on ${lastSaid.to} ${Moment(lastSaid.timestamp).fromNow()}`);
+                    output.append(`saying`).append(`${lastSaid.text}`).append(`on ${lastSaid.to} ${Moment(lastSaid.timestamp).fromNow()}`);
 
                 // Get the most recent result
                 let lastResult = _(results).maxBy(value => Moment(value[Object.keys(value)[0]].timestamp).unix());
