@@ -14,7 +14,7 @@ const icons = ircTypography.icons;
 module.exports = (results, app) => {
         // Site is not live
         if (results.unreachable) {
-          app.say(results.to, `${c[results.cached ? 'green' : 'red']('*')} ${results.from} ${icons.sideArrow} ${c.blue(results.url)} ${icons.sideArrow} ${c.red.bold('Unverifiable Link')}`);
+          app.say(results.to, `${c[results.cached ? 'green' : 'red']('*')} ${results.from} ${icons.sideArrow} ${c.blue(results.url)} ${icons.sideArrow} ${c.red.bold('Unverifiable Link')} Code: ${results.statusCode || 'None'}`);
           return;
         }
 

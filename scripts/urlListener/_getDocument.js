@@ -20,7 +20,8 @@ module.exports = results => new Promise((resolve, reject) => rp({
         results.headers = response.headers;
         // Hold on to the actual URL after all redirects
         results.realUrl = response.request.uri.href;
-
+        // Hold on to the response status code
+        results.statusCode = response.statusCode;
         // We did not recieve enough information from the request
         if (!contentType) return resolve(results);
 
