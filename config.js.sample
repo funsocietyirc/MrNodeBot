@@ -195,11 +195,11 @@ module.exports = {
         noFollow: true, // Prevent the express routes from being indexed by spiders
         // Rate limiter for routes in the /api/ uir space
         rateLimit: {
-          enabled: true,
-          limitInMins: 15,  // The amount of mins for the rate limiter
-          max: 100,         // The Max amount of requests
-          delayMs: 0,       // The delay in ms (0 to indicate no delay until max)
-          headers: true,    // Inject HTTP headers to show usage remaining
+            enabled: true,
+            limitInMins: 15, // The amount of mins for the rate limiter
+            max: 100, // The Max amount of requests
+            delayMs: 0, // The delay in ms (0 to indicate no delay until max)
+            headers: true, // Inject HTTP headers to show usage remaining
         },
     },
     // Feature Configuration
@@ -240,8 +240,12 @@ module.exports = {
             ],
             greetIgnore: ['#MrNodeBot'],
             greeterDealy: 20,
-            idleChat: 15, // Mins
         },
+        idleChat: { // New
+            enabled: false, // New
+            timeOutInMins: 180, // New
+            channels: ['#MrNodeBot']
+        }, // New
         twitter: {
             enabled: false,
             followers: 'funsocietyirc',

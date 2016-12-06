@@ -615,9 +615,6 @@ class MrNodeBot {
                     });
                 }
             });
-
-            // Bail
-            return;
         }
 
         // Nothing to see here
