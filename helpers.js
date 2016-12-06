@@ -78,6 +78,9 @@ const RoundNumber = exports.RoundNumber = (num, decimals) => {
     return (Math.round((num * t) + (decimals > 0 ? 1 : 0) * (Math.sign(num) * (10 / Math.pow(100, decimals)))) / t).toFixed(decimals);
 };
 
+// Rot 13 ALGO
+const Rot13 = exports.Rot13 = text =>  text.replace(/[a-zA-Z]/g, c => String.fromCharCode((c <= "Z" ? 90 : 122) >= (c = c.charCodeAt(0) + 13) ? c : c - 26));
+
 // Comma deliminate numbers at 3 digits
 const NumberWithCommas = exports.NumberWithCommas = x => {
     // We were given no input, return 0

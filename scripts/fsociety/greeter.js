@@ -39,7 +39,7 @@ module.exports = app => {
 
     // Model
     const greetModel = Models.Greeter;
-    
+
     // Check DB to see if they were already greeted
     const checkChannel = (channel, nick, host, callback) => greetModel.query(qb => qb.where(clause => {
             clause
