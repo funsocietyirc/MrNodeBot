@@ -152,7 +152,7 @@ module.exports = app => {
                     output.append(`changing their nick from ${lastResult.aliasNew.oldnick} in [${lastResult.aliasNew.channels ? lastResult.aliasNew.channels.replace(',', ', ') : ''}] ${Moment(lastResult.aliasNew.timestamp).fromNow()}`);
 
                 // For Some reason our output is empty
-                if (_.isEmpty(output)) {
+                if (_.isEmpty(output.text)) {
                     app.say(to, `Something went wrong finding the active state for ${user}, ${from}`);
                     return;
                 }
