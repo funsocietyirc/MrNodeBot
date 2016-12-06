@@ -79,6 +79,7 @@ class StringBuilder {
     };
     // Append to Buffer
     append(text) {
+        if (_.isUndefined(text) || !_.isString(text) || _.isEmpty(text)) return this;
         this.buffer = _.isEmpty(this.buffer) ? text : `${this.buffer} ${this.options.divider} ${text}`;
         return this;
     };
