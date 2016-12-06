@@ -49,6 +49,8 @@ module.exports = results => new Promise((resolve, reject) => rp({
         logger.warn('Error in URL Get Document function', {
             err
         });
+        // Set status code
+        results.statusCode = err.response.statusCode;
         // Set the unreachable flag
         results.unreachable = true;
         resolve(results);
