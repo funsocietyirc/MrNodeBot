@@ -9,6 +9,7 @@ const _ = require('lodash');
 const gen = require('../generators/_imdbData');
 const logger = require('../../lib/logger');
 const ircTypography = require('../lib/_ircTypography');
+const short = require('../lib/_getShortService');
 
 module.exports = app => {
     // Register IMDB Command
@@ -26,12 +27,29 @@ module.exports = app => {
                         app.say(to, 'Your IMDB request rendered no results, better luck next time');
                         return;
                     }
-                    app.say(to,
-                        `${ircTypography.logos.imdb} ${data.Title} (${data.Year}) (https://www.imdb.com/title/${data.imdbID}) Released: ${data.Released} Runtime: ${data.Runtime} Genre: ${data.Genre} ` +
-                        `Type: ${data.Type} Writer(s): ${data.Writer} Cast: ${data.Actors} Rating: ${data.imdbRating} Votes: ${data.imdbVotes} MetaScore: ${data.Metascore} Plot: ${data.Plot}`
-                    );
+                    let output = new ircTypography.StringBuilder({
+                        logo: 'imdb',
+                    });
+                    return short(`https://www.imdb.com/title/${data.imdbID}`)
+                        .then(shortUrl => {
+                            output
+                                .append(data.Title)
+                                .append(data.Year)
+                                .append(shortUrl)
+                                .append(`Released: ${data.Released}`)
+                                .append(`Runetime: ${data.Runtime}`)
+                                .append(`Genre: ${data.Genre}`).append(`Type: ${data.Type}`)
+                                .append(`Writer(s): ${data.Writer}`)
+                                .append(`Cast: ${data.Actors}`).append(`Rating: ${data.imdbRating}`)
+                                .append(`Votes: ${data.imdbVotes}`)
+                                .append(`MetaScore ${data.Metascore}`);
+
+                            app.say(to, output.text);
+                            app.say(to, `${ircTypography.c.bold('Plot')} ${ircTypography.icons.sideArrow} ${data.Plot}`);
+                        });
                 })
                 .catch(err => {
+                    console.dir(err);
                     logger.error('IMDB Command Issue', {
                         err
                     });

@@ -7,7 +7,7 @@ const icons = {
     downArrow: c.red.bold('↓'),
     views: c.navy.bold('⚘'),
     comments: c.blue.bold('✍'),
-    sideArrow: c.grey.bold('→'),
+    sideArrow: c.bold('→'),
     anchor: c.navy.bold('⚓'),
     star: c.yellow('✡'),
     happy: c.green.bold('☺'),
@@ -61,26 +61,23 @@ const title = text => c.bold(text);
 class StringBuilder {
     // Build with options object
     constructor(options = Object.create(null)) {
-        // Initialize buffer
-        this.buffer = '';
-
         // Establish divider
-        options.divider = !_.isUndefined(options.divider) && _.isString(options.divider) ? options.divider : icons.sideArrow;
+        options.divider = _.isUndefined(options.divider) || !_.isString(options.divider) ? icons.sideArrow : options.divider;
 
-        // We have an options object
-        if (_.isObject(options) && !_.isEmpty(options)) {
-            // We have been provided with an initial logo
-            if (!_.isUndefined(options.logo) && _.isString(options.logo) && _.has(logos, options.logo)) this.buffer = `${logos[options.logo]} ${icons.sideArrow}`;
-        }
+        // Should we disable color
+        options.disableColor = _.isUndefined(options.disableColor) || !_.isBoolean(options.disableColor) || options.disableColor !== true ? false : true;
+
+        // Initialize buffer with optional Logo
+        this.buffer = (_.isUndefined(options.logo) || !_.isString(options.logo) || !_.has(logos, options.logo)) ? '' : `${logos[options.logo]}`;
 
         // Set the options
         this.options = options;
-
     };
     // Append to Buffer
     append(text) {
-        if (_.isUndefined(text) || !_.isString(text) || _.isEmpty(text)) return this;
-        this.buffer = _.isEmpty(this.buffer) ? text : `${this.buffer} ${this.options.divider} ${text}`;
+        // No text detected
+        if (_.isUndefined(text) || _.isEmpty(text)) return this;
+        this.buffer = !_.isString(this.buffer) || _.isEmpty(this.buffer) ? text : `${this.buffer} ${this.options.divider} ${text}`;
         return this;
     };
     // Append an icon
@@ -88,18 +85,32 @@ class StringBuilder {
         if (!_.isUndefined(icon) && _.isString(icon) && !_isEmpty(string) && _.has(icons, icon)) this.buffer = `${this.buffer} ${icons[icon]}`;
         return this;
     };
+    // Return color number
+    colorNumber(num, title) {
+        if (!_.isUndefined(num) && !_.isEmpty(num)) return _.isString(title) && !_.isEmpty(title) ? `${title} ${this.append(colorNumber(num))}` : this.append(colorNumber(num));
+        return this;
+    };
+    // Return color signed number
+    colorSignedNumber(num, title) {
+        if (!_.isUndefined(num) && !_.isEmpty(num)) return _.isString(title) && !_.isEmpty(title) ? `${title} ${this.append(colorSignedNumber(num))}` : this.append(colorSignedNumber(num));
+        return this;
+    };
+    // Add a Title
+    bold(text) {
+        if (!_.isUndefined(text) && _.isString(text) && !_.isEmpty(text)) return this.append(c.bold(text));
+        return this;
+    };
     // Return the buffer
     toString() {
-        return this.buffer.trim();
-    }
-
+        return this.options.disableColor ? c.stripColors(this.buffer.trim()) : this.buffer.trim();
+    };
     // Text Get accessor
     get text() {
         return this.toString();
-    }
+    };
     set text(input) {
         return this.append(input);
-    }
+    };
 };
 
 
@@ -110,5 +121,6 @@ module.exports = {
     title,
     colorNumber,
     colorSignedNumber,
-    StringBuilder
+    StringBuilder,
+    c
 };

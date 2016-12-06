@@ -125,12 +125,12 @@ module.exports = app => {
 
                 // Hold the output
                 let output = new typo.StringBuilder();
-                output.append('Seen');
+                output.bold('Seen');
 
                 // Check the last thing said
                 let lastSaid = _(results).map('log').compact().first();
                 if (lastSaid)
-                    output.append(lastSaid.from).append(`saying ${lastSaid.text}`).append(`on ${lastSaid.to} ${Moment(lastSaid.timestamp).fromNow()}`);
+                    output.append(`${lastSaid.from} saying`).append(`${lastSaid.text}`).append(`on ${lastSaid.to} ${Moment(lastSaid.timestamp).fromNow()}`);
 
                 // Get the most recent result
                 let lastResult = _(results).maxBy(value => Moment(value[Object.keys(value)[0]].timestamp).unix());
@@ -139,7 +139,7 @@ module.exports = app => {
                 if (lastResult.part)
                     output.append(`parting ${lastResult.part.channel} ${Moment(lastResult.part.timestamp).fromNow()}`).append(lastResult.part.reason);
                 else if (lastResult.quit)
-                    output.append(`quitting [${lastResult.quit.channels ? lastResult.quit.channels.replace(',', ', ') : ''}] ${Moment(lastResult.quit.timestamp).fromNow()}`).append(lastResult.quit.reason);
+                    output.append(`quitting [${lastResult.quit.channels}] ${Moment(lastResult.quit.timestamp).fromNow()}`).append(lastResult.quit.reason);
                 else if (lastResult.kick)
                     output.append(`getting kicked from ${lastResult.kick.channel} ${Moment(lastResult.kick.timestamp).fromNow()}`).append(lastResult.kick.reason);
                 else if (lastResult.join)
