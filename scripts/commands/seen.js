@@ -8,7 +8,8 @@ const scriptInfo = {
 const _ = require('lodash');
 const Moment = require('moment');
 const Models = require('bookshelf-model-loader');
-const logger = require('../../lib/logger')
+const logger = require('../../lib/logger');
+const typo = require('../lib/_ircTypography');
 
 module.exports = app => {
 
@@ -123,40 +124,39 @@ module.exports = app => {
                 }
 
                 // Hold the output
-                let output = '';
+                let output = new typo.StringBuilder();
+                output.append('Seen');
 
                 // Check the last thing said
                 let lastSaid = _(results).map('log').compact().first();
                 if (lastSaid)
-                    output = `${lastSaid.from} was last seen saying "${lastSaid.text}" on ${lastSaid.to} ${Moment(lastSaid.timestamp).fromNow()}.`
+                    output.append(lastSaid.from).append(`saying ${lastSaid.text}`).append(`on ${lastSaid.to} ${Moment(lastSaid.timestamp).fromNow()}`);
 
                 // Get the most recent result
                 let lastResult = _(results).maxBy(value => Moment(value[Object.keys(value)[0]].timestamp).unix());
 
                 // Check other activity
                 if (lastResult.part)
-                    output = `${output} They last Parted ${lastResult.part.channel} ${Moment(lastResult.part.timestamp).fromNow()} with the reason: ${lastResult.part.reason || 'No reason given'}`;
+                    ouput.append(`parting ${lastResult.part.channel} ${Moment(lastResult.part.timestamp).fromNow()}`).append(lastResult.part.reason);
                 else if (lastResult.quit)
-                    output = `${output} They last Quit [${lastResult.quit.channels ? lastResult.quit.channels.replace(',', ', ') : ''}] ${Moment(lastResult.quit.timestamp).fromNow()} with the reason: ${lastResult.quit.reason || 'No reason given'}`;
+                    output.append(`quitting [${lastResult.quit.channels ? lastResult.quit.channels.replace(',', ', ') : ''}] ${Moment(lastResult.quit.timestamp).fromNow()}`).append(lastResult.quit.reason);
                 else if (lastResult.kick)
-                    output = `${output} They were last Kicked from ${lastResult.kick.channel} ${Moment(lastResult.kick.timestamp).fromNow()} with the reason: ${lastResult.kick.reason || 'No reason given'}`;
+                    output.append(`getting kicked from ${lastResult.kick.channel} ${Moment(lastResult.kick.timestamp).fromNow()}`).append(lastResult.kick.reason);
                 else if (lastResult.join)
-                    output = `${output} They last Joined ${lastResult.join.channel} ${Moment(lastResult.join.timestamp).fromNow()}`;
+                    output.append(`joining ${lastResult.join.channel} ${Moment(lastResult.join.timestamp).fromNow()}`);
                 else if (lastResult.aliasOld) {
-                    output = `${output} They last changed their Nick to ${lastResult.aliasOld.newnick} in [${lastResult.aliasOld.channels ? lastResult.aliasOld.channels.replace(',', ', ') : ''}] ${Moment(lastResult.aliasOld.timestamp).fromNow()}`;
+                    output.append(`changing their nick to ${lastResult.aliasOld.newnick} in [${lastResult.aliasOld.channels ? lastResult.aliasOld.channels.replace(',', ', ') : ''}] ${Moment(lastResult.aliasOld.timestamp).fromNow()}`);
                     // Recurse on nick change
                     seen(to, from, lastResult.aliasOld.newnick, message);
                 } else if (lastResult.aliasNew)
-                    output = `${output} They last changed their Nick from ${lastResult.aliasNew.oldnick} in [${lastResult.aliasNew.channels ? lastResult.aliasNew.channels.replace(',', ', ') : ''}] ${Moment(lastResult.aliasNew.timestamp).fromNow()}`;
+                    output.append(`changing their nick from ${lastResult.aliasNew.oldnick} in [${lastResult.aliasNew.channels ? lastResult.aliasNew.channels.replace(',', ', ') : ''}] ${Moment(lastResult.aliasNew.timestamp).fromNow()}`);
 
-                // Trim output
-                output = output.trim();
                 // For Some reason our output is empty
                 if (_.isEmpty(output)) {
                     app.say(to, `Something went wrong finding the active state for ${user}, ${from}`);
                     return;
                 }
-                app.say(to, output);
+                app.say(to, output.text);
             })
             .catch(err => {
                 logger.error('Error in the last active Promise.all chain', {

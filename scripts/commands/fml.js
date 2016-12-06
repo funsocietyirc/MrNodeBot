@@ -20,7 +20,11 @@ module.exports = app => {
                     app.say(to, 'I could not seem to find any FML lines');
                     return;
                 }
-                app.say(to, `${ircTypography.logos.fml} ${result}`);
+                let output = new ircTypography.StringBuilder({
+                    logo: 'fml'
+                });
+                output.append(result);
+                app.say(to, output.text);
             })
             .catch(err => {
                 app.say(to, 'Something went wrong with the FML API');
