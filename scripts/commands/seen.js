@@ -28,7 +28,7 @@ module.exports = app => {
         let nick = args.nick;
         let user = args.user;
         let host = args.host;
-            // We have no user
+        // We have no user
         if (!nick && !user && !host) {
             app.say(to, `You need to give me something to work with ${from}`);
             return;
@@ -158,28 +158,32 @@ module.exports = app => {
 
 
                 // Check other activity
-                if (lastResult.part) {
-                    if (!lastSaid) output.append(lastResult.part.nick);
-                    output.append(`parting ${lastResult.part.channel} ${Moment(lastResult.part.timestamp).fromNow()}`).append(lastResult.part.reason);
-                } else if (lastResult.quit) {
-                    if (!lastSaid) output.append(lastResult.quit.nick);
-                    output.append(`quitting [${lastResult.quit.channels}] ${Moment(lastResult.quit.timestamp).fromNow()}`).append(lastResult.quit.reason);
-                } else if (lastResult.kick) {
-                    if (!lastSaid) output.append(lastResult.kick.nick);
-                    output.append(`getting kicked from ${lastResult.kick.channel} ${Moment(lastResult.kick.timestamp).fromNow()}`).append(lastResult.kick.reason);
-                } else if (lastResult.join) {
-                    if (!lastSaid) output.append(lastResult.join.nick);
-                    output.append(`joining ${lastResult.join.channel} ${Moment(lastResult.join.timestamp).fromNow()}`);
-                } else if (lastResult.aliasOld) {
-                    if (!lastSaid) output.append(lastResult.aliasold.oldnick);
-                    output.append(`changing their nick to ${lastResult.aliasOld.newnick} in [${lastResult.aliasOld.channels}] ${Moment(lastResult.aliasOld.timestamp).fromNow()}`);
-                    // Recurse on nick change
-                    // TODO Fix
-                    // seen(to, from, `${lastResult.aliasOld.newnick}*${lastResult.aliasOld.user}@${lastResult.aliasOld.host}`, message);
-                } else if (lastResult.aliasNew) {
-                    if (!lastSaid) output.append(lastResult.aliasNew.newnick);
-                    output.append(`changing their nick from ${lastResult.aliasNew.oldnick} in [${lastResult.aliasNew.channels}] ${Moment(lastResult.aliasNew.timestamp).fromNow()}`);
-                }
+                if (lastResult.part)
+                    output
+                    .append(`parting ${lastResult.part.channel} ${Moment(lastResult.part.timestamp).fromNow()}`)
+                    .append(`as ${lastResult.part.nick}`)
+                    .append(lastResult.part.reason);
+                else if (lastResult.quit)
+                    output
+                    .append(`quitting [${lastResult.quit.channels}] ${Moment(lastResult.quit.timestamp).fromNow()}`)
+                    .append(`as ${lastResult.quit.nick}`)
+                    .append(lastResult.quit.reason);
+                else if (lastResult.kick)
+                    output
+                    .append(`getting kicked from ${lastResult.kick.channel} ${Moment(lastResult.kick.timestamp).fromNow()}`)
+                    .append(`as ${lastResult.kick.nick}`)
+                    .append(lastResult.kick.reason);
+                else if (lastResult.join)
+                    output
+                    .append(`joining ${lastResult.join.channel} ${Moment(lastResult.join.timestamp).fromNow()}`)
+                    .append(`as ${lastResult.join.nick}`);
+                else if (lastResult.aliasOld)
+                    output
+                    .append(`changing their nick from ${lastResult.aliasold.oldnick} to ${lastResult.aliasOld.newnick} in [${lastResult.aliasOld.channels}] ${Moment(lastResult.aliasOld.timestamp).fromNow()}`);
+                else if (lastResult.aliasNew)
+                    output
+                    .append(`changing their nick from ${lastResult.aliasNew.oldnick} to ${lastResult.aliasNew.newnick} in [${lastResult.aliasNew.channels}] ${Moment(lastResult.aliasNew.timestamp).fromNow()}`);
+
 
                 // For Some reason our output is empty
                 if (_.isEmpty(output.text)) {
