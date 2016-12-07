@@ -151,7 +151,7 @@ module.exports = app => {
 
                 // Check the last thing said
                 let lastSaid = _(results).map('log').compact().first();
-                output.appendBold(`Seen ${lastSaid.from}`);
+
                 if (lastSaid)
                     output.append(`saying`).append(`${lastSaid.text}`).append(`on ${lastSaid.to} ${Moment(lastSaid.timestamp).fromNow()}`);
 
