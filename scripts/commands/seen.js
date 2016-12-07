@@ -40,13 +40,16 @@ module.exports = app => {
             return;
         }
 
-        //Grab Logging Data
-        let logging = Models.Logging.query(qb => {
-            if (nick) qb.andWhere('from', nick);
-            if (user) qb.andWhere('ident', user);
+        // Query filter
+        const filter = (qb, nickField = 'nick', userField = 'user') => {
+            if (nick) qb.andWhere(nickField, nick);
+            if (user) qb.andWhere(userField, user);
             if (host) qb.andWhere('host', 'like', host);
-            qb.orderBy('timestamp', 'desc').limit(1);
-        }).fetch().then(result => {
+            return qb.orderBy('timestamp', 'desc').limit(1);
+        };
+
+        //Grab Logging Data
+        let logging = Models.Logging.query(qb => filter(qb, 'from', 'ident')).fetch().then(result => {
             if (!result) return;
             return new Object({
                 log: result.toJSON()
@@ -54,12 +57,7 @@ module.exports = app => {
         });
 
         // Grab Join Data
-        let joinLogging = Models.JoinLogging.query(qb => {
-            if (nick) qb.andWhere('nick', nick);
-            if (user) qb.andWhere('user', user);
-            if (host) qb.andWhere('host', 'like', host);
-            qb.orderBy('timestamp', 'desc').limit(1);
-        }).fetch().then(result => {
+        let joinLogging = Models.JoinLogging.query(filter).fetch().then(result => {
             if (!result) return;
             return new Object({
                 join: result.toJSON()
@@ -67,25 +65,15 @@ module.exports = app => {
         });
 
         // Grab Part Logging Data
-        let partLogging = Models.PartLogging.query(qb => {
-            if (nick) qb.andWhere('nick', nick);
-            if (user) qb.andWhere('user', user);
-            if (host) qb.andWhere('host', 'like', host);
-            qb.orderBy('timestamp', 'desc').limit(1)
-        }).fetch().then(result => {
+        let partLogging = Models.PartLogging.query(filter).fetch().then(result => {
             if (!result) return;
             return new Object({
                 part: result.toJSON()
             });
         });
 
-        // Gran Quit Logging Data
-        let quitLogging = Models.QuitLogging.query(qb => {
-            if (nick) qb.andWhere('nick', nick);
-            if (user) qb.andWhere('user', user);
-            if (host) qb.andWhere('host', 'like', host);
-            qb.orderBy('timestamp', 'desc').limit(1)
-        }).fetch().then(result => {
+        // Grab Quit Logging Data
+        let quitLogging = Models.QuitLogging.query(filter).fetch().then(result => {
             if (!result) return;
             return new Object({
                 quit: result.toJSON()
@@ -93,12 +81,7 @@ module.exports = app => {
         });
 
         // Grab Kick Logging Data
-        let kickLogging = Models.KickLogging.query(qb => {
-            if (nick) qb.andWhere('nick', nick);
-            if (user) qb.andWhere('user', user);
-            if (host) qb.andWhere('host', 'like', host);
-            qb.orderBy('timestamp', 'desc').limit(1)
-        }).fetch().then(result => {
+        let kickLogging = Models.KickLogging.query(filter).fetch().then(result => {
             if (!result) return;
             return new Object({
                 kick: result.toJSON()
@@ -106,12 +89,7 @@ module.exports = app => {
         });
 
         // Grab Nick Change notices (old)
-        let aliasOld = Models.Alias.query(qb => {
-            if (nick) qb.andWhere('oldnick', nick);
-            if (user) qb.andWhere('user', user);
-            if (host) qb.andWhere('host', 'like', host);
-            qb.orderBy('timestamp', 'desc').limit(1)
-        }).fetch().then(result => {
+        let aliasOld = Models.Alias.query(qb => filter(qb, 'oldnick')).fetch().then(result => {
             if (!result) return;
             return new Object({
                 aliasOld: result.toJSON()
@@ -119,12 +97,7 @@ module.exports = app => {
         });
 
         // Grab Nick Change notices (old)
-        let aliasNew = Models.Alias.query(qb => {
-            if (nick) qb.andWhere('newnick', nick);
-            if (user) qb.andWhere('user', user);
-            if (host) qb.andWhere('host', 'like', host);
-            qb.orderBy('timestamp', 'desc').limit(1)
-        }).fetch().then(result => {
+        let aliasNew = Models.Alias.query(qb => filter(qb, 'newnick')).fetch().then(result => {
             if (!result) return;
             return new Object({
                 aliasNew: result.toJSON()
@@ -187,8 +160,8 @@ module.exports = app => {
         desc: '[nick*user@host] shows the last activity of the user',
         access: app.Config.accessLevels.identified,
         call: (to, from, text, message) => {
-          if(from !== to) app.say(to, `I have private messaged you the results ${from}`);
-          seen(to, from, text, message);
+            if (from !== to) app.say(to, `I have private messaged you the results ${from}`);
+            seen(to, from, text, message);
         }
     });
 
