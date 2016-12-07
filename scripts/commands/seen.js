@@ -10,7 +10,7 @@ const Moment = require('moment');
 const Models = require('bookshelf-model-loader');
 const logger = require('../../lib/logger');
 const typo = require('../lib/_ircTypography');
-const extract = require('../../lib/userIdentHostExtract');
+const extract = require('../../lib/extractNickUserIdent');
 
 module.exports = app => {
 
