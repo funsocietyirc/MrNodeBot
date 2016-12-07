@@ -119,7 +119,6 @@ module.exports = app => {
                 output.insert('on').insertBold(`[${lastResult.aliasOld.channels.replace(',',', ')}]`);
                 output.insert(Moment(lastResult.aliasOld.timestamp).fromNow());
                 // The last action commited by the user was a nick change, recurse and follow the next nick in the chain
-                seen(to, from, `${lastResult.aliasOld.newnick}*${lastResult.aliasOld.user}@${lastResult.aliasOld.host}`, message, iteration + 1);
             }
             // else if (lastResult.aliasNew) {
             //     //output.insert('Changing their nick from').insertBold(lastResult.aliasNew)
@@ -127,6 +126,9 @@ module.exports = app => {
             // }
 
             // Respond
+            if (lastResult.aliasOld && iteration <= 3) seen(to, from, `${lastResult.aliasOld.newnick}*${lastResult.aliasOld.user}@${lastResult.aliasOld.host}`, message, iteration + 1);
+            else if (lastResult.aliasOld) output.append(`Chain exceeds max limit`);
+
             app.say(from, !_.isEmpty(output.text) ? output.text : `Something went wrong finding the active state for ${nick || user || host}, ${from}`);
         };
 
