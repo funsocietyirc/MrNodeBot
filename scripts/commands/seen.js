@@ -138,7 +138,7 @@ module.exports = app => {
                 results = _.compact(results);
                 // No Data available for user
                 if (!_.isArray(results) || _.isEmpty(results)) {
-                    app.say(to, `I have no data on ${nick || user || host}`);
+                    app.say(from, `I have no data on ${nick || user || host}`);
                     return;
                 }
 
@@ -171,22 +171,25 @@ module.exports = app => {
                     output.append(`changing their nick to ${lastResult.aliasNew.newnick} from ${lastResult.aliasNew.oldnick} in [${lastResult.aliasNew.channels}] ${Moment(lastResult.aliasNew.timestamp).fromNow()}`);
 
                 // Respond
-                app.say(to, !_.isEmpty(output.text) ? output.text : `Something went wrong finding the active state for ${nick}, ${from}`);
+                app.say(from, !_.isEmpty(output.text) ? output.text : `Something went wrong finding the active state for ${nick}, ${from}`);
             })
             .catch(err => {
                 console.dir(err);
                 logger.error('Error in the last active Promise.all chain', {
                     err
                 });
-                app.say(to, `Something went wrong finding the active state for ${nick || user || host}, ${from}`);
+                app.say(from, `Something went wrong finding the active state for ${nick || user || host}, ${from}`);
             });
     };
 
     // Command
     app.Commands.set('seen', {
-        desc: '[nick*user@hot] shows the last activity of the user',
+        desc: '[nick*user@host] shows the last activity of the user',
         access: app.Config.accessLevels.identified,
-        call: seen
+        call: (to, from, text, message) => {
+          if(from !== to) app.say(to, `I have private messaged you the results ${from}`);
+          seen(text);
+        }
     });
 
     // Return the script info
