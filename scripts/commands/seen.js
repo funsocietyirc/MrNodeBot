@@ -147,7 +147,7 @@ module.exports = app => {
 
                 // Hold the output
                 let output = new typo.StringBuilder();
-                output.appendBold(`Seen ${nick}`);
+                output.appendBold(`Seen ${lastSaid.from}`);
 
                 // Check the last thing said
                 let lastSaid = _(results).map('log').compact().first();
