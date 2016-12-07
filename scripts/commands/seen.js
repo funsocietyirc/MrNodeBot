@@ -44,7 +44,7 @@ module.exports = app => {
         let logging = Models.Logging.query(qb => {
             if (nick) qb.andWhere('from', nick);
             if (user) qb.andWhere('ident', user);
-            if (host) qb.andWhere('host', host);
+            if (host) qb.andWhere('host', 'like', host);
             qb.orderBy('timestamp', 'desc').limit(1);
         }).fetch().then(result => {
             if (!result) return;
@@ -57,7 +57,7 @@ module.exports = app => {
         let joinLogging = Models.JoinLogging.query(qb => {
             if (nick) qb.andWhere('nick', nick);
             if (user) qb.andWhere('user', user);
-            if (host) qb.andWhere('host', host);
+            if (host) qb.andWhere('host', 'like', host);
             qb.orderBy('timestamp', 'desc').limit(1);
         }).fetch().then(result => {
             if (!result) return;
@@ -70,7 +70,7 @@ module.exports = app => {
         let partLogging = Models.PartLogging.query(qb => {
             if (nick) qb.andWhere('nick', nick);
             if (user) qb.andWhere('user', user);
-            if (host) qb.andWhere('host', host);
+            if (host) qb.andWhere('host', 'like', host);
             qb.orderBy('timestamp', 'desc').limit(1)
         }).fetch().then(result => {
             if (!result) return;
@@ -83,7 +83,7 @@ module.exports = app => {
         let quitLogging = Models.QuitLogging.query(qb => {
             if (nick) qb.andWhere('nick', nick);
             if (user) qb.andWhere('user', user);
-            if (host) qb.andWhere('host', host);
+            if (host) qb.andWhere('host', 'like', host);
             qb.orderBy('timestamp', 'desc').limit(1)
         }).fetch().then(result => {
             if (!result) return;
@@ -96,7 +96,7 @@ module.exports = app => {
         let kickLogging = Models.KickLogging.query(qb => {
             if (nick) qb.andWhere('nick', nick);
             if (user) qb.andWhere('user', user);
-            if (host) qb.andWhere('host', host);
+            if (host) qb.andWhere('host', 'like', host);
             qb.orderBy('timestamp', 'desc').limit(1)
         }).fetch().then(result => {
             if (!result) return;
@@ -110,7 +110,7 @@ module.exports = app => {
             qb.select();
             if (nick) qb.andWhere('oldnick', nick);
             if (user) qb.andWhere('user', user);
-            if (host) qb.andWhere('host', host);
+            if (host) qb.andWhere('host', 'like', host);
             qb.orderBy('timestamp', 'desc').limit(1)
         }).fetch().then(result => {
             if (!result) return;
@@ -124,7 +124,7 @@ module.exports = app => {
             qb.select();
             if (nick) qb.andWhere('oldnick', nick);
             if (user) qb.andWhere('user', user);
-            if (host) qb.andWhere('host', host);
+            if (host) qb.andWhere('host', 'like', host);
             qb.orderBy('timestamp', 'desc').limit(1)
         }).fetch().then(result => {
             if (!result) return;
