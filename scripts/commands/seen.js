@@ -5,6 +5,7 @@ const scriptInfo = {
     createdBy: 'IronY'
 };
 
+// Includes
 const _ = require('lodash');
 const Moment = require('moment');
 const Models = require('bookshelf-model-loader');
@@ -12,8 +13,8 @@ const logger = require('../../lib/logger');
 const typo = require('../lib/_ircTypography');
 const extract = require('../../lib/extractNickUserIdent');
 
+// Exports
 module.exports = app => {
-
     // If we have Database availability
     if (!Models.Logging || !Models.JoinLogging || !Models.PartLogging || !Models.QuitLogging || !Models.KickLogging || !Models.Alias) return scriptInfo;
 
@@ -46,64 +47,24 @@ module.exports = app => {
             return qb.orderBy('timestamp', 'desc').limit(1);
         };
 
-        //Grab Logging Data
-        let logging = Models.Logging.query(qb => filter(qb, 'from', 'ident')).fetch().then(result => {
-            if (!result) return;
-            return new Object({
-                log: result.toJSON()
-            });
-        });
-
-        // Grab Join Data
-        let joinLogging = Models.JoinLogging.query(filter).fetch().then(result => {
-            if (!result) return;
-            return new Object({
-                join: result.toJSON()
-            });
-        });
-
-        // Grab Part Logging Data
-        let partLogging = Models.PartLogging.query(filter).fetch().then(result => {
-            if (!result) return;
-            return new Object({
-                part: result.toJSON()
-            });
-        });
-
-        // Grab Quit Logging Data
-        let quitLogging = Models.QuitLogging.query(filter).fetch().then(result => {
-            if (!result) return;
-            return new Object({
-                quit: result.toJSON()
-            });
-        });
-
-        // Grab Kick Logging Data
-        let kickLogging = Models.KickLogging.query(filter).fetch().then(result => {
-            if (!result) return;
-            return new Object({
-                kick: result.toJSON()
-            });
-        });
-
-        // Grab Nick Change notices (old)
-        let aliasOld = Models.Alias.query(qb => filter(qb, 'oldnick')).fetch().then(result => {
-            if (!result) return;
-            return new Object({
-                aliasOld: result.toJSON()
-            });
-        });
-
-        // Grab Nick Change notices (old)
-        let aliasNew = Models.Alias.query(qb => filter(qb, 'newnick')).fetch().then(result => {
-            if (!result) return;
-            return new Object({
-                aliasNew: result.toJSON()
-            });
-        });
+        // Render object
+        const render = (result, key) => {
+            if (!result || !key) return;
+            let output = Object.create(null);
+            output[key] = result.toJSON();
+            return output;
+        };
 
         // Resolve all promises
-        Promise.all([logging, partLogging, quitLogging, kickLogging, joinLogging, aliasOld, aliasNew])
+        Promise.all([
+                Models.Logging.query(qb => filter(qb, 'from', 'ident')).fetch().then(result => render(result, 'log')),
+                Models.JoinLogging.query(filter).fetch().then(result => render(result, 'join')),
+                Models.PartLogging.query(filter).fetch().then(result => render(result, 'part')),
+                Models.QuitLogging.query(filter).fetch().then(result => render(result, 'quit')),
+                Models.KickLogging.query(filter).fetch().then(result => render(result, 'kick')),
+                Models.Alias.query(qb => filter(qb, 'oldnick')).fetch().then(result => render(result, 'aliasOld')),
+                Models.Alias.query(qb => filter(qb, 'newnick')).fetch().then(result => render(result, 'aliasNew')),
+            ])
             .then(results => {
                 // Clean results that are falsey / undefined
                 results = _.compact(results);
