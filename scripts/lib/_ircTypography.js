@@ -61,11 +61,16 @@ const title = text => c.bold(text);
 class StringBuilder {
     // Build with options object
     constructor(options = Object.create(null)) {
-        // Establish divider
-        options.divider = _.isUndefined(options.divider) || !_.isString(options.divider) ? icons.sideArrow : options.divider;
-
+        // Initialize options
+        this._buildOptions(options);
+    };
+    // Build the options
+    _buildOptions(options) {
         // Should we disable color
         options.disableColor = _.isUndefined(options.disableColor) || !_.isBoolean(options.disableColor) || options.disableColor !== true ? false : true;
+
+        // Establish divider
+        options.divider = _.isUndefined(options.divider) || !_.isString(options.divider) ? (options.disableColor ? c.stripColors(icons.sideArrow) : icons.sideArrow) : options.divider;
 
         // Initialize buffer with optional Logo
         this.buffer = (_.isUndefined(options.logo) || !_.isString(options.logo) || !_.has(logos, options.logo)) ? '' : `${logos[options.logo]}`;
@@ -77,19 +82,23 @@ class StringBuilder {
     append(text) {
         // No text detected
         if (_.isUndefined(text) || _.isEmpty(text)) return this;
-        this.buffer = !_.isString(this.buffer) || _.isEmpty(this.buffer) ? text : `${this.buffer} ${this.options.divider} ${text}`;
+        this.buffer = !_.isString(this.buffer) || _.isEmpty(this.buffer) ? text : `${this.buffer} ${text} ${this.options.divider}`;
         return this;
     };
     // Insert into buffer
     insert(text) {
         if (_.isUndefined(text) || _.isEmpty(text)) return this;
-        this.buffer = this.buffer + text;
+        this.buffer = this.buffer + ' ' + text;
         return this;
     };
     // Append an icon
     insertIcon(icon, spaceBetween = true) {
         if (!_.isUndefined(icon) && _.isString(icon) && !_isEmpty(string) && _.has(icons, icon)) this.buffer = `${this.buffer}${spaceBetween ? ' ': ''}${icons[icon]}`;
         return this;
+    };
+    // Insert divider
+    insertDivider(text) {
+        return this.insert((text || this.options.divider) + ' ');
     };
     // Append color number
     appendColorNumber(num, title) {
@@ -106,16 +115,22 @@ class StringBuilder {
         if (!_.isUndefined(text) && _.isString(text) && !_.isEmpty(text)) return this.append(c.bold(text));
         return this;
     };
+    // Inert a title
+    insertBold(text) {
+        if (!_.isUndefined(text) && _.isString(text) && !_.isEmpty(text)) return this.insert(c.bold(text));
+        return this;
+    };
     // Return the buffer
     toString() {
-        return this.options.disableColor ? c.stripColors(this.buffer.trim()) : this.buffer.trim();
+        // Get a normalized buffer
+        let outputBuffer = this.options.disableColor ? c.stripColors(this.buffer.trim()) : this.buffer.trim();
+        // See if the divider is at the final spot, if so, remove it
+        outputBuffer = outputBuffer.endsWith(this.options.divider) ? outputBuffer.substring(0, outputBuffer.length - this.options.divider.length) : outputBuffer;
+        return outputBuffer;
     };
     // Text Get accessor
     get text() {
         return this.toString();
-    };
-    set text(input) {
-        return this.append(input);
     };
 };
 
