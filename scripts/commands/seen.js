@@ -126,8 +126,8 @@ module.exports = app => {
             // }
 
             // Respond
-            if (lastResult.aliasOld && iteration <= 3) seen(to, from, `${lastResult.aliasOld.newnick}*${lastResult.aliasOld.user}@${lastResult.aliasOld.host}`, message, iteration + 1);
-            else if (lastResult.aliasOld) output.append(`Chain exceeds max limit`);
+            if (lastResult.aliasOld && iteration < 3) seen(to, from, `${lastResult.aliasOld.newnick}*${lastResult.aliasOld.user}@${lastResult.aliasOld.host}`, message, iteration + 1);
+            else if (lastResult.aliasOld) output.insertDivider().appendBold(`Chain exceeds max limit`);
 
             app.say(from, !_.isEmpty(output.text) ? output.text : `Something went wrong finding the active state for ${nick || user || host}, ${from}`);
         };
