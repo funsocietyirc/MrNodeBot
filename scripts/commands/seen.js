@@ -10,6 +10,7 @@ const Moment = require('moment');
 const Models = require('bookshelf-model-loader');
 const logger = require('../../lib/logger');
 const typo = require('../lib/_ircTypography');
+const extract = require('../../lib/userIdentHostExtract');
 
 module.exports = app => {
 
@@ -20,92 +21,113 @@ module.exports = app => {
         Show the last known activity of a given username
     **/
     const seen = (to, from, text, message) => {
+        // Extract user information
+        let args = extract(text);
+
         // Grab user
-        let [user] = text.split(' ');
+        let nick = args.nick;
+        let user = args.user;
+        let host = args.host;
 
         // We have no user
-        if (!user) {
-            app.say(to, 'you must specify a user');
+        if (!nick && !user && !host) {
+            app.say(to, `You need to give me something to work with ${from}`);
             return;
         }
+
         // Someone is trying to get the activity of the bot
-        if (app._ircClient.isBotNick(user)) {
+        if (app._ircClient.isBotNick(nick)) {
             app.say(to, `I am always active ${from}, always...`);
             return;
         }
 
-        //1 Grab Logging Data
-        let logging = Models.Logging.query(qb => qb
-            .select('to', 'from', 'text', 'timestamp')
-            .where('from', user)
-            .orderBy('timestamp', 'desc')
-            .limit(1)).fetch().then(result => {
+        //Grab Logging Data
+        let logging = Models.Logging.query(qb => {
+            if (nick) qb.andWhere('from', nick);
+            if (user) qb.andWhere('ident', user);
+            if (host) qb.andWhere('host', host);
+            qb.orderBy('timestamp', 'desc').limit(1);
+        }).fetch().then(result => {
             if (!result) return;
             return new Object({
                 log: result.toJSON()
             });
         });
+
         // Grab Join Data
-        let joinLogging = Models.JoinLogging.query(qb => qb
-            .select('nick', 'channel', 'timestamp')
-            .where('nick', user)
-            .orderBy('timestamp', 'desc')
-            .limit(1)).fetch().then(result => {
+        let joinLogging = Models.JoinLogging.query(qb => {
+            if (nick) qb.andWhere('nick', nick);
+            if (user) qb.andWhere('user', user);
+            if (host) qb.andWhere('host', host);
+            qb.orderBy('timestamp', 'desc').limit(1);
+        }).fetch().then(result => {
             if (!result) return;
             return new Object({
                 join: result.toJSON()
             });
         });
+
         // Grab Part Logging Data
-        let partLogging = Models.PartLogging.query(qb => qb
-            .select('nick', 'channel', 'reason', 'timestamp')
-            .where('nick', user)
-            .orderBy('timestamp', 'desc')
-            .limit(1)).fetch().then(result => {
+        let partLogging = Models.PartLogging.query(qb => {
+            if (nick) qb.andWhere('nick', nick);
+            if (user) qb.andWhere('user', user);
+            if (host) qb.andWhere('host', host);
+            qb.orderBy('timestamp', 'desc').limit(1)
+        }).fetch().then(result => {
             if (!result) return;
             return new Object({
                 part: result.toJSON()
             });
         });
+
         // Gran Quit Logging Data
-        let quitLogging = Models.QuitLogging.query(qb => qb
-            .select('nick', 'channels', 'reason', 'timestamp')
-            .where('nick', user)
-            .orderBy('timestamp', 'desc')
-            .limit(1)).fetch().then(result => {
+        let quitLogging = Models.QuitLogging.query(qb => {
+            if (nick) qb.andWhere('nick', nick);
+            if (user) qb.andWhere('user', user);
+            if (host) qb.andWhere('host', host);
+            qb.orderBy('timestamp', 'desc').limit(1)
+        }).fetch().then(result => {
             if (!result) return;
             return new Object({
                 quit: result.toJSON()
             });
         });
+
         // Grab Kick Logging Data
-        let kickLogging = Models.KickLogging.query(qb => qb
-            .select('nick', 'channel', 'reason', 'timestamp')
-            .where('nick', user)
-            .orderBy('timestamp', 'desc')
-            .limit(1)).fetch().then(result => {
+        let kickLogging = Models.KickLogging.query(qb => {
+            if (nick) qb.andWhere('nick', nick);
+            if (user) qb.andWhere('user', user);
+            if (host) qb.andWhere('host', host);
+            qb.orderBy('timestamp', 'desc').limit(1)
+        }).fetch().then(result => {
             if (!result) return;
             return new Object({
                 kick: result.toJSON()
             });
         });
+
         // Grab Nick Change notices (old)
-        let aliasOld = Models.Alias.query(qb => qb
-            .select('oldnick', 'newnick', 'channels', 'timestamp')
-            .where('oldnick', user)
-            .orderBy('timestamp', 'desc')
-            .limit(1)).fetch().then(result => {
+        let aliasOld = Models.Alias.query(qb => {
+            qb.select();
+            if (nick) qb.andWhere('oldnick', nick);
+            if (user) qb.andWhere('user', user);
+            if (host) qb.andWhere('host', host);
+            qb.orderBy('timestamp', 'desc').limit(1)
+        }).fetch().then(result => {
             if (!result) return;
             return new Object({
                 aliasOld: result.toJSON()
             });
         });
+
         // Grab Nick Change notices (old)
-        let aliasNew = Models.Alias.query(qb => qb
-            .select('oldnick', 'newnick', 'channels', 'timestamp')
-            .where('newnick', user)
-            .orderBy('timestamp', 'desc')
-            .limit(1)).fetch().then(result => {
+        let aliasNew = Models.Alias.query(qb => {
+            qb.select();
+            if (nick) qb.andWhere('oldnick', nick);
+            if (user) qb.andWhere('user', user);
+            if (host) qb.andWhere('host', host);
+            qb.orderBy('timestamp', 'desc').limit(1)
+        }).fetch().then(result => {
             if (!result) return;
             return new Object({
                 aliasNew: result.toJSON()
@@ -119,13 +141,13 @@ module.exports = app => {
                 results = _.compact(results);
                 // No Data available for user
                 if (!_.isArray(results) || _.isEmpty(results)) {
-                    app.say(to, `I have no data on ${user}`);
+                    app.say(to, `I have no data on ${nick}`);
                     return;
                 }
 
                 // Hold the output
                 let output = new typo.StringBuilder();
-                output.appendBold(`Seen ${user}`);
+                output.appendBold(`Seen ${nick}`);
 
                 // Check the last thing said
                 let lastSaid = _(results).map('log').compact().first();
@@ -153,22 +175,23 @@ module.exports = app => {
 
                 // For Some reason our output is empty
                 if (_.isEmpty(output.text)) {
-                    app.say(to, `Something went wrong finding the active state for ${user}, ${from}`);
+                    app.say(to, `Something went wrong finding the active state for ${nick}, ${from}`);
                     return;
                 }
                 app.say(to, output.text);
             })
             .catch(err => {
+                console.dir(err);
                 logger.error('Error in the last active Promise.all chain', {
                     err
                 });
-                app.say(to, `Something went wrong finding the active state for ${user}, ${from}`);
+                app.say(to, `Something went wrong finding the active state for ${nick}, ${from}`);
             });
     };
 
     // Command
     app.Commands.set('seen', {
-        desc: '[user] shows the last activity of the user',
+        desc: '[nick*user@hot] shows the last activity of the user',
         access: app.Config.accessLevels.identified,
         call: seen
     });
