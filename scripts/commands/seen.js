@@ -140,7 +140,7 @@ module.exports = app => {
                 results = _.compact(results);
                 // No Data available for user
                 if (!_.isArray(results) || _.isEmpty(results)) {
-                    app.say(to, `I have no data on ${nick}`);
+                    app.say(to, `I have no data on ${nick || user || host}`);
                     return;
                 }
 
