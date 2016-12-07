@@ -18,7 +18,7 @@ module.exports = app => {
         call: (to, from, text, message) => dict(text)
             .then(results => {
                 let definition = _.truncate(results.definition, {
-                    length: 200
+                    length: 300
                 });
                 return short(results.url)
                     .then(shortUrl => app.say(to, `${results.term}: ${definition} - ${shortUrl}`));
