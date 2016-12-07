@@ -29,7 +29,8 @@ module.exports = app => {
         let user = args.user;
         let host = args.host;
 
-        // We have no user
+        console.log(nick, user, host)
+            // We have no user
         if (!nick && !user && !host) {
             app.say(to, `You need to give me something to work with ${from}`);
             return;
