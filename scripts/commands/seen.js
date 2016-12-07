@@ -55,7 +55,48 @@ module.exports = app => {
             return output;
         };
 
-        // Resolve all promises
+        const processResults = results => {
+            // Clean results that are falsey / undefined
+            results = _.compact(results);
+            // No Data available for user
+            if (!_.isArray(results) || _.isEmpty(results)) {
+                app.say(from, `I have no data on ${nick || user || host}`);
+                return;
+            }
+
+            // Hold the output
+            let output = new typo.StringBuilder();
+            // Begin the Line
+            output.appendBold(`Seen`);
+
+            // See if there has been anything said by the user, append to buffer if so
+            let lastSaid = _(results).map('log').compact().first();
+            if (lastSaid) output.append().append(`${lastSaid.from} saying`).append(`${lastSaid.text}`).append(`on ${lastSaid.to} ${Moment(lastSaid.timestamp).fromNow()}`);
+
+            // Get the most recent result
+            let lastResult = _(results).maxBy(value => Moment(value[Object.keys(value)[0]].timestamp).unix());
+
+            // Check other activity
+            if (lastResult.part)
+                output.append(`parting ${lastResult.part.channel} ${Moment(lastResult.part.timestamp).fromNow()}`).append(`as ${lastResult.part.nick}`).append(lastResult.part.reason);
+            else if (lastResult.quit)
+                output.append(`quitting [${lastResult.quit.channels}] ${Moment(lastResult.quit.timestamp).fromNow()}`).append(`as ${lastResult.quit.nick}`).append(lastResult.quit.reason);
+            else if (lastResult.kick)
+                output.append(`getting kicked from ${lastResult.kick.channel} ${Moment(lastResult.kick.timestamp).fromNow()}`).append(`as ${lastResult.kick.nick}`).append(lastResult.kick.reason);
+            else if (lastResult.join)
+                output.append(`joining ${lastResult.join.channel} ${Moment(lastResult.join.timestamp).fromNow()}`).append(`as ${lastResult.join.nick}`);
+            else if (lastResult.aliasOld) {
+                output.append(`changing their nick from ${lastResult.aliasOld.oldnick} to ${lastResult.aliasOld.newnick} in [${lastResult.aliasOld.channels}] ${Moment(lastResult.aliasOld.timestamp).fromNow()}`);
+                // Recurse
+                seen(to, from, `${lastResult.aliasOld.newnick}*${lastResult.aliasOld.user}@${lastResult.aliasOld.host}`, message);
+            } else if (lastResult.aliasNew)
+                output.append(`changing their nick to ${lastResult.aliasNew.newnick} from ${lastResult.aliasNew.oldnick} in [${lastResult.aliasNew.channels}] ${Moment(lastResult.aliasNew.timestamp).fromNow()}`);
+
+            // Respond
+            app.say(from, !_.isEmpty(output.text) ? output.text : `Something went wrong finding the active state for ${nick || user || host}, ${from}`);
+        };
+
+        // Resolve all the queries, process the results, report any errors
         Promise.all([
                 Models.Logging.query(qb => filter(qb, 'from', 'ident')).fetch().then(result => render(result, 'log')),
                 Models.JoinLogging.query(filter).fetch().then(result => render(result, 'join')),
@@ -65,48 +106,8 @@ module.exports = app => {
                 Models.Alias.query(qb => filter(qb, 'oldnick')).fetch().then(result => render(result, 'aliasOld')),
                 Models.Alias.query(qb => filter(qb, 'newnick')).fetch().then(result => render(result, 'aliasNew')),
             ])
-            .then(results => {
-                // Clean results that are falsey / undefined
-                results = _.compact(results);
-                // No Data available for user
-                if (!_.isArray(results) || _.isEmpty(results)) {
-                    app.say(from, `I have no data on ${nick || user || host}`);
-                    return;
-                }
-
-                // Hold the output
-                let output = new typo.StringBuilder();
-                // Begin the Line
-                output.appendBold(`Seen`);
-
-                // See if there has been anything said by the user, append to buffer if so
-                let lastSaid = _(results).map('log').compact().first();
-                if (lastSaid) output.append().append(`${lastSaid.from} saying`).append(`${lastSaid.text}`).append(`on ${lastSaid.to} ${Moment(lastSaid.timestamp).fromNow()}`);
-
-                // Get the most recent result
-                let lastResult = _(results).maxBy(value => Moment(value[Object.keys(value)[0]].timestamp).unix());
-
-                // Check other activity
-                if (lastResult.part)
-                    output.append(`parting ${lastResult.part.channel} ${Moment(lastResult.part.timestamp).fromNow()}`).append(`as ${lastResult.part.nick}`).append(lastResult.part.reason);
-                else if (lastResult.quit)
-                    output.append(`quitting [${lastResult.quit.channels}] ${Moment(lastResult.quit.timestamp).fromNow()}`).append(`as ${lastResult.quit.nick}`).append(lastResult.quit.reason);
-                else if (lastResult.kick)
-                    output.append(`getting kicked from ${lastResult.kick.channel} ${Moment(lastResult.kick.timestamp).fromNow()}`).append(`as ${lastResult.kick.nick}`).append(lastResult.kick.reason);
-                else if (lastResult.join)
-                    output.append(`joining ${lastResult.join.channel} ${Moment(lastResult.join.timestamp).fromNow()}`).append(`as ${lastResult.join.nick}`);
-                else if (lastResult.aliasOld) {
-                    output.append(`changing their nick from ${lastResult.aliasOld.oldnick} to ${lastResult.aliasOld.newnick} in [${lastResult.aliasOld.channels}] ${Moment(lastResult.aliasOld.timestamp).fromNow()}`);
-                    // Recurse
-                    seen(to, from, `${lastResult.aliasOld.newnick}*${lastResult.aliasOld.user}@${lastResult.aliasOld.host}`, message);
-                } else if (lastResult.aliasNew)
-                    output.append(`changing their nick to ${lastResult.aliasNew.newnick} from ${lastResult.aliasNew.oldnick} in [${lastResult.aliasNew.channels}] ${Moment(lastResult.aliasNew.timestamp).fromNow()}`);
-
-                // Respond
-                app.say(from, !_.isEmpty(output.text) ? output.text : `Something went wrong finding the active state for ${nick || user || host}, ${from}`);
-            })
+            .then(rprocessResults)
             .catch(err => {
-                console.dir(err);
                 logger.error('Error in the last active Promise.all chain', {
                     err
                 });
