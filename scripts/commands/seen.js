@@ -64,7 +64,7 @@ module.exports = app => {
             results = _.compact(results);
             // No Data available for user
             if (!_.isArray(results) || _.isEmpty(results)) {
-                app.say(from, `I have no data on ${nick || user || host}`);
+                app.say(to, `I have no data on ${nick || user || host}`);
                 return;
             }
 
@@ -126,10 +126,10 @@ module.exports = app => {
             // }
 
             // Respond
-            if (lastResult.aliasOld && iteration < 3) seen(to, from, `${lastResult.aliasOld.newnick}*${lastResult.aliasOld.user}@${lastResult.aliasOld.host}`, message, iteration + 1);
+            if (lastResult.aliasOld && iteration < 2) seen(to, from, `${lastResult.aliasOld.newnick}*${lastResult.aliasOld.user}@${lastResult.aliasOld.host}`, message, iteration + 1);
             else if (lastResult.aliasOld) output.insertDivider().appendBold(`Chain exceeds max limit`);
 
-            app.say(from, !_.isEmpty(output.text) ? output.text : `Something went wrong finding the active state for ${nick || user || host}, ${from}`);
+            app.say(to, !_.isEmpty(output.text) ? output.text : `Something went wrong finding the active state for ${nick || user || host}, ${from}`);
         };
 
         // Resolve all the queries, process the results, report any errors
@@ -148,7 +148,7 @@ module.exports = app => {
                 logger.error('Error in the last active Promise.all chain', {
                     err
                 });
-                app.say(from, `Something went wrong finding the active state for ${nick || user || host}, ${from}`);
+                app.say(to, `Something went wrong finding the active state for ${nick || user || host}, ${from}`);
             });
     };
 
@@ -156,10 +156,7 @@ module.exports = app => {
     app.Commands.set('seen', {
         desc: '[nick*user@host] shows the last activity of the user',
         access: app.Config.accessLevels.identified,
-        call: (to, from, text, message) => {
-            if (from !== to) app.say(to, `I have private messaged you the results ${from}`);
-            seen(to, from, text, message);
-        }
+        call: seen
     });
 
     // Return the script info
