@@ -188,7 +188,7 @@ module.exports = app => {
         access: app.Config.accessLevels.identified,
         call: (to, from, text, message) => {
           if(from !== to) app.say(to, `I have private messaged you the results ${from}`);
-          seen(text);
+          seen(to, from, text, message);
         }
     });
 
