@@ -106,7 +106,7 @@ module.exports = app => {
                 Models.Alias.query(qb => filter(qb, 'oldnick')).fetch().then(result => render(result, 'aliasOld')),
                 Models.Alias.query(qb => filter(qb, 'newnick')).fetch().then(result => render(result, 'aliasNew')),
             ])
-            .then(rprocessResults)
+            .then(processResults)
             .catch(err => {
                 logger.error('Error in the last active Promise.all chain', {
                     err
