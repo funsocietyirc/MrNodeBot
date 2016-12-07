@@ -17,9 +17,7 @@ module.exports = app => {
     // If we have Database availability
     if (!Models.Logging || !Models.JoinLogging || !Models.PartLogging || !Models.QuitLogging || !Models.KickLogging || !Models.Alias) return scriptInfo;
 
-    /**
-        Show the last known activity of a given username
-    **/
+    // Show activity of given hostmask
     const seen = (to, from, text, message) => {
         // Extract user information
         let args = extract(text);
@@ -42,8 +40,8 @@ module.exports = app => {
 
         // Query filter
         const filter = (qb, nickField = 'nick', userField = 'user') => {
-            if (nick) qb.andWhere(nickField, nick);
-            if (user) qb.andWhere(userField, user);
+            if (nick) qb.andWhere(nickField, 'like', nick);
+            if (user) qb.andWhere(userField, 'like', user);
             if (host) qb.andWhere('host', 'like', host);
             return qb.orderBy('timestamp', 'desc').limit(1);
         };
