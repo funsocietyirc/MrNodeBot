@@ -23,13 +23,11 @@ module.exports = app => {
     const seen = (to, from, text, message) => {
         // Extract user information
         let args = extract(text);
-
+        console.dir(args);
         // Grab user
         let nick = args.nick;
         let user = args.user;
         let host = args.host;
-
-        console.log(nick, user, host)
             // We have no user
         if (!nick && !user && !host) {
             app.say(to, `You need to give me something to work with ${from}`);
@@ -176,7 +174,8 @@ module.exports = app => {
                     if (!lastSaid) output.append(lastResult.aliasold.oldnick);
                     output.append(`changing their nick to ${lastResult.aliasOld.newnick} in [${lastResult.aliasOld.channels}] ${Moment(lastResult.aliasOld.timestamp).fromNow()}`);
                     // Recurse on nick change
-                    seen(to, from, `${lastResult.aliasOld.newNick}*${lastResult.aliasOld.user}@${lastResult.aliasOld.host}`, message);
+                    // TODO Fix
+                    // seen(to, from, `${lastResult.aliasOld.newnick}*${lastResult.aliasOld.user}@${lastResult.aliasOld.host}`, message);
                 } else if (lastResult.aliasNew) {
                     if (!lastSaid) output.append(lastResult.aliasNew.newnick);
                     output.append(`changing their nick from ${lastResult.aliasNew.oldnick} in [${lastResult.aliasNew.channels}] ${Moment(lastResult.aliasNew.timestamp).fromNow()}`);
@@ -190,7 +189,6 @@ module.exports = app => {
                 app.say(to, output.text);
             })
             .catch(err => {
-                console.dir(err);
                 logger.error('Error in the last active Promise.all chain', {
                     err
                 });
