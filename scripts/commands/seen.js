@@ -176,7 +176,7 @@ module.exports = app => {
                     if (!lastSaid) output.append(lastResult.aliasold.oldnick);
                     output.append(`changing their nick to ${lastResult.aliasOld.newnick} in [${lastResult.aliasOld.channels}] ${Moment(lastResult.aliasOld.timestamp).fromNow()}`);
                     // Recurse on nick change
-                    //seen(to, from, lastResult.aliasOld.newnick, message);
+                    seen(to, from, `${lastResult.aliasOld.newNick}*${lastResult.aliasOld.user}@${lastResult.aliasOld.host}`, message);
                 } else if (lastResult.aliasNew) {
                     if (!lastSaid) output.append(lastResult.aliasNew.newnick);
                     output.append(`changing their nick from ${lastResult.aliasNew.oldnick} in [${lastResult.aliasNew.channels}] ${Moment(lastResult.aliasNew.timestamp).fromNow()}`);
