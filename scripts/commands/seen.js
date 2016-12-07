@@ -171,7 +171,7 @@ module.exports = app => {
                     output.append(`changing their nick to ${lastResult.aliasNew.newnick} from ${lastResult.aliasNew.oldnick} in [${lastResult.aliasNew.channels}] ${Moment(lastResult.aliasNew.timestamp).fromNow()}`);
 
                 // Respond
-                app.say(from, !_.isEmpty(output.text) ? output.text : `Something went wrong finding the active state for ${nick}, ${from}`);
+                app.say(from, !_.isEmpty(output.text) ? output.text : `Something went wrong finding the active state for ${nick || user || host}, ${from}`);
             })
             .catch(err => {
                 console.dir(err);
