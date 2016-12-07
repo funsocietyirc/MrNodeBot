@@ -99,7 +99,7 @@ module.exports = app => {
                 output.appendBold(lastResult.part.reason);
             } else if (lastResult.quit) {
                 output.insert('Quitting').insertBold(!_.isEmpty(lastResult.quit.channels) ? `[${lastResult.quit.channels.replace(',',', ')}]` : 'on');
-                output.insert(Moment(lastResult.aliasOld.timestamp).fromNow());
+                output.insert(Moment(lastResult.quit.timestamp).fromNow());
                 if (lastResult.quit.nick != lastSaid.from) output.insert('as').insertBold(lastResult.quit.nick);
                 output.insert(lastResult.quit.reason);
             } else if (lastResult.kick) {
