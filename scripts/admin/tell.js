@@ -10,7 +10,7 @@ const t = require('../../lib/localize');
 
 // Localizations
 const i18next = require('../../lib/i18next');
-i18next.addResources('en', 'admin', {
+i18next.addResources('en', 'tell', {
     help: 'tell [nick] [message] : Reach out and touch somebody',
     reportBack: 'I have told {{- nick} {{- body}}}'
 });
@@ -31,7 +31,7 @@ module.exports = app => {
         app.say(nick, body);
 
         // Report back
-        if (nick != to) app.say(t('admin:reportBack', {
+        if (nick != to) app.say(t('tell:reportBack', {
             nick,
             body
         }));
