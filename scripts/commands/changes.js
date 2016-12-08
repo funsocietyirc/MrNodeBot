@@ -17,7 +17,7 @@ module.exports = app => {
     app.Commands.set('changes', {
         desc: 'Review the bots change log',
         access: app.Config.accessLevels.guest,
-        call: (to, from, text, message) => gitlog(app.Config.gitLog, function(error, commits) {
+        call: (to, from, text, message) => gitlog(app.Config.gitLog, (error, commits) => {
             // Exit on error
             if (error) {
                 app.say(to, 'Something has gone wrong retrieving the change log');

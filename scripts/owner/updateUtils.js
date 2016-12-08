@@ -5,8 +5,10 @@ const scriptInfo = {
     createdBy: 'IronY'
 };
 
-const shell = require('shelljs');
 const _ = require('lodash');
+const shell = require('shelljs');
+const gitlog = require('gitlog');
+const logger = require('../../lib/logger');
 
 /**
   Handle real time upgrades, updates, and restarts
@@ -60,26 +62,62 @@ module.exports = app => {
                 app.say(to, 'Can not update, Git is not available on the host');
                 return;
             }
-            // Die if something goes wrong with git pull
-            if (shell.exec('git pull').code !== 0) {
-                app.say(to, 'Something went wrong with the pull request');
-                return;
-            }
 
-            // Parse any additional arguments
-            switch (target) {
-                case 'cycle':
-                    app.say(to, 'I will be back!');
-                    // Delay so the bot has a chance to talk
-                    setTimeout(() => {
-                        app.Bootstrap(true);
-                    }, 2000);
-                    break;
-                default:
-                    app.action(to, 'is feeling so fresh and so clean');
-                    app.Bootstrap(false);
-                    break;
-            }
+            // Do git update
+            shell.exec('git pull', {
+                async: true,
+                sielnt: false
+            }, (code, stdout, stderr) => {
+                // The Code did not exit properly
+                if (code !== 0) {
+                    app.say(to, 'Something went wrong with the pull request');
+                    return;
+                }
+                // Perform GitLog for last commit
+                gitlog(app.Config.gitLog, (error, commits) => {
+                    // Something went wrong
+                    if (error || _.isUndefined(commits) || _.isEmpty(commits) || !_.isString(commits[0].abbrevHash)) {
+                        app.say(to, 'Something went wrong finding the last commit');
+                        return;
+                    }
+
+                    // Get the files involved in the last commit
+                    shell.exec(`git diff-tree --no-commit-id --name-only -r ${commits[0].abbrevHash}`, {
+                        async: true,
+                        silent: true
+                    }, (code2, files, stderr2) => {
+                        // Something went wrong
+                        if (code2 !== 0 || !_.isEmpty(files)) {
+                            app.action(to, 'is feeling so fresh and so clean');
+                            app.Bootstrap(false);
+                            return;
+                        }
+                        // Decide if this is a reload or cycle
+                        let shouldCycle = false;
+                        // Iterate the results
+                        for (let file of files) {
+                            if (_.includes(file, 'scripts')) {
+                                shouldCycle = true;
+                                break;
+                            }
+                        }
+                        if(!shouldCycle) {
+                          app.action(to, 'is feeling so fresh and so clean');
+                          app.Bootstrap(false);
+                          return;
+                        }
+                        else {
+                          app.say(to, 'I will be back!');
+                          // Delay so the bot has a chance to talk
+                          setTimeout(() => {
+                              app.Bootstrap(true);
+                          }, 2000);
+                        }
+                    });
+
+                });
+            });
+
         }
     });
 
