@@ -94,6 +94,7 @@ module.exports = app => {
                 return;
             }
 
+
             // Perform GitLog for last commit
             gitlog(app.Config.gitLog, (error, commits) => {
                 // Something went wrong
