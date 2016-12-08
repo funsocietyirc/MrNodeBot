@@ -53,10 +53,6 @@ module.exports = app => {
         desc: 'Hot swap out the Bot, if hard is specified it will do a hard reboot',
         access: app.Config.accessLevels.owner,
         call: (to, from, text, message) => {
-            let textArray = text.split(' ');
-            let [target] = textArray;
-            target = target || 'soft'; // Defult to soft update
-
             // Die if there is no git available
             if (!shell.which('git')) {
                 app.say(to, 'Can not update, Git is not available on the host');
