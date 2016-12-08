@@ -117,7 +117,7 @@ module.exports = app => {
                     // Iterate the results
                     for (let file of diffFiles) {
                         // Should we cycle
-                        if (!_.includes(file, 'scripts/')) shouldCycle = true;
+                        if (!_.includes(file, 'scripts')) shouldCycle = true;
                         // Should we update npm packages
                         if (_.includes(file, 'package.json')) shouldNpm = true;
                         // If we have both matches we can break the loop
