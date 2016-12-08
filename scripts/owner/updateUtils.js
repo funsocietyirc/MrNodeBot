@@ -92,7 +92,7 @@ module.exports = app => {
                 app.say(to, 'I am still lemony fresh, no update required');
                 return;
             }
-
+ 
             // Perform GitLog for last commit
             gitlog(app.Config.gitLog, (error, commits) => {
                 // Something went wrong
