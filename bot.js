@@ -354,7 +354,7 @@ class MrNodeBot {
             .stripColorsAndStyle(text) // Strip styles and color
             .replace(helpers.RemoveNonPrintChars, '') // Remove non printable characters
             .replace(helpers.FakeSpaceChars, '\u0020') // Replace fake spaces with space
-            .trim() // Trim;
+            .trim();
     };
 
     // Handle Action
