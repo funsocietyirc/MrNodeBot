@@ -69,6 +69,13 @@ module.exports = app => {
                     app.say(to, 'Something went wrong with the pull request');
                     return;
                 }
+
+                // No updates available
+                if(_.isString(stdOut) && stdOut === 'Already up-to-date.') {
+                  app.say(to, 'I am still lemony fresh, no update required');
+                  return;
+                }
+
                 // Perform GitLog for last commit
                 gitlog(app.Config.gitLog, (error, commits) => {
                     // Something went wrong
