@@ -99,7 +99,7 @@ module.exports = app => {
                         let shouldCycle = false;
                         // Iterate the results
                         for (let file of files) {
-                            if (_.includes(file, 'scripts')) {
+                            if (!_.includes(file, 'scripts/')) {
                                 shouldCycle = true;
                                 break;
                             }
