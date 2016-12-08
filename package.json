@@ -60,7 +60,7 @@
     "shelljs": "^0.7.5",
     "twit": "^2.2.5",
     "urijs": "^1.18.4",
-    "watson-developer-cloud": "^2.11.0",
+    "watson-developer-cloud": "^2.13.1",
     "winston": "^2.3.0",
     "winston-daily-rotate-file": "^1.4.0",
     "winston-logio-mirror": "^0.3.0",
