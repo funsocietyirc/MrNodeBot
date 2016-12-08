@@ -681,6 +681,7 @@ class MrNodeBot {
             cmd
         }));
     };
+    
 
     //noinspection JSMethodCanBeStatic
     _handleAuthenticatedCommands(nick, to, text, message) {
