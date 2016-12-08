@@ -116,13 +116,16 @@ module.exports = app => {
                     let shouldNpm = false;
                     // Iterate the results
                     for (let file of diffFiles) {
+                        console.dir(file);
                         // Should we cycle
-                        if (!_.includes(file, 'scripts')) shouldCycle = true;
+                        if(!_.startsWith(file, 'scripts')) shouldCycle = true;
                         // Should we update npm packages
-                        if (_.includes(file, 'package.json')) shouldNpm = true;
-                        // If we have both matches we can break the loop
+                        if(_.startsWith(file, 'package.json')) shouldNpm = true;
+                        // Exit early if we have what we need
                         if (shouldCycle && shouldNpm) break;
                     }
+                    console.dir('npm', shouldNpm);
+                    console.dir('cycle', shouldCycle);
 
                     if (shouldNpm) {
                         app.say(to, 'Running NPM install..');
