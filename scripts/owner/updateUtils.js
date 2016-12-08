@@ -139,8 +139,6 @@ module.exports = app => {
                     }
                     // Final check
                     else {
-                      console.log(shouldCycle, shouldNpm);
-
                         if (shouldCycle) cycle(to);
                         else reload(to);
                     }
