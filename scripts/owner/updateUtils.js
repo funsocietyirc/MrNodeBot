@@ -108,8 +108,7 @@ module.exports = app => {
                 }, (diffCode, diffFiles, diffErr) => {
                     // Something went wrong
                     if (diffCode !== 0 || _.isEmpty(diffFiles)) {
-                        app.action(to, 'is feeling so fresh and so clean');
-                        app.Bootstrap(false);
+                        app.say(to, 'Could not get a read out the last commit')
                         return;
                     }
                     // Decide if this is a reload or cycle

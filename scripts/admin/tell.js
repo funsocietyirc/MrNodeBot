@@ -10,7 +10,7 @@ const t = require('../../lib/localize');
 
 // Localizations
 const i18next = require('../../lib/i18next');
-i18next.addResources('en', 'tell', {
+i18next.addResources('en', 'admin', {
     help: 'tell [nick] [message] : Reach out and touch somebody',
     reportBack: 'I have told {{- nick} {{- body}}}'
 });
