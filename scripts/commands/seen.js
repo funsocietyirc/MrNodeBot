@@ -12,7 +12,6 @@ const Moment = require('moment');
 const Models = require('bookshelf-model-loader');
 const logger = require('../../lib/logger');
 const typo = require('../lib/_ircTypography');
-const extract = require('../../lib/extractNickUserIdent');
 const gen = require('../generators/_getLastUsageData');
 
 // Exports
@@ -45,12 +44,10 @@ module.exports = app => {
             let lastAction = result.lastAction;
 
             // Begin the Line
-            if (!iteration)
-                output.insert(`Seen`);
-
+            if (iteration === 0) output.insert(`Seen`);
 
             // See if there has been anything said by the user, append to buffer if so
-            if (lastSaid) {
+            if (!_.isUndefined(lastSaid) && _.isObject(lastSaid) || !_.isEmpty(lastSaid)) {
                 if (!iteration) output.insertBold(lastSaid.from).insert('Saying');
                 else output.insert('| Then saying');
                 output
@@ -102,7 +99,6 @@ module.exports = app => {
 
             app.say(to, !_.isEmpty(output.text) ? output.text : `Something went wrong finding the active state for ${args.nick || args.user ||args.host}, ${from}`);
         };
-
 
         gen(text)
             .then(sendToIRC)

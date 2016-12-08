@@ -48,7 +48,7 @@ module.exports = text => new Promise((res, rej) => {
         // Invalid Results
         if (!_.isArray(results) || _.isEmpty(results)) return {
             args,
-            finalResults: results
+            finalResults: []
         };
         // Remove undefined / falsey values
         results = _.compact(results);
