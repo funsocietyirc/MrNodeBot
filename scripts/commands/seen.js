@@ -63,24 +63,24 @@ module.exports = app => {
                 output.insert('Parting')
                     .insertBold(lastAction.part.channel)
                     .insert(Moment(lastAction.part.timestamp).fromNow());
-                if (lastAction.part.nick != lastSaid.from) output.insert('as').insertBold(lastAction.part.nick);
+                if (!lastSaid || lastAction.part.nick != lastSaid.from) output.insert('as').insertBold(lastAction.part.nick);
                 output.appendBold(lastAction.part.reason);
             } else if (lastAction.quit) {
                 output.insert('Quitting').insertBold(!_.isEmpty(lastAction.quit.channels) ? `[${lastAction.quit.channels.replace(',',', ')}]` : 'on');
                 output.insert(Moment(lastAction.quit.timestamp).fromNow());
-                if (lastAction.quit.nick != lastSaid.from) output.insert('as').insertBold(lastAction.quit.nick);
+                if (!lastSaid || lastAction.quit.nick != lastSaid.from) output.insert('as').insertBold(lastAction.quit.nick);
                 output.insert(lastAction.quit.reason);
             } else if (lastAction.kick) {
                 output.insert('Getting kicked from')
                     .insertBold(lastAction.kick.channel)
                     .insert(lastAction.kick.timestamp);
-                if (lastAction.kick.nick != lastSaid.from) output.insert('as').insertBold(lastAction.quit.nick);
+                if (!lastSaid || lastAction.kick.nick != lastSaid.from) output.insert('as').insertBold(lastAction.quit.nick);
                 output.insert(lastAction.kick.reason);
             } else if (lastAction.join) {
                 output.insert('Joining')
                     .insertBold(lastAction.join.channel)
                     .insert(Moment(lastAction.join.timestamp).fromNow());
-                if (lastAction.join.nick != lastSaid.from) output.insert('as').insertBold(lastAction.join.nick);
+                if (!lastSaid || lastAction.join.nick != lastSaid.from) output.insert('as').insertBold(lastAction.join.nick);
 
             } else if (lastAction.aliasOld) {
                 output.insert('Changing their nick to').insertBold(lastAction.aliasOld.newnick);
