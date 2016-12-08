@@ -80,7 +80,7 @@ module.exports = app => {
                 output.insert('Joining')
                     .insertBold(lastAction.join.channel)
                     .insert(Moment(lastAction.join.timestamp).fromNow());
-                if (lastAction.kick.join != lastSaid.from) output.insert('as').insertBold(lastAction.join.nick);
+                if (lastAction.join.nick != lastSaid.from) output.insert('as').insertBold(lastAction.join.nick);
 
             } else if (lastAction.aliasOld) {
                 output.insert('Changing their nick to').insertBold(lastAction.aliasOld.newnick);
@@ -103,7 +103,7 @@ module.exports = app => {
         gen(text)
             .then(sendToIRC)
             .catch(err => {
-              console.dir(err);
+              console.dir(err)
                 logger.error('Error in the last active Promise.all chain', {
                     err
                 });
