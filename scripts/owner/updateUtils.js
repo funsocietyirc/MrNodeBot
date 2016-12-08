@@ -105,7 +105,7 @@ module.exports = app => {
                 shell.exec(`git diff-tree --no-commit-id --name-only -r ${commits[0].abbrevHash}`, {
                     async: true,
                     silent: app.Config.bot.debug || false
-                }, (diffCode, diffFiles, stderr2) => {
+                }, (diffCode, diffFiles, diffErr) => {
                     // Something went wrong
                     if (diffCode !== 0 || _.isEmpty(diffFiles)) {
                         app.action(to, 'is feeling so fresh and so clean');
@@ -123,7 +123,7 @@ module.exports = app => {
                         // Should we update npm packages
                         if (_.includes(file, 'package.json')) shouldNpm = true;
                         // If we have both matches we can break the loop
-                        if(shouldCyle && shouldNpm) break;
+                        if(shouldCycle && shouldNpm) break;
                     }
 
 
