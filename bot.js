@@ -682,7 +682,6 @@ class MrNodeBot {
         }));
     };
     
-
     //noinspection JSMethodCanBeStatic
     _handleAuthenticatedCommands(nick, to, text, message) {
         text = this._normalizeText(text);
