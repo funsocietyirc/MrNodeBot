@@ -21,7 +21,7 @@ module.exports = results => new Promise((resolve, reject) => rp({
         // Hold on to the actual URL after all redirects
         results.realUrl = response.request.uri.href;
         // Hold on to the response status code
-        results.statusCode = response.statusCode;
+        results.statusCode = _.isUndefined(response) || _.isUndefined(response.statusCode) ? 'No Status' : response.statusCode;
         // We did not recieve enough information from the request
         if (!contentType) return resolve(results);
 
@@ -50,7 +50,8 @@ module.exports = results => new Promise((resolve, reject) => rp({
             err
         });
         // Set status code
-        results.statusCode = err.response.statusCode;
+        results.statusCode = _.isUndefineed(err)_ || .isUndefined(err.response) || _.isUndefined(err.response.statusCode) ? 'No Status' : err.response.statusCode;
+
         // Set the unreachable flag
         results.unreachable = true;
         resolve(results);
