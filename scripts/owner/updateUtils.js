@@ -6,6 +6,7 @@ const scriptInfo = {
 };
 
 const _ = require('lodash');
+const os = require('os');
 const shell = require('shelljs');
 const gitlog = require('gitlog');
 const logger = require('../../lib/logger');
@@ -114,18 +115,17 @@ module.exports = app => {
                     // Decide if this is a reload or cycle
                     let shouldCycle = false;
                     let shouldNpm = false;
-                    // Iterate the results 
-                    for (let file of diffFiles) {
-                        console.dir(file);
-                        // Should we cycle
-                        if(!_.startsWith(file, 'scripts')) shouldCycle = true;
-                        // Should we update npm packages
-                        if(_.startsWith(file, 'package.json')) shouldNpm = true;
-                        // Exit early if we have what we need
-                        if (shouldCycle && shouldNpm) break;
-                    }
-                    console.dir('npm', shouldNpm);
-                    console.dir('cycle', shouldCycle);
+
+                      // Iterate the results
+                      for (let file of diffFiles.split(os.EOL)) {
+                          console.dir(file);
+                          // Should we cycle
+                          if(!_.startsWith(file, 'scripts')) shouldCycle = true;
+                          // Should we update npm packages
+                          if(_.startsWith(file, 'package.json')) shouldNpm = true;
+                          // Exit early if we have what we need
+                          if (shouldCycle && shouldNpm) break;
+                      }
 
                     if (shouldNpm) {
                         app.say(to, 'Running NPM install..');
