@@ -50,7 +50,7 @@ module.exports = results => new Promise((resolve, reject) => rp({
             err
         });
         // Set status code
-        results.statusCode = (_.isUndefined(err) || .isUndefined(err.response) || _.isUndefined(err.response.statusCode)) ? 'No Status' : err.response.statusCode;
+        results.statusCode = (_.isUndefined(err) || _.isUndefined(err.response) || _.isUndefined(err.response.statusCode)) ? 'No Status' : err.response.statusCode;
 
         // Set the unreachable flag
         results.unreachable = true;
