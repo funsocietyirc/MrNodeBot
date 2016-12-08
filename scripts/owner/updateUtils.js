@@ -98,7 +98,7 @@ module.exports = app => {
             // Perform GitLog for last commit
             gitlog(app.Config.gitLog, (error, commits) => {
                 // Something went wrong
-                if (error || _.isUndefined(commits) || _.isEmpty(commits) || !_.isString(commits[0];.abbrevHash)) {
+                if (error || _.isUndefined(commits) || _.isEmpty(commits) || !_.isString(commits[0].abbrevHash)) {
                     app.say(to, 'Something went wrong finding the last commit');
                     return;
                 }
