@@ -80,7 +80,7 @@ module.exports = app => {
                 output.insert('Joining')
                     .insertBold(lastAction.join.channel)
                     .insert(Moment(lastAction.join.timestamp).fromNow());
-                if (lastAction.kick.nick != lastSaid.from) output.insert('as').insertBold(lastAction.quit.nick);
+                if (lastAction.kick.join != lastSaid.from) output.insert('as').insertBold(lastAction.join.nick);
 
             } else if (lastAction.aliasOld) {
                 output.insert('Changing their nick to').insertBold(lastAction.aliasOld.newnick);
