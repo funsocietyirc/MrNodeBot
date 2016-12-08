@@ -115,16 +115,21 @@ module.exports = app => {
                     // Decide if this is a reload or cycle
                     let shouldCycle = false;
                     let shouldNpm = false;
+                    let files = _.compact(diffFiles.split(os.EOL));
+                    console.dir(files);
+                    // Check if we have any non scripts
+                    for (let file of files) {
+                        if (!_.startsWith(file, 'scripts')) {
+                            shouldCycle = true;
+                            break;
+                        }
+                    }
 
-                    // Iterate the results
-                    for (let file of diffFiles.split(os.EOL)) {
-                        console.dir(file);
-                        // Should we cycle
-                        if (!_.startsWith(file, 'scripts')) shouldCycle = true;
-                        // Should we update npm packages
-                        if (_.startsWith(file, 'package.json')) shouldNpm = true;
-                        // Exit early if we have what we need
-                        if (shouldCycle && shouldNpm) break;
+                    // Should we update npm packages
+                    for (let file of files) {
+                        if (_.startsWith(file, 'package.json')) {
+                            shouldNpm = true;
+                        }
                     }
 
                     if (shouldNpm) {
@@ -142,7 +147,6 @@ module.exports = app => {
                     }
                     // Final check
                     else {
-
                         if (shouldCycle) cycle(to);
                         else reload(to);
                     }
