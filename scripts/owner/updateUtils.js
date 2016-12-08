@@ -108,7 +108,7 @@ module.exports = app => {
                 }, (diffCode, diffFiles, diffErr) => {
                     // Something went wrong
                     if (diffCode !== 0 || _.isEmpty(diffFiles)) {
-                        app.say(to, 'Could not get a read out the last commit')''
+                        app.say(to, 'Could not get a read out the last commit');
                         return;
                     }
                     // Decide if this is a reload or cycle
@@ -139,6 +139,7 @@ module.exports = app => {
                     }
                     // Final check
                     else {
+
                         if (shouldCycle) cycle(to);
                         else reload(to);
                     }
