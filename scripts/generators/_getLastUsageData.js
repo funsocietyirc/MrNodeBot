@@ -7,10 +7,6 @@ const Moment = require('moment');
 
 
 module.exports = text => new Promise((res, rej) => {
-    // Gate
-    if (!Models.Logging || !Models.JoinLogging || !Models.PartLogging || !Models.QuitLogging || !Models.KickLogging || !Models.Alias) return rej(new Error('No Database available'));
-    if (_.isUndefined(text) || !_.isString(text) || _.isEmpty(text)) return rej(new Error('No input available'));
-
     // Extract user information
     let args = extract(text);
 
@@ -19,10 +15,17 @@ module.exports = text => new Promise((res, rej) => {
     let user = args.user;
     let host = args.host;
 
-    // GATES
+    // Gate
+    if (!Models.Logging || !Models.JoinLogging || !Models.PartLogging || !Models.QuitLogging || !Models.KickLogging || !Models.Alias) return rej({
+        args,
+        inner: new Error('no database available'),
+    });
 
     // We have no user
-    if (!nick && !user && !host) return rej(new Error('No results available'));
+    if (!nick && !user && !host) return rej({
+        args,
+        inner: new Error('no results'),
+    });
 
     // Query filter
     const filter = (qb, nickField = 'nick', userField = 'user') => {
@@ -43,18 +46,23 @@ module.exports = text => new Promise((res, rej) => {
     // Tabulate results
     const tabulateResults = results => {
         // Invalid Results
-        if (!_.isArray(results) || _.isEmpty(results)) return [];
+        if (!_.isArray(results) || _.isEmpty(results)) return {
+            args,
+            finalResults: results
+        };
         // Remove undefined / falsey values
         results = _.compact(results);
         return {
+            args,
             finalResults: results, // Filtered version of total results
             lastSaid: _(results).map('log').compact().first(), // Last Said information
             lastAction: _(results).maxBy(value => Moment(value[Object.keys(value)[0]].timestamp).unix()) // Last Action information
         };
     };
 
+
     // Resolve all the queries, process the results, report any errors
-    return Promise.all([
+    return res(Promise.all([
             Models.Logging.query(qb => filter(qb, 'from', 'ident')).fetch().then(result => render(result, 'log')),
             Models.JoinLogging.query(filter).fetch().then(result => render(result, 'join')),
             Models.PartLogging.query(filter).fetch().then(result => render(result, 'part')),
@@ -63,16 +71,6 @@ module.exports = text => new Promise((res, rej) => {
             Models.Alias.query(qb => filter(qb, 'oldnick')).fetch().then(result => render(result, 'aliasOld')),
             // Models.Alias.query(qb => filter(qb, 'newnick')).fetch().then(result => render(result, 'aliasNew')),
         ])
-        .then(tabulateResults)
-        .then(sendToIRC)
-        .catch(err => {
-            logger.error('Error in the last active Promise.all chain', {
-                err
-            });
-            return rej({
-                args: args,
-                inner: err.message,
-            });
-        });
+        .then(tabulateResults));
 
 });

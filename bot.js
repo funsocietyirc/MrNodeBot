@@ -647,6 +647,7 @@ class MrNodeBot {
                     group: helpers.AccessString(command.access),
                 }));
             } catch (err) {
+                if (app.Config.bot.debug === true) console.dir(err);
                 logger.error(t('errors.procCommand', {
                     command: cmd
                 }), {
