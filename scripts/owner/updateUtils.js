@@ -62,7 +62,7 @@ module.exports = app => {
             // Do git update
             shell.exec('git pull', {
                 async: true,
-                sielnt: false
+                sielnt: app.Config.bot.debug || false
             }, (code, stdout, stderr) => {
                 // The Code did not exit properly
                 if (code !== 0) {
@@ -80,7 +80,7 @@ module.exports = app => {
                     // Get the files involved in the last commit
                     shell.exec(`git diff-tree --no-commit-id --name-only -r ${commits[0].abbrevHash}`, {
                         async: true,
-                        silent: true
+                        silent: app.Config.bot.debug || false
                     }, (code2, files, stderr2) => {
                         // Something went wrong
                         if (code2 !== 0 || !_.isEmpty(files)) {
@@ -97,17 +97,16 @@ module.exports = app => {
                                 break;
                             }
                         }
-                        if(!shouldCycle) {
-                          app.action(to, 'is feeling so fresh and so clean');
-                          app.Bootstrap(false);
-                          return;
-                        }
-                        else {
-                          app.say(to, 'I will be back!');
-                          // Delay so the bot has a chance to talk
-                          setTimeout(() => {
-                              app.Bootstrap(true);
-                          }, 2000);
+                        if (!shouldCycle) {
+                            app.action(to, 'is feeling so fresh and so clean');
+                            app.Bootstrap(false);
+                            return;
+                        } else {
+                            app.say(to, 'I will be back!');
+                            // Delay so the bot has a chance to talk
+                            setTimeout(() => {
+                                app.Bootstrap(true);
+                            }, 2000);
                         }
                     });
 
