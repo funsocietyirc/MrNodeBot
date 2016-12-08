@@ -30,7 +30,8 @@ i18next.addResources('en', 'admin', {
 });
 
 /**
-  Administrator List manipulationr Commands: admin [list add del help]
+  Administrator List manipulationr
+  Commands: admin [list add del help]
 **/
 module.exports = app => {
     const admin = (to, from, text, message) => {
