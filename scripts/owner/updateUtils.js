@@ -115,7 +115,6 @@ module.exports = app => {
                     // Decide if this is a reload or cycle
                     let shouldCycle = false;
                     let shouldNpm = false;
-
                     // Iterate the results
                     for (let file of diffFiles) {
                         // Should we cycle
@@ -125,7 +124,6 @@ module.exports = app => {
                         // If we have both matches we can break the loop
                         if(shouldCycle && shouldNpm) break;
                     }
-
 
                     if (shouldNpm) {
                         app.say(to, 'Running NPM install..');
@@ -142,6 +140,8 @@ module.exports = app => {
                     }
                     // Final check
                     else {
+                      console.log(shouldCycle, shouldNpm);
+
                         if (shouldCycle) cycle(to);
                         else reload(to);
                     }
