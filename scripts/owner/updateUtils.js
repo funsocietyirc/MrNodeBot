@@ -77,7 +77,6 @@ module.exports = app => {
                         return;
                     }
 
-
                     // Get the files involved in the last commit
                     shell.exec(`git diff-tree --no-commit-id --name-only -r ${commits[0].abbrevHash}`, {
                         async: true,
