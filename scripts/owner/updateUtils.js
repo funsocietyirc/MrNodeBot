@@ -48,89 +48,121 @@ module.exports = app => {
         }
     });
 
+    const cycle = to => {
+        app.say(to, 'I will be back!');
+        // Delay so the bot has a chance to talk
+        setTimeout(() => {
+            app.Bootstrap(true);
+        }, 2000);
+    };
+
+    const reload = to => {
+        app.action(to, 'is feeling so fresh and so clean');
+        app.Bootstrap(false);
+    };
+
+    const halt = to => {
+        app.action(to, 'is meltttinggg.....');
+        app._ircClient.disconnect();
+        process.exit(42);
+    };
+
+
+
+    const updateCommand = (to, from, text, message) => {
+        // Die if there is no git available
+        if (!shell.which('git')) {
+            app.say(to, 'Can not update, Git is not available on the host');
+            return;
+        }
+
+        // Do git update
+        shell.exec('git pull', {
+            async: true,
+            sielnt: app.Config.bot.debug || false
+        }, (code, stdout, stderr) => {
+            // The Code did not exit properly
+            if (code !== 0) {
+                app.say(to, 'Something went wrong with the pull request');
+                return;
+            }
+
+            // No updates available
+            if (_.isString(stdout) && _.includes(stdout.toLowerCase(), 'up-to-date')) {
+                app.say(to, 'I am still lemony fresh, no update required');
+                return;
+            }
+
+            // Perform GitLog for last commit
+            gitlog(app.Config.gitLog, (error, commits) => {
+                // Something went wrong
+                if (error || _.isUndefined(commits) || _.isEmpty(commits) || !_.isString(commits[0].abbrevHash)) {
+                    app.say(to, 'Something went wrong finding the last commit');
+                    return;
+                }
+
+                // Get the files involved in the last commit
+                shell.exec(`git diff-tree --no-commit-id --name-only -r ${commits[0].abbrevHash}`, {
+                    async: true,
+                    silent: app.Config.bot.debug || false
+                }, (diffCode, diffFiles, stderr2) => {
+                    // Something went wrong
+                    if (diffCode !== 0 || _.isEmpty(diffFiles)) {
+                        app.action(to, 'is feeling so fresh and so clean');
+                        app.Bootstrap(false);
+                        return;
+                    }
+                    // Decide if this is a reload or cycle
+                    let shouldCycle = false;
+                    let shouldNpm = false;
+
+                    // Iterate the results
+                    for (let file of diffFiles) {
+                        // Should we cycle
+                        if (!_.includes(file, 'scripts/')) shouldCycle = true;
+                        // Should we update npm packages
+                        if (_.includes(file, 'package.json')) shouldNpm = true;
+                        // If we have both matches we can break the loop
+                        if(shouldCyle && shouldNpm) break;
+                    }
+
+
+                    if (shouldNpm) {
+                        app.say(to, 'Running NPM install..');
+                        shell.exec('npm install', {
+                            async: true,
+                            silent: app.Config.bot.debug || false
+                        }, (npmCode, npmStdOut, npmStdErr) => {
+                            if (npmCode !== 0) {
+                                app.say(to, 'Something went wrong running the npm update');
+                                return;
+                            }
+                            cycle(to);
+                        });
+                    }
+                    // Final check
+                    else {
+                        if (shouldCycle) cycle(to);
+                        else reload(to);
+                    }
+                });
+
+            });
+        });
+    };
     // Update only works in production as to not git pull away any new changes
     app.Commands.set('update', {
         desc: 'Hot swap out the Bot, if hard is specified it will do a hard reboot',
         access: app.Config.accessLevels.owner,
-        call: (to, from, text, message) => {
-            // Die if there is no git available
-            if (!shell.which('git')) {
-                app.say(to, 'Can not update, Git is not available on the host');
-                return;
-            }
-
-            // Do git update
-            shell.exec('git pull', {
-                async: true,
-                sielnt: app.Config.bot.debug || false
-            }, (code, stdout, stderr) => {
-                // The Code did not exit properly
-                if (code !== 0) {
-                    app.say(to, 'Something went wrong with the pull request');
-                    return;
-                }
-
-                // No updates available
-                if(_.isString(stdout) && _.includes(stdout.toLowerCase(), 'up-to-date')) {
-                  app.say(to, 'I am still lemony fresh, no update required');
-                  return;
-                }
-
-                // Perform GitLog for last commit
-                gitlog(app.Config.gitLog, (error, commits) => {
-                    // Something went wrong
-                    if (error || _.isUndefined(commits) || _.isEmpty(commits) || !_.isString(commits[0].abbrevHash)) {
-                        app.say(to, 'Something went wrong finding the last commit');
-                        return;
-                    }
-
-                    // Get the files involved in the last commit
-                    shell.exec(`git diff-tree --no-commit-id --name-only -r ${commits[0].abbrevHash}`, {
-                        async: true,
-                        silent: app.Config.bot.debug || false
-                    }, (code2, files, stderr2) => {
-                        // Something went wrong
-                        if (code2 !== 0 || _.isEmpty(files)) {
-                            app.action(to, 'is feeling so fresh and so clean');
-                            app.Bootstrap(false);
-                            return;
-                        }
-                        // Decide if this is a reload or cycle
-                        let shouldCycle = false;
-                        // Iterate the results
-                        for (let file of files) {
-                            if (!_.includes(file, 'scripts/')) {
-                                shouldCycle = true;
-                                break;
-                            }
-                        }
-                        if (!shouldCycle) {
-                            app.action(to, 'is feeling so fresh and so clean');
-                            app.Bootstrap(false);
-                            return;
-                        } else {
-                            app.say(to, 'I will be back!');
-                            // Delay so the bot has a chance to talk
-                            setTimeout(() => {
-                                app.Bootstrap(true);
-                            }, 2000);
-                        }
-                    });
-
-                });
-            });
-
-        }
+        call: updateCommand
     });
+
 
     // Terminate the bot and the proc watcher that keeps it up
     app.Commands.set('halt', {
         desc: 'Halt and catch fire (Quit bot / watcher proc)',
         access: app.Config.accessLevels.owner,
-        call: (to, from, text, message) => {
-            app._ircClient.disconnect();
-            process.exit(42);
-        }
+        call: (to, from, text, message) => halt(to)
     });
 
     // Return the script info
