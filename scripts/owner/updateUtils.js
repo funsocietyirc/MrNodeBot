@@ -77,14 +77,14 @@ module.exports = app => {
                         return;
                     }
 
- 
+
                     // Get the files involved in the last commit
                     shell.exec(`git diff-tree --no-commit-id --name-only -r ${commits[0].abbrevHash}`, {
                         async: true,
                         silent: app.Config.bot.debug || false
                     }, (code2, files, stderr2) => {
                         // Something went wrong
-                        if (code2 !== 0 || !_.isEmpty(files)) {
+                        if (code2 !== 0 || _.isEmpty(files)) {
                             app.action(to, 'is feeling so fresh and so clean');
                             app.Bootstrap(false);
                             return;
