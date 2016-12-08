@@ -114,7 +114,7 @@ module.exports = app => {
                     // Decide if this is a reload or cycle
                     let shouldCycle = false;
                     let shouldNpm = false;
-                    // Iterate the results
+                    // Iterate the results 
                     for (let file of diffFiles) {
                         console.dir(file);
                         // Should we cycle
