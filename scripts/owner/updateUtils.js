@@ -92,7 +92,7 @@ module.exports = app => {
                 app.say(to, 'I am still lemony fresh, no update required');
                 return;
             }
- 
+
             // Perform GitLog for last commit
             gitlog(app.Config.gitLog, (error, commits) => {
                 // Something went wrong
@@ -121,7 +121,7 @@ module.exports = app => {
                         // Should we update npm packages
                         if (_.includes(file, 'package.json')) shouldNpm = true;
                         // If we have both matches we can break the loop
-                        if(shouldCycle && shouldNpm) break;
+                        if (shouldCycle && shouldNpm) break;
                     }
 
                     if (shouldNpm) {
