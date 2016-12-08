@@ -71,7 +71,7 @@ module.exports = app => {
                 }
 
                 // No updates available
-                if(_.isString(stdOut) && stdOut === 'Already up-to-date.') {
+                if(_.isString(stdOut) && stdout === 'Already up-to-date.') {
                   app.say(to, 'I am still lemony fresh, no update required');
                   return;
                 }
