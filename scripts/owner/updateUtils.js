@@ -19,25 +19,15 @@ const short = require('../lib/_getShortService');
 module.exports = app => {
 
     // Cycle the bot (quit process)
-    const cycle = to => {
+    const halt = (to, from) => {
         app.say(to, 'I will be back!');
-        // Delay so the bot has a chance to talk
-        setTimeout(() => {
-            app.Bootstrap(true);
-        }, 2000);
+        app._ircClient.disconnect(`${from} just updated me, tinkering with my core components. I must rest now, I will be back!`, () => process.exit());
     };
 
     // Reload the bots scripts
-    const reload = to => {
+    const reload = (to, from) => {
         app.action(to, 'is feeling so fresh and so clean');
         app.Bootstrap(false);
-    };
-
-    // Terminate the process
-    const halt = to => {
-        app.action(to, 'is meltttinggg.....');
-        app._ircClient.disconnect();
-        process.exit(42);
     };
 
     // Pull code from github
@@ -143,13 +133,13 @@ module.exports = app => {
                                         app.say(to, 'Something went wrong running NPM update');
                                         return;
                                     }
-                                    cycle(to);
+                                    cycle(to,from);
                                 });
                             }
                             // Final check
                             else {
-                                if (shouldCycle) cycle(to);
-                                else reload(to);
+                                if (shouldCycle) cycle(to, from);
+                                else reload(to, from);
                             }
                         })
                         .catch(err => {
@@ -175,7 +165,7 @@ module.exports = app => {
     app.Commands.set('halt', {
         desc: 'Halt and catch fire (Quit bot / watcher proc)',
         access: app.Config.accessLevels.owner,
-        call: (to, from, text, message) => halt(to)
+        call: (to, from, text, message) => halt(to, from)
     });
 
     // Reload the configuration object
@@ -192,7 +182,7 @@ module.exports = app => {
     app.Commands.set('reload-scripts', {
         desc: 'Live reload the Bot from local storage',
         access: app.Config.accessLevels.owner,
-        call: (to, from, text, message) => reload(to)
+        call: (to, from, text, message) => reload(to, from)
     });
 
     // Reload both the scripts and the Config
@@ -202,7 +192,7 @@ module.exports = app => {
         access: app.Config.accessLevels.owner,
         call: (to, from, text, message) => {
             app.reloadConfiguration();
-            reload(to);
+            reload(to, from);
         }
     });
 
