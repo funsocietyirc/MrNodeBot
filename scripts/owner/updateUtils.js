@@ -111,7 +111,7 @@ module.exports = app => {
 
                         app.say(to, 'hello')
                         console.dir(output);
-
+ 
                     // Report we found an update
                     app.say(to, output.toString());
 
