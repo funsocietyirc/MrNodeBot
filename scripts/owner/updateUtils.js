@@ -10,44 +10,13 @@ const os = require('os');
 const shell = require('shelljs');
 const gitlog = require('gitlog');
 const logger = require('../../lib/logger');
+const typo = require('../lib/_ircTypography');
 
 /**
   Handle real time upgrades, updates, and restarts
   Commands: update reload halt
 **/
 module.exports = app => {
-
-    // Reload the configuration object
-    app.Commands.set('reload-config', {
-        desc: 'Reload the configuration object',
-        access: app.Config.accessLevels.owner,
-        call: (to, from, text, message) => {
-            app.reloadConfiguration();
-            app.action(to, 'has finished changing his mind');
-        }
-    });
-
-    // Live reload the scripts
-    app.Commands.set('reload-scripts', {
-        desc: 'Live reload the Bot from local storage',
-        access: app.Config.accessLevels.owner,
-        call: (to, from, text, message) => {
-            app.Bootstrap(false);
-            app.action(to, 'has finished reloading his thoughts');
-        }
-    });
-
-    // Reload both the scripts and the Config
-    // Live reload the scripts
-    app.Commands.set('reload', {
-        desc: 'Live reload the Bot from local storage',
-        access: app.Config.accessLevels.owner,
-        call: (to, from, text, message) => {
-            app.reloadConfiguration();
-            app.Bootstrap(false);
-            app.action(to, 'is feeling so fresh and so clean');
-        }
-    });
 
     const cycle = to => {
         app.say(to, 'I will be back!');
@@ -68,8 +37,7 @@ module.exports = app => {
         process.exit(42);
     };
 
-
-
+    // Update command handler
     const updateCommand = (to, from, text, message) => {
         // Die if there is no git available
         if (!shell.which('git')) {
@@ -135,8 +103,14 @@ module.exports = app => {
                         }
                     }
 
+                    let output = new typo.StringBuilder();
+                    output.appendBold('Found Update')
+                        .apped(commit.subject)
+                        .append(commit.authorDateRel)
+                        .append(`${app.Config.project.repository.url}/commit/${commit.abbrevHash}`);
+
                     // Report we found an update
-                    app.say(to, `Found update: ${commit.abbrevHash} / ${commit.authorName} / ${commit.subject} / ${commit.authorDateRel}`);
+                    app.say(to, output.text);
 
                     if (shouldNpm) {
                         app.say(to, 'Running NPM install..');
@@ -168,6 +142,36 @@ module.exports = app => {
         call: updateCommand
     });
 
+    // Reload the configuration object
+    app.Commands.set('reload-config', {
+        desc: 'Reload the configuration object',
+        access: app.Config.accessLevels.owner,
+        call: (to, from, text, message) => {
+            app.reloadConfiguration();
+            app.action(to, 'has finished changing his mind');
+        }
+    });
+
+    // Live reload the scripts
+    app.Commands.set('reload-scripts', {
+        desc: 'Live reload the Bot from local storage',
+        access: app.Config.accessLevels.owner,
+        call: (to, from, text, message) => {
+            app.Bootstrap(false);
+            app.action(to, 'has finished reloading his thoughts');
+        }
+    });
+
+    // Reload both the scripts and the Config
+    // Live reload the scripts
+    app.Commands.set('reload', {
+        desc: 'Live reload the Bot from local storage',
+        access: app.Config.accessLevels.owner,
+        call: (to, from, text, message) => {
+            app.reloadConfiguration();
+            reload();
+        }
+    });
 
     // Terminate the bot and the proc watcher that keeps it up
     app.Commands.set('halt', {
