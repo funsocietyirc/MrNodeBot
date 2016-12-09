@@ -111,10 +111,11 @@ module.exports = app => {
 
                         app.say(to, 'hello')
                         console.dir(output);
-                    // 
+                    //
                     // // Report we found an update
                     // app.say(to, output.toString());
 
+ 
                     if (shouldNpm) {
                         app.say(to, 'Running NPM install..');
                         shell.exec('npm install', {
