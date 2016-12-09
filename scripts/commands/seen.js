@@ -32,7 +32,8 @@ module.exports = app => {
 
         // Send to IRC
         const sendToIRC = result => {
-            // No Data available for user
+            console.dir(result)
+                // No Data available for user
             if (_.isEmpty(result) || _.isEmpty(result.finalResults)) {
                 app.say(to, `I have no data on ${result.args.nick || result.args.user ||result.args.host}`);
                 return;
@@ -83,27 +84,28 @@ module.exports = app => {
                 if (!lastSaid || lastAction.join.nick != lastSaid.from) output.insert('as').insertBold(lastAction.join.nick);
 
             } else if (lastAction.aliasOld) {
-                output.insert('Changing their nick to').insertBold(lastAction.aliasOld.newnick);
-                output.insert('on').insertBold(`[${lastAction.aliasOld.channels.replace(',',', ')}]`);
-                output.insert(Moment(lastAction.aliasOld.timestamp).fromNow());
+                output.insert('Changing their nick to').insertBold(lastAction.aliasOld.newnick)
+                    .insert('on').insertBold(`[${lastAction.aliasOld.channels.replace(',',', ')}]`)
+                    .insert(Moment(lastAction.aliasOld.timestamp).fromNow());
                 // The last action commited by the user was a nick change, recurse and follow the next nick in the chain
+            } else if (lastAction.aliasNew) {
+                output.append('Changing their nick from').insertBold(lastAction.aliasNew.oldnick)
+                    .insert('on').insertBold(`[${lastAction.aliasNew.channels.replace(',',', ')}]`)
+                    .insert(Moment(lastAction.aliasNew.timestamp).fromNow());
             }
-            // else if (lastAction.aliasNew) {
-            //     //output.insert('Changing their nick from').insertBold(lastAction.aliasNew)
-            //     output.append(`changing their nick to ${lastAction.aliasNew.newnick} from ${lastAction.aliasNew.oldnick} in [${lastAction.aliasNew.channels}] ${Moment(lastAction.aliasNew.timestamp).fromNow()}`);
-            // }
+
+            // First result to channel, any chains elsewhere
+            if (iteration === 0 && lastAction.aliasOld && from !== to) output.insertDivider().append(`additional results have been messaged to you ${from}`);
+            app.say(iteration === 0 ? to : from, !_.isEmpty(output.text) ? output.text : `Something went wrong finding the active state for ${args.nick || args.user ||args.host}, ${from}`);
 
             // Respond
-            if (lastAction.aliasOld && iteration < 1) seen(to, from, `${lastAction.aliasOld.newnick}*${lastAction.aliasOld.user}@${lastAction.aliasOld.host}`, message, iteration + 1);
-            else if (lastAction.aliasOld) output.insertDivider().appendBold(`Chain exceeds max limit`);
-
-            app.say(to, !_.isEmpty(output.text) ? output.text : `Something went wrong finding the active state for ${args.nick || args.user ||args.host}, ${from}`);
+            if (lastAction.aliasOld) seen(to, from, `${lastAction.aliasOld.newnick}*${lastAction.aliasOld.user}@${lastAction.aliasOld.host}`, message, iteration + 1);
         };
 
         gen(text)
             .then(sendToIRC)
             .catch(err => {
-              console.dir(err)
+                console.dir(err)
                 logger.error('Error in the last active Promise.all chain', {
                     err
                 });

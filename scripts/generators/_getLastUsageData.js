@@ -71,7 +71,7 @@ module.exports = text => new Promise((res, rej) => {
             Models.QuitLogging.query(qb => filter(qb, 'nick','user','channels')).fetch().then(result => render(result, 'quit')),
             Models.KickLogging.query(filter).fetch().then(result => render(result, 'kick')),
             Models.Alias.query(qb => filter(qb, 'oldnick','user','channels')).fetch().then(result => render(result, 'aliasOld')),
-            // Models.Alias.query(qb => filter(qb, 'newnick')).fetch().then(result => render(result, 'aliasNew')),
+            Models.Alias.query(qb => filter(qb, 'newnick','user','channels')).fetch().then(result => render(result, 'aliasNew')),
         ])
         .then(tabulateResults));
 
