@@ -10,7 +10,6 @@ const os = require('os');
 const shell = require('shelljs');
 const gitlog = require('gitlog');
 const logger = require('../../lib/logger');
-const typo = require('../lib/_ircTypography');
 
 /**
   Handle real time upgrades, updates, and restarts
@@ -74,7 +73,7 @@ module.exports = app => {
     const updateCommand = (to, from, text, message) => {
         // Die if there is no git available
         if (!shell.which('git')) {
-            app.say(to, 'Can not update, GIT is not available on the host');
+            app.say(to, 'Can not update, Git is not available on the host');
             return;
         }
 
@@ -135,9 +134,9 @@ module.exports = app => {
                             shouldNpm = true;
                         }
                     }
- 
+
                     // Report we found an update
-                    app.say(to, `Found update: ${commit.subject} / ${commit.authorDateRel} / ${app.Config.project.repository.url}/commit/${commit.abbrevHash}`);
+                    app.say(to, `Found update: ${commit.abbrevHash} / ${commit.authorName} / ${commit.subject} / ${commit.authorDateRel}`);
 
                     if (shouldNpm) {
                         app.say(to, 'Running NPM install..');
