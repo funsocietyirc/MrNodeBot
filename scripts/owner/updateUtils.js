@@ -135,7 +135,7 @@ module.exports = app => {
                             shouldNpm = true;
                         }
                     }
-
+ 
                     // Report we found an update
                     app.say(to, `Found update: ${commit.subject} / ${commit.authorDateRel} / ${app.Config.project.repository.url}/commit/${commit.abbrevHash}`);
 
