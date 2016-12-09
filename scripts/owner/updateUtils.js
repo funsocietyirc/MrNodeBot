@@ -10,7 +10,7 @@ const os = require('os');
 const shell = require('shelljs');
 const gitlog = require('gitlog');
 const logger = require('../../lib/logger');
-
+const typo = require('../lib/_ircTypography')
 /**
   Handle real time upgrades, updates, and restarts
   Commands: update reload halt
@@ -97,13 +97,15 @@ module.exports = app => {
             // Perform GitLog for last commit
             gitlog(app.Config.gitLog, (error, commits) => {
                 // Something went wrong
-                if (error || _.isUndefined(commits) || _.isEmpty(commits) || !_.isString(commits[0].abbrevHash)) {
+                if (error || _.isUndefined(commits) || _.isEmpty(commits) || !_.isArray(commits) || _.isEmpty(commits)) {
                     app.say(to, 'Something went wrong finding the last commit');
                     return;
                 }
 
+                let commit = _.first(commits);
+
                 // Get the files involved in the last commit
-                shell.exec(`git diff-tree --no-commit-id --name-only -r ${commits[0].abbrevHash}`, {
+                shell.exec(`git diff-tree --no-commit-id --name-only -r ${commit.abbrevHash}`, {
                     async: true,
                     silent: app.Config.bot.debug || false
                 }, (diffCode, diffFiles, diffErr) => {
@@ -131,7 +133,15 @@ module.exports = app => {
                             shouldNpm = true;
                         }
                     }
-                    
+
+                    let output = new typo.StringBuilder();
+                    output.appendBold('Maeve mode activated')
+                      .append(commit.subject)
+                      .append(commit.authorDateRel)
+                      .append(`${app.Config.project.repository.url}/commit/${commit.abbrevHash}`)
+
+
+                    // Update NPM Modules
                     if (shouldNpm) {
                         app.say(to, 'Running NPM install..');
                         shell.exec('npm install', {
@@ -139,7 +149,7 @@ module.exports = app => {
                             silent: app.Config.bot.debug || false
                         }, (npmCode, npmStdOut, npmStdErr) => {
                             if (npmCode !== 0) {
-                                app.say(to, 'Something went wrong running the npm update');
+                                app.say(to, 'Something went wrong running NPM update');
                                 return;
                             }
                             cycle(to);
