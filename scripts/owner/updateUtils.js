@@ -110,7 +110,7 @@ module.exports = app => {
                         .append(`${app.Config.project.repository.url}/commit/${commit.abbrevHash}`);
 
                     // Report we found an update
-                    app.say(to, output.text);
+                    app.say(to, output.toString());
 
                     if (shouldNpm) {
                         app.say(to, 'Running NPM install..');
@@ -135,7 +135,7 @@ module.exports = app => {
             });
         });
     };
-    
+
     // Update only works in production as to not git pull away any new changes
     app.Commands.set('update', {
         desc: 'Hot swap out the Bot, if hard is specified it will do a hard reboot',
