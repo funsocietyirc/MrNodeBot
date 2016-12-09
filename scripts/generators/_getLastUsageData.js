@@ -6,10 +6,25 @@ const logger = require('../../lib/logger');
 const Moment = require('moment');
 
 
-module.exports = text => new Promise((res, rej) => {
+module.exports = (input, options) => new Promise((res, rej) => {
     // Extract user information
-    let args = extract(text);
+    let args = null;
+    // We have a string, parse it
+    if (_.isString(input)) args = extract(input);
+    // We were passed an object
+    else if (_.isObject(input)) args = input;
+    // We were given an array
+    else if (_.isArray(input)) args = Object.create({
+        nick: input[0],
+        user: input[1],
+        host: input[2],
+        channel: input[3]
+    });
 
+    // Deal with options
+    options = _.isObject(options) ? options : Object.create(null);
+    // By default sort descending for the last result
+    if(_.isUndefined(options.descending) || !_.isBoolean(options.descending)) options.descending = true;
     // Grab user
     let nick = args.nick;
     let user = args.user;
@@ -34,7 +49,8 @@ module.exports = text => new Promise((res, rej) => {
         if (user) qb.andWhere(userField, 'like', user);
         if (host) qb.andWhere('host', 'like', host);
         if (channel) qb.andWhere(channelField, 'like', `%${channel}%`);
-        return qb.orderBy('timestamp', 'desc').limit(1);
+        // Order
+        return qb.orderBy('timestamp', options.descending ? 'desc' : 'asc').limit(1);
     };
 
     // Render object
@@ -58,20 +74,20 @@ module.exports = text => new Promise((res, rej) => {
             args,
             finalResults: results, // Filtered version of total results
             lastSaid: _(results).map('log').compact().first(), // Last Said information
-            lastAction: _(results).maxBy(value => Moment(value[Object.keys(value)[0]].timestamp).unix()) // Last Action information
+            lastAction: _(results)[options.descending ? 'maxBy' : 'minBy'](value => Moment(value[Object.keys(value)[0]].timestamp).unix()) // Last Action information
         };
     };
 
 
     // Resolve all the queries, process the results, report any errors
     return res(Promise.all([
-            Models.Logging.query(qb => filter(qb, 'from', 'ident','to')).fetch().then(result => render(result, 'log')),
+            Models.Logging.query(qb => filter(qb, 'from', 'ident', 'to')).fetch().then(result => render(result, 'log')),
             Models.JoinLogging.query(filter).fetch().then(result => render(result, 'join')),
             Models.PartLogging.query(filter).fetch().then(result => render(result, 'part')),
-            Models.QuitLogging.query(qb => filter(qb, 'nick','user','channels')).fetch().then(result => render(result, 'quit')),
+            Models.QuitLogging.query(qb => filter(qb, 'nick', 'user', 'channels')).fetch().then(result => render(result, 'quit')),
             Models.KickLogging.query(filter).fetch().then(result => render(result, 'kick')),
-            Models.Alias.query(qb => filter(qb, 'oldnick','user','channels')).fetch().then(result => render(result, 'aliasOld')),
-            Models.Alias.query(qb => filter(qb, 'newnick','user','channels')).fetch().then(result => render(result, 'aliasNew')),
+            Models.Alias.query(qb => filter(qb, 'oldnick', 'user', 'channels')).fetch().then(result => render(result, 'aliasOld')),
+            Models.Alias.query(qb => filter(qb, 'newnick', 'user', 'channels')).fetch().then(result => render(result, 'aliasNew')),
         ])
         .then(tabulateResults));
 

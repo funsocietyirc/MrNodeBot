@@ -20,7 +20,7 @@ module.exports = app => {
     if (!Models.Logging || !Models.JoinLogging || !Models.PartLogging || !Models.QuitLogging || !Models.KickLogging || !Models.Alias) return scriptInfo;
 
     // Show activity of given hostmask
-    const seen = (to, from, text, message, iteration = 0) => {
+    const seen = (to, from, text, message, iteration = 0, descending = true) => {
         // Gate
         if (!_.isString(text) || _.isEmpty(text)) {
             app.say(to, `I need someone to look for ${from}`);
@@ -32,8 +32,7 @@ module.exports = app => {
 
         // Send to IRC
         const sendToIRC = result => {
-            console.dir(result)
-                // No Data available for user
+            // No Data available for user
             if (_.isEmpty(result) || _.isEmpty(result.finalResults)) {
                 app.say(to, `I have no data on ${result.args.nick || result.args.user ||result.args.host}`);
                 return;
@@ -99,13 +98,14 @@ module.exports = app => {
             app.say(iteration === 0 ? to : from, !_.isEmpty(output.text) ? output.text : `Something went wrong finding the active state for ${args.nick || args.user ||args.host}, ${from}`);
 
             // Recurse
-            if (lastAction.aliasOld) seen(to, from, `${lastAction.aliasOld.newnick}!${lastAction.aliasOld.user}@${lastAction.aliasOld.host}`, message, iteration + 1);
+            if (lastAction.aliasOld) seen(to, from, `${lastAction.aliasOld.newnick}!${lastAction.aliasOld.user}@${lastAction.aliasOld.host}`, message, iteration + 1, descending);
         };
 
-        gen(text)
+        gen(text, {
+                descending
+            })
             .then(sendToIRC)
             .catch(err => {
-                console.dir(err)
                 logger.error('Error in the last active Promise.all chain', {
                     err
                 });
@@ -115,9 +115,16 @@ module.exports = app => {
 
     // Command
     app.Commands.set('seen', {
-        desc: '[nick!user@host] shows the last activity of the user',
+        desc: '[nick!user@host channel] shows the last activity of the user',
         access: app.Config.accessLevels.identified,
         call: seen
+    });
+
+    // Command
+    app.Commands.set('first-seen', {
+        desc: '[nick!user@host channel] shows the first activity of the user',
+        access: app.Config.accessLevels.identified,
+        call: (to, from, text, message) => seen(to, from, text, message, 0, false)
     });
 
     // Return the script info
