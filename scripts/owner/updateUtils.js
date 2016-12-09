@@ -97,12 +97,10 @@ module.exports = app => {
             // Perform GitLog for last commit
             gitlog(app.Config.gitLog, (error, commits) => {
                 // Something went wrong
-                if (error || _.isUndefined(commits) || _.isEmpty(commits) || !_.isString(commits[0];.abbrevHash)) {
+                if (error || _.isUndefined(commits) || _.isEmpty(commits) || !_.isString(commits[0].abbrevHash)) {
                     app.say(to, 'Something went wrong finding the last commit');
                     return;
                 }
-
-                let commit = commits[0];
 
                 // Get the files involved in the last commit
                 shell.exec(`git diff-tree --no-commit-id --name-only -r ${commits[0].abbrevHash}`, {
@@ -126,7 +124,6 @@ module.exports = app => {
                             break;
                         }
                     }
-                    
 
                     // Should we update npm packages
                     for (let file of files) {
@@ -134,8 +131,6 @@ module.exports = app => {
                             shouldNpm = true;
                         }
                     }
-
-                    app.say(to, `Found update: ${commit.abbrevHash} / ${commit.authorName} / ${commit.subject} / ${commit.authorDateRel}`);
 
                     if (shouldNpm) {
                         app.say(to, 'Running NPM install..');
