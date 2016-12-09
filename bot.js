@@ -345,7 +345,7 @@ class MrNodeBot {
             this._loadDynamicAssets(true);
         }
     };
-    
+
     // Drop non ascii and color code/style information
     _normalizeText(text) {
         if (_.isUndefined(text) || !_.isString(text)) return text;
@@ -854,6 +854,7 @@ class MrNodeBot {
     };
 
 }
+
 
 // Export Class
 module.exports = MrNodeBot;
