@@ -98,8 +98,8 @@ module.exports = app => {
             if (iteration === 0 && lastAction.aliasOld && from !== to) output.insertDivider().append(`additional results have been messaged to you ${from}`);
             app.say(iteration === 0 ? to : from, !_.isEmpty(output.text) ? output.text : `Something went wrong finding the active state for ${args.nick || args.user ||args.host}, ${from}`);
 
-            // Respond
-            if (lastAction.aliasOld) seen(to, from, `${lastAction.aliasOld.newnick}*${lastAction.aliasOld.user}@${lastAction.aliasOld.host}`, message, iteration + 1);
+            // Recurse
+            if (lastAction.aliasOld) seen(to, from, `${lastAction.aliasOld.newnick}!${lastAction.aliasOld.user}@${lastAction.aliasOld.host}`, message, iteration + 1);
         };
 
         gen(text)
@@ -115,7 +115,7 @@ module.exports = app => {
 
     // Command
     app.Commands.set('seen', {
-        desc: '[nick*user@host] shows the last activity of the user',
+        desc: '[nick!user@host] shows the last activity of the user',
         access: app.Config.accessLevels.identified,
         call: seen
     });
