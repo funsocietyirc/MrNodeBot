@@ -94,11 +94,10 @@ module.exports = app => {
                 return;
             }
 
-
             // Perform GitLog for last commit
             gitlog(app.Config.gitLog, (error, commits) => {
                 // Something went wrong
-                if (error || _.isUndefined(commits) || _.isEmpty(commits) || !_.isString(commits[0].abbrevHash)) {
+                if (error || _.isUndefined(commits) || _.isEmpty(commits) || !_.isString(commits[0];.abbrevHash)) {
                     app.say(to, 'Something went wrong finding the last commit');
                     return;
                 }
@@ -106,7 +105,7 @@ module.exports = app => {
                 let commit = commits[0];
 
                 // Get the files involved in the last commit
-                shell.exec(`git diff-tree --no-commit-id --name-only -r ${commit.abbrevHash}`, {
+                shell.exec(`git diff-tree --no-commit-id --name-only -r ${commits[0].abbrevHash}`, {
                     async: true,
                     silent: app.Config.bot.debug || false
                 }, (diffCode, diffFiles, diffErr) => {
@@ -128,7 +127,6 @@ module.exports = app => {
                         }
                     }
 
-
                     // Should we update npm packages
                     for (let file of files) {
                         if (_.startsWith(file, 'package.json')) {
@@ -136,7 +134,6 @@ module.exports = app => {
                         }
                     }
 
-                    // Report we found an update
                     app.say(to, `Found update: ${commit.abbrevHash} / ${commit.authorName} / ${commit.subject} / ${commit.authorDateRel}`);
 
                     if (shouldNpm) {
@@ -146,7 +143,7 @@ module.exports = app => {
                             silent: app.Config.bot.debug || false
                         }, (npmCode, npmStdOut, npmStdErr) => {
                             if (npmCode !== 0) {
-                                app.say(to, 'Something went wrong running the NPM update');
+                                app.say(to, 'Something went wrong running the npm update');
                                 return;
                             }
                             cycle(to);
