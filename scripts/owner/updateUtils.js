@@ -132,7 +132,6 @@ module.exports = app => {
                         }
                     }
                     
-
                     if (shouldNpm) {
                         app.say(to, 'Running NPM install..');
                         shell.exec('npm install', {
