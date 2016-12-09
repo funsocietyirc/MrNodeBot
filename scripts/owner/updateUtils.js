@@ -109,6 +109,7 @@ module.exports = app => {
                         .append(commit.authorDateRel)
                         .append(`${app.Config.project.repository.url}/commit/${commit.abbrevHash}`);
 
+
                         console.dir(output);
 
                     // Report we found an update
