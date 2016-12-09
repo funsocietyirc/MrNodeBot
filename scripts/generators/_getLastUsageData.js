@@ -33,7 +33,7 @@ module.exports = text => new Promise((res, rej) => {
         if (nick) qb.andWhere(nickField, 'like', nick);
         if (user) qb.andWhere(userField, 'like', user);
         if (host) qb.andWhere('host', 'like', host);
-        if (channel) qb.andWhere(channelField, 'like', channel);
+        if (channel) qb.andWhere(channelField, 'like', `%${channel}%`);
         return qb.orderBy('timestamp', 'desc').limit(1);
     };
 
