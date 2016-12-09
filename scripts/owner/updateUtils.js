@@ -131,6 +131,7 @@ module.exports = app => {
                             shouldNpm = true;
                         }
                     }
+                    
 
                     if (shouldNpm) {
                         app.say(to, 'Running NPM install..');
