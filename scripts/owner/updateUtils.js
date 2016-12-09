@@ -183,7 +183,6 @@ module.exports = app => {
         call: updateCommand
     });
 
-
     // Terminate the bot and the proc watcher that keeps it up
     app.Commands.set('halt', {
         desc: 'Halt and catch fire (Quit bot / watcher proc)',
