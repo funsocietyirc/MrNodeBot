@@ -138,7 +138,7 @@ module.exports = app => {
                             }
                             // Final check
                             else {
-                                if (shouldCycle) cycle(to, from);
+                                if (shouldCycle) halt(to, from);
                                 else reload(to, from);
                             }
                         })
