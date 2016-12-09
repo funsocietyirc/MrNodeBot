@@ -10,7 +10,8 @@ const os = require('os');
 const shell = require('shelljs');
 const gitlog = require('gitlog');
 const logger = require('../../lib/logger');
-const typo = require('../lib/_ircTypography')
+const typo = require('../lib/_ircTypography');
+
 /**
   Handle real time upgrades, updates, and restarts
   Commands: update reload halt
@@ -136,9 +137,9 @@ module.exports = app => {
 
                     let output = new typo.StringBuilder();
                     output.appendBold('Maeve mode activated')
-                      .append(commit.subject)
-                      .append(commit.authorDateRel)
-                      .append(`${app.Config.project.repository.url}/commit/${commit.abbrevHash}`)
+                        .append(commit.subject)
+                        .append(commit.authorDateRel)
+                        .append(`${app.Config.project.repository.url}/commit/${commit.abbrevHash}`)
 
 
                     // Update NPM Modules
