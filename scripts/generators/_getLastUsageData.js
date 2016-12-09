@@ -14,6 +14,7 @@ module.exports = text => new Promise((res, rej) => {
     let nick = args.nick;
     let user = args.user;
     let host = args.host;
+    let channel = args.channel;
 
     // Gate
     if (!Models.Logging || !Models.JoinLogging || !Models.PartLogging || !Models.QuitLogging || !Models.KickLogging || !Models.Alias) return rej({
@@ -28,10 +29,11 @@ module.exports = text => new Promise((res, rej) => {
     });
 
     // Query filter
-    const filter = (qb, nickField = 'nick', userField = 'user') => {
+    const filter = (qb, nickField = 'nick', userField = 'user', channelField = 'channel') => {
         if (nick) qb.andWhere(nickField, 'like', nick);
         if (user) qb.andWhere(userField, 'like', user);
         if (host) qb.andWhere('host', 'like', host);
+        if (channel) qb.andWhere(channelField, 'like', channel);
         return qb.orderBy('timestamp', 'desc').limit(1);
     };
 
@@ -63,12 +65,12 @@ module.exports = text => new Promise((res, rej) => {
 
     // Resolve all the queries, process the results, report any errors
     return res(Promise.all([
-            Models.Logging.query(qb => filter(qb, 'from', 'ident')).fetch().then(result => render(result, 'log')),
+            Models.Logging.query(qb => filter(qb, 'from', 'ident','to')).fetch().then(result => render(result, 'log')),
             Models.JoinLogging.query(filter).fetch().then(result => render(result, 'join')),
             Models.PartLogging.query(filter).fetch().then(result => render(result, 'part')),
-            Models.QuitLogging.query(filter).fetch().then(result => render(result, 'quit')),
+            Models.QuitLogging.query(qb => filter(qb, 'nick','user','channels')).fetch().then(result => render(result, 'quit')),
             Models.KickLogging.query(filter).fetch().then(result => render(result, 'kick')),
-            Models.Alias.query(qb => filter(qb, 'oldnick')).fetch().then(result => render(result, 'aliasOld')),
+            Models.Alias.query(qb => filter(qb, 'oldnick','user','channels')).fetch().then(result => render(result, 'aliasOld')),
             // Models.Alias.query(qb => filter(qb, 'newnick')).fetch().then(result => render(result, 'aliasNew')),
         ])
         .then(tabulateResults));
