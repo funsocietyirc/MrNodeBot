@@ -834,6 +834,7 @@ class MrNodeBot {
         return _(this._ircClient.chans).keys().uniq().value();
     };
 
+
     // Getting to allow quick setting of channels
     // Warning: Refactoring this down for some odd reason breaks it
     set channels(value) {
