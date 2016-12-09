@@ -21,7 +21,8 @@ module.exports = app => {
     // Cycle the bot (quit process)
     const halt = (to, from) => {
         app.say(to, 'I will be back!');
-        app._ircClient.disconnect(`${from} just updated me, tinkering with my core components. I must rest now, I will be back!`, () => process.exit());
+        // Delay execution to allow for irc messages to post
+        setTimeout(app._ircClient.disconnect(`${from} just updated me, tinkering with my core components. I must rest now, I will be back!`, () => process.exit()), 5000);
     };
 
     // Reload the bots scripts
