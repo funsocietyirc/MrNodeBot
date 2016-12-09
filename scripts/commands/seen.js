@@ -101,6 +101,7 @@ module.exports = app => {
             if (lastAction.aliasOld) seen(to, from, `${lastAction.aliasOld.newnick}!${lastAction.aliasOld.user}@${lastAction.aliasOld.host}`, message, iteration + 1, descending);
         };
 
+        // Begin the chain
         gen(text, {
                 descending
             })
