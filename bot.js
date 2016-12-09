@@ -681,7 +681,7 @@ class MrNodeBot {
             cmd
         }));
     };
-    
+
     //noinspection JSMethodCanBeStatic
     _handleAuthenticatedCommands(nick, to, text, message) {
         text = this._normalizeText(text);
@@ -811,7 +811,6 @@ class MrNodeBot {
         // Assure AutoConnect flag is not reset
         this.Config.irc.autoConnect = false;
     };
-
 
     // Properties
 
