@@ -18,38 +18,7 @@ const short = require('../lib/_getShortService');
 **/
 module.exports = app => {
 
-    // Reload the configuration object
-    app.Commands.set('reload-config', {
-        desc: 'Reload the configuration object',
-        access: app.Config.accessLevels.owner,
-        call: (to, from, text, message) => {
-            app.reloadConfiguration();
-            app.action(to, 'has finished changing his mind');
-        }
-    });
-
-    // Live reload the scripts
-    app.Commands.set('reload-scripts', {
-        desc: 'Live reload the Bot from local storage',
-        access: app.Config.accessLevels.owner,
-        call: (to, from, text, message) => {
-            app.Bootstrap(false);
-            app.action(to, 'has finished reloading his thoughts');
-        }
-    });
-
-    // Reload both the scripts and the Config
-    // Live reload the scripts
-    app.Commands.set('reload', {
-        desc: 'Live reload the Bot from local storage',
-        access: app.Config.accessLevels.owner,
-        call: (to, from, text, message) => {
-            app.reloadConfiguration();
-            app.Bootstrap(false);
-            app.action(to, 'is feeling so fresh and so clean');
-        }
-    });
-
+    // Cycle the bot (quit process)
     const cycle = to => {
         app.say(to, 'I will be back!');
         // Delay so the bot has a chance to talk
@@ -58,22 +27,26 @@ module.exports = app => {
         }, 2000);
     };
 
+    // Reload the bots scripts
     const reload = to => {
         app.action(to, 'is feeling so fresh and so clean');
         app.Bootstrap(false);
     };
 
+    // Terminate the process
     const halt = to => {
         app.action(to, 'is meltttinggg.....');
         app._ircClient.disconnect();
         process.exit(42);
     };
 
-
-
+    // Pull code from github
     const updateCommand = (to, from, text, message) => {
         // Die if there is no git available
         if (!shell.which('git')) {
+            logger.error('Unable to locate git on host to perform update', {
+                err
+            });
             app.say(to, 'Can not update, Git is not available on the host');
             return;
         }
@@ -85,6 +58,9 @@ module.exports = app => {
         }, (code, stdout, stderr) => {
             // The Code did not exit properly
             if (code !== 0) {
+                logger.error('Something went wrong during pull request in update command', {
+                    err
+                });
                 app.say(to, 'Something went wrong with the pull request');
                 return;
             }
@@ -99,6 +75,9 @@ module.exports = app => {
             gitlog(app.Config.gitLog, (error, commits) => {
                 // Something went wrong
                 if (error || _.isUndefined(commits) || _.isEmpty(commits) || !_.isArray(commits) || _.isEmpty(commits)) {
+                    logger.error('Was unable to find last commit during update', {
+                        err
+                    });
                     app.say(to, 'Something went wrong finding the last commit');
                     return;
                 }
@@ -112,9 +91,13 @@ module.exports = app => {
                 }, (diffCode, diffFiles, diffErr) => {
                     // Something went wrong
                     if (diffCode !== 0 || _.isEmpty(diffFiles)) {
+                        logger.error('Could not read the commit log during update', {
+                            err
+                        });
                         app.say(to, 'Could not get a read out the last commit');
                         return;
                     }
+
                     // Decide if this is a reload or cycle
                     let shouldCycle = false;
                     let shouldNpm = false;
@@ -132,8 +115,10 @@ module.exports = app => {
                     for (let file of files) {
                         if (_.startsWith(file, 'package.json')) {
                             shouldNpm = true;
+                            break;
                         }
                     }
+
                     // begin shorten chain
                     short(`${app.Config.project.repository.url}/commit/${commit.abbrevHash}`)
                         .then(shortUrl => {
@@ -152,6 +137,9 @@ module.exports = app => {
                                     silent: app.Config.bot.debug || false
                                 }, (npmCode, npmStdOut, npmStdErr) => {
                                     if (npmCode !== 0) {
+                                        logger.error('Something went wrong running NPM update', {
+                                            err
+                                        });
                                         app.say(to, 'Something went wrong running NPM update');
                                         return;
                                     }
@@ -188,6 +176,34 @@ module.exports = app => {
         desc: 'Halt and catch fire (Quit bot / watcher proc)',
         access: app.Config.accessLevels.owner,
         call: (to, from, text, message) => halt(to)
+    });
+
+    // Reload the configuration object
+    app.Commands.set('reload-config', {
+        desc: 'Reload the configuration object',
+        access: app.Config.accessLevels.owner,
+        call: (to, from, text, message) => {
+            app.reloadConfiguration();
+            app.action(to, 'has finished changing his mind');
+        }
+    });
+
+    // Live reload the scripts
+    app.Commands.set('reload-scripts', {
+        desc: 'Live reload the Bot from local storage',
+        access: app.Config.accessLevels.owner,
+        call: (to, from, text, message) => reload(to)
+    });
+
+    // Reload both the scripts and the Config
+    // Live reload the scripts
+    app.Commands.set('reload', {
+        desc: 'Live reload the Bot from local storage',
+        access: app.Config.accessLevels.owner,
+        call: (to, from, text, message) => {
+            app.reloadConfiguration();
+            reload(to);
+        }
     });
 
     // Return the script info
