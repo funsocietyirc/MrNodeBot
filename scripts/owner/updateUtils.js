@@ -145,7 +145,7 @@ module.exports = app => {
                             app.say(to, output.text);
 
                             // Update NPM Modules
-                            if (shouldNpm) {
+                            if (shell.which('npm') && shouldNpm) {
                                 app.say(to, 'Running NPM install..');
                                 shell.exec('npm install', {
                                     async: true,
