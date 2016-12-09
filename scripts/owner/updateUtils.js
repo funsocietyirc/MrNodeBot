@@ -66,7 +66,7 @@ module.exports = app => {
             // Perform GitLog for last commit
             gitlog(app.Config.gitLog, (error, commits) => {
                 // Something went wrong
-                if (error || _.isUndefined(commits) || _.isEmpty(commits) || !_.isString(commits[0].abbrevHash)) {
+                if (error || _.isUndefined(commits) || _.isEmpty(commits) || !_.isArray(commits) || _.isEmpty(commits)) {
                     app.say(to, 'Something went wrong finding the last commit');
                     return;
                 }
@@ -108,12 +108,12 @@ module.exports = app => {
                     //     .apped(commit.subject)
                     //     .append(commit.authorDateRel)
                     //     .append(`${app.Config.project.repository.url}/commit/${commit.abbrevHash}`);
- 
+
                         app.say(to, 'hello')
                         console.dir(output);
-
-                    // Report we found an update
-                    app.say(to, output.toString());
+                    // 
+                    // // Report we found an update
+                    // app.say(to, output.toString());
 
                     if (shouldNpm) {
                         app.say(to, 'Running NPM install..');
