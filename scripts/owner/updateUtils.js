@@ -126,6 +126,7 @@ module.exports = app => {
                             break;
                         }
                     }
+                    
 
                     // Should we update npm packages
                     for (let file of files) {
