@@ -27,9 +27,8 @@ const bot = new Bot(app => {
     process.setMaxListeners(0);
 
     // Code here will be executed after the bot is finished connecting
-    if (process.stdin.setRawMode) {
-        process.stdin.setRawMode(true);
-    }
+    if (process.stdin.setRawMode) process.stdin.setRawMode(true);
+
     process.stdin.on('data', (b) => {
         if (b[0] === 3) {
             app._ircClient.disconnect('I have been terminated from the Console. Goodbye cruel world...', () => {
