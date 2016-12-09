@@ -20,11 +20,11 @@ module.exports = app => {
 
     // Cycle the bot (quit process)
     const halt = (to, from) => {
-        app.say(to, 'I will be restarting soon!');
-        // Delay execution to allow for irc messages to post
-        setTimeout(() => {
-            app._ircClient.disconnect(`${from} just updated me, tinkering with my core components. I must rest now, I will be back!`, () => setTimeout(process.exit, 5000));
-        }, 10000, to, from);
+        app.action(to, 'needs to take a quick 5 second nap');
+        // Defer for 5 seconds so everything has a chance to send
+        app._ircClient.disconnect('Hello Motto', function() {
+            process.exit();
+        });
     };
 
     // Reload the bots scripts
