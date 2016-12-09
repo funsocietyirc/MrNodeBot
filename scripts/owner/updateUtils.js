@@ -143,6 +143,7 @@ module.exports = app => {
                             }
                         })
                         .catch(err => {
+                            console.dir(err);
                             logger.error('Something went wrong in the update utils shorten chain', {
                                 err
                             });
