@@ -133,7 +133,7 @@ module.exports = app => {
                                         app.say(to, 'Something went wrong running NPM update');
                                         return;
                                     }
-                                    cycle(to,from);
+                                    halt(to,from);
                                 });
                             }
                             // Final check
@@ -143,7 +143,6 @@ module.exports = app => {
                             }
                         })
                         .catch(err => {
-                            console.dir(err);
                             logger.error('Something went wrong in the update utils shorten chain', {
                                 err
                             });
