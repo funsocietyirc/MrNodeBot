@@ -11,7 +11,7 @@ const shell = require('shelljs');
 const gitlog = require('gitlog');
 const logger = require('../../lib/logger');
 const typo = require('../lib/_ircTypography');
-
+const short = require('../lib/_getShortService');
 /**
   Handle real time upgrades, updates, and restarts
   Commands: update reload halt
@@ -134,40 +134,48 @@ module.exports = app => {
                             shouldNpm = true;
                         }
                     }
+                    // begin shorten chain
+                    short(`${app.Config.project.repository.url}/commit/${commit.abbrevHash}`)
+                        .then(shortUrl => {
+                            let output = new typo.StringBuilder();
+                            output.appendBold('Maeve mode activated')
+                                .append(commit.subject)
+                                .append(commit.authorDateRel)
+                                .append(shortUrl);
+                            app.say(to, output.text);
 
-                    let output = new typo.StringBuilder();
-                    output.appendBold('Maeve mode activated')
-                        .append(commit.subject)
-                        .append(commit.authorDateRel)
-                        .append(`${app.Config.project.repository.url}/commit/${commit.abbrevHash}`);
-
-                    app.say(to, output.text);
-
-                    // Update NPM Modules
-                    if (shouldNpm) {
-                        app.say(to, 'Running NPM install..');
-                        shell.exec('npm install', {
-                            async: true,
-                            silent: app.Config.bot.debug || false
-                        }, (npmCode, npmStdOut, npmStdErr) => {
-                            if (npmCode !== 0) {
-                                app.say(to, 'Something went wrong running NPM update');
-                                return;
+                            // Update NPM Modules
+                            if (shouldNpm) {
+                                app.say(to, 'Running NPM install..');
+                                shell.exec('npm install', {
+                                    async: true,
+                                    silent: app.Config.bot.debug || false
+                                }, (npmCode, npmStdOut, npmStdErr) => {
+                                    if (npmCode !== 0) {
+                                        app.say(to, 'Something went wrong running NPM update');
+                                        return;
+                                    }
+                                    cycle(to);
+                                });
                             }
-                            cycle(to);
+                            // Final check
+                            else {
+                                if (shouldCycle) cycle(to);
+                                else reload(to);
+                            }
+                        })
+                        .catch(err => {
+                            logger.error('Something went wrong in the update utils shorten chain', {
+                                err
+                            });
+                            app.say(to, 'Something went wrong getting the short link for the last commit');
                         });
-                    }
-                    // Final check
-                    else {
-                        if (shouldCycle) cycle(to);
-                        else reload(to);
-                    }
                 });
 
             });
         });
     };
-    
+
     // Update only works in production as to not git pull away any new changes
     app.Commands.set('update', {
         desc: 'Hot swap out the Bot, if hard is specified it will do a hard reboot',
