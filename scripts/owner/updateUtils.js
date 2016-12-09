@@ -128,6 +128,7 @@ module.exports = app => {
                         }
                     }
 
+
                     // Should we update npm packages
                     for (let file of files) {
                         if (_.startsWith(file, 'package.json')) {
