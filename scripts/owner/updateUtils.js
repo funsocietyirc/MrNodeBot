@@ -139,8 +139,9 @@ module.exports = app => {
                     output.appendBold('Maeve mode activated')
                         .append(commit.subject)
                         .append(commit.authorDateRel)
-                        .append(`${app.Config.project.repository.url}/commit/${commit.abbrevHash}`)
+                        .append(`${app.Config.project.repository.url}/commit/${commit.abbrevHash}`);
 
+                    app.say(to, output.text);
 
                     // Update NPM Modules
                     if (shouldNpm) {
