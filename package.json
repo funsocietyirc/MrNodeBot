@@ -51,7 +51,7 @@
     "node-schedule": "^1.2.0",
     "pug": "^2.0.0-beta5",
     "pusher": "^1.5.1",
-    "rand-token": "^0.2.1",
+    "rand-token": "^0.3.0",
     "random-js": "^1.0.4",
     "request": "^2.79.0",
     "request-promise-native": "^1.0.3",
