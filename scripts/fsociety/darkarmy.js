@@ -34,12 +34,12 @@ module.exports = app => {
 
         logger.info(timeMessage);
 
-          // Join any channels we are not already on
+        // Join any channels we are not already on
         _(darkChannels)
             .reject(dc => _.includes(app.channels, dc))
             .each((channel, i) =>
                 setTimeout(
-                    () => app.channels = channel,
+                    () => app._ircClient.join(channel),
                     interval * i, i)
             );
     };
