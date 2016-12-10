@@ -12,7 +12,6 @@ module.exports = app => {
         access: app.Config.accessLevels.owner,
         call: (to, from, text, message) => {
           let oldNick = app.nick;
-          app._ircClient.originalNick = text;
           app.nick = text;
           app.say(from, `I was once ${oldNick} but now I am ${app.nick}... The times, they are changing.`);
 

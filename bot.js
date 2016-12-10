@@ -827,13 +827,13 @@ class MrNodeBot {
         }));
         this._ircClient.send('nick', newNick);
         this._ircClient.nick = newNick;
+        this._ircClient.originalNick = newNick;
     };
 
     // Bots IRC Channels
     get channels() {
         return _(this._ircClient.chans).keys().uniq().value();
     };
-
 
     // Getting to allow quick setting of channels
     // Warning: Refactoring this down for some odd reason breaks it
