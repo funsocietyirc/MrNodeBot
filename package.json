@@ -44,6 +44,7 @@
     "irc-colors": "^1.3.1",
     "knex": "^0.12.6",
     "lodash": "^4.17.2",
+    "markov": "git+https://github.com/Ibexian/node-markov.git",
     "minimist": "^1.2.0",
     "moment": "^2.17.1",
     "named-routes": "2.0.6",
