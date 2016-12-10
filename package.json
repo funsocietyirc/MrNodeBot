@@ -40,7 +40,7 @@
     "hashmap": "^2.0.3",
     "i18next": "^4.1.1",
     "i18next-sync-fs-backend": "^0.1.0",
-    "irc": "git://github.com/funsocietyirc/node-irc.git",
+    "irc": "git://github.com/funsocietyirc/node-irc.git#bcad49a2c4e4929bc042da557005f2294da21668",
     "irc-colors": "^1.3.1",
     "knex": "^0.12.6",
     "lodash": "^4.17.2",
