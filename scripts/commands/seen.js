@@ -16,8 +16,16 @@ const gen = require('../generators/_getLastUsageData');
 
 // Exports
 module.exports = app => {
-    // If we have Database availability
-    if (!Models.Logging || !Models.ActionLogging || !Models.JoinLogging || !Models.PartLogging || !Models.QuitLogging || !Models.KickLogging || !Models.Alias) return scriptInfo;
+    // Bail if we do not have a complete set of database tables
+    if (!Models.Logging ||
+        !Models.Topics ||
+        !Models.ActionLogging ||
+        !Models.NoticeLogging ||
+        !Models.JoinLogging ||
+        !Models.PartLogging ||
+        !Models.QuitLogging ||
+        !Models.KickLogging ||
+        !Models.Alias) return scriptInfo;
 
     // Show activity of given hostmask
     const seen = (to, from, text, message, iteration = 0, descending = true) => {
@@ -60,6 +68,7 @@ module.exports = app => {
                     .insertDivider();
             }
 
+            // We have an action, filter and vary output style
             if (_.isObject(lastAction) && !_.isEmpty(lastAction)) {
                 switch (lastAction.key) {
                     case 'part':
@@ -104,13 +113,15 @@ module.exports = app => {
                             .insert('on').insertBold(`[${lastAction.channels.replace(',',', ')}]`)
                             .insert(Moment(lastAction.timestamp).fromNow());
                         break;
+                    case 'topic':
+                        output.insert(`Changing the topic in`)
+                            .insertBold(lastAction.channel)
+                            .insert(Moment(lastAction.timestamp).fromNow());
+                        break;
                 }
-
             }
-
             // report back to IRC
             app.say(iteration === 0 ? to : from, !_.isEmpty(output.text) ? output.text : `Something went wrong finding the active state for ${args.nick || args.user ||args.host}, ${from}`);
-
         };
 
         // Begin the chain

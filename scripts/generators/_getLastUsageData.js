@@ -32,11 +32,20 @@ module.exports = (input, options) => new Promise((res, rej) => {
     let host = args.host;
     let channel = args.channel;
 
-    // Gate
-    if (!Models.Logging || !Models.NoticeLogging || !Models.ActionLogging || !Models.JoinLogging || !Models.PartLogging || !Models.QuitLogging || !Models.KickLogging || !Models.Alias) return rej({
-        args,
-        inner: new Error('no database available'),
-    });
+    // Reject if we do not have a full set of database information
+    if (!Models.Logging ||
+        !Models.Topics ||
+        !Models.NoticeLogging ||
+        !Models.ActionLogging ||
+        !Models.JoinLogging ||
+        !Models.PartLogging ||
+        !Models.QuitLogging ||
+        !Models.KickLogging ||
+        !Models.Alias)
+        return rej({
+            args,
+            inner: new Error('no database available'),
+        });
 
     // We have no user
     if (!nick && !user && !host) return rej({
@@ -107,6 +116,7 @@ module.exports = (input, options) => new Promise((res, rej) => {
             Models.Alias.query(qb => filter(qb, 'newnick', 'user', 'channels')).fetch().then(result => render(result, 'aliasNew')),
             Models.ActionLogging.query(qb => filter(qb, 'from', 'user', 'to')).fetch().then(result => render(result, 'action')),
             Models.NoticeLogging.query(qb => filter(qb, 'from', 'user', 'to')).fetch().then(result => render(result, 'notice')),
+            Models.Topics.query(qb => filter(qb, 'nick', 'user', 'channel')).fetch().then(result => render(result, 'topic')),
         ])
         .then(tabulateResults));
 
