@@ -56,6 +56,7 @@ By: IronY
     -   [watson-developer-cloud](https://github.com/watson-developer-cloud/node-sdk) Node.js library to access IBM Watson services.
     -   [twit](https://github.com/ttezel/twit) Twitter API Client for node (REST & Streaming API)
     -   [minimist](https://github.com/substack/minimist) parse argument options
+
 # API Keys
 -   For most features a Google API key with Shortener service, SafeSearch service, and YoutTube search service enable is required, how ever if one is not provided,
 | the bot will try to gracefully fall back onto is.gd
