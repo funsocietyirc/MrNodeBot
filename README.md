@@ -7,17 +7,32 @@ By: IronY
 -   Mysql || MariaDB || Postgres SQL || Sqlite3
 -   libiconv
 
+# Features
+
+-   Logging / Analytics
+-   SED Corrections
+-   URL Announce
+
 # Technologies
 
--   Knex.js
--   Bookshelf.js
--   Lodash
--   Express
--   node-scheduler
--   node-irc
+-   Query Builder [Knex.js](http://bookshelfjs.org/)
+-   ORM [Bookshelf.js](http://bookshelfjs.org/)
+-   Web Server [Express.js](http://expressjs.com/en/4x/api.html)
+-   Scheduler [node-scheduler](https://github.com/node-schedule/node-schedule)
+-   IRC Client [node-irc fork](https://github.com/funsocietyirc/node-irc)
+-   Logging [Winston](https://github.com/winstonjs/winston)
+-   Time [Moment](http://momentjs.com/)
+-   Localization [i18next](https://github.com/i18next/i18next)
+-   Utility [Lodash](https://lodash.com/docs/)
+-   Utility [Lodash Addons](https://github.com/helion3/lodash-addons)
+-   Utility [Request](https://github.com/request/request)
+-   Utility [Request-Promise](https://github.com/request/request-promise)
+-   Utility [irc-colors](https://github.com/fent/irc-colors.js)
 
 # API Keys
--   For most features a google api key with Shortener service, SafeSearch service, and youTube search service enable is required
+-   For most features a Google API key with Shortener service, SafeSearch service, and YoutTube search service enable is required, how ever if one is not provided,
+| the bot will try to gracefully fall back onto is.gd
+
 
 # Install Steps
 
