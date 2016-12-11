@@ -57,11 +57,7 @@ module.exports = app => {
             // See if there has been anything said by the user, append to buffer if so
             if (
                 _.isObject(lastSaid) &&
-                !_.isEmpty(lastSaid) &&
-                _.isObject(lastAction) &&
-                !_.isEmpty(lastAction) &&
-                iteration == 0 &&
-                Moment(lastSaid.timestamp).isBefore(Moment(lastAction.timestamp))
+                !_.isEmpty(lastSaid)
             ) {
                 if (!iteration) output.insertBold(lastSaid.from).insert('Saying');
                 else output.insert('Then saying');
