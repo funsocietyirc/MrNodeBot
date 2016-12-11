@@ -5,9 +5,10 @@ const scriptInfo = {
     createdBy: 'IronY'
 };
 
-const Models = require('bookshelf-model-loader');
-const logger = require('../../lib/logger');
+const _ = require('lodash');
 const c = require('irc-colors');
+const logger = require('../../lib/logger');
+const Models = require('bookshelf-model-loader');
 
 /** Log all incoming channel messages to a Sql Database **/
 module.exports = app => {

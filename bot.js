@@ -126,11 +126,8 @@ class MrNodeBot {
                         // Handle Notices, also used to check validation for NickServ requests
                         notice: (nick, to, text, message) => {
                             // Check for auth command, return if we have one
-                            if (_.toLower(nick) === _.toLower(this.Config.nickserv.nick)) {
-                                this._handleAuthenticatedCommands(nick, to, text, message);
-                            } else {
-                                this._handleOnNotice(nick, to, text, message);
-                            };
+                            if (_.toLower(nick) === _.toLower(this.Config.nickserv.nick)) this._handleAuthenticatedCommands(nick, to, text, message);
+                            else this._handleOnNotice(nick, to, text, message);
                         },
                         // Handle CTCP Requests
                         ctcp: (nick, to, text, type, message) => this._handleCtcpCommands(nick, to, text, type, message),
@@ -398,8 +395,6 @@ class MrNodeBot {
 
     // Handle On Notices
     _handleOnNotice(from, to, text, message) {
-        text = this._normalizeText(text);
-
         // Do not handle our own actions, or those on the ignore list
         if (from == this.nick || _.includes(this.Ignore, _.toLower(from))) return;
 

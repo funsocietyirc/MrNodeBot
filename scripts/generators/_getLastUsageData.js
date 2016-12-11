@@ -5,6 +5,7 @@ const extract = require('../../lib/extractNickUserIdent');
 const logger = require('../../lib/logger');
 const Moment = require('moment');
 
+const saidCats = ['log', 'action', 'notice'];
 
 module.exports = (input, options) => new Promise((res, rej) => {
     // Extract user information
@@ -32,7 +33,7 @@ module.exports = (input, options) => new Promise((res, rej) => {
     let channel = args.channel;
 
     // Gate
-    if (!Models.Logging || !Models.ActionLogging || !Models.JoinLogging || !Models.PartLogging || !Models.QuitLogging || !Models.KickLogging || !Models.Alias) return rej({
+    if (!Models.Logging || !Models.NoticeLogging || !Models.ActionLogging || !Models.JoinLogging || !Models.PartLogging || !Models.QuitLogging || !Models.KickLogging || !Models.Alias) return rej({
         args,
         inner: new Error('no database available'),
     });
@@ -72,8 +73,8 @@ module.exports = (input, options) => new Promise((res, rej) => {
 
         // Remove undefined / falsey values
         let _results = _(results).compact();
-        let lastSaid = _results.filter(r => r.key == 'action' || r.key == 'log')[options.descending ? 'maxBy' : 'minBy'](r => Moment(r.timestamp).unix());
-        let lastAction = _results.reject(r => r.key == 'action' || r.key == 'log')[options.descending ? 'maxBy' : 'minBy'](r => Moment(r.timestamp).unix());
+        let lastSaid = _results.filter(r => _.includes(saidCats, r.key))[options.descending ? 'maxBy' : 'minBy'](r => Moment(r.timestamp).unix());
+        let lastAction = _results.reject(r => _.includes(saidCats, r.key))[options.descending ? 'maxBy' : 'minBy'](r => Moment(r.timestamp).unix());
         let finalResults = _results.value();
 
         // Build the outputs
@@ -105,6 +106,7 @@ module.exports = (input, options) => new Promise((res, rej) => {
             Models.Alias.query(qb => filter(qb, 'oldnick', 'user', 'channels')).fetch().then(result => render(result, 'aliasOld')),
             Models.Alias.query(qb => filter(qb, 'newnick', 'user', 'channels')).fetch().then(result => render(result, 'aliasNew')),
             Models.ActionLogging.query(qb => filter(qb, 'from', 'user', 'to')).fetch().then(result => render(result, 'action')),
+            Models.NoticeLogging.query(qb => filter(qb, 'from', 'user', 'to')).fetch().then(result => render(result, 'notice')),
         ])
         .then(tabulateResults));
 
