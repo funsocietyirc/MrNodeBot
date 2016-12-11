@@ -57,7 +57,8 @@ module.exports = (input, options) => new Promise((res, rej) => {
     const render = (result, key) => {
         if (!result || !key) return;
         let output = Object.create(null);
-        output[key] = result.toJSON();
+        output = result.toJSON();
+        output.key = key;
         return output;
     };
 
@@ -68,16 +69,31 @@ module.exports = (input, options) => new Promise((res, rej) => {
             args,
             finalResults: []
         };
-        // Remove undefined / falsey values
-        results = _.compact(results);
-        return {
-            args,
-            finalResults: results, // Filtered version of total results
-            lastSaid: _(results).map('log').compact().first(), // Last Said information
-            lastAction: _(results)[options.descending ? 'maxBy' : 'minBy'](value => Moment(value[Object.keys(value)[0]].timestamp).unix()) // Last Action information
-        };
-    };
 
+        // Remove undefined / falsey values
+        let _results = _(results).compact();
+        let lastSaid = _results.filter(r => r.key == 'action' || r.key == 'log')[options.descending ? 'maxBy' : 'minBy'](r => Moment(r.timestamp).unix());
+        let lastAction = _results.reject(r => r.key == 'action' || r.key == 'log')[options.descending ? 'maxBy' : 'minBy'](r => Moment(r.timestamp).unix());
+        let finalResults = _results.value();
+
+        // Build the outputs
+        let output = {
+            args,
+            lastSaid,
+            finalResults,
+        };
+
+        // Only return the action if it happened after the last said
+        if (
+            _.isObject(lastSaid) &&
+            _.isObject(lastAction) &&
+            !_.isUndefined(lastSaid.timestamp) &&
+            !_.isUndefined(lastAction.timestamp) &&
+            Moment(lastAction.timestamp).isAfter(Moment(lastSaid.timestamp))
+        ) output.lastAction = lastAction;
+
+        return output;
+    };
 
     // Resolve all the queries, process the results, report any errors
     return res(Promise.all([

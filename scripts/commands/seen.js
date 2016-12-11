@@ -52,57 +52,65 @@ module.exports = app => {
                 else output.insert('| Then saying');
                 output
                     .insertBold(lastSaid.text)
+                    .insert('via')
+                    .insert(_.startCase(lastSaid.key))
                     .insert('on')
                     .insertBold(lastSaid.to)
                     .insert(Moment(lastSaid.timestamp).fromNow())
                     .insertDivider();
             }
 
-            // Check other activity
-            if (lastAction.part) {
-                output.insert('Parting')
-                    .insertBold(lastAction.part.channel)
-                    .insert(Moment(lastAction.part.timestamp).fromNow());
-                if (!lastSaid || lastAction.part.nick != lastSaid.from) output.insert('as').insertBold(lastAction.part.nick);
-                output.appendBold(lastAction.part.reason);
-            } else if (lastAction.quit) {
-                output.insert('Quitting').insertBold(!_.isEmpty(lastAction.quit.channels) ? `[${lastAction.quit.channels.replace(',',', ')}]` : 'on');
-                output.insert(Moment(lastAction.quit.timestamp).fromNow());
-                if (!lastSaid || lastAction.quit.nick != lastSaid.from) output.insert('as').insertBold(lastAction.quit.nick);
-                output.insert(lastAction.quit.reason);
-            } else if (lastAction.kick) {
-                output.insert('Getting kicked from')
-                    .insertBold(lastAction.kick.channel)
-                    .insert(lastAction.kick.timestamp);
-                if (!lastSaid || lastAction.kick.nick != lastSaid.from) output.insert('as').insertBold(lastAction.quit.nick);
-                output.insert(lastAction.kick.reason);
-            } else if (lastAction.join) {
-                output.insert('Joining')
-                    .insertBold(lastAction.join.channel)
-                    .insert(Moment(lastAction.join.timestamp).fromNow());
-                if (!lastSaid || lastAction.join.nick != lastSaid.from) output.insert('as').insertBold(lastAction.join.nick);
+            if (_.isObject(lastAction) && !_.isEmpty(lastAction)) {
+                switch (lastAction.key) {
+                    case 'part':
+                        output.insert('Parting')
+                            .insertBold(lastAction.channel)
+                            .insert(Moment(lastAction.timestamp).fromNow());
+                        if (!lastSaid || lastAction.nick != lastSaid.from) output.insert('as').insertBold(lastAction.nick);
+                        output.appendBold(lastAction.reason);
+                        break;
+                    case 'quit':
+                        output.insert('Quitting').insertBold(!_.isEmpty(lastAction.channels) ? `[${lastAction.channels.replace(',',', ')}]` : 'on');
+                        output.insert(Moment(lastAction.timestamp).fromNow());
+                        if (!lastSaid || lastAction.quit.nick != lastSaid.from) output.insert('as').insertBold(lastAction.nick);
+                        output.insert(lastAction.reason);
+                        break;
+                    case 'kick':
+                        output.insert('Getting kicked from')
+                            .insertBold(lastAction.channel)
+                            .insert(lastAction.timestamp);
+                        if (!lastSaid || lastAction.nick != lastSaid.from) output.insert('as').insertBold(lastAction.nick);
+                        output.insert(lastAction.reason);
+                        break;
+                    case 'join':
+                        output.insert('Joining')
+                            .insertBold(lastAction.channel)
+                            .insert(Moment(lastAction.timestamp).fromNow());
+                        if (!lastSaid || lastAction.nick != lastSaid.from) output.insert('as').insertBold(lastAction.nick);
+                        break;
+                    case 'aliasOld':
+                        output.insert('Changing their nick to').insertBold(lastAction.newnick)
+                            .insert('on').insertBold(`[${lastAction.channels.replace(',',', ')}]`)
+                            .insert(Moment(lastAction.timestamp).fromNow());
 
-            } else if (lastAction.aliasOld) {
-                output.insert('Changing their nick to').insertBold(lastAction.aliasOld.newnick)
-                    .insert('on').insertBold(`[${lastAction.aliasOld.channels.replace(',',', ')}]`)
-                    .insert(Moment(lastAction.aliasOld.timestamp).fromNow());
-                // The last action commited by the user was a nick change, recurse and follow the next nick in the chain
-            } else if (lastAction.aliasNew) {
-                output.insert('Changing their nick from').insertBold(lastAction.aliasNew.oldnick)
-                    .insert('on').insertBold(`[${lastAction.aliasNew.channels.replace(',',', ')}]`)
-                    .insert(Moment(lastAction.aliasNew.timestamp).fromNow());
-            } else if (lastAction.action) {
-                output.insert('Performing the action').insertBold(lastAction.action.text)
-                    .insert('on').insertBold(lastAction.action.to)
-                    .insert(Moment(lastAction.action.timestamp).fromNow());
+                        // First result to channel, any chains elsewhere
+                        if (iteration === 0 && from !== to) output.insertDivider().append(`additional results have been messaged to you ${from}`);
+
+                        // Recurse
+                        seen(to, from, `${lastAction.newnick}!${lastAction.user}@${lastAction.host}`, message, iteration + 1, descending);
+                        break;
+                    case 'aliasNew':
+                        output.insert('Changing their nick from').insertBold(lastAction.oldnick)
+                            .insert('on').insertBold(`[${lastAction.channels.replace(',',', ')}]`)
+                            .insert(Moment(lastAction.timestamp).fromNow());
+                        break;
+                }
+
             }
 
-            // First result to channel, any chains elsewhere
-            if (iteration === 0 && lastAction.aliasOld && from !== to) output.insertDivider().append(`additional results have been messaged to you ${from}`);
+            // report back to IRC
             app.say(iteration === 0 ? to : from, !_.isEmpty(output.text) ? output.text : `Something went wrong finding the active state for ${args.nick || args.user ||args.host}, ${from}`);
 
-            // Recurse
-            if (lastAction.aliasOld) seen(to, from, `${lastAction.aliasOld.newnick}!${lastAction.aliasOld.user}@${lastAction.aliasOld.host}`, message, iteration + 1, descending);
         };
 
         // Begin the chain
