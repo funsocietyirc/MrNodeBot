@@ -46,6 +46,20 @@ module.exports = {
         // Currently running Environment
         env: 'devel'
     },
+    // Localization setting
+    localization: {
+        debug: false,
+        lng: 'en',
+        defaultNS: 'app',
+        fallbackLng: "en",
+        initImmediate: false,
+        whitelist: ['en'],
+        saveMissing: true,
+        saveMissingTo: 'current',
+        ns: ['app', 'libraries'],
+        preload: ['en'],
+        load: 'current',
+    },
     // User Manager configuration
     userManager: {
         salt: 'samplesalt',
@@ -252,7 +266,7 @@ module.exports = {
             channels: ['#MrNodeBot']
         },
         conversational: {
-            randomChange: 5000,
+            randomChance: 5000,
             enabled: false,
             ignoredChans: []
         }
