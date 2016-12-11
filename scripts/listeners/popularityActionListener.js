@@ -1,3 +1,4 @@
+
 'use strict';
 const scriptInfo = {
     name: 'Popularity Listener',
@@ -34,7 +35,8 @@ module.exports = app => {
     const delay = delayMins * 60 * 1000;
 
     const cleanJobInMins = (
-        _.isUndefined(app.Config.features.popularity) ||
+        _.isUndefined(app.Confi
+          g.features.popularity) ||
         _.isUndefined(app.Config.features.popularity.cleanJobInMins)
     ) ? 30 : app.Config.features.popularity.cleanJobInMins;
 

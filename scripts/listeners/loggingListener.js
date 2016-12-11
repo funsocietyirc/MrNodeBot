@@ -43,7 +43,7 @@ module.exports = app => {
                 from: from,
                 to: to,
                 text: c.stripColorsAndStyle(text),
-                type:type,
+                type: type,
                 user: message.user,
                 host: message.host
             })
@@ -56,7 +56,7 @@ module.exports = app => {
 
     // Log Channel Parts
     const actionCmd = (from, to, text, message) => {
-      // We do not have database, or we are talking to ourselves
+        // We do not have database, or we are talking to ourselves
         if (!Models.ActionLogging) {
             return;
         }
@@ -75,7 +75,7 @@ module.exports = app => {
     });
 
     const noticeCmd = (from, to, text, message) => {
-      // We do not have database, or we are talking to ourselves
+        // We do not have database, or we are talking to ourselves
         if (!Models.NoticeLogging || _.isNull(from) || _.isNull(message.user) || _.isNull(message.host)) return;
         Models.NoticeLogging.create({
                 from: from,
@@ -204,12 +204,12 @@ module.exports = app => {
                     return;
                 }
                 Models.Topics.create({
-                        channel: channel,
-                        topic: topic,
-                        nick: nick,
-                        user: message.user,
-                        host: message.host
-                    });
+                    channel: channel,
+                    topic: topic,
+                    nick: nick,
+                    user: message.user,
+                    host: message.host
+                });
             })
             .catch(logger.error);
     };
