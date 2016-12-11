@@ -76,7 +76,7 @@ module.exports = app => {
             }
 
             // Set the value
-            app.Config[key] = json;
+            _.set(app.Config, key, json);
 
             // Create output
             const output = new typo.StringBuilder();

@@ -14,22 +14,25 @@ const random = require('../../lib/randomEngine.js');
   Listeners: converse
 **/
 module.exports = app => {
-    // See if we are conversational or not
-    let conversational = app.Config.features.conversational.enabled;
-    let ignoredChans = app.Config.features.conversational.ignoredChans;
-    let randomChance = app.Config.features.conversational.randomChance;
+    // No Features block
+    if (!_.has(app, 'Config.features.conversational')) return scriptInfo;
+
 
     const converse = (to, from, text, message) => {
-        conversational = !conversational;
-        let formatText = conversational ? 'now' : 'no longer';
+        app.Config.features.conversational.enabled = !_.isBoolean(app.Config.features.conversational.enabled) ? true : !app.Config.features.conversational.enabled;
+        let formatText = app.Config.features.conversational.enabled ? 'now' : 'no longer';
         app.say(to, `I am ${formatText} conversational`);
     };
 
     const listen = (to, from, text, message, is) => {
-        if (conversational && !_.includes(ignoredChans, to) && !is.triggered && random.bool(1, is.privateMsg ? 1 : randomChance)) {
-            gen(text)
-              .then(result => app.say(to, `${from}, ${result}`));
-        }
+        // Check if we are enabled
+        let enabled = _.isBoolean(app.Config.features.conversational.enabled) && app.Config.features.conversational.enabled === true;
+        // Get Random Chance, normalize to 500 if not a valid or unset integer
+        let randomChance = _.isSafeInteger(app.Config.features.conversational.randomChance) ? app.Config.features.conversational.randomChance : 500;
+        // Get and normalize ignored channels
+        let ignoredChans = _.isArray(app.Config.features.conversational.ignoredChans) ? app.Config.features.conversational.ignoredChans : [];
+        // See if we should send a message
+        if (enabled && !_.includes(ignoredChans, to) && random.bool(1, is.privateMsg ? 1 : randomChance)) gen(text).then(result => app.say(to, `${from}, ${result}`));
     };
 
     // Toggle the conversational listener status
