@@ -12,9 +12,7 @@ const c = require('irc-colors');
 /** Log all incoming channel messages to a Sql Database **/
 module.exports = app => {
     // Assure the database exists
-    if (!app.Database) {
-        return;
-    }
+    if (!app.Database) return;
 
     // Log Messages
     const msgCmd = (to, from, text, message) => {
