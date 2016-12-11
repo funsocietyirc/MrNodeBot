@@ -165,7 +165,6 @@ class MrNodeBot {
             });
     };
 
-
     // Init the Database subsystem
     _initDbSubSystem() {
         // We have a Database available
