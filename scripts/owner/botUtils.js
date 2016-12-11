@@ -15,6 +15,10 @@ module.exports = app => {
         access: app.Config.accessLevels.owner,
         call: (to, from, text, message) => {
             let oldNick = app.nick;
+            if (app.nick == text || _.isEmpty(text)) {
+                app.say(to, `I am already ${app.nick}, what else would you like me to go by ${from}`);
+                return;
+            }
             app.nick = text;
             app.say(from, `I was once ${oldNick} but now I am ${app.nick}... The times, they are changing.`);
 
@@ -29,6 +33,23 @@ module.exports = app => {
         }
     });
 
+    app.Commands.set('conf-get', {
+        desc: '[key] - Get a configuration key',
+        access: app.Config.accessLevels.owner,
+        call: (to, from, text, message) => {
+            if (_.isEmpty(text)) {
+                app.say(to, `You need to provide me with a key ${from}`);
+                return;
+            }
+            let [key] = text.split(' ');
+            if (!_.has(app.Config, key)) {
+                app.say(to, `I do not have the config setting: ${key}, ${from}`);
+                return;
+            }
+            app.say(to, `The config value you requested [${key}] is ` + JSON.stringify(_.get(app.Config, key, '')));
+        }
+    });
+
     // set
     app.Commands.set('conf-set', {
         desc: '[key value] - Manipulate config values',
@@ -39,6 +60,7 @@ module.exports = app => {
                 app.say(to, `I need a value to set ${from}`);
                 return;
             }
+
             // Get Key Value pair
             let matches = text.match(/(\S+)\s(.*)/im)
 
@@ -53,6 +75,7 @@ module.exports = app => {
             let value = matches[2].replace(/'/g, '"');
             // Does the key already exist in the config store
             let exists = _.has(app.Config, key);
+            let defaultValue = _.get(app.Config, key);
 
             // Attempt to parse JSON
             let json = null;
@@ -64,14 +87,19 @@ module.exports = app => {
             }
 
             // If we have anything other then an object but the original is an object
-            if (exists && _.isObject(app.Config[key]) && !_.isObject(json)) {
+            if (exists && _.isObject(defaultValue) && !_.isObject(json)) {
                 app.say(to, 'I can only replace a Object with another Object');
                 return;
             }
 
             // If we have anything other then an array but the original is an array
-            if (exists && _.isArray(app.Config[key]) && !_.isArray(json)) {
+            if (exists && _.isArray(defaultValue) && !_.isArray(json)) {
                 app.say(to, 'I can only replace a Array with another Array');
+                return;
+            }
+
+            if (exists && _.isString(defaultValue) && !_.isString(json)) {
+                app.say(to, 'I can only replace a String with another String');
                 return;
             }
 
