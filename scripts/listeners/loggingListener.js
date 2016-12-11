@@ -206,7 +206,9 @@ module.exports = app => {
                 Models.Topics.create({
                         channel: channel,
                         topic: topic,
-                        nick: nick
+                        nick: nick,
+                        user: message.user,
+                        host: message.host
                     });
             })
             .catch(logger.error);

@@ -52,12 +52,19 @@ module.exports = app => {
             let lastAction = result.lastAction;
 
             // Begin the Line
-            if (iteration === 0) output.insert(`Seen`);
+            if (iteration === 0) output.insert(iteration === 0 ? `Seen` : '|');
 
             // See if there has been anything said by the user, append to buffer if so
-            if (!_.isUndefined(lastSaid) && _.isObject(lastSaid) || !_.isEmpty(lastSaid)) {
+            if (
+                _.isObject(lastSaid) &&
+                !_.isEmpty(lastSaid) &&
+                _.isObject(lastAction) &&
+                !_.isEmpty(lastAction) &&
+                iteration == 0 &&
+                Moment(lastSaid.timestamp).isBefore(Moment(lastAction.timestamp))
+            ) {
                 if (!iteration) output.insertBold(lastSaid.from).insert('Saying');
-                else output.insert('| Then saying');
+                else output.insert('Then saying');
                 output
                     .insertBold(lastSaid.text)
                     .insert('via')
@@ -106,7 +113,7 @@ module.exports = app => {
                         if (iteration === 0 && from !== to) output.insertDivider().append(`additional results have been messaged to you ${from}`);
 
                         // Recurse
-                        seen(to, from, `${lastAction.newnick}!${lastAction.user}@${lastAction.host}`, message, iteration + 1, descending);
+                        seen(to, from, `${lastAction.newnick || ''}!${lastAction.user || ''}@${lastAction.host || ''} ${lastSaid.to || lastAction.channel || ''}`, message, iteration + 1, descending);
                         break;
                     case 'aliasNew':
                         output.insert('Changing their nick from').insertBold(lastAction.oldnick)
@@ -130,6 +137,7 @@ module.exports = app => {
             })
             .then(sendToIRC)
             .catch(err => {
+                console.dir(err)
                 logger.error('Error in the last active Promise.all chain', {
                     err
                 });
