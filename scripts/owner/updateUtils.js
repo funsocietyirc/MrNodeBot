@@ -98,7 +98,7 @@ module.exports = app => {
 
                     // Check if we have any non scripts
                     for (let file of files) {
-                        if (!_.startsWith(file, 'scripts') && _.endsWith('.js')) {
+                        if (!_.startsWith(file, 'scripts') && _.endsWith(file, '.js')) {
                             shouldCycle = true;
                             break;
                         }
