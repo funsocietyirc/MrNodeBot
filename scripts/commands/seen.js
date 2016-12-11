@@ -17,7 +17,7 @@ const gen = require('../generators/_getLastUsageData');
 // Exports
 module.exports = app => {
     // If we have Database availability
-    if (!Models.Logging || !Models.JoinLogging || !Models.PartLogging || !Models.QuitLogging || !Models.KickLogging || !Models.Alias) return scriptInfo;
+    if (!Models.Logging || !Models.ActionLogging || !Models.JoinLogging || !Models.PartLogging || !Models.QuitLogging || !Models.KickLogging || !Models.Alias) return scriptInfo;
 
     // Show activity of given hostmask
     const seen = (to, from, text, message, iteration = 0, descending = true) => {
@@ -88,9 +88,13 @@ module.exports = app => {
                     .insert(Moment(lastAction.aliasOld.timestamp).fromNow());
                 // The last action commited by the user was a nick change, recurse and follow the next nick in the chain
             } else if (lastAction.aliasNew) {
-                output.append('Changing their nick from').insertBold(lastAction.aliasNew.oldnick)
+                output.insert('Changing their nick from').insertBold(lastAction.aliasNew.oldnick)
                     .insert('on').insertBold(`[${lastAction.aliasNew.channels.replace(',',', ')}]`)
                     .insert(Moment(lastAction.aliasNew.timestamp).fromNow());
+            } else if (lastAction.action) {
+                output.insert('Performing the action').insertBold(lastAction.action.text)
+                    .insert('on').insertBold(lastAction.action.to)
+                    .insert(Moment(lastAction.action.timestamp).fromNow());
             }
 
             // First result to channel, any chains elsewhere

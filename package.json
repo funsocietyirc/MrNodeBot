@@ -20,7 +20,8 @@
     "framework"
   ],
   "engines": {
-    "node": ">=6.9.1"
+    "node": ">=6.9.1",
+    "npm": ">=4.0.0"
   },
   "dependencies": {
     "app-root-path": "^2.0.1",

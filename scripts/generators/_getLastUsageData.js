@@ -24,7 +24,7 @@ module.exports = (input, options) => new Promise((res, rej) => {
     // Deal with options
     options = _.isObject(options) ? options : Object.create(null);
     // By default sort descending for the last result
-    if(_.isUndefined(options.descending) || !_.isBoolean(options.descending)) options.descending = true;
+    if (_.isUndefined(options.descending) || !_.isBoolean(options.descending)) options.descending = true;
     // Grab user
     let nick = args.nick;
     let user = args.user;
@@ -32,7 +32,7 @@ module.exports = (input, options) => new Promise((res, rej) => {
     let channel = args.channel;
 
     // Gate
-    if (!Models.Logging || !Models.JoinLogging || !Models.PartLogging || !Models.QuitLogging || !Models.KickLogging || !Models.Alias) return rej({
+    if (!Models.Logging || !Models.ActionLogging || !Models.JoinLogging || !Models.PartLogging || !Models.QuitLogging || !Models.KickLogging || !Models.Alias) return rej({
         args,
         inner: new Error('no database available'),
     });
@@ -88,6 +88,7 @@ module.exports = (input, options) => new Promise((res, rej) => {
             Models.KickLogging.query(filter).fetch().then(result => render(result, 'kick')),
             Models.Alias.query(qb => filter(qb, 'oldnick', 'user', 'channels')).fetch().then(result => render(result, 'aliasOld')),
             Models.Alias.query(qb => filter(qb, 'newnick', 'user', 'channels')).fetch().then(result => render(result, 'aliasNew')),
+            Models.ActionLogging.query(qb => filter(qb, 'from', 'user', 'to')).fetch().then(result => render(result, 'action')),
         ])
         .then(tabulateResults));
 
