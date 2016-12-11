@@ -77,9 +77,7 @@ module.exports = app => {
 
     const noticeCmd = (from, to, text, message) => {
       // We do not have database, or we are talking to ourselves
-        if (!Models.NoticeLogging) {
-            return;
-        }
+        if (!Models.NoticeLogging || _.isNull(from) || _.isNull(message.user) || _.isNull(message.host)) return;
         Models.NoticeLogging.create({
                 from: from,
                 to: to,
