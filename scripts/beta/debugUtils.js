@@ -1,16 +1,16 @@
 'use strict';
 
 const scriptInfo = {
-    name: 'Evaluate',
-    desc: 'Allow for inline JS Evaluation via IRC for easier debugging',
+    name: 'Debug Utils',
+    desc: 'Bot Debugging',
     createdBy: 'IronY'
 };
 
 const _ = require('lodash');
-const util = require('util');
 const logger = require('../../lib/logger.js');
 
 module.exports = app => {
+    // Evaluate
     app.Commands.set('eval', {
         desc: '[valid js] will return value to console',
         access: app.Config.accessLevels.owner,
@@ -27,6 +27,7 @@ module.exports = app => {
             }
         }
     });
-    
+
+
     return scriptInfo;
 };
