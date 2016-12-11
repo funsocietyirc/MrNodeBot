@@ -27,7 +27,6 @@ By: IronY
     -   HTML Template language [pug](https://github.com/pugjs/pug)
     -   Route name helper [named-routes](https://github.com/alubbe/named-routes)
 -   Scheduler [node-scheduler](https://github.com/node-schedule/node-schedule)
--   IRC Client [node-irc fork](https://github.com/funsocietyirc/node-irc)
 -   Logging [Winston](https://github.com/winstonjs/winston)
     -   Log File Rotation [winston-daily-rotate-file](https://github.com/winstonjs/winston-daily-rotate-file)
     -   Real Time Logging via HTTP [winston-logio-mirror](https://github.com/jaakkos/winston-logio)
@@ -35,12 +34,28 @@ By: IronY
 -   Time [Moment](http://momentjs.com/)
 -   Localization [i18next](https://github.com/i18next/i18next)
     -   File System loader [i18next-sync-fs-backend](https://github.com/i18next/i18next-node-fs-backend)
--   Utility - Functional [Lodash](https://lodash.com/docs/)
+-   Functional [Lodash](https://lodash.com/docs/)
     -   additional convienance methods [Lodash Addons](https://github.com/helion3/lodash-addons)
--   Utility - HTTP Request [Request](https://github.com/request/request)
+-   HTTP Request [Request](https://github.com/request/request)
     -   Native promise implementation [Request-Promise](https://github.com/request/request-promise)
--   Utility - IRC [irc-colors](https://github.com/fent/irc-colors.js)
-
+-   IRC [node-irc fork](https://github.com/funsocietyirc/node-irc)
+-   Utilities
+    -   [file-type](https://github.com/sindresorhus/file-type) Detect the file type by checking the magic number of a Buffer/Uint8Array
+    -   [irc-colors](https://github.com/fent/irc-colors.js) IRC Colors
+    -   [freeport](https://github.com/daaku/nodejs-freeport) Get an available open port on current host
+    -   [gitlog](https://github.com/domharrington/node-gitlog) Git log parser
+    -   [rand-token](https://www.npmjs.com/package/rand-token) Generate random tokens
+    -   [rand-js](https://github.com/ckknight/random-js) A mathematically correct random number generator library for JavaScript
+    -   [URIjs](https://github.com/medialize/URI.js) Javascript URL mutation library
+    -   [shelljs](https://github.com/shelljs/shelljs) Portable Unix shell commands
+    -   [x-ray](https://github.com/lapwinglabs/x-ray) The next web scraper
+    -   [hashmap](https://github.com/flesler/hashmap) HashMap JavaScript class for NodeJS and the browser. The keys can be anything and won't be stringified
+    -   [pusher](https://github.com/pusher/pusher-http-node) Node.js client to interact with the Pusher REST API
+    -   [bot](https://github.com/vesln/bot) Feeling lonely? You personal bot is here.
+    -   [scrypt](https://github.com/barrysteyn/node-scrypt) Scrypt for Node (crypto)
+    -   [watson-developer-cloud](https://github.com/watson-developer-cloud/node-sdk) Node.js library to access IBM Watson services.
+    -   [twit](https://github.com/ttezel/twit) Twitter API Client for node (REST & Streaming API)
+    -   [minimist](https://github.com/substack/minimist) parse argument options
 # API Keys
 -   For most features a Google API key with Shortener service, SafeSearch service, and YoutTube search service enable is required, how ever if one is not provided,
 | the bot will try to gracefully fall back onto is.gd
