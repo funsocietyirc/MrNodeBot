@@ -16,11 +16,15 @@ const getSymbol = require('currency-symbol-map');
 
 
 // Add Symbols
-getSymbol.symbolCurrencyMap['฿'] = 'BTC';
+// TODO Extract this into a better system
+_.set(getSymbol.currencySymbolMap, 'BTC', '฿');
+_.set(getSymbol.currencySymbolMap, '฿', 'BTC');
+
 
 module.exports = app => {
     // Base currency
     const baseCur = _.getString(_.get(app.Config, 'features.exchangeRate.base'), 'USD').toUpperCase();
+
     // Set base currency in money.js
     fx.base = baseCur;
 
