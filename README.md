@@ -2,19 +2,39 @@
 
 By: IronY
 
-# Deps
+## Special Considerations
+The bot currently depends on NickServ services supporting the ACC command for certain command authentication types. Networks confirmed to work include
+-   FreeNode
+-   Dalnet
 
--   Mysql || MariaDB || Postgres SQL || Sqlite3
--   libiconv
+## Dependencies
+-   A Database engine, either MySql, MariaDB, Postgres, Sqlite3
+-   libicu (character encoding detection) [More Instructions](https://github.com/mooz/node-icu-charset-detector)
+    -   **Debian** (Ubuntu) ```apt-get install libicu-dev```
+    -   **Gentoo** ```emerge icu```
+    -   **Fedora/CentOS** ```yum install libicu-devel```
+    -   **OSX**
+        -   HomeBrew ```brew install icu4c; brew link icu4c --force```
+        -   MacPorts ```port install icu +devel```
 
-# Features
+## Install Steps
+-   Install Node Modules ```npm install```
+-   Create Configuration file from template ```cp config.js.sample config.js```
+-   Edit Configuration file
+-   Configure database
+    -   By default the bot will use sqlite3, ```npm install sqlite3```
+    -   If using mysql ```npm install mysql```
+        -   Create a Schema and be sure to give it a utf8mb4_unicode_ci character set (CREATE DATABASE db_name CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci)
+        -   Modify the config.js accordingly
+        -   Once properly configured and run for the first time, the Bot will provision the database schema using migrations
+-   Start the bot ```node index.js [--config config.js-path]``` or ```npm start```
 
+## Features
 -   Logging / Analytics
 -   SED Corrections
 -   URL Announce
 
-# Technologies
-
+## Technologies
 -   Query Builder / Migrations [Knex.js](http://bookshelfjs.org/)
 -   ORM [Bookshelf.js](http://bookshelfjs.org/)
     -   Central Model Repository [bookshelf-model-loader](https://github.com/imjoshholloway/bookshelf-model-loader)
@@ -57,27 +77,20 @@ By: IronY
     -   [twit](https://github.com/ttezel/twit) Twitter API Client for node (REST & Streaming API)
     -   [minimist](https://github.com/substack/minimist) parse argument options
 
-# API Keys
+## API Keys
 -   For most features a Google API key with Shortener service, SafeSearch service, and YoutTube search service enable is required, how ever if one is not provided,
 | the bot will try to gracefully fall back onto is.gd
 
-
-# Install Steps
-
--   ```npm install```
--   ```cp config.js.sample config.js```
--   go through configuration and adjust
--   By default the bot will use sqlite3, you will need to ```npm install sqlite3``` in order for this to work
--   If instead you decide to use mysql, ```npm install mysql```
--   ```node index.js [--config config.js-path]``` or ```npm start```
-
-## Due to this bot requiring NickServ for its validation of access levels
-
-## It has been tested with both FreeNode and Dalnet
+## Command Access levels
+-   **owner** - The Command can only be run by the bot owner (hard coded username/host combo in config.js)
+-   **admin** - The Command can be run by the owner or anyone in the admin list
+-   **identified** - The Command can be run by anyone using a nick identified with services
+-   **guest** - The Command can be run by anyone
+-   **channelOp** - The command can be run by the owner, or anyone with ops in the channel it is being originated from
+-   **channelOpIdentified** - the Command can be run by the owner, the admins, or anyone with ops in the channel who are also identified
+-   **channelVoice** - the Command can be run by the owner, the the ops, and the voices in the channel it is originated from
+-   **channelVoiceIdentified** - the Command can be run by identified voices, ops in the channel originated from, or owner and admins
 
 Have questions? Looking to chat? Join us on #fsociety on irc.freenode.net
 
 Pull Requests Welcome
-
-## If using mysql you will need to create a schema first, make sure to give it a utf8mb4_unicode_ci charset
-CREATE DATABASE db_name CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
