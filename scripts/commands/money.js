@@ -30,7 +30,8 @@ module.exports = app => {
     fx.base = baseCur;
 
     const updateRates = scheduler.schedule('updateCurRates', {
-            hour: [scheduler.Range(0,23)]
+            hour: [scheduler.Range(0,23)],
+            minute: 0
         }, () =>
         // Get the initial conversion rates
         request(fixerApi, {
@@ -84,6 +85,7 @@ module.exports = app => {
             err
         }))
     );
+
     // initial run
     if (_.isFunction(scheduler.jobs.updateCurRates.job)) scheduler.jobs.updateCurRates.job();
     // The function does not exist, log error
