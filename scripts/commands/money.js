@@ -12,11 +12,7 @@ const fx = require('money');
 const request = require('request-promise-native');
 const logger = require('../../lib/logger');
 const scheduler = require('../../lib/scheduler');
-
-// Base currency
-const baseCur = 'USD';
-// Set base currency in money.js
-fx.base = baseCur;
+const getSymbol = require('currency-symbol-map').getSymbolFromCurrency;
 
 module.exports = app => {
     // Base currency
@@ -25,7 +21,7 @@ module.exports = app => {
     fx.base = baseCur;
 
     const updateRates = scheduler.schedule('updateCurRates', {
-            hour: [new scheduler.Range(0, 23)]
+            hour: [...Array(24).keys()]
         }, () =>
         request('http://api.fixer.io/latest', {
             json: true,
@@ -44,9 +40,7 @@ module.exports = app => {
                 return;
             }
             // Received Rates
-            logger.info('Updating exchange rates', {
-                rates: data.rates
-            });
+            logger.info('Updating exchange rates');
             // Adjust rates in money
             fx.rates = data.rates
         })
@@ -83,7 +77,7 @@ module.exports = app => {
                 from: cFrom,
                 to: cTo
             });
-            app.say(to, `At the current exchange rate ${amount} ${cFrom} is ${result.toFixed(2)} ${cTo}, ${from}`);
+            app.say(to, `At the current exchange rate ${getSymbol(cFrom)}${amount} ${cFrom} is ${getSymbol(cTo)}${result.toFixed(2)} ${cTo}, ${from}`);
         } catch (err) {
             app.say(to, `I am unable to convert ${cFrom} to ${cTo} ${from}`);
         }

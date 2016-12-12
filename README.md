@@ -77,7 +77,7 @@ The bot currently depends on NickServ services supporting the ACC command for ce
     -   [twit](https://github.com/ttezel/twit) Twitter API Client for Node (REST & Streaming API)
     -   [minimist](https://github.com/substack/minimist) Parse argument options
     -   [money](http://openexchangerates.github.io/money.js/) Convert exchange rates
-
+    -   [currency-symbol-map](https://github.com/bengourley/currency-symbol-map) A function to lookup the currency symbol for a given currency code and vice versa
 
 ## API Keys
 -   For most features a Google API key with Shortener service, SafeSearch service, and YouTube search service enabled is required, however, if one is not provided, the bot will try to gracefully fall back onto is.gd
