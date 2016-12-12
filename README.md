@@ -22,8 +22,8 @@ The bot currently depends on NickServ services supporting the ACC command for ce
 -   Create a configuration file from a template ```cp config.js.sample config.js```
 -   Edit the configuration file
 -   Configure a database
-    -   By default, the bot will use sqlite3, ```npm install sqlite3```
-    -   If using MySql, ```npm install mysql```
+    -   By default, the bot will use SQLite 3, ```npm install sqlite3```
+    -   If using MySQL, ```npm install mysql```
         -   Create a Schema and be sure to give it a utf8mb4_unicode_ci character set (CREATE DATABASE db_name CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci)
         -   Modify the config.js accordingly
         -   Once properly configured and run for the first time, the Bot will provision the database schema using migrations
