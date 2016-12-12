@@ -63,7 +63,7 @@ module.exports = app => {
                 });
             }
             // Set the rate
-            fx.rates.BTC = btc.rate;
+            fx.rates.BTC = 1/btc.rate;
         }))
         .catch(err => {
           console.dir(err)
