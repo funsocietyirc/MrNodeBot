@@ -44,12 +44,35 @@ module.exports = app => {
             // Adjust rates in money
             fx.rates = data.rates
         })
+        .then(() => request('https://bitpay.com/api/rates', {
+            json: true,
+            method: 'get'
+        }).then(data => {
+            // No Data available
+            if (!_.isArray(data) || _.isEmpty(data)) {
+                logger.error('Error fetching BitCoin data for exchange seeding', {
+                    data
+                });
+                return;
+            }
+
+            let btc = _.find(data, o => o.code === baseCur);
+            if (!btc || !_isString(btc.code) || _.isEmpty(btc.code) || !_.isSafeInteger(btc.rate)) {
+                logger.error('Error fetching bitCoin data, data returned is not formated correctly', {
+                    data
+                });
+            }
+            // Set the rate
+            fx.rates.BTC = btc.rate;
+        }))
         .catch(err => logger.error('Something went wrong getting currency rates', {
             err
         }))
     );
     // initial run
-    scheduler.jobs.updateCurRates.job();
+    if (_.isFunction(scheduler.jobs.updateCurRates.job)) scheduler.jobs.updateCurRates.job();
+    // The function does not exist, log error
+    else logger.error(`Something went wrong with the currency exchange rate job, no function exists`);
 
     // Provide exchange
     const exchange = (to, from, text, message) => {
@@ -58,11 +81,14 @@ module.exports = app => {
             app.say(to, `I need some more information ${from}`);
             return;
         }
+        // Extract variables
         let [amount, cFrom, cTo] = text.split(' ');
+        // Verify amount is numeric
         if (!_.isSafeInteger(_.parseInt(amount))) {
             app.say(to, `That is not a valid amount ${from}`);
             return;
         }
+        // Verify we have a target currency
         if (!cFrom) {
             app.say(to, `I need a currency to convert from`);
             return;
@@ -72,7 +98,7 @@ module.exports = app => {
         cTo = (cTo || baseCur).toUpperCase();
         // Attempt conversion
         try {
-            // If no cTo is provided, assume USD
+            // If no cTo is provided, assume default base
             let result = fx.convert(amount, {
                 from: cFrom,
                 to: cTo
