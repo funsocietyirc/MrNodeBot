@@ -12,7 +12,11 @@ const fx = require('money');
 const request = require('request-promise-native');
 const logger = require('../../lib/logger');
 const scheduler = require('../../lib/scheduler');
-const getSymbol = require('currency-symbol-map').getSymbolFromCurrency;
+const getSymbol = require('currency-symbol-map');
+
+
+// Add Symbols
+getSymbol.symbolCurrencyMap['฿'] = 'BTC';
 
 module.exports = app => {
     // Base currency
@@ -63,13 +67,13 @@ module.exports = app => {
                 });
             }
             // Set the rate
-            fx.rates.BTC = 1/btc.rate;
+            fx.rates.BTC = 1 / btc.rate;
         }))
         .catch(err => {
-          console.dir(err)
-          logger.error('Something went wrong getting currency rates', {
-              err
-          });
+            console.dir(err)
+            logger.error('Something went wrong getting currency rates', {
+                err
+            });
         })
     );
     // initial run
