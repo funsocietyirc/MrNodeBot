@@ -68,7 +68,7 @@ module.exports = app => {
                 }
                 // Find the base currency in the btc info
                 let btc = _.find(data, o => o.code === baseCur);
-                if (!btc || !_.isString(btc.code) || _.isEmpty(btc.code) || !_.isSafeInteger(btc.rate)) {
+                if (!btc || !btc.code || !_.isSafeInteger(btc.rate)) {
                     logger.error('Error fetching BitCoin data, data returned is not formated correctly', {
                         data
                     });
