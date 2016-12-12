@@ -19,6 +19,8 @@ const getSymbol = require('currency-symbol-map');
 _.set(getSymbol.currencySymbolMap, 'BTC', '฿');
 _.set(getSymbol.currencySymbolMap, '฿', 'BTC');
 
+const fixerApi = 'http://api.fixer.io/latest'; // API For Country exchange rates
+const btcApi = 'https://bitpay.com/api/rates'; // API For BTC exchange rates
 
 module.exports = app => {
     // Base currency
@@ -30,14 +32,14 @@ module.exports = app => {
     const updateRates = scheduler.schedule('updateCurRates', {
             hour: [...Array(24).keys()]
         }, () =>
-        request(
-            'http://api.fixer.io/latest', {
-                json: true,
-                method: 'get',
-                qs: {
-                    base: baseCur
-                }
-            })
+        // Get the initial conversion rates
+        request(fixerApi, {
+            json: true,
+            method: 'get',
+            qs: {
+                base: baseCur
+            }
+        })
         // Set the rate sin money.js
         .then(data => {
             // No rates available
@@ -53,11 +55,12 @@ module.exports = app => {
             fx.rates = data.rates
         })
         .then(() =>
-            request(
-                'https://bitpay.com/api/rates', {
-                    json: true,
-                    method: 'get'
-                })
+            // Get the BTC Rate
+            request(btcApi, {
+                json: true,
+                method: 'get'
+            })
+            // Set the BTC Rate
             .then(data => {
                 // No Data available
                 if (!_.isArray(data) || _.isEmpty(data)) {
@@ -68,7 +71,7 @@ module.exports = app => {
                 }
                 // Find the base currency in the btc info
                 let btc = _.find(data, o => o.code === baseCur);
-                if (!btc || !btc.code || isNaN(btc.rate)) {
+                if (!btc || !btc.code || isNaN(btc.rate) || btc.rate === 0) {
                     logger.error('Error fetching BitCoin data, data returned is not formated correctly', {
                         data
                     });
@@ -77,12 +80,9 @@ module.exports = app => {
                 // Set the BTC rate based on inverse exchange
                 fx.rates.BTC = 1 / btc.rate;
             }))
-        .catch(err => {
-            console.dir(err)
-            logger.error('Something went wrong getting currency rates', {
-                err
-            });
-        })
+        .catch(err => logger.error('Something went wrong getting currency rates', {
+            err
+        }))
     );
     // initial run
     if (_.isFunction(scheduler.jobs.updateCurRates.job)) scheduler.jobs.updateCurRates.job();

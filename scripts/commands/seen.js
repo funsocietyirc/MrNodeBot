@@ -84,7 +84,7 @@ module.exports = app => {
                     case 'quit':
                         output.insert('Quitting').insertBold(!_.isEmpty(lastAction.channels) ? `[${lastAction.channels.replace(',',', ')}]` : 'on');
                         output.insert(Moment(lastAction.timestamp).fromNow());
-                        if (!lastSaid || lastAction.quit.nick != lastSaid.from) output.insert('as').insertBold(lastAction.nick);
+                        if (!lastSaid || lastAction.nick != lastSaid.from) output.insert('as').insertBold(lastAction.nick);
                         output.insert(lastAction.reason);
                         break;
                     case 'kick':
