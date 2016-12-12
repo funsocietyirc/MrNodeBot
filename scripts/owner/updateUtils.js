@@ -84,10 +84,11 @@ module.exports = app => {
                 }, (diffCode, diffFiles, diffErr) => {
                     // Something went wrong
                     if (diffCode !== 0 || _.isEmpty(diffFiles)) {
-                        logger.error('Could not read the commit log during update', {
-                            err
+                        logger.error('Was unable to read the commit ', {
+                            diffCode,
+                            diffFiles
                         });
-                        app.say(to, 'Could not get a read out the last commit');
+                        app.say(to, 'I was unable to read the commit log');
                         return;
                     }
 
