@@ -75,7 +75,7 @@ module.exports = app => {
         }
         // Normalize
         cFrom = cFrom.toUpperCase();
-        cTo = cTo.toUpperCase() || baseCur;
+        cTo = (cTo || baseCur).toUpperCase();
         // Attempt conversion
         try {
             // If no cTo is provided, assume USD
