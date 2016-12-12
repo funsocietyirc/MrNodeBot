@@ -14,7 +14,6 @@ const logger = require('../../lib/logger');
 const scheduler = require('../../lib/scheduler');
 const getSymbol = require('currency-symbol-map');
 
-
 // Add Symbols
 // TODO Extract this into a better system
 _.set(getSymbol.currencySymbolMap, 'BTC', '฿');
@@ -31,13 +30,14 @@ module.exports = app => {
     const updateRates = scheduler.schedule('updateCurRates', {
             hour: [...Array(24).keys()]
         }, () =>
-        request('http://api.fixer.io/latest', {
-            json: true,
-            method: 'get',
-            qs: {
-                base: baseCur
-            }
-        })
+        request(
+            'http://api.fixer.io/latest', {
+                json: true,
+                method: 'get',
+                qs: {
+                    base: baseCur
+                }
+            })
         // Set the rate sin money.js
         .then(data => {
             // No rates available
@@ -52,27 +52,31 @@ module.exports = app => {
             // Adjust rates in money
             fx.rates = data.rates
         })
-        .then(() => request('https://bitpay.com/api/rates', {
-            json: true,
-            method: 'get'
-        }).then(data => {
-            // No Data available
-            if (!_.isArray(data) || _.isEmpty(data)) {
-                logger.error('Error fetching BitCoin data for exchange seeding', {
-                    data
-                });
-                return;
-            }
-
-            let btc = _.find(data, o => o.code === baseCur);
-            if (!btc || !_.isString(btc.code) || _.isEmpty(btc.code) || !_.isSafeInteger(btc.rate)) {
-                logger.error('Error fetching bitCoin data, data returned is not formated correctly', {
-                    data
-                });
-            }
-            // Set the rate
-            fx.rates.BTC = 1 / btc.rate;
-        }))
+        .then(() =>
+            request(
+                'https://bitpay.com/api/rates', {
+                    json: true,
+                    method: 'get'
+                })
+            .then(data => {
+                // No Data available
+                if (!_.isArray(data) || _.isEmpty(data)) {
+                    logger.error('Error fetching BitCoin data for exchange seeding', {
+                        data
+                    });
+                    return;
+                }
+                // Find the base currency in the btc info
+                let btc = _.find(data, o => o.code === baseCur);
+                if (!btc || !_.isString(btc.code) || _.isEmpty(btc.code) || !_.isSafeInteger(btc.rate)) {
+                    logger.error('Error fetching BitCoin data, data returned is not formated correctly', {
+                        data
+                    });
+                    return;
+                }
+                // Set the BTC rate based on inverse exchange
+                fx.rates.BTC = 1 / btc.rate;
+            }))
         .catch(err => {
             console.dir(err)
             logger.error('Something went wrong getting currency rates', {
@@ -114,7 +118,7 @@ module.exports = app => {
                 from: cFrom,
                 to: cTo
             });
-            app.say(to, `At the current exchange rate ${getSymbol(cFrom)}${amount} ${cFrom} is ${getSymbol(cTo)}${result.toFixed(2)} ${cTo}, ${from}`);
+            app.say(to, `At the current exchange rate ${getSymbol(cFrom) || ''}${amount} ${cFrom} is ${getSymbol(cTo) || ''}${result.toFixed(2)} ${cTo}, ${from}`);
         } catch (err) {
             app.say(to, `I am unable to convert ${cFrom} to ${cTo} ${from}`);
         }
