@@ -255,11 +255,11 @@ module.exports = {
             greetIgnore: ['#MrNodeBot'],
             greeterDealy: 20,
         },
-        idleChat: { // New
-            enabled: false, // New
-            timeOutInMins: 180, // New
+        idleChat: {
+            enabled: false,
+            timeOutInMins: 180,
             channels: ['#MrNodeBot']
-        }, // New
+        },
         twitter: {
             enabled: false,
             followers: 'funsocietyirc',
@@ -269,6 +269,9 @@ module.exports = {
             randomChance: 5000,
             enabled: false,
             ignoredChans: []
+        },
+        exchangeRate: {
+          base: 'USD'
         }
     },
 };

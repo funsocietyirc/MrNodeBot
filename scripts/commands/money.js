@@ -7,6 +7,7 @@ const scriptInfo = {
 };
 
 const _ = require('lodash');
+require('lodash-addons');
 const fx = require('money');
 const request = require('request-promise-native');
 const logger = require('../../lib/logger');
@@ -18,7 +19,11 @@ const baseCur = 'USD';
 fx.base = baseCur;
 
 module.exports = app => {
-    console.dir(fx);
+    // Base currency
+    const baseCur = _.getString(_.get(app.Config, 'features.exchangeRate.base'), 'USD');
+    // Set base currency in money.js
+    fx.base = baseCur;
+
     const updateRates = scheduler.schedule('updateCurRates', {
             hour: [new scheduler.Range(0, 23)]
         }, () =>
@@ -65,7 +70,7 @@ module.exports = app => {
             return;
         }
         if (!cFrom) {
-            app.say(to, `I need a currancy to convert from`);
+            app.say(to, `I need a currency to convert from`);
             return;
         }
         cTo = cTo || baseCur;
@@ -83,7 +88,7 @@ module.exports = app => {
 
     // Evaluate
     app.Commands.set('exchange', {
-        desc: '[amount from to?] - Convert currancy based on current exchange rates',
+        desc: '[amount from to?] - Convert currency based on current exchange rates',
         access: app.Config.accessLevels.identified,
         call: exchange
     });
