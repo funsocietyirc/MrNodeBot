@@ -83,8 +83,8 @@ module.exports = app => {
 
     // Evaluate
     app.Commands.set('exchange', {
-        desc: '',
-        access: app.Config.accessLevels.owner,
+        desc: '[amount from to?] - Convert currancy based on current exchange rates',
+        access: app.Config.accessLevels.identified,
         call: exchange
     });
 
