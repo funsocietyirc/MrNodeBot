@@ -20,7 +20,7 @@ fx.base = baseCur;
 
 module.exports = app => {
     // Base currency
-    const baseCur = _.getString(_.get(app.Config, 'features.exchangeRate.base'), 'USD');
+    const baseCur = _.getString(_.get(app.Config, 'features.exchangeRate.base'), 'USD').toUpperCase();
     // Set base currency in money.js
     fx.base = baseCur;
 
@@ -73,7 +73,10 @@ module.exports = app => {
             app.say(to, `I need a currency to convert from`);
             return;
         }
-        cTo = cTo || baseCur;
+        // Normalize
+        cFrom = cFrom.toUpperCase();
+        cTo = cTo.toUpperCase() || baseCur;
+        // Attempt conversion
         try {
             // If no cTo is provided, assume USD
             let result = fx.convert(amount, {
