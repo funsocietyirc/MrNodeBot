@@ -57,7 +57,7 @@ module.exports = app => {
             }
 
             let btc = _.find(data, o => o.code === baseCur);
-            if (!btc || !_isString(btc.code) || _.isEmpty(btc.code) || !_.isSafeInteger(btc.rate)) {
+            if (!btc || !_.isString(btc.code) || _.isEmpty(btc.code) || !_.isSafeInteger(btc.rate)) {
                 logger.error('Error fetching bitCoin data, data returned is not formated correctly', {
                     data
                 });
@@ -65,9 +65,12 @@ module.exports = app => {
             // Set the rate
             fx.rates.BTC = btc.rate;
         }))
-        .catch(err => logger.error('Something went wrong getting currency rates', {
-            err
-        }))
+        .catch(err => {
+          console.dir(err)
+          logger.error('Something went wrong getting currency rates', {
+              err
+          });
+        })
     );
     // initial run
     if (_.isFunction(scheduler.jobs.updateCurRates.job)) scheduler.jobs.updateCurRates.job();
