@@ -271,7 +271,11 @@ module.exports = {
             ignoredChans: []
         },
         exchangeRate: {
-          base: 'USD'
+            base: 'USD',
+            updateScheduleTime: {
+                hour: [...Array(24).keys()], // Every hour
+                minute: 0 // On the hour
+            }
         }
     },
 };

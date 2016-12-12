@@ -25,14 +25,15 @@ const btcApi = 'https://bitpay.com/api/rates'; // API For BTC exchange rates
 module.exports = app => {
     // Base currency
     const baseCur = _.getString(_.get(app.Config, 'features.exchangeRate.base'), 'USD').toUpperCase();
+    const updateScheduleTime = _.get(app.Config, 'features.exchangeRate.updateScheduleTime', {
+        hour: [...Array(24).keys()], // Every hour
+        minute: 0 // On the hour
+    });
 
     // Set base currency in money.js
     fx.base = baseCur;
 
-    const updateRates = scheduler.schedule('updateCurRates', {
-            hour: [scheduler.Range(0,23)],
-            minute: 0
-        }, () =>
+    scheduler.schedule('updateCurRates', updateScheduleTime, () =>
         // Get the initial conversion rates
         request(fixerApi, {
             json: true,
@@ -81,6 +82,7 @@ module.exports = app => {
                 // Set the BTC rate based on inverse exchange
                 fx.rates.BTC = 1 / btc.rate;
             }))
+        // Problem with request chains
         .catch(err => logger.error('Something went wrong getting currency rates', {
             err
         }))
@@ -93,6 +95,11 @@ module.exports = app => {
 
     // Provide exchange
     const exchange = (to, from, text, message) => {
+        // No exchange rates available
+        if (!_.isObject(fx.rates) || _.isEmpty(fx.rates)) {
+            app.say(to, `It seems I am without the current exchange rates, sorry ${from}`);
+            return;
+        }
         // No text available
         if (_.isEmpty(text)) {
             app.say(to, `I need some more information ${from}`);
@@ -121,7 +128,9 @@ module.exports = app => {
                 to: cTo
             });
             app.say(to, `At the current exchange rate ${getSymbol(cFrom) || ''}${amount} ${cFrom} is ${getSymbol(cTo) || ''}${result.toFixed(2)} ${cTo}, ${from}`);
-        } catch (err) {
+        }
+        // Problem with money.js conversion
+        catch (err) {
             app.say(to, `I am unable to convert ${cFrom} to ${cTo} ${from}`);
         }
     };
