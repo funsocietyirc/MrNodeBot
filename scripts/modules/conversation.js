@@ -21,7 +21,7 @@ module.exports = app => {
     const converse = (to, from, text, message) => {
         app.Config.features.conversational.enabled = !_.isBoolean(app.Config.features.conversational.enabled) ? true : !app.Config.features.conversational.enabled;
         let formatText = app.Config.features.conversational.enabled ? 'now' : 'no longer';
-        app.say(to, `I am ${formatText} conversational`);
+        app.action(to, `is ${formatText} conversational`);
     };
 
     const listen = (to, from, text, message, is) => {
