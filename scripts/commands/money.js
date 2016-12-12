@@ -30,7 +30,7 @@ module.exports = app => {
     fx.base = baseCur;
 
     const updateRates = scheduler.schedule('updateCurRates', {
-            hour: [...Array(24).keys()]
+            hour: [scheduler.Range(0,23)]
         }, () =>
         // Get the initial conversion rates
         request(fixerApi, {
