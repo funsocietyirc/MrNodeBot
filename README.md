@@ -23,7 +23,7 @@ The bot currently depends on NickServ services supporting the ACC command for ce
 -   Edit Configuration file
 -   Configure database
     -   By default the bot will use sqlite3, ```npm install sqlite3```
-    -   If using mysql ```npm install mysql```
+    -   If using MySql ```npm install mysql```
         -   Create a Schema and be sure to give it a utf8mb4_unicode_ci character set (CREATE DATABASE db_name CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci)
         -   Modify the config.js accordingly
         -   Once properly configured and run for the first time, the Bot will provision the database schema using migrations
@@ -81,7 +81,7 @@ The bot currently depends on NickServ services supporting the ACC command for ce
 -   For most features a Google API key with Shortener service, SafeSearch service, and YoutTube search service enable is required, how ever if one is not provided,
 | the bot will try to gracefully fall back onto is.gd
 
-## Command Access levels
+## Command Access Levels
 -   **owner** - The Command can only be run by the bot owner (hard coded username/host combo in config.js)
 -   **admin** - The Command can be run by the owner or anyone in the admin list
 -   **identified** - The Command can be run by anyone using a nick identified with services
@@ -90,6 +90,9 @@ The bot currently depends on NickServ services supporting the ACC command for ce
 -   **channelOpIdentified** - the Command can be run by the owner, the admins, or anyone with ops in the channel who are also identified
 -   **channelVoice** - the Command can be run by the owner, the the ops, and the voices in the channel it is originated from
 -   **channelVoiceIdentified** - the Command can be run by identified voices, ops in the channel originated from, or owner and admins
+
+## Knex Migrations
+This project is powered by knexjs and takes advantage of its migration system. In order to use migrations ```npm install -g knex``` and use the **knex** command ex ```knex migrate:make add_users_table ```. More instructions can be found [here](http://knexjs.org/#Installation-migrations). The bot will check for and install new migrations on startup.
 
 Have questions? Looking to chat? Join us on #fsociety on irc.freenode.net
 
