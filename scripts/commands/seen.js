@@ -133,7 +133,6 @@ module.exports = app => {
             })
             .then(sendToIRC)
             .catch(err => {
-                console.dir(err)
                 logger.error('Error in the last active Promise.all chain', {
                     err
                 });

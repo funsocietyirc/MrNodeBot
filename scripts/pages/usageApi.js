@@ -35,7 +35,6 @@ module.exports = app => {
                     logger.error('Error in api.usage.channels.available', {
                         err
                     });
-                    console.dir(err);
                     res.json({
                         status: 'error'
                     });

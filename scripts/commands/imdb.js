@@ -30,7 +30,6 @@ module.exports = app => {
                     let output = new ircTypography.StringBuilder({
                         logo: 'imdb',
                     });
-                    console.dir(app._ircClient.supported)
                     return short(`https://www.imdb.com/title/${data.imdbID}`)
                         .then(shortUrl => {
                             output

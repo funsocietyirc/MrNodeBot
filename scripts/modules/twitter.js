@@ -20,7 +20,6 @@ module.exports = app => {
     if (!app._twitterClient) return scriptInfo;
 
     const say = (tweet, shortUrl) => {
-        console.dir(tweet);
         // Announce to Channels
         app.Config.features.twitter.channels.forEach((chan) => {
             if (!twitterEnabled) return;

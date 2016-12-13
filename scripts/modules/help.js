@@ -80,7 +80,6 @@ module.exports = app => {
       handler: (req, res) => {
           // Return sorted result
           let results = _(app.LoadedScripts).map('info').compact().sortBy('name').value();
-          console.dir(results);
           res.render('scripts', {
               // Do not expose full path
               results

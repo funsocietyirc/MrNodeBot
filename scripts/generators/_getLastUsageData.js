@@ -87,8 +87,6 @@ module.exports = (input, options) => new Promise((res, rej) => {
         let lastAction = _results.reject(r => _.includes(saidCats, r.key))[options.descending ? 'maxBy' : 'minBy'](r => Moment(r.timestamp).unix());
         let finalResults = _results.value();
 
-        console.dir(args);
-
         // Build the outputs
         let output = {
             args,

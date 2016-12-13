@@ -12,7 +12,12 @@ const fx = require('money');
 const request = require('request-promise-native');
 const logger = require('../../lib/logger');
 const scheduler = require('../../lib/scheduler');
+// Get a monatary symbol
 const getSymbol = require('currency-symbol-map');
+
+// Format moneys
+const accounting = require('accounting-js');
+console.dir(accounting.settings);
 
 // Add Symbols
 // TODO Extract this into a better system
@@ -107,11 +112,16 @@ module.exports = app => {
         }
         // Extract variables
         let [amount, cFrom, cTo] = text.split(' ');
+
+        // Normalize amount through accounting
+        amount = accounting.unformat(amount);
+
         // Verify amount is numeric
-        if (!_.isSafeInteger(_.parseInt(amount))) {
-            app.say(to, `That is not a valid amount ${from}`);
+        if (!amount) {
+            app.say(to, `Invalid amount or 0 amount given ${from}, I cannot do anything with that`);
             return;
         }
+
         // Verify we have a target currency
         if (!cFrom) {
             app.say(to, `I need a currency to convert from`);
@@ -127,7 +137,17 @@ module.exports = app => {
                 from: cFrom,
                 to: cTo
             });
-            app.say(to, `At the current exchange rate ${getSymbol(cFrom) || ''}${amount} ${cFrom} is ${getSymbol(cTo) || ''}${result.toFixed(2)} ${cTo}, ${from}`);
+
+            // Format result and amount throught accounting.js
+            result = accounting.formatMoney(result, {
+              symbol: getSymbol(cTo) || ''
+            });
+            amount = accounting.formatMoney(amount, {
+              symbol: getSymbol(cFrom) || ''
+            })
+
+            // Report back to IRC
+            app.say(to, `At the current exchange rate ${amount} ${cFrom} is ${result} ${cTo}, ${from}`);
         }
         // Problem with money.js conversion
         catch (err) {

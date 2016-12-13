@@ -24,6 +24,7 @@
     "npm": ">=4.0.0"
   },
   "dependencies": {
+    "accounting-js": "^1.1.1",
     "app-root-path": "^2.0.1",
     "body-parser": "^1.15.0",
     "bookshelf": "^0.10.0",
@@ -63,7 +64,7 @@
     "shelljs": "^0.7.5",
     "twit": "^2.2.5",
     "urijs": "^1.18.4",
-    "watson-developer-cloud": "^2.13.1",
+    "watson-developer-cloud": "^2.14.0",
     "winston": "^2.3.0",
     "winston-daily-rotate-file": "^1.4.0",
     "winston-logio-mirror": "^0.3.0",
