@@ -8,21 +8,14 @@ const scriptInfo = {
 
 const _ = require('lodash');
 require('lodash-addons');
-const fx = require('money');
 const request = require('request-promise-native');
 const logger = require('../../lib/logger');
 const scheduler = require('../../lib/scheduler');
 // Get a monatary symbol
 const getSymbol = require('currency-symbol-map');
-
-// Format moneys
+// Money and Accounting
+const fx = require('money');
 const accounting = require('accounting-js');
-console.dir(accounting.settings);
-
-// Add Symbols
-// TODO Extract this into a better system
-_.set(getSymbol.currencySymbolMap, 'BTC', '฿');
-_.set(getSymbol.currencySymbolMap, '฿', 'BTC');
 
 const fixerApi = 'http://api.fixer.io/latest'; // API For Country exchange rates
 const btcApi = 'https://bitpay.com/api/rates'; // API For BTC exchange rates
