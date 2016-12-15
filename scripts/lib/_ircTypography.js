@@ -81,8 +81,14 @@ class StringBuilder {
     // Append to Buffer
     append(text) {
         // No text detected
-        if (_.isUndefined(text) || _.isEmpty(text)) return this;
+        if (_.isUndefined(text) || !_.isString(text) || _.isEmpty(text)) return this;
         this.buffer = !_.isString(this.buffer) || _.isEmpty(this.buffer) ? text : `${this.buffer} ${text} ${this.options.divider} `;
+        return this;
+    };
+    // Prepend text to buffer
+    prepend(text) {
+        if (_.isUndefined(text) || !_.isString(text) || _.isEmpty(text)) return this;
+        this.buffer = `${text} ${this.options.divider} ${this.buffer}`;
         return this;
     };
     // Insert into buffer
