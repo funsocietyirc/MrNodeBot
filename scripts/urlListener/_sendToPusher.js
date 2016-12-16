@@ -5,7 +5,7 @@ const pusher = require('../../lib/pusher');
 
 module.exports = results => new Promise(resolve => {
     // Bail if we do not have pusher
-    if (!pusher) return resulve(results);
+    if (!pusher) return resolve(results);
 
     // Decide which pusher channel to push over
     let channel = /\.(gif|jpg|jpeg|tiff|png)$/i.test(results.url) ? 'image' : 'url';
