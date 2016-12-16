@@ -6,9 +6,26 @@ chai.use(require('chai-moment'));
 const moment = require('moment');
 const expect = chai.expect;
 const _ = require('lodash');
+const c = require('irc-colors');
 
 const config = require('../config');
 const helpers = require('../helpers');
+
+describe('Title line should provide IRC formatting', () => it('should format', () => {
+  let sentence = 'This is a title line';
+  let encoded = c.white.bold.bgblack(sentence);
+  let decoded = c.stripColorsAndStyle(encoded);
+  expect(sentence).to.not.equal(encoded);
+  expect(sentence).to.equal(decoded);
+}));
+
+describe('Url Pattern Regular Expression', () => {
+    let pattern = helpers.ValidHostExpression;
+    let validHosts = ['www.google.com', '127.0.0.1', 'this'];
+    let invaldHosts = ['http://www.google.com', 'this/is/a/test']
+    it('should pass valid hosts', () => _.each(validHosts, host => expect(host).to.match(pattern)));
+    it('should vail invalid hosts', () => _.each(invaldHosts, host => expect(host).to.not.match(pattern)));
+});
 
 describe('Fake Space character Regex Expression', () => it('should match all given chars', () => expect(
     [
@@ -41,9 +58,17 @@ describe('Fake Space character Regex Expression', () => it('should match all giv
         '\u200D',
         '\u2060',
         '\uFEFF',
-    ].join('').replace(helpers.RemoveNonPrintChars, '').trim()).to.be.empty));
+    ].join('').replace(helpers.FakeSpaceChars, '').trim()).to.be.empty));
 
 describe('Non printing character Regex Expression', () => it('should match all given chars', () => expect(['\u0002', '\u001F', '\u0016', '\u0003', '\u000F'].join('').replace(helpers.RemoveNonPrintChars, '').trim()).to.be.empty));
+
+describe('Strip New Line Regex Expression', () =>
+    it('should match all given chars', () =>
+        _.each(['\r', '\n', '\r\n','\n\r'], result =>
+            expect(helpers.StripNewLine(result).trim()).to.be.empty
+        )
+    )
+);
 
 describe('Rot13 Encode / Decode', () => {
     let sentence = 'How are you today, I am fine, I am a Robot...';

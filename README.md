@@ -38,6 +38,9 @@ If you want to be able to use commands like update, restart, and halt while havi
 -   SED Corrections
 -   URL Announce
 
+## Unit Testing
+Unit testing is being introduced and has a long way to go to catch up. To run available tests ```npm test```
+
 ## Technologies
 -   Query Builder / Migrations [Knex.js](http://bookshelfjs.org/)
 -   ORM [Bookshelf.js](http://bookshelfjs.org/)
@@ -88,6 +91,8 @@ If you want to be able to use commands like update, restart, and halt while havi
     -   [chai](https://github.com/chaijs/chai)
     -   [chai-as-promised](https://www.npmjs.com/package/chai-as-promised)
     -   [chai-moment](date assertions for chai, powered by moment)
+    -   [chai-bookshelf](http://chaijs.com/plugins/chai-bookshelf/)
+    -   [simple-mock](https://github.com/jupiter/simple-mock)
 
 ## API Keys
 -   For most features a Google API key with Shortener service, SafeSearch service, and YouTube search service enabled is required, however, if one is not provided, the bot will try to gracefully fall back onto is.gd

@@ -1,7 +1,6 @@
 'use strict';
 // Includes
 const moment = require('moment');
-const logger = require('./lib/logger');
 const c = require('irc-colors');
 const _ = require('lodash');
 
@@ -25,7 +24,6 @@ const AccessString = str => {
         case 7:
             return 'ChannelVoiceIdentified';
         default:
-            logger.error(`Unknown command type ${str} used`);
             return 'Unknown';
     }
 };
@@ -42,14 +40,7 @@ const TitleLine = text => c.white.bold.bgblack(text);
 const Plural = (text, number) => number > 1 || number === 0 ? text + 's' : text;
 
 // Strip new lines
-const StripNewLine = text => text.replace(/(?:\r\n|\r|\n)/g, ' ');
-
-// Round numbers
-const RoundNumber = (num, decimals) => {
-    decimals = decimals || 2;
-    var t = Math.pow(10, decimals);
-    return (Math.round((num * t) + (decimals > 0 ? 1 : 0) * (Math.sign(num) * (10 / Math.pow(100, decimals)))) / t).toFixed(decimals);
-};
+const StripNewLine = text => text.replace(/\r?\n|\r/g, ' ');
 
 // Rot 13
 const Rot13 = text => text.replace(/[a-zA-Z]/g, c => String.fromCharCode((c <= "Z" ? 90 : 122) >= (c = c.charCodeAt(0) + 13) ? c : c - 26));
@@ -65,7 +56,6 @@ module.exports = {
     RemoveNonPrintChars,
     ValidHostExpression,
     Rot13,
-    RoundNumber,
     StripNewLine,
     Plural,
     TitleLine,

@@ -12,6 +12,7 @@ const Models = require('bookshelf-model-loader');
 const helpers = require('../../helpers');
 const logger = require('../../lib/logger');
 const typo = require('../lib/_ircTypography');
+const accounting = require('accounting-js');
 
 const _ = require('lodash');
 
@@ -98,7 +99,7 @@ module.exports = app => {
                     output = output + space + `Most of the time ${channel} is ${response.docSentiment.type}`;
                     output = output + space + `They are also interested in: ${taxonomy}`;
                     output = output + space + `The emotional state of ${channel} is: `;
-                    _.each(response.docEmotions, (value, key) => output = output + ` ${_.capitalize(key)}: ${helpers.RoundNumber(value * 100)}%`);
+                    _.each(response.docEmotions, (value, key) => output = output + ` ${_.capitalize(key)}: ${accounting.toFixed(value * 100,0)}%`);
                     // Report back to IRC
                     app.say(to, output);
                 });
@@ -157,7 +158,7 @@ module.exports = app => {
                     output = output + space + `Most of the time ${nick} is ${response.docSentiment.type}`;
                     output = output + space + `They are also interested in: ${taxonomy}`;
                     output = output + space + `Their emotional state is: `;
-                    _.each(response.docEmotions, (value, key) => output = output + ` ${_.capitalize(key)}: ${helpers.RoundNumber(value * 100)}%`);
+                    _.each(response.docEmotions, (value, key) => output = output + ` ${_.capitalize(key)}: ${accounting.toFixed(value * 100,0)}%`);
 
                     // Report back to IRC
                     app.say(to, output);

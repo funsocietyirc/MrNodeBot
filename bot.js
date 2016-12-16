@@ -1,4 +1,7 @@
-/** MrNodeBot IRC Bot By IronY */
+/**
+ * @module bot
+ * @author IronY
+ */
 'use strict';
 
 // Node Libs
@@ -21,7 +24,7 @@ require('./extensions');
 // Extend For Un-cache
 require('./lib/uncache')(require);
 
-// Dynamic collections
+/** Dynamically created collections */
 const dynCollections = _([
     'AdmCallbacks', // Administrative commands
     'NickChanges', // Fired On Nick changes
@@ -41,37 +44,45 @@ const dynCollections = _([
     'OnCtcp', // Fired when a ctcp is received
 ]);
 
+/**
+ * MrNodeBot primary class
+ * @param {function} [callback] - A callback to fire after registering with the server
+ * @param {string} [configPath=config.js] - a full path to a configuration file
+ */
 class MrNodeBot {
     constructor(callback, configPath) {
         // Assign and normalize callback
         this._callback = _.isFunction(callback) ? callback : false;
 
-        // Configuration Object
+        /** Configuration Object */
         this.Config = require(configPath || './config');
         this.Config.irc.autoConnect = false;
 
-        // Set Script Directories
+        /** Script Directories */
         this._scriptDirectories = this.Config.bot.scripts;
 
-        // Grab twitter client
+        /** Twitter Client Instance */
         this._twitterClient = require('./lib/twitterClient');
 
-        // Grab the IRC instance
+        /** Irc Client Instance */
         this._ircClient = require('./lib/ircClient');
 
         // Dynamically create Collections
         dynCollections.each(v => this[v] = new HashMap());
 
-        // Lists
+        /** Ignore List */
         this.Ignore = [];
+        /** Admin list */
         this.Admins = [];
+        /** Loaded Scripts */
         this.LoadedScripts = [];
 
-        // Track root path
+        /** Application Root Path */
         this.AppRoot = require('app-root-path').toString();
 
-        // Class Variables that are initialized elsewhere
+        /** Database Instance */
         this.Database = null;
+        /** Web Server Instance */
         this.Webserver = null;
 
         // Init Chain
@@ -82,7 +93,7 @@ class MrNodeBot {
         this._initUserManager();
     };
 
-    // Init the Web Server
+    /** Initalize Web Server */
     _initWebServer() {
         logger.info(t('webServer.starting'));
         this.WebServer = require('./web/server')(this);
@@ -91,7 +102,7 @@ class MrNodeBot {
         }));
     };
 
-    // Init the IRC Bot
+    /** Initialize IRC client */
     _initIrc() {
         logger.info(t('irc.initializing'));
         // Connect the Bot to the irc network
@@ -165,7 +176,7 @@ class MrNodeBot {
             });
     };
 
-    // Init the Database subsystem
+    /** Initialize Databse Subsystem */
     _initDbSubSystem() {
         // We have a Database available
         if (this.Config.knex.enabled) {
@@ -182,7 +193,7 @@ class MrNodeBot {
         this.Database = false;
     };
 
-    // Initialize the user manager
+    /** Initialize User Manager */
     _initUserManager() {
         if (!this.Database) {
             logger.info(t('database.missing', {
@@ -195,14 +206,20 @@ class MrNodeBot {
         this._userManager = new UserManager();
     };
 
-    //noinspection JSMethodCanBeStatic
+    /**
+     * Clear file from Node cache
+     * @param {string} fullPath - Path to cached file
+     */
     _clearCache(fullPath) {
         require.uncache(require.resolve(fullPath));
     };
 
-    // Extensions Loader
-    // Read all JS files in the scripts directory and evaluate them
-    // During the update process this updates the script portions of the code
+    /**
+     * Extension Loader
+     * @description Read all JS files in the script diectories and require them.
+     * @param {string} dir - Directory to load scripts from
+     * @param {bool} [clearCache] - Should the files be cleared from the node cache
+     */
     _loadScriptsFromDir(dir, clearCache) {
         logger.info(t('scripts.initializing', {
             dir
@@ -245,7 +262,7 @@ class MrNodeBot {
             });
     };
 
-    // Init storage
+    /** Initialize Locale Storage subsystem*/
     _initStorageSubSystem() {
         // Load the storage before the Bot connects (Sync)
         storage.initSync();
@@ -275,7 +292,7 @@ class MrNodeBot {
         logger.info(t('storage.initialized'));
     };
 
-    // Read the configuration and alias any commands specified
+    /** Read the configuration and alias any commands specified*/
     _createCommandAliases() {
         // Read in command rebindings
         if (!this.Config.commandBindings || !_.isArray(this.Config.commandBindings)) return;
@@ -303,6 +320,10 @@ class MrNodeBot {
         });
     };
 
+    /**
+     * Reload all dynamic assets
+     * @param {bool} [clearCahce=false] - Should the assets also be uncached
+     */
     _loadDynamicAssets(clearCache = false) {
         // Clear dynamic assets
         if (clearCache) {
@@ -330,9 +351,11 @@ class MrNodeBot {
         });
     };
 
-    // Application Bootstrap
-    Bootstrap(hard) {
-        hard = hard || false;
+    /**
+     *  Boostrap the Bot, by either killing the process or reloading dynamic assets
+     * @param {bool} [hard=false] - Should We terminate the process
+     */
+    Bootstrap(hard = false) {
         if (hard) {
             logger.info(t('bootstrap.rebooting'));
             this._ircClient.disconnect();
@@ -343,7 +366,10 @@ class MrNodeBot {
         }
     };
 
-    // Drop non ascii and color code/style information
+    /**
+     *  Normalie text, replacing non print chars with nothing and fake space chars with a real space
+     * @param {string} text - The text to normalize
+     */
     _normalizeText(text) {
         if (_.isUndefined(text) || !_.isString(text)) return text;
         return c
@@ -353,7 +379,13 @@ class MrNodeBot {
             .trim();
     };
 
-    // Handle Action
+    /**
+     * IRC Action handler
+     * @param {string} from - Nick sending the message
+     * @param {string} to - Nick/Channel the message was received on
+     * @param {string} text - The message content
+     * @param {object} message - IRC information such as user, and host
+     */
     _handleAction(from, to, text, message) {
         text = this._normalizeText(text);
         // Do not handle our own actions, or those on the ignore list
@@ -371,8 +403,13 @@ class MrNodeBot {
         });
     };
 
-    // Handle Nick changes
-    _handleNickChanges(oldnick, newnick, channels, message) {
+    /**
+     * IRC Nick changes handler
+     * @param {string} oldnick - Original nickname received
+     * @param {string} newnick - The new nick the user has taken
+     * @param {string} channels  The IRC channels this was observed on
+     * @param {object} message - IRC information such as user, and host
+     */    _handleNickChanges(oldnick, newnick, channels, message) {
         // Return if user is on ignore list
         if (_.includes(this.Ignore, _.toLower(oldnick)) || _.includes(this.Ignore, _.toLower(newnick))) return;
 
@@ -393,7 +430,13 @@ class MrNodeBot {
         });
     };
 
-    // Handle On Notices
+    /**
+     * IRC Notice handler
+     * @param {string} from - Nick sending the message
+     * @param {string} to - Nick/Channel the message was received on
+     * @param {string} text - The message content
+     * @param {object} message - IRC information such as user, and host
+     */
     _handleOnNotice(from, to, text, message) {
         // Do not handle our own actions, or those on the ignore list
         if (from == this.nick || _.includes(this.Ignore, _.toLower(from))) return;
@@ -411,7 +454,12 @@ class MrNodeBot {
         });
     };
 
-    // Handle On Joins
+    /**
+     * IRC On Join Handler
+     * @param {string} channel -The Channel observed
+     * @param {string} nick - The Nick that joined
+     * @param {object} message - IRC information such as user, and host
+     */
     _handleOnJoin(channel, nick, message) {
         // Handle Ignore
         if (_.includes(this.Ignore, _.toLower(nick))) return;
@@ -433,7 +481,13 @@ class MrNodeBot {
         });
     };
 
-    // Handle On Part
+    /**
+     * IRC On Part Handler
+     * @param {string} channel - The Channel observed
+     * @param {string} nick - The Nick observed
+     * @param {string} reason - The part reason
+     * @param {object} message - IRC information such as user, and host
+     */
     _handleOnPart(channel, nick, reason, message) {
         reason = this._normalizeText(reason);
 
