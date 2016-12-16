@@ -12,7 +12,7 @@ const Models = require('bookshelf-model-loader');
 const excuse = require('../generators/_simpleExcuse');
 const logger = require('../../lib/logger');
 
-module.exports = (app) => {
+module.exports = app => {
 
     // Check Jeeks Website to make sure he is still alive
     app.Commands.set('jeek', {
@@ -55,14 +55,6 @@ module.exports = (app) => {
             // Report back to IRC
             excuse().then(excuses => app.say(to, _.first(excuses)));
         }
-    });
-
-    // Say Hello To Fr1end
-    app.OnJoin.set('fsociety-fr1end', {
-        call: (channel, nick, message) => {
-            if (nick == 'fr1end') app.say(channel, `Hello fr1end...`);
-        },
-        name: 'Hello fr1end'
     });
 
     // Show a very attractive wheel barrowa

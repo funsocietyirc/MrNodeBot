@@ -99,7 +99,6 @@ module.exports = app => {
                     output = output + space + `They are also interested in: ${taxonomy}`;
                     output = output + space + `The emotional state of ${channel} is: `;
                     _.each(response.docEmotions, (value, key) => output = output + ` ${_.capitalize(key)}: ${helpers.RoundNumber(value * 100)}%`);
-
                     // Report back to IRC
                     app.say(to, output);
                 });

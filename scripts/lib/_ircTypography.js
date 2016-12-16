@@ -1,5 +1,6 @@
 const c = require('irc-colors');
 const _ = require('lodash');
+require('lodash-addons');
 
 // Misc Icons
 const icons = {
@@ -67,13 +68,13 @@ class StringBuilder {
     // Build the options
     _buildOptions(options) {
         // Should we disable color
-        options.disableColor = _.isUndefined(options.disableColor) || !_.isBoolean(options.disableColor) || options.disableColor !== true ? false : true;
+        options.disableColor = _.getBoolean(_.get(options, 'disableColor'), false);
 
         // Establish divider
-        options.divider = _.isUndefined(options.divider) || !_.isString(options.divider) ? (options.disableColor ? c.stripColors(icons.sideArrow) : icons.sideArrow) : options.divider;
+        options.divider = _.getString(_.get(options, 'divider'), (options.disableColor ? c.stripColors(icons.sideArrow) : icons.sideArrow));
 
         // Initialize buffer with optional Logo
-        this.buffer = (_.isUndefined(options.logo) || !_.isString(options.logo) || !_.has(logos, options.logo)) ? '' : `${logos[options.logo]}`;
+        this.buffer = _.isUndefined(options.logo) || !_.isString(options.logo) || !_.has(logos, options.logo) ? '' : `${logos[options.logo]}`;
 
         // Set the options
         this.options = options;
@@ -81,19 +82,19 @@ class StringBuilder {
     // Append to Buffer
     append(text) {
         // No text detected
-        if (_.isUndefined(text) || !_.isString(text) || _.isEmpty(text)) return this;
+        if (!_.isString(text) || _.isEmpty(text)) return this;
         this.buffer = !_.isString(this.buffer) || _.isEmpty(this.buffer) ? text : `${this.buffer} ${text} ${this.options.divider} `;
         return this;
     };
     // Prepend text to buffer
     prepend(text) {
-        if (_.isUndefined(text) || !_.isString(text) || _.isEmpty(text)) return this;
+        if (!_.isString(text) || _.isEmpty(text)) return this;
         this.buffer = `${text} ${this.options.divider} ${this.buffer}`;
         return this;
     };
     // Insert into buffer
-    insert(text) {
-        if (_.isUndefined(text) || _.isEmpty(text)) return this;
+    insert(text, left = false) {
+        if (!_.isString(text) || _.isEmpty(text)) return this;
         this.buffer = this.buffer + ' ' + text;
         return this;
     };
@@ -108,22 +109,22 @@ class StringBuilder {
     };
     // Append color number
     appendColorNumber(num, title) {
-        if (!_.isUndefined(num) && !_.isEmpty(num)) return _.isString(title) && !_.isEmpty(title) ? `${title} ${this.append(colorNumber(num))}` : this.append(colorNumber(num));
+        if (!_.isEmpty(num)) return _.isString(title) && !_.isEmpty(title) ? `${title} ${this.append(colorNumber(num))}` : this.append(colorNumber(num));
         return this;
     };
     // Return color signed number
     appendColorSignedNumber(num, title) {
-        if (!_.isUndefined(num) && !_.isEmpty(num)) return _.isString(title) && !_.isEmpty(title) ? `${title} ${this.append(colorSignedNumber(num))}` : this.append(colorSignedNumber(num));
+        if (!_.isEmpty(num)) return _.isString(title) && !_.isEmpty(title) ? `${title} ${this.append(colorSignedNumber(num))}` : this.append(colorSignedNumber(num));
         return this;
     };
     // Add a Title
     appendBold(text) {
-        if (!_.isUndefined(text) && _.isString(text) && !_.isEmpty(text)) return this.append(c.bold(text));
+        if (_.isString(text) && !_.isEmpty(text)) return this.append(c.bold(text));
         return this;
     };
     // Inert a title
     insertBold(text) {
-        if (!_.isUndefined(text) && _.isString(text) && !_.isEmpty(text)) return this.insert(c.bold(text));
+        if (_.isString(text) && !_.isEmpty(text)) return this.insert(c.bold(text));
         return this;
     };
     // Return the buffer
