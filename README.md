@@ -83,6 +83,11 @@ If you want to be able to use commands like update, restart, and halt while havi
     -   [money](http://openexchangerates.github.io/money.js/) Convert exchange rates
     -   [currency-symbol-map](https://github.com/bengourley/currency-symbol-map) A function to lookup the currency symbol for a given currency code and vice versa
     -   [accounting-js](https://github.com/nashdot/accounting-js) Number, money and currency formatting library
+-   Testing
+    -   [mocha]()
+    -   [chai](https://github.com/chaijs/chai)
+    -   [chai-as-promised](https://www.npmjs.com/package/chai-as-promised)
+    -   [chai-moment](date assertions for chai, powered by moment)
 
 ## API Keys
 -   For most features a Google API key with Shortener service, SafeSearch service, and YouTube search service enabled is required, however, if one is not provided, the bot will try to gracefully fall back onto is.gd

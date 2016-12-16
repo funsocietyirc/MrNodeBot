@@ -4,7 +4,6 @@ const moment = require('moment');
 const logger = require('./lib/logger');
 const c = require('irc-colors');
 const _ = require('lodash');
-const startTime = moment();
 
 // String representation of access level
 const AccessString = str => {
@@ -31,8 +30,8 @@ const AccessString = str => {
     }
 };
 
-/* Get the current uptime */
-const StartTime = startTime;
+// Key track of the start time
+const StartTime = moment();
 
 /* Color stuffs */
 const ColorHelpArgs = text => text.replaceAll('[', c.red.bold('[')).replaceAll(']', c.red.bold(']'));

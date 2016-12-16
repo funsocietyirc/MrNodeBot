@@ -7,7 +7,7 @@ Description=MrNodeBot
 WorkingDirectory=/<path to project root>
 ExecStart=/usr/bin/node /<path to project root>/index.js
 Restart=always
-RestartSec=10                       # Restart service after 10 seconds if node service crashes
+RestartSec=2                       # Restart service after 10 seconds if node service crashes
 SyslogIdentifier=MrNodeBot
 
 User=<user created in readme.md>

@@ -69,5 +69,10 @@
     "winston-daily-rotate-file": "^1.4.0",
     "winston-logio-mirror": "^0.3.0",
     "x-ray": "^2.3.0"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "chai-moment": "^0.1.0",
+    "mocha": "^3.2.0"
   }
 }
