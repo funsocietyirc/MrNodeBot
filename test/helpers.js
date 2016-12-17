@@ -11,13 +11,14 @@ const c = require('irc-colors');
 const config = require('../config');
 const helpers = require('../helpers');
 
-describe('Title line should provide IRC formatting', () => it('should format', () => {
-  let sentence = 'This is a title line';
-  let encoded = c.white.bold.bgblack(sentence);
-  let decoded = c.stripColorsAndStyle(encoded);
-  expect(sentence).to.not.equal(encoded);
-  expect(sentence).to.equal(decoded);
-}));
+
+describe('Title Line should provide IRC Formatting', () => {
+    let sentence = 'This is a title line';
+    let encoded = c.white.bold.bgblack(sentence);
+    let decoded = c.stripColorsAndStyle(encoded);
+    it('should not have the same result for the sentence and the encoded sentence', () => expect(sentence).to.not.equal(encoded));
+    it('should have the same result for original sentence and decoded sentence', () => expect(sentence).to.equal(decoded));
+});
 
 describe('Url Pattern Regular Expression', () => {
     let pattern = helpers.ValidHostExpression;
@@ -64,7 +65,7 @@ describe('Non printing character Regex Expression', () => it('should match all g
 
 describe('Strip New Line Regex Expression', () =>
     it('should match all given chars', () =>
-        _.each(['\r', '\n', '\r\n','\n\r'], result =>
+        _.each(['\r', '\n', '\r\n', '\n\r'], result =>
             expect(helpers.StripNewLine(result).trim()).to.be.empty
         )
     )
@@ -74,7 +75,6 @@ describe('Rot13 Encode / Decode', () => {
     let sentence = 'How are you today, I am fine, I am a Robot...';
     let encoded = helpers.Rot13(sentence);
     let decoded = helpers.Rot13(encoded);
-
     it('should have difference values', () => expect(encoded).to.not.equal(decoded));
     it('should have the same initial value as decoded value', () => expect(sentence).to.equal(decoded));
 });
@@ -87,12 +87,7 @@ describe('Pluralize Helper', () => {
 
 describe('Start Time', () => {
     it('is a valid number', () => expect(helpers.StartTime).to.be.a.number);
-
-    it('is a valid Moment.js object', () => {
-        expect(helpers.StartTime).to.have.property('_isAMomentObject');
-        expect(helpers.StartTime._isAMomentObject).to.be.true;
-    });
-
+    it('is a valid Moment.js object', () => expect(helpers.StartTime._isAMomentObject).to.be.true);
     it('is in the future', () => expect(helpers.StartTime).to.be.beforeMoment(moment()));
 });
 

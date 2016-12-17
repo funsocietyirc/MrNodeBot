@@ -3,6 +3,7 @@
 *An IronY / FSociety Production*
 
 [![Dependencies](https://david-dm.org/funsocietyirc/mrnodebot.svg)](https://david-dm.org/funsocietyirc/mrnodebot)
+[![devDependencies Status](https://david-dm.org/funsocietyirc/mrnodebot/dev-status.svg)](https://david-dm.org/funsocietyirc/mrnodebot?type=dev)
 
 ## Special Considerations
 The bot currently depends on NickServ services supporting the ACC command for certain command authentication types. Networks confirmed to work include
@@ -39,6 +40,11 @@ If you want to be able to use commands like update, restart, and halt while havi
 -   Logging / Analytics
 -   SED Corrections
 -   URL Announce
+-   Popularity (upvote/downvote) system
+-   Mention system
+-   A Seen/Last-seen command to track usage
+-   API Endpoints connected to Analytics
+-   Express/Pug Web Front end
 
 ## Unit Testing
 Unit testing is being introduced and has a long way to go to catch up. To run available tests ```npm test```
@@ -103,7 +109,11 @@ I am currently in the processes of providing jsdoc style docblocks for documenta
     -   [docstrap](Theme for jsdoc)
 
 ## API Keys
--   For most features a Google API key with Shortener service, SafeSearch service, and YouTube search service enabled is required, however, if one is not provided, the bot will try to gracefully fall back onto is.gd
+-   **Google API Key** - For most features a *Google API key* with **Shortener** service, **SafeSearch** service, and **YouTube search** service enabled is required, however, if one is not provided, the bot will try to gracefully fall back onto is.gd
+-   **Imgur API Key** - A *Imgur API key* is required to extract meta data on Imgur links in the URL announcer
+-   **Twitter API Key** A *Twitter API key* is required to be able to send tweets, subscribe to tweets, or have a tweet sent out during the announce process
+
+
 
 ## Command Access Levels
 -   **owner** - The Command can only be run by the bot owner (hard coded username/host combo in config.js)
