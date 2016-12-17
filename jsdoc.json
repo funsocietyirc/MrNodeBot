@@ -1,0 +1,40 @@
+{
+    "tags": {
+        "allowUnknownTags": true,
+        "dictionaries": ["jsdoc", "closure"]
+    },
+    "source": {
+        "include": ["."],
+        "includePattern": ".js$",
+        "excludePattern": "(node_modules|docs|database/migrations|web/assets)"
+    },
+    "plugins": [
+        "plugins/markdown"
+    ],
+    "opts": {
+        "recurse": true,
+        "destination": "docs/",
+        "encoding": "utf8",
+        "verbose": true,
+        "template": "node_modules/ink-docstrap/template",
+        "readme": "README.md"
+    },
+    "templates": {
+        "cleverLinks": false,
+        "monospaceLinks": false,
+        "systemName": "MrNodeBot",
+        "footer": "",
+        "copyright": "2016 Dave Richer",
+        "includeDate": "true",
+        "navType": "inline",
+        "theme": "Cyborg",
+        "linenums": "true",
+        "collapseSymbols": "true",
+        "inverseNav": "false",
+        "outputSourceFiles": "true",
+        "outputSourcePath": "true",
+        "syntaxTheme": "javascript",
+        "sort": "true",
+        "search": "true"
+    }
+}

@@ -1,6 +1,9 @@
 ![Mr. NodeBot](/web/assets/bot.png?raw=true "Mr. NodeBot")
 
-By: IronY
+*An IronY / FSociety Production*
+
+[![npm](https://img.shields.io/npm/v/npm.svg)]()
+[![Dependencies](https://david-dm.org/funsocietyirc/mrnodebot.svg)](https://david-dm.org/funsocietyirc/mrnodebot)
 
 ## Special Considerations
 The bot currently depends on NickServ services supporting the ACC command for certain command authentication types. Networks confirmed to work include
@@ -40,6 +43,9 @@ If you want to be able to use commands like update, restart, and halt while havi
 
 ## Unit Testing
 Unit testing is being introduced and has a long way to go to catch up. To run available tests ```npm test```
+
+## Documentation
+I am currently in the processes of providing jsdoc style docblocks for documentation generation. You can generate the documentation by running ```npm run generate-docs```
 
 ## Technologies
 -   Query Builder / Migrations [Knex.js](http://bookshelfjs.org/)
@@ -87,12 +93,15 @@ Unit testing is being introduced and has a long way to go to catch up. To run av
     -   [currency-symbol-map](https://github.com/bengourley/currency-symbol-map) A function to lookup the currency symbol for a given currency code and vice versa
     -   [accounting-js](https://github.com/nashdot/accounting-js) Number, money and currency formatting library
 -   Testing
-    -   [mocha]()
+    -   [mocha](https://github.com/mochajs/mocha)
     -   [chai](https://github.com/chaijs/chai)
-    -   [chai-as-promised](https://www.npmjs.com/package/chai-as-promised)
-    -   [chai-moment](date assertions for chai, powered by moment)
-    -   [chai-bookshelf](http://chaijs.com/plugins/chai-bookshelf/)
+        -   [chai-as-promised](https://www.npmjs.com/package/chai-as-promised)
+        -   [chai-moment](date assertions for chai, powered by moment)
+        -   [chai-bookshelf](http://chaijs.com/plugins/chai-bookshelf/)
     -   [simple-mock](https://github.com/jupiter/simple-mock)
+-   Documentation
+    -   [jsdoc](https://github.com/jsdoc3/jsdoc)
+    -   [docstrap](Theme for jsdoc)
 
 ## API Keys
 -   For most features a Google API key with Shortener service, SafeSearch service, and YouTube search service enabled is required, however, if one is not provided, the bot will try to gracefully fall back onto is.gd

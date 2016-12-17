@@ -1,8 +1,9 @@
+'use strict';
+
 /**
  * @module bot
  * @author IronY
  */
-'use strict';
 
 // Node Libs
 const _ = require('lodash');
@@ -46,8 +47,8 @@ const dynCollections = _([
 
 /**
  * MrNodeBot primary class
- * @param {function} [callback] - A callback to fire after registering with the server
- * @param {string} [configPath=config.js] - a full path to a configuration file
+ * @param {function} [callback] A callback to fire after registering with the server
+ * @param {string} [configPath=config.js] a full path to a configuration file
  */
 class MrNodeBot {
     constructor(callback, configPath) {
@@ -56,6 +57,7 @@ class MrNodeBot {
 
         /** Configuration Object */
         this.Config = require(configPath || './config');
+        // Failsafe to prevent against autoconnect
         this.Config.irc.autoConnect = false;
 
         /** Script Directories */
@@ -74,6 +76,9 @@ class MrNodeBot {
         this.Ignore = [];
         /** Admin list */
         this.Admins = [];
+        // Initialize local storage
+        this._initStorageSubSystem();
+
         /** Loaded Scripts */
         this.LoadedScripts = [];
 
@@ -82,15 +87,19 @@ class MrNodeBot {
 
         /** Database Instance */
         this.Database = null;
+        this._initDbSubSystem();
+
         /** Web Server Instance */
         this.Webserver = null;
-
-        // Init Chain
-        this._initDbSubSystem();
         this._initWebServer();
-        this._initIrc();
-        this._initStorageSubSystem();
+
+        /** User Manager */
+        this._userManager = null;
         this._initUserManager();
+
+        /** Irc Client Instance */
+        this._ircClient = require('./lib/ircClient');
+        this._initIrc();
     };
 
     /** Initalize Web Server */
@@ -102,7 +111,9 @@ class MrNodeBot {
         }));
     };
 
-    /** Initialize IRC client */
+    /**
+     * Initialize IRC client
+     */
     _initIrc() {
         logger.info(t('irc.initializing'));
         // Connect the Bot to the irc network
@@ -208,7 +219,7 @@ class MrNodeBot {
 
     /**
      * Clear file from Node cache
-     * @param {string} fullPath - Path to cached file
+     * @param {string} fullPath Path to cached file
      */
     _clearCache(fullPath) {
         require.uncache(require.resolve(fullPath));
@@ -217,7 +228,7 @@ class MrNodeBot {
     /**
      * Extension Loader
      * @description Read all JS files in the script diectories and require them.
-     * @param {string} dir - Directory to load scripts from
+     * @param {string} dir Directory to load scripts from
      * @param {bool} [clearCache] - Should the files be cleared from the node cache
      */
     _loadScriptsFromDir(dir, clearCache) {
@@ -322,7 +333,7 @@ class MrNodeBot {
 
     /**
      * Reload all dynamic assets
-     * @param {bool} [clearCahce=false] - Should the assets also be uncached
+     * @param {bool} [clearCahce=false] Should the assets also be uncached
      */
     _loadDynamicAssets(clearCache = false) {
         // Clear dynamic assets
@@ -353,7 +364,7 @@ class MrNodeBot {
 
     /**
      *  Boostrap the Bot, by either killing the process or reloading dynamic assets
-     * @param {bool} [hard=false] - Should We terminate the process
+     * @param {bool} [hard=false] Should We terminate the process
      */
     Bootstrap(hard = false) {
         if (hard) {
@@ -368,7 +379,7 @@ class MrNodeBot {
 
     /**
      *  Normalie text, replacing non print chars with nothing and fake space chars with a real space
-     * @param {string} text - The text to normalize
+     * @param {string} text The text to normalize
      */
     _normalizeText(text) {
         if (_.isUndefined(text) || !_.isString(text)) return text;
@@ -381,10 +392,10 @@ class MrNodeBot {
 
     /**
      * IRC Action handler
-     * @param {string} from - Nick sending the message
-     * @param {string} to - Nick/Channel the message was received on
-     * @param {string} text - The message content
-     * @param {object} message - IRC information such as user, and host
+     * @param {string} from Nick sending the message
+     * @param {string} to Nick/Channel the message was received on
+     * @param {string} text The message content
+     * @param {object} message IRC information such as user, and host
      */
     _handleAction(from, to, text, message) {
         text = this._normalizeText(text);
@@ -405,11 +416,12 @@ class MrNodeBot {
 
     /**
      * IRC Nick changes handler
-     * @param {string} oldnick - Original nickname received
-     * @param {string} newnick - The new nick the user has taken
-     * @param {string} channels  The IRC channels this was observed on
-     * @param {object} message - IRC information such as user, and host
-     */    _handleNickChanges(oldnick, newnick, channels, message) {
+     * @param {string} oldnick Original nickname received
+     * @param {string} newnick The new nick the user has taken
+     * @param {string} channels The IRC channels this was observed on
+     * @param {object} message IRC information such as user, and host
+     */
+    _handleNickChanges(oldnick, newnick, channels, message) {
         // Return if user is on ignore list
         if (_.includes(this.Ignore, _.toLower(oldnick)) || _.includes(this.Ignore, _.toLower(newnick))) return;
 
@@ -432,10 +444,10 @@ class MrNodeBot {
 
     /**
      * IRC Notice handler
-     * @param {string} from - Nick sending the message
-     * @param {string} to - Nick/Channel the message was received on
-     * @param {string} text - The message content
-     * @param {object} message - IRC information such as user, and host
+     * @param {string} from Nick sending the message
+     * @param {string} to Nick/Channel the message was received on
+     * @param {string} text The message content
+     * @param {object} message IRC information such as user, and host
      */
     _handleOnNotice(from, to, text, message) {
         // Do not handle our own actions, or those on the ignore list
@@ -456,9 +468,9 @@ class MrNodeBot {
 
     /**
      * IRC On Join Handler
-     * @param {string} channel -The Channel observed
-     * @param {string} nick - The Nick that joined
-     * @param {object} message - IRC information such as user, and host
+     * @param {string} channel The Channel observed
+     * @param {string} nick The Nick that joined
+     * @param {object} message IRC information such as user, and host
      */
     _handleOnJoin(channel, nick, message) {
         // Handle Ignore
@@ -483,10 +495,10 @@ class MrNodeBot {
 
     /**
      * IRC On Part Handler
-     * @param {string} channel - The Channel observed
-     * @param {string} nick - The Nick observed
-     * @param {string} reason - The part reason
-     * @param {object} message - IRC information such as user, and host
+     * @param {string} channel The Channel observed
+     * @param {string} nick The Nick observed
+     * @param {string} reason The part reason
+     * @param {object} message IRC information such as user, and host
      */
     _handleOnPart(channel, nick, reason, message) {
         reason = this._normalizeText(reason);
@@ -512,7 +524,14 @@ class MrNodeBot {
         });
     };
 
-    // Handle On Kick
+    /**
+     * IRC on Kick Handler
+     * @param {string} channel Channel observed
+     * @param {string} nick Nick being kicked
+     * @param {string} by Nick doing kick
+     * @param {string} reason Reason for kick
+     * @param {object} message IRC information such as user, and host
+     */
     _handleOnKick(channel, nick, by, reason, message) {
         reason = this._normalizeText(reason);
 
@@ -544,7 +563,13 @@ class MrNodeBot {
         });
     };
 
-    // Handle On Quit
+    /**
+     * IRC on Quit Handler
+     * @param {string} nick Nick being kicked
+     * @param {string} reason Reason for kick
+     * @param {array} channels List of channels observed
+     * @param {object} message IRC information such as user, and host
+     */
     _handleOnQuit(nick, reason, channels, message) {
         reason = this._normalizeText(reason);
         //  Handle Ignore
@@ -568,7 +593,13 @@ class MrNodeBot {
         });
     };
 
-    // Handle Topic changes
+    /**
+     * IRC on Topic Handler
+     * @param {string} channel Channel observed having topic changed
+     * @param {string} topic Topic set
+     * @param {string} nick Nick observed setting the topic
+     * @param {object} message IRC information such as user, and host
+     */
     _handleOnTopic(channel, topic, nick, message) {
         topic = this._normalizeText(topic);
         //  Handle Ignore
@@ -592,7 +623,14 @@ class MrNodeBot {
         });
     };
 
-    // Handle CTCP commands
+    /**
+     * IRC on CTCP Handler
+     * @param {string} from Nick sending the CTCP Message
+     * @param {string} to Channel / Nick sent the CTCP Message
+     * @param {string} text Content of more message
+     * @param {string} type The type of CTCP mMessage
+     * @param {object} message IRC information such as user, and host
+     */
     _handleCtcpCommands(from, to, text, type, message) {
         text = this._normalizeText(text);
 
@@ -612,7 +650,10 @@ class MrNodeBot {
         });
     };
 
-    // Fired when the bot connects to the network
+    /**
+     * IRC on Registered handler
+     * @param {object} message Message returned from server
+     */
     _handleRegistered(message) {
         logger.info(t('events.registeredToIrc'));
 
@@ -629,7 +670,13 @@ class MrNodeBot {
         });
     };
 
-    // Process the commands
+    /**
+     * IRC Bot Command Handler
+     * @param {string} from Nick the Command originated from
+     * @param {string} to Nick / Channel the command is to
+     * @param {string} text Content of the message
+     * @param {object} message IRC information such as user, and host
+     */
     _handleCommands(from, to, text, message) {
         // Normalize text
         text = this._normalizeText(text);
@@ -730,7 +777,14 @@ class MrNodeBot {
         }));
     };
 
-    //noinspection JSMethodCanBeStatic
+    /**
+     * IRC Identified Command Handler
+     * @param {string} nick Nick Command was fired by
+     * @param {string} to Nick / Channel the Command was fired on
+     * @param {string} text Message Content
+     * @param {object} message IRC information such as user, and host
+     * @returns {boolean} command status
+     */
     _handleAuthenticatedCommands(nick, to, text, message) {
         text = this._normalizeText(text);
 
@@ -738,7 +792,7 @@ class MrNodeBot {
         let [user, acc, code] = text.split(' ');
 
         // Does not exist in call back, return
-        if (!this.AdmCallbacks.has(user)) return;
+        if (!this.AdmCallbacks.has(user)) return false;
 
         let admCall = this.AdmCallbacks.get(user),
             admCmd = this.Commands.get(admCall.cmd),
@@ -755,7 +809,7 @@ class MrNodeBot {
         if (!admCall.is.identified) {
             this.say(admCall.from, t('auth.notIdentified'));
             this.AdmCallbacks.remove(user);
-            return;
+            return false;
         }
 
         // Gate
@@ -778,7 +832,7 @@ class MrNodeBot {
                 type: admCall.cmd
             }));
             this.AdmCallbacks.remove(user);
-            return;
+            return false;
         }
 
         // Launch the command
@@ -805,9 +859,14 @@ class MrNodeBot {
 
         // Remove the callback from the stack
         this.AdmCallbacks.remove(user);
+        return true;
     };
 
-    // Send a message to the target
+    /**
+     * Say something over IRC
+     * @param {string} target Nick / Channel to say it to
+     * @param {string} message What to say
+     */
     say(target, message) {
         if (!_.isString(message) || _.isEmpty(message.trim())) return;
         let msg = randomString(message);
@@ -821,7 +880,11 @@ class MrNodeBot {
         this._ircClient.say(target, msg);
     };
 
-    // Send a action to the target
+    /**
+     * Perform an Action over IRC
+     * @param {string} target Nick / Channel to say it to
+     * @param {string} message What to say
+     */
     action(target, message) {
         if (!_.isString(message) || _.isEmpty(message.trim())) return;
         let msg = randomString(message);
@@ -835,7 +898,11 @@ class MrNodeBot {
         this._ircClient.action(target, msg);
     };
 
-    // Send notice to the target
+    /**
+     * Perform a Notice over IRC
+     * @param {string} target Nick / Channel to say it to
+     * @param {string} message What to say
+     */
     notice(target, message) {
         if (!_.isString(message) || _.isEmpty(message.trim())) return;
         let msg = randomString(message);
@@ -850,7 +917,7 @@ class MrNodeBot {
         this._ircClient.notice(target, msg);
     };
 
-    // Reload the configruation
+    /** Reload Bots Configuration Object */
     reloadConfiguration() {
         logger.info(t('bootstrap.reloadConfig'));
 
@@ -862,11 +929,10 @@ class MrNodeBot {
 
     // Properties
 
-    // Bots IRC Nickname
+    /** Bots IRC Nickname */
     get nick() {
         return this._ircClient.nick;
     };
-
     set nick(newNick) {
         // If we do not have a provided nick, use the settings default
         newNick = newNick || this.Config.irc.nick;
@@ -879,13 +945,10 @@ class MrNodeBot {
         this._ircClient.originalNick = newNick;
     };
 
-    // Bots IRC Channels
+    /** Get a list of joined IRC channels */
     get channels() {
         return _(this._ircClient.chans).keys().uniq().value();
     };
-
-    // Getting to allow quick setting of channels
-    // Warning: Refactoring this down for some odd reason breaks it
     set channels(value) {
         // Given an array
         if (_.isArray(value)) value.forEach(channel => {
@@ -906,5 +969,5 @@ class MrNodeBot {
 }
 
 
-// Export Class
+/** Expose the Bot */
 module.exports = MrNodeBot;

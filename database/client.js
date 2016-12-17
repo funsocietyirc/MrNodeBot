@@ -1,7 +1,8 @@
+'use strict';
+
 const _ = require('lodash');
 const logger = require('../lib/logger');
 const config = require('../config');
-// TODO Localize
 
 // Do not load ORM if we have a disabled database
 if (!config.knex.enabled) return;
