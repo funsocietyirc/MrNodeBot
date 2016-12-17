@@ -37,9 +37,7 @@ module.exports = app => {
     const updateCommand = (to, from, text, message) => {
         // Die if there is no git available
         if (!shell.which('git')) {
-            logger.error('Unable to locate git on host to perform update', {
-                err
-            });
+            logger.error('Unable to locate git on host to perform update');
             app.say(to, 'Can not update, Git is not available on the host');
             return;
         }
