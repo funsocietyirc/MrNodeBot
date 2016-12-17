@@ -2,7 +2,6 @@
 
 *An IronY / FSociety Production*
 
-[![npm](https://img.shields.io/npm/v/npm.svg)]()
 [![Dependencies](https://david-dm.org/funsocietyirc/mrnodebot.svg)](https://david-dm.org/funsocietyirc/mrnodebot)
 
 ## Special Considerations
