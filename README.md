@@ -103,7 +103,8 @@ I am currently in the processes of providing jsdoc style docblocks for documenta
         -   [chai-as-promised](https://www.npmjs.com/package/chai-as-promised)
         -   [chai-moment](date assertions for chai, powered by moment)
         -   [chai-bookshelf](http://chaijs.com/plugins/chai-bookshelf/)
-    -   [simple-mock](https://github.com/jupiter/simple-mock)
+            [sinon-chai](https://github.com/domenic/sinon-chai)
+    -   [sinon](https://github.com/sinonjs/sinon)
 -   Documentation
     -   [jsdoc](https://github.com/jsdoc3/jsdoc)
     -   [docstrap](Theme for jsdoc)
@@ -112,8 +113,6 @@ I am currently in the processes of providing jsdoc style docblocks for documenta
 -   **Google API Key** - For most features a *Google API key* with **Shortener** service, **SafeSearch** service, and **YouTube search** service enabled is required, however, if one is not provided, the bot will try to gracefully fall back onto is.gd
 -   **Imgur API Key** - A *Imgur API key* is required to extract meta data on Imgur links in the URL announcer
 -   **Twitter API Key** A *Twitter API key* is required to be able to send tweets, subscribe to tweets, or have a tweet sent out during the announce process
-
-
 
 ## Command Access Levels
 -   **owner** - The Command can only be run by the bot owner (hard coded username/host combo in config.js)

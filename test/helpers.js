@@ -96,11 +96,7 @@ describe('Access Strings', () => {
     // The Configuration File portion
     describe('Configuration File', () => {
         // The confiuration file is ok
-        it('has valid configuration file', () => {
-            expect(config.accessLevels).to.exist;
-            expect(config.accessLevels).to.be.an('object');
-            expect(config.accessLevels).to.not.be.empty;
-        });
+        it('has valid configuration file', () => expect(config.accessLevels).to.be.an('object'));
         // We get valid translations from the helpers
         it('value should be numeric', () => {
             for (const value in config.accessLevels) {
@@ -111,16 +107,7 @@ describe('Access Strings', () => {
 
     // The Helpers portion
     describe('Helpers', () => {
-        it('gets a valid string response from helper', () =>
-            _.each(config.accessLevels, (v, k) => {
-                expect(helpers.AccessString(v)).to.be.a.string;
-                expect(helpers.AccessString(v)).to.not.be.empty;
-            })
-        );
-
-        it('should get an invalid response from helper', () =>
-            expect(helpers.AccessString(config.accessLevels.length)).to.equal('Unknown')
-        );
-
+        it('gets a valid string response from helper', () => _.each(config.accessLevels, (v, k) => expect(helpers.AccessString(v)).to.be.a.string));
+        it('should get an invalid response from helper', () => expect(helpers.AccessString(config.accessLevels.length)).to.equal('Unknown'));
     });
 });

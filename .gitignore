@@ -3,7 +3,7 @@ persist
 .node-persist
 *.log
 .idea
-config.js
+/config.js
 *.back
 data.sqlite
 .tags
