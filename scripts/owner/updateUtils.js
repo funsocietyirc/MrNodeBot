@@ -50,7 +50,7 @@ module.exports = app => {
             // The Code did not exit properly
             if (code !== 0) {
                 logger.error('Something went wrong during pull request in update command', {
-                    err
+                    stderr
                 });
                 app.say(to, 'Something went wrong with the pull request');
                 return;
