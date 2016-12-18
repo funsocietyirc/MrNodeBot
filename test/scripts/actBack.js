@@ -17,7 +17,6 @@ describe('test the actBack script', () => {
     };
 
     let actback = null;
-    let mock = sinon.mock(require('../../bot'));
 
     beforeEach(() => {
         app.action = sinon.spy();
