@@ -130,7 +130,7 @@ module.exports = app => {
                                 }, (npmCode, npmStdOut, npmStdErr) => {
                                     if (npmCode !== 0) {
                                         logger.error('Something went wrong running NPM update', {
-                                            err
+                                            npmStdErr
                                         });
                                         app.say(to, 'Something went wrong running NPM update');
                                         return;
