@@ -6,13 +6,13 @@ const scriptInfo = {
 };
 
 const _ = require('lodash');
-const t = require('../../lib/localize');
 
 const color = require('irc-colors');
 const storage = require('node-persist');
 const helpers = require('../../helpers');
 
 // Localizations
+const t = require('../../lib/localize');
 const i18next = require('../../lib/i18next');
 i18next.addResources('en', 'admin', {
     needsUser: 'You need to specify a user',

@@ -177,6 +177,9 @@ module.exports = {
                 "password": "",
                 "userName": ""
             }
+        },
+        worldWeatherOnline: {
+            key: ''
         }
     },
     // Git Log configuration
@@ -276,6 +279,7 @@ module.exports = {
                 hour: [...Array(24).keys()], // Every hour
                 minute: 0 // On the hour
             }
-        }
+        },
+        weather: {},
     },
 };
