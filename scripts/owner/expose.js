@@ -7,10 +7,10 @@ const scriptInfo = {
 };
 
 const randToken = require('rand-token');
-const HashMap = require('hashmap');
+const mapSearch = require('../../helpers').MapSearch;
 
 module.exports = app => {
-    const tokens = new HashMap();
+    const tokens = new Map();
 
     // Register Route with Application
     const exposeRoute = (req, res) => {
@@ -39,10 +39,11 @@ module.exports = app => {
     });
 
     const expose = (to, from, text, message) => {
-        if (tokens.search(to)) {
-            app.say(from, `${to} is already exposed`);
+        // Make sure we do not already have the token
+        if (mapSearch(tokens, to)) {
+            app.say(to, `${to} is already exposed ${from}`);
             return;
-        }
+        };
         let token = ''
         do {
             token = randToken.generate(8);
@@ -54,8 +55,8 @@ module.exports = app => {
         let url = `${app.Config.express.address}${path}`;
         app.say(to, `-- Do not click this link if you do not wish to be Exposed -- ${app.nick} ${url}`);
         setTimeout(() => {
-            tokens.remove(token);
-            app.say(from, `Expose is no longer listening on ${to}.`);
+            tokens.delete(token);
+            app.say(to, `Expose is no longer listening on ${to}.`);
         }, 60000);
 
     };

@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node ./index.js",
     "test": "./node_modules/mocha/bin/mocha test/**/*.js --reporter spec",
+    "test-watch": "./node_modules/mocha/bin/mocha test/**/*.js --reporter spec -w",
     "generate-docs": "node_modules/.bin/jsdoc -c jsdoc.json"
   },
   "author": "Dave Richer <dave@develops.io>",
@@ -41,7 +42,6 @@
     "file-type": "^4.0.0",
     "freeport": "^1.0.5",
     "gitlog": "^2.0.1",
-    "hashmap": "^2.0.3",
     "i18next": "^4.1.1",
     "i18next-sync-fs-backend": "^0.1.0",
     "irc": "git://github.com/funsocietyirc/node-irc.git#37c8a67b0e68f2cfe78365df1ddbd4016b779a6c",

@@ -8,9 +8,20 @@ const expect = chai.expect;
 const _ = require('lodash');
 const c = require('irc-colors');
 
-const config = require('../config');
-const helpers = require('../helpers');
+const config = require('../../config');
+const helpers = require('../../helpers');
 
+describe('MapSearch works correctly', () => {
+    let map = null;
+
+    beforeEach(() => {
+        map = new Map([['key','value']]);
+    });
+
+    it('does not have value', () => expect(helpers.MapSearch(map, 'invalid')))
+    it('has a value', () => expect(helpers.MapSearch(map, 'value')).to.not.be.empty);
+    it('gets the propery', () => expect(helpers.MapSearch(map, 'value')).to.equal('key'));
+});
 
 describe('Title Line should provide IRC Formatting', () => {
     let sentence = 'This is a title line';

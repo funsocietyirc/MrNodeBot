@@ -11,7 +11,6 @@ const c = require('irc-colors');
 const fs = require('fs');
 const path = require('path');
 const storage = require('node-persist');
-const HashMap = require('hashmap');
 
 // Project libs
 const helpers = require('./helpers');
@@ -70,7 +69,7 @@ class MrNodeBot {
         this._ircClient = require('./lib/ircClient');
 
         // Dynamically create Collections
-        dynCollections.each(v => this[v] = new HashMap());
+        dynCollections.each(v => this[v] = new Map());
 
         /** Ignore List */
         this.Ignore = [];
@@ -808,7 +807,7 @@ class MrNodeBot {
         // This is a identified command and the user is not identified
         if (!admCall.is.identified) {
             this.say(admCall.from, t('auth.notIdentified'));
-            this.AdmCallbacks.remove(user);
+            this.AdmCallbacks.delete(user);
             return false;
         }
 
@@ -831,7 +830,7 @@ class MrNodeBot {
                 group: group,
                 type: admCall.cmd
             }));
-            this.AdmCallbacks.remove(user);
+            this.AdmCallbacks.delete(user);
             return false;
         }
 
@@ -858,7 +857,7 @@ class MrNodeBot {
         }
 
         // Remove the callback from the stack
-        this.AdmCallbacks.remove(user);
+        this.AdmCallbacks.delete(user);
         return true;
     };
 

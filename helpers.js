@@ -36,6 +36,19 @@ const AccessString = module.exports.AccessString = str => {
     }
 };
 
+/**
+ * Search a iterable for a value and return the first key
+ * @param {Map} map The Iterable
+ * @param {Object} value The value to search for
+ * @returns {Object}
+ */
+const MapSearch = module.exports.MapSearch = (map, value) => {
+    for (const [t, v] of map) {
+        if (v === value) return t;
+    }
+    return false;
+};
+
 /** Start Time in moment format */
 const StartTime = module.exports.StartTime = moment();
 

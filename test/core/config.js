@@ -5,7 +5,7 @@ const chai = require('chai');
 const expect = chai.expect;
 const _ = require('lodash');
 
-const config = require('../config');
+const config = require('../../config');
 
 describe('The Configuration File', () => {
     const requiredTopLevelKeys = [

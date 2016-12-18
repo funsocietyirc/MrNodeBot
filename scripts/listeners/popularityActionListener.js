@@ -9,7 +9,6 @@ const scriptInfo = {
 const _ = require('lodash');
 const Models = require('bookshelf-model-loader');
 const logger = require('../../lib/logger');
-const HashMap = require('hashmap');
 const scheduler = require('../../lib/scheduler');
 
 // Primary Logic
@@ -18,7 +17,7 @@ module.exports = app => {
     // Database not available
     if (!Models.Upvote) return scriptInfo;
 
-    const timeouts = new HashMap();
+    const timeouts = new Map();
     const defaultPattern = /gives (.*) (\+|\-)1(?: (.*))?/;
 
     const pattern = (
@@ -51,7 +50,7 @@ module.exports = app => {
     }, () => {
         logger.info('Cleaning up upvote data');
         timeouts.forEach((val, key) => {
-            if (_.isEmpty(val)) timeouts.remove(key);
+            if (_.isEmpty(val)) timeouts.delete(key);
         });
     });
 

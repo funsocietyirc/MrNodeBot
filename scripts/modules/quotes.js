@@ -5,7 +5,6 @@ const scriptInfo = {
     createdBy: 'IronY'
 };
 
-const HashMap = require('hashmap');
 const Moment = require('moment');
 const color = require('irc-colors');
 const storage = require('node-persist');
@@ -23,8 +22,8 @@ module.exports = app => {
 
     // Grab the collection
     storage.getItem('quotes', (err, value) => {
-        if (value) quotes = new HashMap(value);
-        else quotes = new HashMap();
+        if (value) quotes = new Map(value);
+        else quotes = new Map();
     });
 
     const addQuote = (to, from, text, message) => {
@@ -68,7 +67,7 @@ module.exports = app => {
         }
 
         // Delete quote
-        quotes.remove(text);
+        quotes.delete(text);
         storage.setItemSync('quotes', quotes);
 
         app.say(to, ' Quote has been removed');
