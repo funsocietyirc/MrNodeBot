@@ -44,7 +44,7 @@
     "gitlog": "^2.0.1",
     "i18next": "^4.1.1",
     "i18next-sync-fs-backend": "^0.1.0",
-    "irc": "git://github.com/funsocietyirc/node-irc.git#e8379bf19b86ced6d7c9f3d4338389fbde5859a3",
+    "irc": "git://github.com/funsocietyirc/node-irc.git#c438411dfd5bdbcc7399fc705fb50350757a3b2e",
     "irc-colors": "^1.3.1",
     "knex": "^0.12.6",
     "lodash": "^4.17.2",
