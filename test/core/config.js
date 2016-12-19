@@ -32,7 +32,7 @@ describe('The Configuration File', () => {
 
     describe('has the correct type for top level keys', () => {
         it('has the property ircClientDebug which is a boolean', () => expect(config.ircClientDebug).to.be.a('boolean'));
-        it('has the property project which is an object', () => expect(config.project).to.be.a('object'));
+        it('has the property project to be equal to package.json contents', () => expect(config.project).to.equal(require('../../package.json')));
         it('has the property bot which is an object', () => expect(config.bot).to.be.a('object'));
         it('has the property localization that is an object', () => expect(config.localization).to.be.a('object'));
         it('has the property userManager that is an object', () => expect(config.userManager).to.be.a('object'));
