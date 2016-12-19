@@ -35,13 +35,22 @@ module.exports = app => {
             try {
                 let result = eval(text);
                 result = _.isString(result) ? result : simpleString(result);
-                let splitResults = result.split('\n') || [];
+                let splitResults = _.chunk(result.split('\n') || [], 50);
                 logger.info(`Eval result:`, {
                     result: splitResults
                 });
-                _.each(splitResults, line => app._ircClient.cSay(from, to, line));
+                // Stagger call back to prevent flooding
+                _.each(
+                    splitResults,
+                    (chunk, k) => _.each(
+                        chunk, (line, l) => setTimeout(
+                            () => app._ircClient.cSay(from, to, line),
+                            (k * 30) * 1000 * (l * 1000)
+                        )
+                    )
+                );
+
             } catch (err) {
-                console.dir(err)
                 logger.error('Eval command failed:', {
                     err
                 });

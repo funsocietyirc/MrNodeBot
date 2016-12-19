@@ -31,7 +31,8 @@ const bot = new Bot(app => {
 
     process.stdin.on('data', (b) => {
         if (b[0] === 3) {
-            app._ircClient.disconnect('I have been terminated from the Console. Goodbye cruel world...', () => {
+            if(!app._ircClient.conn) process.exit();
+            else app._ircClient.disconnect('I have been terminated from the Console. Goodbye cruel world...', () => {
                 if (process.stdin.setRawMode) {
                     process.stdin.setRawMode(false);
                 }
