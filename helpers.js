@@ -4,6 +4,7 @@
  * @module Helpers
  * @author Dave Richer
  */
+
 const moment = require('moment');
 const c = require('irc-colors');
 const _ = require('lodash');
@@ -40,7 +41,7 @@ const AccessString = module.exports.AccessString = str => {
  * Search a iterable for a value and return the first key
  * @param {Map} map The Iterable
  * @param {Object} value The value to search for
- * @returns {Object}
+ * @returns {Object} the first match found
  */
 const MapSearch = module.exports.MapSearch = (map, value) => {
     for (const [t, v] of map) {
