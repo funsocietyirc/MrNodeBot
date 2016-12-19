@@ -25,21 +25,21 @@ module.exports = app => {
         ) ? 50 :
         app.Config.features.sed.totalDbResults;
 
-      const triggerStart = (
-              _.isUndefined(app.Config.features.sed) ||
-              _.isUndefined(app.Config.features.sed.triggerStart) ||
-              !_.isString(app.Config.features.sed.triggerStart) ||
-              _.isEmpty(app.Config.features.sed.triggerStart)
-          ) ? 's' :
-          app.Config.features.sed.triggerStart;
+    const triggerStart = (
+            _.isUndefined(app.Config.features.sed) ||
+            _.isUndefined(app.Config.features.sed.triggerStart) ||
+            !_.isString(app.Config.features.sed.triggerStart) ||
+            _.isEmpty(app.Config.features.sed.triggerStart)
+        ) ? 's' :
+        app.Config.features.sed.triggerStart;
 
-      const delimiter = (
-              _.isUndefined(app.Config.features.sed) ||
-              _.isUndefined(app.Config.features.sed.delimiter) ||
-              !_.isString(app.Config.features.sed.delimiter) ||
-              _.isEmpty(app.Config.features.sed.delimiter)
-          ) ? '/' :
-          app.Config.features.sed.delimiter;
+    const delimiter = (
+            _.isUndefined(app.Config.features.sed) ||
+            _.isUndefined(app.Config.features.sed.delimiter) ||
+            !_.isString(app.Config.features.sed.delimiter) ||
+            _.isEmpty(app.Config.features.sed.delimiter)
+        ) ? '/' :
+        app.Config.features.sed.delimiter;
 
     // Internal
     const specialChar = ' ';
@@ -47,6 +47,9 @@ module.exports = app => {
     // Computed
     const trigger = triggerStart + delimiter;
     const doubleDelimiter = delimiter + delimiter;
+
+    const escapePattern = new RegExp(doubleDelimiter, 'g');
+    const unescapePattern = new RegExp(specialChar, 'g');
 
     /**
       Correct Listener Handler
@@ -63,7 +66,7 @@ module.exports = app => {
         if (text[text.length - 1] == delimiter) text = text.slice(0, -1);
 
         // Remove the trigger, and escape double delimiters with special char
-        text = _.replace(text, trigger, '').replaceAll(doubleDelimiter, specialChar);
+        text = _.replace(text, trigger, '').replace(escapePattern, specialChar);
 
         // Create the replacement string from a slice of the text
         // Bail if this results in a empty string
@@ -74,10 +77,10 @@ module.exports = app => {
         text = _.replace(text, replacement, '').trim();
 
         // Remove the leading delimiter, and unescape special char, then trim the replacement
-        replacement = replacement.substr(1).replaceAll(specialChar, doubleDelimiter).trim();
+        replacement = replacement.substr(1).replace(unescapePattern, doubleDelimiter).trim();
 
         // Unescape and trim the text
-        text = text.replaceAll(specialChar, doubleDelimiter).trim();
+        text = text.replace(unescapePattern, doubleDelimiter).trim();
 
         // Bail if we have neither text or replacement
         if (!text || !replacement) return;

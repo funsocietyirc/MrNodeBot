@@ -10,8 +10,8 @@ const _ = require('lodash');
 
 /**
  * AccessString - Get A String representation of a Access Level
- * @param {string} str Number value of the access string
- * @returns {string} A String representation of the access value
+ * @param {String} str Number value of the access string
+ * @returns {String} A String representation of the access value
  */
 const AccessString = module.exports.AccessString = str => {
     switch (str) {
@@ -56,44 +56,55 @@ const StartTime = module.exports.StartTime = moment();
 
 /**
  * ColorHelpArgs - Colorize brackets
- * @param {string} text Unformatted String
- * @returns {string} Unformatted String
+ * @param {String} text Unformatted String
+ * @returns {String} Unformatted String
  */
-const ColorHelpArgs = module.exports.ColorHelpArgs = text => text.replaceAll('[', c.red.bold('[')).replaceAll(']', c.red.bold(']'));
-
+const ColorHelpArgs = module.exports.ColorHelpArgs = text => text.replace(/([\[\],])/g, c.red.bold('$1'));
 /**
  * RedSlashes - Colorize Slashes
- * @param {string} text Unformatted String
- * @returns {string} Formatted String
+ * @param {String} text Unformatted String
+ * @returns {String} Formatted String
  */
-const RedSlashes = module.exports.RedSlashes = text => text.replaceAll('/', c.red.bold('/'));
+const RedSlashes = module.exports.RedSlashes = text => text.replace(/(\/)/g, c.red.bold('$1'));
 
 /**
  * TitleLine - Format a Title Line
- * @param {string} text Unformatted String
- * @returns {string} Formatted String
+ * @param {String} text Unformatted String
+ * @returns {String} Formatted String
  */
 const TitleLine = module.exports.TitleLine = text => c.white.bold.bgblack(text)
 
 /**
  * Plural - Basic Pluralization
- * @param {string} text Text to apply Transform
- * @param {number} number Amount
- * @returns {type} Formatted String
+ * @param {String} text Text to apply Transform
+ * @param {Number} number Amount
+ * @returns {String} Formatted String
  */
 const Plural = module.exports.Plural = (text, number) => number > 1 || number === 0 ? text + 's' : text;
 
 /**
  * StripNewLine - Strip New Lines
- * @param {type} text Unformatted Text
- * @returns {type} Formatted Text
+ * @param {String} text Unformatted Text
+ * @returns {String} Formatted Text
  */
 const StripNewLine = module.exports.StripNewLine = text => text.replace(/\r?\n|\r/g, ' ');
 
 /**
+ * Replace all occurences of needle in haystack with replacement
+ * @param {String} haystack the text to search in
+ * @param {String} needle what we are looking for
+ * @param {String} replacement what to replace the needle with
+ * @returns {String} haystack with needles replaced by replacement
+ */
+const ReplaceAll = module.exports.ReplaceAll = (haystack, needle, replacement) => {
+    if (!_.isString(haystack) || !_.isString(needle) || !_.isString(replacement)) return haystack;
+    return haystack.replace(new RegExp(needle.replace(/([\/\,\!\\\^\$\{\}\[\]\(\)\.\*\+\?\|\<\>\-\&])/g, '\\$&'), 'g'), replacement.replace(/\$/g, '$$$$'));
+};
+
+/**
  * Rot13 - 13 Letter shift encoder/decoer
- * @param {string} text Unformatted Text
- * @returns {string} Formatted Text
+ * @param {String} text Unformatted Text
+ * @returns {String} Formatted Text
  */
 const Rot13 = module.exports.Rot13 = text => text.replace(/[a-zA-Z]/g, c => String.fromCharCode((c <= "Z" ? 90 : 122) >= (c = c.charCodeAt(0) + 13) ? c : c - 26));
 

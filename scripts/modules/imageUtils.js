@@ -13,6 +13,8 @@ const rp = require('request-promise-native');
 const logger = require('../../lib/logger');
 const scheduler = require('../../lib/scheduler');
 
+const hashPattern = new RegExp('%23','g');
+
 // Display a list of images in the Web Front end
 module.exports = app => {
     // Bailout if we do not have database
@@ -103,7 +105,7 @@ module.exports = app => {
     const imagesView = (req, res) => {
         Models.Url.query(qb => {
                 // If there is a channel in the query string
-                if (req.params.channel) qb.where('to', req.params.channel.replaceAll('%23', '#'));
+                if (req.params.channel) qb.where('to', req.params.channel.replace(hashPattern, '#'));
 
                 // If there is a from in the query string
                 if (req.params.user) qb.where('from', req.params.user);

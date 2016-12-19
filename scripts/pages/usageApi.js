@@ -11,6 +11,7 @@ const Models = require('bookshelf-model-loader');
 
 const getUsageOverTime = require('../generators/_getUsageOverTime');
 const getUsageChansAvail = require('../generators/_getUsageChannelsAvailable');
+const hashPattern = new RegExp('%23', 'g');
 
 module.exports = app => {
     // No Database
@@ -23,7 +24,7 @@ module.exports = app => {
         name: 'api.usage.channels.available',
         verb: 'get',
         handler: (req, res) => {
-            let channel = req.params.channel && _.isString(req.params.channel) ? req.params.channel.replaceAll('%23','#') : null;
+            let channel = req.params.channel && _.isString(req.params.channel) ? req.params.channel.replace(hashPattern,'#') : null;
             getUsageChansAvail(app, channel)
                 .then(results => {
                     res.json({
@@ -49,7 +50,7 @@ module.exports = app => {
         name: 'api.usage.channels.overtime',
         verb: 'get',
         handler: (req, res) => {
-            getUsageOverTime(req.params.channel.replaceAll('%23', '#'), req.params.nick)
+            getUsageOverTime(req.params.channel.replace(hashPattern, '#'), req.params.nick)
                 .then(results => {
                     if (!results) {
                         res.json({

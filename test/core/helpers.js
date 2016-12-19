@@ -11,11 +11,32 @@ const c = require('irc-colors');
 const config = require('../../config');
 const helpers = require('../../helpers');
 
+describe('ReplaceAll works correct', () => {
+    let string = '';
+    beforeEach(() => {
+        string = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut';
+    });
+
+    it(
+        'makes a successful replacement', () => expect(
+            helpers.ReplaceAll(string, 'Lorem', 'winner')
+        ).to.equal('winner ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut')
+    );
+    it(
+      'makes a unsuccessful case sensitive replacement', () => expect(
+          helpers.ReplaceAll(string, 'lorum', 'winner')
+      ).to.equal(string)
+    );
+
+});
+
 describe('MapSearch works correctly', () => {
     let map = null;
 
     beforeEach(() => {
-        map = new Map([['key','value']]);
+        map = new Map([
+            ['key', 'value']
+        ]);
     });
 
     it('does not have value', () => expect(helpers.MapSearch(map, 'invalid')))

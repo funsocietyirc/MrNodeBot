@@ -22,6 +22,7 @@ const scriptInfo = {
 
 const Models = require('bookshelf-model-loader');
 const _ = require('lodash');
+const hashPattern = new RegExp('%23','g');
 
 module.exports = app => {
     // Bail out if we do not have a database
@@ -76,7 +77,7 @@ module.exports = app => {
 
                 // If there is a channel in the query string
                 if (req.query.channel) {
-                    qb.where('to', req.query.channel.replaceAll('%23', '#'));
+                    qb.where('to', req.query.channel.replace(replaceBrPattern, '#'));
                     init = true;
                 }
                 // If there is a from in the query string

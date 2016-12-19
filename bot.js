@@ -19,8 +19,6 @@ const scheduler = require('./lib/scheduler');
 const randomString = require('./lib/randomString');
 const t = require('./lib/localize');
 
-// Extend for project
-require('./extensions');
 // Extend For Un-cache
 require('./lib/uncache')(require);
 
