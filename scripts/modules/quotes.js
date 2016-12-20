@@ -75,7 +75,7 @@ module.exports = app => {
 
     const randomQuote = (to, from, text, message) => {
         // Get a random number, offset by -1
-        var randomNumber = random.integer(1, quotes.count()) - 1;
+        var randomNumber = random.integer(1, quotes.size) - 1;
 
         // Get the quote text to deal with the hash map system
         var quote = quotes.keys()[randomNumber];
