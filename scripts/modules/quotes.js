@@ -74,17 +74,19 @@ module.exports = app => {
     };
 
     const randomQuote = (to, from, text, message) => {
-        // Get a random number, offset by -1
-        var randomNumber = random.integer(1, quotes.size) - 1;
-
-        // Get the quote text to deal with the hash map system
-        var quote = quotes.keys()[randomNumber];
 
         // Bail out if we could not find key
-        if (!quote) {
+        if (!quotes.size) {
             app.say(to, 'There must not be any quotes yet');
             return;
         }
+
+        // Get a random number, offset by -1
+        var randomNumber = random.integer(1, quotes.size);
+
+        // Get the quote text to deal with the hash map system
+        var quote = quotes.keys()[randomNumber - 1];
+
 
         // Get the metadata
         var data = quotes.values()[randomNumber];
