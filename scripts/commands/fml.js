@@ -22,7 +22,8 @@ module.exports = app => {
                 let output = new ircTypography.StringBuilder({
                     logo: 'fml'
                 });
-                output.append(result);
+                console.dir(result);
+                output.append(result[0]);
                 app.say(to, output.text);
             })
             .catch(err => {

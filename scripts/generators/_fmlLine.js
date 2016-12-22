@@ -8,7 +8,7 @@ const _ = require('lodash');
 const xray = require('x-ray')();
 
 module.exports = count => new Promise(
-    (resolve, reject) => xray('http://www.fmylife.com/random', ['a.fmllink'])
+    (resolve, reject) => xray('https://www.fmylife.com/random', ['a.fmllink'])
     (
         (err, results) => {
             if (err) return reject(err);

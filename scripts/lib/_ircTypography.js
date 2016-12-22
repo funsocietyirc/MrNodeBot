@@ -84,7 +84,7 @@ class StringBuilder {
     append(text) {
         // No text detected
         if (!_.isString(text) || _.isEmpty(text)) return this;
-        this.buffer = !_.isString(this.buffer) || _.isEmpty(this.buffer) ? text : `${this.buffer} ${text} ${this.options.divider} `;
+        this.buffer = !_.isString(this.buffer) || _.isEmpty(this.buffer) ? `${text} ${this.options.divider}` : `${this.buffer} ${text} ${this.options.divider}`;
         return this;
     };
     // Prepend text to buffer
@@ -106,7 +106,7 @@ class StringBuilder {
     };
     // Insert divider
     insertDivider(text) {
-        return this.insert((text || this.options.divider) + ' ');
+        return this.insert((text || this.options.divider));
     };
     // Append color number
     appendColorNumber(num, title) {
@@ -134,7 +134,7 @@ class StringBuilder {
         let outputBuffer = this.options.disableColor ? c.stripColors(this.buffer.trim()) : this.buffer.trim();
         // See if the divider is at the final spot, if so, remove it
         outputBuffer = outputBuffer.endsWith(this.options.divider) ? outputBuffer.substring(0, outputBuffer.length - this.options.divider.length) : outputBuffer;
-        return outputBuffer;
+        return outputBuffer.trim();
     };
     // Text Get accessor
     get text() {
