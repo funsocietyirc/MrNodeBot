@@ -41,7 +41,7 @@
     "express-winston": "^2.1.2",
     "file-type": "^4.0.0",
     "freeport": "^1.0.5",
-    "funsocietyirc-client": "0.0.6",
+    "funsocietyirc-client": "0.0.7",
     "gitlog": "^2.0.1",
     "i18next": "^4.1.1",
     "i18next-sync-fs-backend": "^0.1.0",
