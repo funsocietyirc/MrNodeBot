@@ -57,11 +57,17 @@ module.exports = app => {
             config.sasl = false;
             config.nick = text.split(' ')[0];
             config.channels = [];
+            app.say(to, `I have always wondered what it would be like to have children ${from}, let me see...`);
             let instance = new app._ircClient.Client(config.server, config.nick, config);
-            instance.connect(() => instance.join(to, () => gen().then(result => {
-                instance.say(to, result[0]);
-                setTimeout(() => instance.disconnect('and now I go...'), 10000);
-            })));
+            instance.connect(() => {
+              app.say(to, `I can feel ${config.nick} kicking ${from}!`);
+              instance.join(to, () => gen().then(result => {
+                  app.action(to, `looks at ${config.nick}`);
+                  instance.action(to, `looks at ${app.nick}`);
+                  instance.say(to, result[0]);
+                  setTimeout(() => instance.disconnect('and now I go...'), 10000);
+              }));
+            });
         }
     });
 
