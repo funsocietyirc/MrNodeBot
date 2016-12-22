@@ -15,14 +15,6 @@ module.exports = app => {
         name: 'landingPage',
         verb: 'get'
     });
-    // Landing Page
-    app.WebRoutes.set('chat', {
-        handler: (req,res) => res.render('chat', {}),
-        desc: 'Chat',
-        path: '/chat',
-        name: 'chat',
-        verb: 'get'
-    });
 
     // Return the script info
     return scriptInfo;

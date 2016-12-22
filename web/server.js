@@ -56,12 +56,10 @@ module.exports = (app) => {
     }));
 
     // Prevent the web server from being indexed by spiders
-    if (app.Config.express.noFollow) {
-        webServer.use(function(req, res, next) {
-            res.header('X-Robots-Tag', 'noindex, nofollow');
-            next();
-        });
-    }
+    if (app.Config.express.noFollow) webServer.use(function(req, res, next) {
+        res.header('X-Robots-Tag', 'noindex, nofollow');
+        next();
+    });
 
     // Set Express powered by header to MrNodeBot
     webServer.use((req, res, next) => {
