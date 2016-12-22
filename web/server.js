@@ -59,21 +59,51 @@ module.exports = (app) => {
     }
 
     // Set Express powered by header to MrNodeBot
-    webServer.use((req,res,next) => {
-      res.header('X-powered-by', 'MrNodeBot');
-      next();
+    webServer.use((req, res, next) => {
+        res.header('X-powered-by', 'MrNodeBot');
+        next();
     });
 
+    // Check for Simple Authentication
+    if (
+        _.isObject(app.Config.express.simpleAuth) &&
+        _.isBoolean(app.Config.express.simpleAuth.enabled) &&
+        app.Config.express.simpleAuth.enabled &&
+        _.isString(app.Config.express.simpleAuth.username) &&
+        !_.isEmpty(app.Config.express.simpleAuth.username) &&
+        _.isString(app.Config.express.simpleAuth.password) &&
+        !_.isEmpty(app.Config.express.simpleAuth.password)
+    ) {
+        const auth = require('basic-auth');
+        webServer.use(
+            (req, res, next) => {
+                let credentials = auth(req);
+                if (!credentials ||
+                    credentials.name !== app.Config.express.simpleAuth.username ||
+                    credentials.pass !== app.Config.express.simpleAuth.password
+                ) {
+                    res.statusCode = 401
+                    let realm = _.isString(app.Config.express.simpleAuth.realm) && !_.isEmpty(app.Config.express.simpleAuth.realm) ? app.Config.express.simpleAuth.realm : 'MrNodeBot';
+                    res.setHeader('WWW-Authenticate', 'Basic realm="' + realm +'"')
+                    res.end('I\'m sorry Dave, I\'m afraid I can\'t do that')
+                } else next();
+            }
+        );
+    }
+
     // Set up rate limiting for api routes
-    if(!_.isUndefined(app.Config.express.rateLimit) && _.isBoolean(app.Config.express.rateLimit.enabled) && app.Config.express.rateLimit.enabled) {
-      if(app.Config.express.forwarded) webServer.enable('trust proxy');
-      const rateLimiter = new RateLimit({
-        windowMs: (app.Config.express.rateLimit.limitInMins || 15) * 60 * 100,
-        max: app.Config.express.rateLimit.max || 100,
-        delayMs: app.Config.express.rateLimit.delayMs || 0,
-        headers: app.Config.express.rateLimit.headers || false,
-      });
-      webServer.use('/api/', rateLimiter);
+    if (!_.isUndefined(app.Config.express.rateLimit) &&
+        _.isBoolean(app.Config.express.rateLimit.enabled) &&
+        app.Config.express.rateLimit.enabled
+    ) {
+        if (app.Config.express.forwarded) webServer.enable('trust proxy');
+        const rateLimiter = new RateLimit({
+            windowMs: (app.Config.express.rateLimit.limitInMins || 15) * 60 * 100,
+            max: app.Config.express.rateLimit.max || 100,
+            delayMs: app.Config.express.rateLimit.delayMs || 0,
+            headers: app.Config.express.rateLimit.headers || false,
+        });
+        webServer.use('/api/', rateLimiter);
     }
 
     // Create a router

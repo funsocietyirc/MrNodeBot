@@ -29,6 +29,7 @@
   "dependencies": {
     "accounting-js": "^1.1.1",
     "app-root-path": "^2.0.1",
+    "basic-auth": "^1.1.0",
     "body-parser": "^1.15.0",
     "bookshelf": "^0.10.0",
     "bookshelf-model-loader": "^0.9.6",

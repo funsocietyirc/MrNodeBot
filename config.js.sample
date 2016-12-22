@@ -218,6 +218,13 @@ module.exports = {
             delayMs: 0, // The delay in ms (0 to indicate no delay until max)
             headers: true, // Inject HTTP headers to show usage remaining
         },
+        // Enable Simple Authentication
+        simpleAuth: {
+            enabled: false,
+            realm: '',
+            username: '',
+            password: '',
+        },
     },
     // Feature Configuration
     features: {

@@ -64,6 +64,7 @@ I am currently in the processes of providing jsdoc style docblocks for documenta
     -   Favicon Middleware [serve-favicon](https://github.com/expressjs/serve-favicon)
     -   HTML Template language [pug](https://github.com/pugjs/pug)
     -   Route Name Helper [named-routes](https://github.com/alubbe/named-routes)
+    -   Basic Authentication [basic-auth](https://github.com/jshttp/basic-auth)
 -   Scheduler [node-scheduler](https://github.com/node-schedule/node-schedule)
 -   Logging [Winston](https://github.com/winstonjs/winston)
     -   Log File Rotation [winston-daily-rotate-file](https://github.com/winstonjs/winston-daily-rotate-file)
