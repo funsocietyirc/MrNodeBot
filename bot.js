@@ -277,6 +277,10 @@ class MrNodeBot {
 
         // Load the Ignore list
         storage.getItem('ignored', (err, value) => {
+            if(err) {
+              logger.error('Error Loading the Ignore List'); // TODO Localize
+              return;
+            }
             this.Ignore = value || this.Ignore;
             logger.info(t('storage.ignored', {
                 total: this.Ignore.length
@@ -285,9 +289,7 @@ class MrNodeBot {
 
         // Load the Admin list
         storage.getItem('admins', (err, value) => {
-            if (value) {
-                this.Admins = value;
-            }
+            if (value) this.Admins = value;
             // Default to owner nick if no admin list exists
             else {
                 this.Admins = [_.toLower(this.Config.owner.nick)];

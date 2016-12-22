@@ -5,16 +5,16 @@ const scriptInfo = {
     createdBy: 'IronY'
 };
 const _ = require('lodash');
-const voiceUsers = require('../lib/_voiceUsersInChannel');
 const logger = require('../../lib/logger');
 const scheduler = require('../../lib/scheduler')
+const voiceUsers = require('../lib/_voiceUsersInChannel');
 
 module.exports = app => {
     // We are missing things
     if (!app.Database ||
-        _.isUndefined(app.Config.features.voiceRegulars) ||
-        _.isEmpty(app.Config.features.voiceRegulars) ||
-        !app.Config.features.voiceRegulars.autoVoice
+        !_.isObject(app.Config.features.voiceRegulars) || // We need a voiceRegulars block in the features section
+        _.isEmpty(app.Config.features.voiceRegulars) || // It must not be empty
+        !app.Config.features.voiceRegulars.autoVoice // It is not enabled
     ) return scriptInfo;
 
     const threshold = (
@@ -33,7 +33,7 @@ module.exports = app => {
     cronTime.minute = autoVoiceTimeInMins;
     scheduler.schedule('inviteRegularsInFsociety', cronTime, () =>
         _.forEach(app.channels, channel => {
-            // we are not an op in said channel
+            // we are not an op in said channel, or channel is in ignore list
             if (_.includes(autoVoiceChannelIgnore, channel) || !app._ircClient.isOpInChannel(channel, app.nick)) return;
             voiceUsers(channel, threshold, app)
                 .then(result => logger.info(`Running Voice Regulars in ${channel}`))
@@ -44,7 +44,7 @@ module.exports = app => {
     // Voice Users on join if they meet a certain threshold
     app.OnJoin.set('voice-regulars', {
         call: (channel, nick, message) => {
-            // we are not an op in said channel
+            // we are not an op in said channel, or channel is in ignore list
             if (nick == app.nick || _.includes(autoVoiceChannelIgnore, channel) || !app._ircClient.isOpInChannel(channel, app.nick)) return;
             voiceUsers(channel, threshold, app, {
                     nicks: [nick]

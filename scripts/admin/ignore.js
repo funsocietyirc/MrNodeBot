@@ -29,7 +29,7 @@ module.exports = app => {
             if (!_.includes(app.Admins, lowerCaseNick) && !_.includes(app.Ignore, lowerCaseNick)) {
                 app.say(to, `${nick} has been muted. May there be peace.`);
                 app.Ignore.push(lowerCaseNick);
-                storage.setItemSync('ignore', app.Ignore);
+                storage.setItemSync('ignored', app.Ignore);
             } else app.say(to, `${nick} has either already been muted, or is an Administrator and is beyond my control`);
         }
     });
