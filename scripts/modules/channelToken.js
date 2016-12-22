@@ -26,18 +26,21 @@ module.exports = app => {
 
         tokenModel
             .fetchAll()
-            .then(results => results.forEach(result => {
-                // This is not a very old record, move on
-                if (now.diff(moment(result.attributes.timestamp), 'weeks') < 1) return;
-                return result
-                    .destroy()
-                    .then(deleted => logger.info(`User Token for ${result.attributes.user} on ${result.attributes.channel} has been removed`))
-                    .catch(err => logger.error('Error In removing a user token', {
-                        err
-                    }));
-            }))
+            .then(results =>
+                results.forEach(result => {
+                    // This is not a very old record, move on
+                    if (now.diff(moment(result.attributes.timestamp), 'weeks') < 1) return;
+                    return result
+                        .destroy()
+                        .then(deleted => logger.info(`User Token for ${result.attributes.user} on ${result.attributes.channel} has been removed`))
+                        .catch(err => logger.error('Error In removing a user token', {
+                            err
+                        }));
+                }))
             .then(() => logger.info('Finished clearing User Token'))
-            .catch(err => logger.error('Error removing User tokens', {err}));
+            .catch(err => logger.error('Error removing User tokens', {
+                err
+            }));
     });
 
     // API End point, get a nick verified by channel token
@@ -51,16 +54,15 @@ module.exports = app => {
         // No token available
         if (!token) return res.json(error);
 
-        tokenModel.query(qb => {
+        tokenModel.query(qb =>
                 qb
-                    .where('token', token)
-                    .select(['user', 'channel', 'timestamp']);
-            })
+                .where('token', token)
+                .select(['user', 'channel', 'timestamp'])
+            )
             .fetch()
             .then(result => {
-                if (!result) {
-                    return res.json(error);
-                }
+                if (!result) return res.json(error);
+
                 res.json({
                     status: 'success',
                     result: result
@@ -120,9 +122,7 @@ module.exports = app => {
                         }, {
                             patch: true
                         })
-                        .then(() => {
-                            app.say(from, `Your new token for ${to} is ${token}`);
-                        });
+                        .then(() => app.say(from, `Your new token for ${to} is ${token}`));
                 }
             });
     };
