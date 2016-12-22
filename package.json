@@ -23,8 +23,8 @@
     "framework"
   ],
   "engines": {
-    "node": ">=6.9.1",
-    "npm": ">=4.0.0"
+    "node": ">=6.0.0",
+    "npm": ">=3.8.6"
   },
   "dependencies": {
     "accounting-js": "^1.1.1",
