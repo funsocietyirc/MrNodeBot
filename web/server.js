@@ -16,7 +16,10 @@ module.exports = (app) => {
     // Create Express Server
     let webServer = Express();
 
+    // Hold on to the Logging transports
     let transports = [];
+
+    // Push the File Logging transports
     transports.push(new(winston.transports.DailyRotateFile)({
             name: 'express-info-file',
             filename: 'logs/express-info.log',
@@ -27,17 +30,18 @@ module.exports = (app) => {
             filename: 'logs/express-error.log',
             level: 'error',
         }));
-    if (app.Config.bot.webDebug === true) {
-        transports.push(new(winston.transports.Console)({
-            name: 'express-console',
-            timestamp: true,
-            colorize: true,
-            prettyPrint: true,
-            depth: 4,
-            level: app.Config.bot.webDebugLevel || 'info',
-        }));
-    }
 
+    // If we are in web debug mode, push the Logging to the console
+    if (app.Config.bot.webDebug === true) transports.push(new(winston.transports.Console)({
+        name: 'express-console',
+        timestamp: true,
+        colorize: true,
+        prettyPrint: true,
+        depth: 4,
+        level: app.Config.bot.webDebugLevel || 'info',
+    }));
+
+    // Attach the Logger to the express Instance
     webServer.use(expressWinston.logger({
         exitOnError: false,
         transports: transports,
@@ -45,9 +49,10 @@ module.exports = (app) => {
         msg: app.Config.express.forwarded ? "HTTP {{req.method}} {{req.url}} {{req.headers['x-forwarded-for'] || req.connection.remoteAddress}}" : "HTTP {{req.method}} {{req.url}} {{req.connection.remoteAddress}}",
         expressFormat: false, // Use the default Express/morgan request formatting. Enabling this will override any msg if true. Will only output colors with colorize set to true
         colorize: true, // Color the text and status code, using the Express/morgan color palette (text: gray, status: default green, 3XX cyan, 4XX yellow, 5XX red).
+        // optional: allows to skip some log messages based on request and/or response
         ignoreRoute: function(req, res) {
-                return false;
-            } // optional: allows to skip some log messages based on request and/or response
+            return false;
+        }
     }));
 
     // Prevent the web server from being indexed by spiders
@@ -65,6 +70,7 @@ module.exports = (app) => {
     });
 
     // Check for Simple Authentication
+    // Enable this in the configuration, and set a username + password
     if (
         _.isObject(app.Config.express.simpleAuth) &&
         _.isBoolean(app.Config.express.simpleAuth.enabled) &&
@@ -84,7 +90,7 @@ module.exports = (app) => {
                 ) {
                     res.statusCode = 401
                     let realm = _.isString(app.Config.express.simpleAuth.realm) && !_.isEmpty(app.Config.express.simpleAuth.realm) ? app.Config.express.simpleAuth.realm : 'MrNodeBot';
-                    res.setHeader('WWW-Authenticate', 'Basic realm="' + realm +'"')
+                    res.setHeader('WWW-Authenticate', 'Basic realm="' + realm + '"')
                     res.end('I\'m sorry Dave, I\'m afraid I can\'t do that')
                 } else next();
             }
@@ -116,31 +122,24 @@ module.exports = (app) => {
 
     // Json parser
     webServer.use(bodyParser.json());
-
+    // Named Routes
     router.extendExpress(webServer);
     router.registerAppHelpers(webServer);
-
     // Pretty Print json
     webServer.set('json spaces', 4);
     // Set the view engine
     webServer.set('view engine', 'pug');
     webServer.set('views', __dirname + '/views');
-
     // Serve Favicon
     webServer.use(favicon(__dirname + '/assets/favicon.ico'));
-
     // Static routes
     webServer.use('/assets', Express.static(__dirname + '/assets'));
-
     // Uploads
     webServer.use('/uploads', Express.static(__dirname + '/uploads'));
-
     // Use fileupload extension
     webServer.use(fileUpload());
-
     // Merge query string paramaters on duplicate
     webServer._router.mergeParams = true;
-
     // If no port specifically set, find an available port
     if (!app.Config.express.port) {
         require('freeport')((err, port) => {
@@ -153,10 +152,10 @@ module.exports = (app) => {
             app.Config.express.port = port;
             websServer.listen(port);
         });
-    } else {
-        // Bind the express server
-        webServer.listen(app.Config.express.port);
     }
+    // Bind the express server
+    else webServer.listen(app.Config.express.port);
 
+    // Export the Web server
     return webServer;
 };
