@@ -4,7 +4,6 @@ const scriptInfo = {
     desc: 'Rot 13 Encoder',
     createdBy: 'IronY'
 };
-
 const _ = require('lodash');
 const helpers = require('../../helpers');
 

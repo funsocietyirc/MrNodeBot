@@ -4,7 +4,6 @@ const scriptInfo = {
     desc: 'Converse with the bot',
     createdBy: 'IronY'
 };
-
 const gen = require('../generators/_chatBotLine');
 
 module.exports = app => {

@@ -4,7 +4,7 @@ const Models = require('bookshelf-model-loader');
 const extract = require('../../lib/extractNickUserIdent');
 const logger = require('../../lib/logger');
 const Moment = require('moment');
-
+// Configuration
 const saidCats = ['log', 'action', 'notice'];
 
 module.exports = (input, options) => new Promise((res, rej) => {

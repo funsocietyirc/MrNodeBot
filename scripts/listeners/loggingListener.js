@@ -10,7 +10,7 @@ const c = require('irc-colors');
 const logger = require('../../lib/logger');
 const Models = require('bookshelf-model-loader');
 
-/** Log all incoming channel messages to a Sql Database **/
+// Log all incoming channel messages to a Sql Database
 module.exports = app => {
     // Assure the database exists
     if (!app.Database) return;

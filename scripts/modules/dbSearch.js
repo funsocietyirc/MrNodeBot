@@ -5,16 +5,14 @@ const scriptInfo = {
         'and last mentioned',
     createdBy: 'IronY'
 };
-
 const _ = require('lodash');
 const Moment = require('moment');
 const Models = require('bookshelf-model-loader');
 const logger = require('../../lib/logger');
 
-/**
-    Database Specific Commands
-    Commands: last-mentioned, random-line
-**/
+
+// Database Specific Commands
+// Commands: last-mentioned, random-line
 module.exports = app => {
     // Only enabled if there is a database available
     if (!Models.Logging) return scriptInfo;

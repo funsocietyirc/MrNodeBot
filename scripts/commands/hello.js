@@ -4,7 +4,6 @@ const scriptInfo = {
     desc: 'Display a salutation to a IRC user, randomText test script',
     createdBy: 'IronY'
 };
-
 const color = require('irc-colors');
 
 module.exports = app => {

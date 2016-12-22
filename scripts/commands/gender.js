@@ -4,9 +4,7 @@ const scriptInfo = {
     desc: 'Guess the sex of a user based on their chat history',
     createdBy: 'IronY'
 };
-
 // Original concept credited to http://www.hackerfactor.com/GenderGuesser.php
-
 const _ = require('lodash');
 const Models = require('bookshelf-model-loader');
 const sampleSize = 1000;

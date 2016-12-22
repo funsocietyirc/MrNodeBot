@@ -1,3 +1,5 @@
+'use strict';
+
 exports.up = function(knex, Promise) {
     return knex.schema.table('alias', function(table) {
         table.string('channels', 1000);

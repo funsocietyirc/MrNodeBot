@@ -1,5 +1,5 @@
-// Static Routes and pages
 'use strict';
+// Static Routes and pages
 const scriptInfo = {
     name: 'Static Pages',
     desc: 'Static Express Pages',

@@ -4,7 +4,6 @@ const scriptInfo = {
   desc: 'Get a REDDIT shower thought',
   createdBy: 'IronY'
 };
-
 const _ = require('lodash');
 const gen = require('../generators/_showerThoughts');
 const logger = require('../../lib/logger');

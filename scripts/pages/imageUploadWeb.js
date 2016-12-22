@@ -4,7 +4,6 @@ const scriptInfo = {
     desc: 'Provides a PUG form for uploading photos',
     createdBy: 'IronY'
 };
-
 const path = require('path');
 const Models = require('bookshelf-model-loader');
 const randToken = require('rand-token');
@@ -12,14 +11,10 @@ const tokenModel = Models.Token;
 
 module.exports = app => {
     // Log nick changes in the alias table
-    if (!app.Database && !Models.Token) {
-        return;
-    }
+    if (!app.Database && !Models.Token) return;
 
     // Show the form upload
-    const uploadForm = (req, res) => {
-        res.render('upload');
-    };
+    const uploadForm = (req, res) => res.render('upload');
 
     // Process the upload
     const uploadHandler = (req, res) => {

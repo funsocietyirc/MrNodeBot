@@ -4,7 +4,6 @@ const scriptInfo = {
     desc: 'Voice users by participation',
     createdBy: 'IronY'
 };
-
 const _ = require('lodash');
 const gen = require('../lib/_voiceUsersInChannel');
 

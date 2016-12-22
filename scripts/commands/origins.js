@@ -4,13 +4,10 @@ const scriptInfo = {
     desc: 'Show the Bots current uptime and other statistics',
     createdBy: 'IronY'
 };
-
 const helpers = require('../../helpers');
 
-/**
-  Provide users with a breif origins story
-  Commands: origins
-**/
+// Provide users with a breif origins story
+// Commands: origins
 module.exports = app => {
     app.Commands.set('origins', {
         desc: 'My origin story',

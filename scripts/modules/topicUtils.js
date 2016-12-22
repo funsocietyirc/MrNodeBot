@@ -4,18 +4,14 @@ const scriptInfo = {
     desc: 'Utilites to view and manipulate the channel topic',
     createdBy: 'IronY'
 };
-
 const Models = require('bookshelf-model-loader');
 const Moment = require('moment');
-
 // Used to break up topics
 const divider = ' | ';
 
 module.exports = app => {
     // Bailout if we do not have database
-    if (!app.Database || !Models.Topics) {
-        return;
-    }
+    if (!app.Database || !Models.Topics) return;
 
     // Get the last 5 topics
     const topics = (to, from, text, message) => {
@@ -45,9 +41,7 @@ module.exports = app => {
     // Helper function to get a the a promise on the channels topics
     const getTopics = (channel, limit) => Models.Topics.query(qb => {
         qb.where('channel', channel).orderBy('timestamp', 'desc');
-        if (limit) {
-            qb.limit(limit);
-        }
+        if (limit) qb.limit(limit);
         qb.select(['topic'])
     }).fetchAll();
 
@@ -122,9 +116,8 @@ module.exports = app => {
                 }
 
                 topic = topic.split(divider);
-                if (!text) {
-                    topic.splice(-1, 1);
-                } else {
+                if (!text) topic.splice(-1, 1);
+                else {
                     let index = topic.indexOf(text);
                     if (index === -1) {
                         app.say(to, `I am not sure you are reading that correctly ${from}`);

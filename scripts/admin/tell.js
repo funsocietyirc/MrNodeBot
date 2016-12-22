@@ -4,10 +4,8 @@ const scriptInfo = {
     desc: 'Have the Bot give a channel or user a message',
     createdBy: 'IronY'
 };
-
 const _ = require('lodash');
 const t = require('../../lib/localize');
-
 // Localizations
 const i18next = require('../../lib/i18next');
 i18next.addResources('en', 'tell', {

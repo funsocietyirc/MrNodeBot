@@ -4,14 +4,11 @@ const scriptInfo = {
     desc: 'The leet speak version of tell',
     createdBy: 'IronY'
 };
-
-
 const leetSpeak = require('../../helpers').leetSpeak;
 const _ = require('lodash');
-/*
-    Send an elite message
-    leet <nick> <message>
-*/
+
+// Send an elite message
+// leet <nick> <message>
 module.exports = app => {
     const leet = (to, from, text, message) => {
         let textArray = text.split(' ');

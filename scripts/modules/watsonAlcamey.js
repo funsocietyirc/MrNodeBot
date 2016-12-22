@@ -4,16 +4,13 @@ const scriptInfo = {
     desc: 'Test Script for watson analytics',
     createdBy: 'IronY'
 };
-
-const AlchemyLanguageV1 = require('watson-developer-cloud/alchemy-language/v1');
-
+const _ = require('lodash');
+const typo = require('../lib/_ircTypography');
+const logger = require('../../lib/logger');
 const Models = require('bookshelf-model-loader');
 const helpers = require('../../helpers');
-const logger = require('../../lib/logger');
-const typo = require('../lib/_ircTypography');
 const accounting = require('accounting-js');
-
-const _ = require('lodash');
+const AlchemyLanguageV1 = require('watson-developer-cloud/alchemy-language/v1');
 
 module.exports = app => {
     // Make sure we have everything we need

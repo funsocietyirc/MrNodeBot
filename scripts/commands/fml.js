@@ -4,7 +4,6 @@ const scriptInfo = {
     desc: 'Get FML Quote',
     createdBy: 'IronY'
 };
-
 const _ = require('lodash');
 const gen = require('../generators/_fmlLine');
 const logger = require('../../lib/logger');

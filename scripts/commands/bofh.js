@@ -4,7 +4,6 @@ const scriptInfo = {
     desc: 'Provider Bastard Operator from hell excuses',
     createdBy: 'IronY'
 };
-
 const gen = require('../generators/_bofhExcuse');
 const ircTypography = require('../lib/_ircTypography');
 

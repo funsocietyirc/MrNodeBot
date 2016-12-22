@@ -4,7 +4,6 @@ const scriptInfo = {
     desc: 'Get IMDB info by title',
     createdBy: 'IronY'
 };
-
 const _ = require('lodash');
 const gen = require('../generators/_imdbData');
 const logger = require('../../lib/logger');

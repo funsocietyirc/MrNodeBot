@@ -4,7 +4,6 @@ const scriptInfo = {
     desc: 'Misc functionality for ##mrRobotARG on freenode',
     createdBy: 'IronY'
 };
-
 const _ = require('lodash');
 const rp = require('request-promise-native');
 const scheduler = require('../../lib/scheduler');

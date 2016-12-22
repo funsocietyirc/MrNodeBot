@@ -1,6 +1,7 @@
 'use strict';
 const rp = require('request-promise-native');
 const logger = require('../../lib/logger');
+
 // Get GitHub Information
 module.exports = (user, repo, results) => rp({
         uri: `https://api.github.com/repos/${user}/${repo}`,

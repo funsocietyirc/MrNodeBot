@@ -4,7 +4,6 @@ const scriptInfo = {
     desc: 'Look up a term with the urban dictionary',
     createdBy: 'IronY'
 };
-
 const _ = require('lodash');
 const util = require('util');
 const logger = require('../../lib/logger.js');

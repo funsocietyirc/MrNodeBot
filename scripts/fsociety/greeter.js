@@ -1,13 +1,11 @@
 'use strict';
+// TODO: Make multi-channel and configurable
 const scriptInfo = {
     name: 'greeter',
     desc: 'Send a message to users joining mr robot sub channels based on certain conditions, ' +
         'letting them know and inviting them to #fsociety',
     createdBy: 'IronY'
 };
-
-// TODO: Make multi-channel and configurable
-
 const _ = require('lodash');
 const Models = require('bookshelf-model-loader');
 const logger = require('../../lib/logger');

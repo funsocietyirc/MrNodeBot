@@ -3,7 +3,6 @@ const _ = require('lodash');
 const Models = require('bookshelf-model-loader');
 const logger = require('../../lib/logger');
 const config = require('../../config');
-
 // Ignore URL logging for specific channels
 const urlLoggerIgnore = config.features.urls.loggingIgnore || [];
 

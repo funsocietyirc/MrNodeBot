@@ -4,7 +4,6 @@ const scriptInfo = {
     desc: 'Conversions and such',
     createdBy: 'IronY'
 };
-
 const _ = require('lodash');
 require('lodash-addons');
 const request = require('request-promise-native');
@@ -15,7 +14,7 @@ const getSymbol = require('currency-symbol-map');
 // Money and Accounting
 const fx = require('money');
 const accounting = require('accounting-js');
-
+// API Information
 const fixerApi = 'http://api.fixer.io/latest'; // API For Country exchange rates
 const btcApi = 'https://bitpay.com/api/rates'; // API For BTC exchange rates
 

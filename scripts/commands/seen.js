@@ -4,7 +4,6 @@ const scriptInfo = {
     desc: 'Get stats on the last activity of a IRC user',
     createdBy: 'IronY'
 };
-
 // Includes
 const _ = require('lodash');
 const Moment = require('moment');

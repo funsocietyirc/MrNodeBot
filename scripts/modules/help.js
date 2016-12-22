@@ -4,15 +4,12 @@ const scriptInfo = {
     desc: 'Dynamically created help system',
     createdBy: 'IronY'
 };
-
 const color = require('irc-colors');
 const _ = require('lodash');
 const helpers = require('../../helpers');
 
-/**
-  Provide User help
-  Commands: help list
-**/
+// Provide User help
+// Commands: help list
 module.exports = app => {
     const list = (to, from, text, message) => {
         app.say(from, color.white.bggray.bold(`${app._ircClient.nick} has the following commands available.`));

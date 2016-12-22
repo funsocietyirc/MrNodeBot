@@ -6,7 +6,6 @@ const scriptInfo = {
 };
 
 module.exports = app => {
-
     // Echo Test command
     app.Commands.set('echo', {
         desc: '[text] Exactly what it sounds like',

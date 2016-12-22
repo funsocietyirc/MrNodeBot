@@ -5,15 +5,12 @@ const scriptInfo = {
         'specified IRC users',
     createdBy: 'IronY'
 };
-
-const storage = require("node-persist");
 const _ = require('lodash');
+const storage = require("node-persist");
 
-/**
-  Manipulation of the Ignore list.
-  Users on the mute list are not acknowledged by the bot
-  Commands: mute un-mute Ignored
-**/
+// Manipulation of the Ignore list.
+// Users on the mute list are not acknowledged by the bot
+// Commands: mute un-mute Ignored
 module.exports = app => {
 
     // Mute a user

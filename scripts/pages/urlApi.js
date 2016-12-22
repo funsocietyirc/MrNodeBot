@@ -15,7 +15,6 @@ const scriptInfo = {
     desc: 'The URL Express API',
     createdBy: 'IronY'
 };
-
 const Models = require('bookshelf-model-loader');
 const _ = require('lodash');
 const hashPattern = new RegExp('%23','g');
@@ -33,10 +32,8 @@ module.exports = app => {
         .orWhere('url', 'like', '%.gif')
         .orWhere('url', 'like', '%.png');
 
-    /**
-      Get the available sources.
-      Returns a unique list of combined nicks and channels
-    **/
+    // Get the available sources.
+    // Returns a unique list of combined nicks and channels
     const imageSourceHandler = (req, res) => {
         Models.Url.query(qb => {
                 qb
@@ -58,9 +55,7 @@ module.exports = app => {
             });
     };
 
-    /**
-      Get list of available urls
-    **/
+    // Get list of available urls
     const urlHandler = (req, res) => {
         Models.Url.query(qb => {
                 let init = false;

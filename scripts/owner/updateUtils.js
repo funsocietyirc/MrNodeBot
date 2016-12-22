@@ -4,7 +4,6 @@ const scriptInfo = {
     desc: 'Provides refresh (reloads scripts), update (pulls from git hub), and halt (terminates bot)',
     createdBy: 'IronY'
 };
-
 const _ = require('lodash');
 const os = require('os');
 const shell = require('shelljs');
@@ -12,10 +11,9 @@ const gitlog = require('gitlog');
 const logger = require('../../lib/logger');
 const typo = require('../lib/_ircTypography');
 const short = require('../lib/_getShortService');
-/**
-  Handle real time upgrades, updates, and restarts
-  Commands: update reload halt
-**/
+
+// Handle real time upgrades, updates, and restarts
+// Commands: update reload halt
 module.exports = app => {
 
     // Cycle the bot (quit process)

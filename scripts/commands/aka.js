@@ -4,7 +4,6 @@ const scriptInfo = {
     desc: 'Get information from the nick change table',
     createdBy: 'IronY'
 };
-
 const Models = require('bookshelf-model-loader');
 
 module.exports = app => {

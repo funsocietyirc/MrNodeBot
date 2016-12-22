@@ -4,10 +4,9 @@ const scriptInfo = {
     desc: 'Popularity Utilities',
     createdBy: 'IronY'
 };
-
 const _ = require('lodash');
-const Models = require('bookshelf-model-loader');
 const logger = require('../../lib/logger');
+const Models = require('bookshelf-model-loader');
 
 module.exports = app => {
     // Database not available

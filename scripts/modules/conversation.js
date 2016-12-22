@@ -4,15 +4,13 @@ const scriptInfo = {
     desck: 'Allow the bot to be conversational in private messages, or randomly in channels',
     createdBy: 'IronY'
 };
-
 const _ = require('lodash');
 const gen = require('../generators/_chatBotLine');
 const random = require('../../lib/randomEngine.js');
-/**
-  Make the bot randomly conversational
-  Commands: converse
-  Listeners: converse
-**/
+
+  // Make the bot randomly conversational
+  // Commands: converse
+  // Listeners: converse
 module.exports = app => {
     // No Features block
     if (!_.has(app, 'Config.features.conversational')) return scriptInfo;

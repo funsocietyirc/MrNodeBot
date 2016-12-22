@@ -4,7 +4,6 @@ const scriptInfo = {
     desc: 'Provide very basic command usage stats',
     createdBy: 'IronY'
 };
-
 const helpers = require('../../helpers');
 const moment = require('moment');
 

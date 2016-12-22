@@ -4,12 +4,10 @@ const scriptInfo = {
     desc: 'Get report data on popularity metrics',
     createdBy: 'IronY'
 };
-
 const _ = require('lodash');
 const Models = require('bookshelf-model-loader');
 const logger = require('../../lib/logger');
 const typo = require('../lib/_ircTypography');
-
 const getPopSent = require('../generators/_getPopularitySentiment');
 const getChanPopRank = require('../generators/_getChannelPopularityRanking');
 const getCanPopRank = require('../generators/_getCandidatePopularityRanking');

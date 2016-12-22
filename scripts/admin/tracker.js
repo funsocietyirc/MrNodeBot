@@ -4,16 +4,13 @@ const scriptInfo = {
     desc: 'Get GEO IP info on a IRC user',
     createdBy: 'IronY'
 };
-
 const _ = require('lodash');
 const gen = require('../generators/_ipLocationData');
 const helpers = require('../../helpers');
 const logger = require('../../lib/logger');
 
-/**
-  Try and get the location of a user using geoip
-  Commands: tracker
-**/
+// Try and get the location of a user using geoip
+// Commands: tracker
 module.exports = app => {
     // Handler
     const tracker = (to, from, text, message) => {

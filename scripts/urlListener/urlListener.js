@@ -14,11 +14,9 @@ const scriptInfo = {
     desc: 'Listen for URLS, append them to a DB table, clean them if they expire, and other stuff including pulling proper meta data',
     createdBy: 'IronY'
 };
-
 const _ = require('lodash');
-
-const extractUrls = require('../../lib/extractUrls');
 const logger = require('../../lib/logger');
+const extractUrls = require('../../lib/extractUrls');
 
 // Build
 const startChain = require('./_startChain.js'); // Begin the chain

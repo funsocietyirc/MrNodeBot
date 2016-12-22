@@ -4,14 +4,12 @@ const scriptInfo = {
     desc: 'Allow users to see git changes from IRC',
     createdBy: 'IronY'
 };
-
 const gitlog = require('gitlog');
 const helpers = require('../../helpers');
 
-/**
-  Review the local git change log ( Last 5 commits )
-  Commands: changes
-**/
+
+// Review the local git change log ( Last 5 commits )
+// Commands: changes
 module.exports = app => {
     app.Commands.set('changes', {
         desc: 'Review the bots change log',

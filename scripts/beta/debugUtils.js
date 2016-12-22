@@ -5,7 +5,6 @@ const scriptInfo = {
     desc: 'Bot Debugging',
     createdBy: 'IronY'
 };
-
 const _ = require('lodash');
 const c = require('irc-colors');
 const util = require('util');
@@ -26,7 +25,6 @@ const simpleString = object =>
     .replace(/(\S+): ,/ig, '$1: null,');
 
 module.exports = app => {
-
     // Evaluate
     app.Commands.set('eval', {
         desc: '[valid js] will return value to console',

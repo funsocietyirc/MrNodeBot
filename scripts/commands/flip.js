@@ -4,7 +4,6 @@ const scriptInfo = {
     desc: 'Simulate a coin toss, Random Engine test script',
     createdBy: 'IronY'
 };
-
 const random = require('../../lib/randomEngine');
 
 module.exports = app => {

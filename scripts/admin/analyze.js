@@ -4,7 +4,6 @@ const scriptInfo = {
     desc: 'Get a summary of information from a online IRC user',
     createdBy: 'IronY'
 };
-
 const _ = require('lodash');
 const c = require('irc-colors');
 const Models = require('bookshelf-model-loader');

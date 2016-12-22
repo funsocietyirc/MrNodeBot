@@ -4,9 +4,7 @@ const scriptInfo = {
     desc: 'Private Admin help, and Admin User management',
     createdBy: 'IronY'
 };
-
 const _ = require('lodash');
-
 const color = require('irc-colors');
 const storage = require('node-persist');
 const helpers = require('../../helpers');
@@ -29,10 +27,8 @@ i18next.addResources('en', 'admin', {
     noAdmins: 'There are currently no Administrators listed'
 });
 
-/**
-  Administrator List manipulationr
-  Commands: admin [list add del help]
-**/
+// Administrator List manipulationr
+// Commands: admin [list add del help]
 module.exports = app => {
     const admin = (to, from, text, message) => {
         let textArray = text.split(' ');

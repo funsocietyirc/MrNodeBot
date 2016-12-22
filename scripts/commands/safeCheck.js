@@ -4,7 +4,6 @@ const scriptInfo = {
     desc: 'Check the safety of a URL',
     createdBy: 'IronY'
 };
-
 const _ = require('lodash');
 const logger = require('../../lib/logger.js');
 const safe = require('../generators/_getGoogleSafeUrlCheck');

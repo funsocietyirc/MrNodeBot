@@ -4,7 +4,6 @@ const scriptInfo = {
     desc: 'Privates add-quote, del-qutote, and quote. Allows rudenemntary quote system',
     createdBy: 'IronY'
 };
-
 const Moment = require('moment');
 const color = require('irc-colors');
 const storage = require('node-persist');

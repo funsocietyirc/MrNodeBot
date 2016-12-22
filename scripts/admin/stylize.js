@@ -4,14 +4,11 @@ const scriptInfo = {
     desc: 'Super colorized version of tell',
     createdBy: 'IronY'
 };
-
 const color = require('irc-colors');
 const _ = require('lodash');
 
-/**
-  Allow the bot to talk to a channel/privmesg in technocolor
-  Commands: styleize [[Channel][Style][Message]]
-**/
+// Allow the bot to talk to a channel/privmesg in technocolor
+// Commands: styleize [[Channel][Style][Message]]
 module.exports = app => {
     // Handler
     const stylize = (to, from, text, message) => {

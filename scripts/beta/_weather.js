@@ -3,23 +3,19 @@
  * @module weather
  * @author Dave Richer
  */
-
 const scriptInfo = {
     name: 'weather',
     desc: 'Get Weather data',
     createdBy: 'IronY'
 };
-
 const _ = require('lodash');
 require('lodash-addons');
 const rp = require('request-promise-native');
 const logger = require('../../lib/logger');
-
 // Localizations
 const t = require('../../lib/localize');
 const i18next = require('../../lib/i18next');
 i18next.addResources('en', 'weather', {});
-
 const apiEndpoint = 'https://api.worldweatheronline.com/free/v2/weather.ashx';
 const numOfDaysDefault = 1;
 
