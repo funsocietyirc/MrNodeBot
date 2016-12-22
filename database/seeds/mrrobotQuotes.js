@@ -1,3 +1,4 @@
+'use strict';
 const quotes = require('././mrrobotQuotes.json').showQuotes;
 exports.seed = function(knex, Promise) {
   // Deletes ALL existing entries

@@ -4,14 +4,12 @@
  * @module react back
  * @author Dave Richer
  */
-
 const scriptInfo = {
     name: 'Act Back',
     desc: 'Mock back actions',
     createdBy: 'IronY',
     actions: {}
 };
-
 const _ = require('lodash');
 
 module.exports = app => {

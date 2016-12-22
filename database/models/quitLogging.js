@@ -1,7 +1,7 @@
 'use strict';
-var Models = require('bookshelf-model-loader');
+const Models = require('bookshelf-model-loader');
 
-var QuitLogging = Models.Base.extend({
+const QuitLogging = Models.Base.extend({
     tableName: 'quitLogging',
     hasTimestamps: ['timestamp'],
     soft: false

@@ -1,5 +1,4 @@
 'use strict';
-
 const _ = require('lodash');
 const getYoutube = require('./_getYoutube.js'); // Get the youtube key from link
 const getImdb = require('./_getImdb.js'); // Get IMDB Data

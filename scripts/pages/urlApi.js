@@ -1,19 +1,15 @@
 'use strict';
-
-/**
-Build the Base query.
-args:
-  req - express quest
-  callback
-
-query params:
-  type:
-    images -- will filter based on image file types
-  user -- matches user
-  channel -- matches channel
-
-**/
-
+// Build the Base query.
+// args:
+//   req - express quest
+//   callback
+//
+// query params:
+//   type:
+//     images -- will filter based on image file types
+//   user -- matches user
+//   channel -- matches channel
+//
 const scriptInfo = {
     name: 'urlApi',
     desc: 'The URL Express API',

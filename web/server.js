@@ -10,10 +10,8 @@ const expressWinston = require('express-winston');
 const rotate = require('winston-daily-rotate-file');
 const RateLimit = require('express-rate-limit');
 
-/*
-  Web Server component:
-  Features: named-routes, favicon, file upload, jade template engine, body parser, json parser
-*/
+//   Web Server component:
+//   Features: named-routes, favicon, file upload, jade template engine, body parser, json parser
 module.exports = (app) => {
     // Create Express Server
     let webServer = Express();

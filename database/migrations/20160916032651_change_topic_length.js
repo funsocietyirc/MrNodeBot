@@ -1,3 +1,5 @@
+'use strict';
+
 const config = require('../../config');
 
 exports.up = function(knex, Promise) {

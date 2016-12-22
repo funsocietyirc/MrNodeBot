@@ -1,5 +1,4 @@
 'use strict';
-
 const _ = require('lodash');
 const rp = require('request-promise-native');
 const xray = require('x-ray')();

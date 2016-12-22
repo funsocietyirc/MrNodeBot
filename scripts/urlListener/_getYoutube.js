@@ -1,5 +1,4 @@
 'use strict';
-
 const _ = require('lodash');
 const gen = require('../generators/_youTubeVideoData');
 const apiKey = require('../../config').apiKeys.google;

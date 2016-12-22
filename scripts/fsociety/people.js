@@ -1,4 +1,4 @@
-'use static';
+'use strict';
 const scriptInfo = {
     name: 'FSociety Peoples',
     desc: 'Commands for certain #fsociety members',

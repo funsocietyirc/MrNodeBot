@@ -1,7 +1,7 @@
 'use strict';
-var Models = require('bookshelf-model-loader');
+const Models = require('bookshelf-model-loader');
 
-var YouTubeLink = Models.Base.extend({
+const YouTubeLink = Models.Base.extend({
     tableName: 'youTubeLink',
     hasTimestamps: ['timestamp'],
     soft: false

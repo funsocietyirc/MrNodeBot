@@ -1,17 +1,12 @@
 'use strict'
-
-// TODO This does not work in sqlite
-
-/**
-  Returns a promise with Channel participation statistics.
-  Requires: The channel to get statistics for, and a optional options object
-  Example output:
-  [
-    { nick: 'IronY', total: 15884 },
-    { nick: 'Zhenn', total: 1259 }
-  ]
-**/
-
+  // TODO This does not work in sqlite
+  // Returns a promise with Channel participation statistics.
+  // Requires: The channel to get statistics for, and a optional options object
+  // Example output:
+  // [
+  //   { nick: 'IronY', total: 15884 },
+  //   { nick: 'Zhenn', total: 1259 }
+  // ]
 const _ = require('lodash');
 const Models = require('bookshelf-model-loader');
 const moment = require('moment');

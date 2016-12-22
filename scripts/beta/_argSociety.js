@@ -1,5 +1,4 @@
 'use strict';
-
 const scriptInfo = {
     name: 'argSociety',
     desc: 'Misc functionality for ##mrRobotARG on freenode',

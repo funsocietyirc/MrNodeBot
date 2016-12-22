@@ -1,5 +1,6 @@
-// Thanks To Foxboron @ Freenode for the original Logic
 'use strict';
+// Thanks To Foxboron @ Freenode for the original Logic
+
 // Ascii Module shims
 const lowerCaseLetters = 'abcdefghijklmnopqrstuvwxyz';
 const upperCaseLetters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';

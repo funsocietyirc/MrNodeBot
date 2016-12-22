@@ -1,5 +1,4 @@
 'use strict';
-
 const scriptInfo = {
     name: 'showImageLink',
     desc: 'Announce a Image link for the user triggering the command',

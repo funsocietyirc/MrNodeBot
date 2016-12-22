@@ -1,5 +1,4 @@
 'use strict';
-
 const scriptInfo = {
     name: 'Seen',
     desc: 'Get stats on the last activity of a IRC user',

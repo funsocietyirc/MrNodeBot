@@ -1,3 +1,4 @@
+'use strict';
 const c = require('irc-colors');
 const _ = require('lodash');
 require('lodash-addons');

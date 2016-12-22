@@ -1,5 +1,4 @@
 'use strict';
-
 const scriptInfo = {
     name: 'Money',
     desc: 'Conversions and such',

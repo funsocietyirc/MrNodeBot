@@ -1,11 +1,9 @@
 'use strict'
-/**
-  Get a response from the Is Good URl Shortner
-  Input:
-    text - URL to shorten
-  Returns:
-    shorturl - The Good Url short link
-**/
+  // Get a response from the Is Good URl Shortner
+  // Input:
+  //   text - URL to shorten
+  // Returns:
+  //   shorturl - The Good Url short link
 const rp = require('request-promise-native');
 
 module.exports = text => rp({

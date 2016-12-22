@@ -1,7 +1,3 @@
-/*
-    Dark Army Channel Module
-    - Join a list of channels following a bitshift algo
-*/
 'use strict';
 const scriptInfo = {
     name: 'darkarmy',

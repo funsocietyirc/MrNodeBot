@@ -1,5 +1,4 @@
 'use strict';
-
 const scriptInfo = {
     name: 'Safe Check',
     desc: 'Check the safety of a URL',

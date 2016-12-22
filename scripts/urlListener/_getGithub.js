@@ -1,5 +1,4 @@
-'use strict'
-
+'use strict';
 const rp = require('request-promise-native');
 const logger = require('../../lib/logger');
 // Get GitHub Information

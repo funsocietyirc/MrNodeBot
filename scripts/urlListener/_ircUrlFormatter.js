@@ -1,5 +1,4 @@
 'use strict';
-
 const c = require('irc-colors');
 const _ = require('lodash');
 const config = require('../../config.js');

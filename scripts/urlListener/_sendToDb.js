@@ -1,5 +1,4 @@
 'use strict';
-
 const _ = require('lodash');
 const Models = require('bookshelf-model-loader');
 const logger = require('../../lib/logger');

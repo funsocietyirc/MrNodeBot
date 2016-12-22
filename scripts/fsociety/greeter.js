@@ -1,7 +1,3 @@
-/**
- Greet the users in #fsociety
- TODO: Make multi-channel and configurable
- **/
 'use strict';
 const scriptInfo = {
     name: 'greeter',
@@ -9,6 +5,8 @@ const scriptInfo = {
         'letting them know and inviting them to #fsociety',
     createdBy: 'IronY'
 };
+
+// TODO: Make multi-channel and configurable
 
 const _ = require('lodash');
 const Models = require('bookshelf-model-loader');

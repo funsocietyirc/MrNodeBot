@@ -1,3 +1,4 @@
+'use strict';
 // We are testing
 process.env.NODE_ENV = 'test';
 

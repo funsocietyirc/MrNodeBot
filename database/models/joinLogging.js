@@ -1,7 +1,7 @@
 'use strict';
-var Models = require('bookshelf-model-loader');
+const Models = require('bookshelf-model-loader');
 
-var JoinLogging = Models.Base.extend({
+const JoinLogging = Models.Base.extend({
     tableName: 'joinLogging',
     hasTimestamps: ['timestamp'],
     soft: false

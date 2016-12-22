@@ -1,5 +1,4 @@
 'use strict';
-
 const scriptInfo = {
     name: 'voiceRegularsOnJoin',
     desc: 'Voice regulars on join',

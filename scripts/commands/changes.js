@@ -1,5 +1,4 @@
 'use strict';
-
 const scriptInfo = {
     name: 'changes',
     desc: 'Allow users to see git changes from IRC',

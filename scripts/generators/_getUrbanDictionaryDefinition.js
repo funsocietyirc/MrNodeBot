@@ -1,5 +1,4 @@
 'use strict';
-
 const _ = require('lodash');
 const xray = require('x-ray')();
 const helpers = require('../../helpers');

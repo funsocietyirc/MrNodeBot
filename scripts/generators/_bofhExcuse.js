@@ -1,5 +1,4 @@
 'use strict';
-
 const _ = require('lodash');
 
 module.exports = size => new Promise(resolve => resolve(_.sampleSize(excuses, size || 1)));

@@ -1,7 +1,7 @@
 'use strict';
-var Models = require('bookshelf-model-loader');
+const Models = require('bookshelf-model-loader');
 
-var Topics = Models.Base.extend({
+const Topics = Models.Base.extend({
     tableName: 'topics',
     hasTimestamps: ['timestamp'],
     soft: false

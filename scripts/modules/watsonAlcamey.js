@@ -1,5 +1,4 @@
 'use strict';
-
 const scriptInfo = {
     name: 'Waston Alcamey',
     desc: 'Test Script for watson analytics',

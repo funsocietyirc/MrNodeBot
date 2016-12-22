@@ -1,5 +1,4 @@
 'use strict';
-
 const scriptInfo = {
     name: 'Popularity Analytic commands',
     desc: 'Get report data on popularity metrics',

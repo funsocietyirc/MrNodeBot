@@ -1,5 +1,4 @@
 'use strict';
-
 const scriptInfo = {
     name: 'tracker',
     desc: 'Get GEO IP info on a IRC user',
