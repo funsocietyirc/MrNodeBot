@@ -3,6 +3,11 @@ node_js:
   - "5"
   - "6"
   - "7"
+compiler:
+  - gcc
+  - clang
+env:
+  - CXX=g++-4.8
 before_install:
   - sudo apt-get -y install libicu-dev
   - npm install -g npm
@@ -10,3 +15,11 @@ script:
   - "npm test"
 notifications:
   irc: "chat.freenode.net#mrnodebot"
+addons:
+  apt:
+    sources:
+    - ubuntu-toolchain-r-test
+    packages:
+    - gcc-4.8
+    - g++-4.8
+    - clang
