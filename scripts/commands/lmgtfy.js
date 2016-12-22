@@ -18,13 +18,11 @@ module.exports = app => {
                 return;
             }
             gen('http://lmgtfy.com/?q=' + encodeURIComponent(text))
-                .then(result => {
-                    if (!result) {
-                        app.say(to, 'Something went wrong figuring that out for you');
-                        return;
-                    }
-                    app.say(to, `${ircTypography.logos.lmgtfy} ${result}`);
-                })
+                .then(result =>
+                    app.say(to, !result ?
+                        'Something went wrong figuring that out for you' :
+                        `${ircTypography.logos.lmgtfy} ${result}`)
+                )
                 .catch(err => logger.error('LMGTFY Error', {
                     err
                 }));

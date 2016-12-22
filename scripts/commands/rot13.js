@@ -8,7 +8,6 @@ const _ = require('lodash');
 const helpers = require('../../helpers');
 
 module.exports = app => {
-    // Flip a coin
     app.Commands.set('rot13', {
         desc: '[text] Encode a rot13 string',
         access: app.Config.accessLevels.admin,

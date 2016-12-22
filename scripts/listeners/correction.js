@@ -4,7 +4,6 @@ const scriptInfo = {
     desc: 'Listen for SED like corrections',
     createdBy: 'IronY'
 };
-
 const Models = require('bookshelf-model-loader');
 const _ = require('lodash');
 const c = require('irc-colors');

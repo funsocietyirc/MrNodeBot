@@ -5,7 +5,6 @@ const scriptInfo = {
         'Provide a list of currently joined Darm Army channels',
     createdBy: 'IronY'
 };
-
 const _ = require('lodash');
 const logger = require('../../lib/logger');
 

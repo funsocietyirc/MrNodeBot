@@ -4,7 +4,6 @@ const scriptInfo = {
     desc: 'Channel Utilities',
     createdBy: 'IronY'
 };
-
 const _ = require('lodash');
 
 module.exports = app => {

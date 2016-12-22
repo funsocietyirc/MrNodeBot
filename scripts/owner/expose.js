@@ -5,7 +5,6 @@ const scriptInfo = {
         'Any IRC client that is auto pulling websites will get their IP posted back',
     createdBy: 'IronY'
 };
-
 const randToken = require('rand-token');
 const mapSearch = require('../../helpers').MapSearch;
 

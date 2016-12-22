@@ -3,17 +3,14 @@ const scriptInfo = {
     name: 'robotTweet',
     createdBy: 'IronY'
 };
-
 const _ = require('lodash');
 const helpers = require('../../helpers');
 const logger = require('../../lib/logger');
 const pusher = require('../../lib/pusher');
 const ircTypo = require('../lib/_ircTypography');
 const short = require('../generators/_isGdShortUrl');
-
 const tweetStreamUrl = 'https://twitter.com/funsocietyirc/status';
 // https://twitter.com/funsocietyirc/status/796592786782949380
-
 let currentStream = null;
 
 module.exports = app => {

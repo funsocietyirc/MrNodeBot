@@ -4,7 +4,6 @@ const scriptInfo = {
     desc: 'Popularity Action listener',
     createdBy: 'IronY'
 };
-
 const _ = require('lodash');
 const Models = require('bookshelf-model-loader');
 const logger = require('../../lib/logger');

@@ -1,5 +1,4 @@
 'use strict';
-
 const scriptInfo = {
     name: 'Debug Utils',
     desc: 'Bot Debugging',

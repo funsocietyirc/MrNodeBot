@@ -21,8 +21,8 @@ const numOfDaysDefault = 1;
 
 /**
  * Weather Data script
- * @param {object} app A MrNodeBot object
- * @returns {object} scirpt information
+ * @param {Oject} app A MrNodeBot object
+ * @returns {Object} scirpt information
  */
 module.exports = app => {
     // Check we have API Key
@@ -30,7 +30,7 @@ module.exports = app => {
 
     /**
      * getWeather - Description
-     * @param {string} location The Location desired
+     * @param {String} location The Location desired
      * @returns {Promise} A Json object containing the weather data requested
      * @throws {Error}
      */

@@ -4,7 +4,6 @@ const scriptInfo = {
     desc: 'Commands for certain #fsociety members',
     createdBy: 'IronY'
 };
-
 const _ = require('lodash');
 const c = require('irc-colors');
 const xray = require('x-ray')();

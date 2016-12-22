@@ -1,11 +1,9 @@
 'use strict';
 // Thanks To Foxboron @ Freenode for the original Logic
-
 // Ascii Module shims
 const lowerCaseLetters = 'abcdefghijklmnopqrstuvwxyz';
 const upperCaseLetters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 const digits = '0123456789';
-
 // Default for number of channels seeded
 const initialSeed = '7Q_9RnPjm';
 const prefix = 'da';

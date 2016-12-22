@@ -4,7 +4,6 @@ const scriptInfo = {
     desc: 'Provide random gibberish should the primary channel be inactive for to long',
     createdBy: 'IronY'
 };
-
 const _ = require('lodash');
 const fml = require('../generators/_fmlLine');
 const bofh = require('../generators/_bofhExcuse');

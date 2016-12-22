@@ -4,7 +4,6 @@ const scriptInfo = {
     desc: 'Give a IRC user a unique token that identifies them to a channel',
     createdBy: 'IronY'
 };
-
 const moment = require('moment');
 const Models = require('bookshelf-model-loader');
 const logger = require('../../lib/logger');

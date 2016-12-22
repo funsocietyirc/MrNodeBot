@@ -4,7 +4,6 @@ const scriptInfo = {
     desc: 'Log IRC evets to the database',
     createdBy: 'IronY'
 };
-
 const _ = require('lodash');
 const c = require('irc-colors');
 const logger = require('../../lib/logger');

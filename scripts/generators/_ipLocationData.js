@@ -1,6 +1,5 @@
 'use strict';
 const rp = require('request-promise-native');
-
  // Return GEO IP Data in the following format
  //     {
  //     ip: '',
@@ -17,7 +16,6 @@ const rp = require('request-promise-native');
  //   }
  //
  // If the host is invalid, and the request fails, a empty object will be returned
-
 
 module.exports = host => new Promise((resolve, reject) => {
     if (!host) {

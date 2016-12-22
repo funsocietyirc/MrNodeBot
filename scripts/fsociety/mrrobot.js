@@ -4,7 +4,6 @@ const scriptInfo = {
     desc: 'Watch for quotes from the MrRobot bot, log them, clean them, and allow for announcement of them',
     createdBy: 'IronY'
 };
-
 const _ = require('lodash');
 const Models = require('bookshelf-model-loader');
 const logger = require('../../lib/logger');
@@ -72,12 +71,11 @@ module.exports = app => {
                 results.forEach(result => quoteModel
                     .where('id', result.attributes.id + 1)
                     .fetch()
-                    .then(secondLine => {
-                        result.set('quote', `${result.get('quote').replace('(1 more message)','')} ${secondLine.get('quote')}`).save().then(() => {
-                            logger.info(`Cleaned up MrRobot show quotes, merged quote ${result.get('id')} and ${secondLine.get('id')}`);
-                            secondLine.destroy();
-                        });
-                    }));
+                    .then(secondLine => result.set('quote', `${result.get('quote').replace('(1 more message)','')} ${secondLine.get('quote')}`).save().then(() => {
+                        logger.info(`Cleaned up MrRobot show quotes, merged quote ${result.get('id')} and ${secondLine.get('id')}`);
+                        secondLine.destroy();
+                    }))
+                );
             });
     };
     app.Commands.set('mrrobot-clean', {
@@ -101,13 +99,9 @@ module.exports = app => {
                 }
             })
             .fetch()
-            .then(result => {
-                if (!result) {
-                    app.say(chan || to, `I have not yet encountered anything like that.`);
-                    return;
-                }
-                app.say(chan || to, `${ircTypography.logos.mrrobot} ${result.get('quote')}`);
-            });
+            .then(result => app.say(
+                chan || to, !result ? `I have not yet encountered anything like that.` : `${ircTypography.logos.mrrobot} ${result.get('quote')}`
+            ));
     };
 
     app.Commands.set('mrrobot', {

@@ -4,7 +4,6 @@ const scriptInfo = {
     desc: 'Provides Registration and other User management functionality',
     createdBy: 'IronY'
 };
-
 const logger = require('../../lib/logger');
 
 module.exports = app => {

@@ -4,7 +4,6 @@ const scriptInfo = {
     desc: 'Announce to all active channels, and to Twitter',
     createdBy: 'IronY'
 };
-
 const _ = require('lodash');
 const logger = require('../../lib/logger');
 const pusherApi = require('../../lib/pusher');

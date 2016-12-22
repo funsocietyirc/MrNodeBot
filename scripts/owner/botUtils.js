@@ -4,7 +4,6 @@ const scriptInfo = {
     desc: 'Bot administrative commands',
     createdBy: 'IronY'
 };
-
 const _ = require('lodash');
 const typo = require('../lib/_ircTypography');
 

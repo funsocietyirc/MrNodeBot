@@ -29,10 +29,12 @@ module.exports = app => {
                     app.say(to, 'You have no mentions available at this time');
                     return;
                 }
-                if (to != from) {
-                    app.say(from, `I have sent you your mentions ${to}`);
-                }
-                app.say(from, `Sending your last ${results.length} mentions`);
+
+                app.say(from, to !== from ?
+                    'You have no mentions available at this time' :
+                    `Sending your last ${results.length} mentions`
+                );
+
                 _.forEach(results.toJSON(), (result, key) => app.say(
                     from,
                     `[${key+1}] - ${Moment(result.timestamp).fromNow()} - By ${result.mention.by} - On ${result.mention.channel}: ${result.mention.text}`

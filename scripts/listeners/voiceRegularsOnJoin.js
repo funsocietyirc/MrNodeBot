@@ -4,7 +4,6 @@ const scriptInfo = {
     desc: 'Voice regulars on join',
     createdBy: 'IronY'
 };
-
 const _ = require('lodash');
 const voiceUsers = require('../lib/_voiceUsersInChannel');
 const logger = require('../../lib/logger');
