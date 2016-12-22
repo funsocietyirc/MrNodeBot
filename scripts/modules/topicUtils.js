@@ -109,13 +109,16 @@ module.exports = app => {
                     app.say(to, 'There is not topics available for this channel');
                     return;
                 }
+
                 let topic = results.pluck('topic')[0];
+
                 if (!topic) {
                     app.say(to, 'That is all she wrote folks');
                     return;
                 }
 
                 topic = topic.split(divider);
+
                 if (!text) topic.splice(-1, 1);
                 else {
                     let index = topic.indexOf(text);
@@ -125,6 +128,7 @@ module.exports = app => {
                     }
                     topic.splice(index, 1);
                 }
+
                 topic = topic.join(divider);
                 app._ircClient.send('topic', to, topic);
             });
@@ -143,16 +147,21 @@ module.exports = app => {
                     app.say(to, 'There is not topics available for this channel');
                     return;
                 }
+
                 let topic = results.pluck('topic')[0];
+
                 if (!topic) {
                     app.say(from, `There is no topic data available for ${to}`);
                     return;
                 }
+
                 topic = topic.split(divider);
+
                 if (!topic.length) {
                     app.say(from, `There is no segments available for the topic in ${to}`);
                     return;
                 }
+
                 app.say(to, `I have oh so personally delivered that information to you ${from}`);
                 app.say(from, `Here are the topic segements for ${to}`);
                 topic.forEach((r, x) => app.say(from, `[${x + 1}] ${r}`));

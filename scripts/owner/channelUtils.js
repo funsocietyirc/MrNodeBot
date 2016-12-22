@@ -21,9 +21,9 @@ module.exports = app => {
             return
         }
         // Part the channel
-        app._ircClient.part(channel, () => {
-            app.say(from, `I have parted ${channel}`);
-        });
+        app._ircClient.part(channel, () =>
+            app.say(from, `I have parted ${channel}`)
+        );
     };
     app.Commands.set('part', {
         desc: 'part [channel] Part a channel',

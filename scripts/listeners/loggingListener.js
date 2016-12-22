@@ -16,9 +16,7 @@ module.exports = app => {
 
     // Log Messages
     const msgCmd = (to, from, text, message) => {
-        if (!Models.Logging) {
-            return;
-        }
+        if (!Models.Logging) return;
         Models.Logging.create({
                 from: from,
                 to: to,
@@ -35,9 +33,7 @@ module.exports = app => {
 
     // Log Ctcp
     const ctcpCmd = (from, to, text, type, message) => {
-        if (!Models.CtcpLogging) {
-            return;
-        }
+        if (!Models.CtcpLogging) return;
         Models.CtcpLogging.create({
                 from: from,
                 to: to,
@@ -56,9 +52,7 @@ module.exports = app => {
     // Log Channel Parts
     const actionCmd = (from, to, text, message) => {
         // We do not have database, or we are talking to ourselves
-        if (!Models.ActionLogging) {
-            return;
-        }
+        if (!Models.ActionLogging) return;
         Models.ActionLogging.create({
                 from: from,
                 to: to,
@@ -92,9 +86,7 @@ module.exports = app => {
 
     // Log Channel joins
     const joinCmd = (channel, nick, message) => {
-        if (!Models.JoinLogging) {
-            return;
-        }
+        if (!Models.JoinLogging) return;
         Models.JoinLogging.create({
                 nick: nick,
                 channel: channel,
@@ -110,9 +102,7 @@ module.exports = app => {
 
     // Log Channel Parts
     const partCmd = (channel, nick, reason, message) => {
-        if (!Models.PartLogging) {
-            return;
-        }
+        if (!Models.PartLogging) return;
         Models.PartLogging.create({
                 nick: nick,
                 channel: channel,
@@ -129,9 +119,7 @@ module.exports = app => {
 
     // Log Kicks
     const kickCmd = (channel, nick, by, reason, message) => {
-        if (!Models.KickLogging) {
-            return;
-        }
+        if (!Models.KickLogging) return;
         Models.KickLogging.create({
                 nick: nick,
                 channel: channel,
@@ -149,9 +137,7 @@ module.exports = app => {
 
     // Log Quits
     const quitCmd = (nick, reason, channels, message) => {
-        if (!Models.QuitLogging) {
-            return;
-        }
+        if (!Models.QuitLogging) return;
         Models.QuitLogging.create({
                 nick: nick,
                 reason: reason,
@@ -168,9 +154,7 @@ module.exports = app => {
 
     // Log Nick Changes
     const nickCmd = (oldnick, newnick, channels, message) => {
-        if (!Models.Alias) {
-            return;
-        }
+        if (!Models.Alias) return;
         // If we have a database connection, log
         Models.Alias.create({
                 oldnick: oldnick,
@@ -188,20 +172,16 @@ module.exports = app => {
 
     // Toppic logging handler
     const topicCmd = (channel, topic, nick, message) => {
-        if (!Models.Topics) {
-            return;
-        }
-        Models.Topics.query(qb => {
+        if (!Models.Topics) return;
+        Models.Topics.query(qb =>
                 qb.where('channel', 'like', channel)
-                    .orderBy('id', 'desc')
-                    .limit(1)
-                    .select(['topic']);
-            })
+                .orderBy('id', 'desc')
+                .limit(1)
+                .select(['topic'])
+            )
             .fetch()
             .then(lastTopic => {
-                if (lastTopic && topic === lastTopic.attributes.topic) {
-                    return;
-                }
+                if (lastTopic && topic === lastTopic.attributes.topic) return;
                 Models.Topics.create({
                     channel: channel,
                     topic: topic,
@@ -216,7 +196,6 @@ module.exports = app => {
         call: topicCmd,
         name: 'topicLogger'
     });
-
 
     // Return the script info
     return scriptInfo;

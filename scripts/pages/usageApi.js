@@ -22,14 +22,14 @@ module.exports = app => {
         name: 'api.usage.channels.available',
         verb: 'get',
         handler: (req, res) => {
-            let channel = req.params.channel && _.isString(req.params.channel) ? req.params.channel.replace(hashPattern,'#') : null;
+            let channel = req.params.channel && _.isString(req.params.channel) ? req.params.channel.replace(hashPattern, '#') : null;
             getUsageChansAvail(app, channel)
-                .then(results => {
+                .then(results =>
                     res.json({
                         status: 'success',
                         channels: results
-                    });
-                })
+                    })
+                )
                 .catch(err => {
                     logger.error('Error in api.usage.channels.available', {
                         err
@@ -50,14 +50,13 @@ module.exports = app => {
         handler: (req, res) => {
             getUsageOverTime(req.params.channel.replace(hashPattern, '#'), req.params.nick)
                 .then(results => {
-                    if (!results) {
-                        res.json({
-                            message: 'No results available',
-                            status: 'error',
-                            results: [],
-                        });
-                        return;
-                    }
+                    // No Results available
+                    if (!results) return res.json({
+                        message: 'No results available',
+                        status: 'error',
+                        results: [],
+                    });
+
                     results.status = 'success';
                     res.json(results);
                 })

@@ -24,9 +24,7 @@ module.exports = app => {
         let results = [];
 
         // Check for matches
-        while (match = pattern.exec(text)) {
-            results.push(match[1]);
-        }
+        while (match = pattern.exec(text)) results.push(match[1]);
 
         // No initial results, bail
         if (_.isEmpty(results)) return;

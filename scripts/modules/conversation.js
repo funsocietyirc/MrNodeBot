@@ -15,7 +15,6 @@ module.exports = app => {
     // No Features block
     if (!_.has(app, 'Config.features.conversational')) return scriptInfo;
 
-
     const converse = (to, from, text, message) => {
         app.Config.features.conversational.enabled = !_.isBoolean(app.Config.features.conversational.enabled) ? true : !app.Config.features.conversational.enabled;
         let formatText = app.Config.features.conversational.enabled ? 'now' : 'no longer';

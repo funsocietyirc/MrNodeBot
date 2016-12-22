@@ -16,18 +16,18 @@ let currentStream = null;
 module.exports = app => {
     if (!app._twitterClient) return scriptInfo;
 
-    const say = (tweet, shortUrl) => {
-        // Announce to Channels
+    // Announce to Channels
+    const say = (tweet, shortUrl) =>
         app.Config.features.twitter.channels.forEach((chan) => {
             if (!twitterEnabled) return;
             app.say(chan, `${ircTypo.logos.twitter} ${ircTypo.icons.sideArrow} ${shortUrl} ${ircTypo.icons.sideArrow} @${tweet.user.screen_name} ${ircTypo.icons.sideArrow} ${tweet.text}`);
         });
-    };
 
     const push = (tweet) => {
         if (!app._twitterClient || !pusher) return;
 
         let timestamp = Date.now();
+
         pusher.trigger('public', 'tweets', {
             tweet,
             timestamp
@@ -35,11 +35,11 @@ module.exports = app => {
     };
 
     const onTweetData = tweet => {
-        // If we have enough information to report back
-        if (tweet.user || tweet.text) {
-            short(`${tweetStreamUrl}/${tweet.id_str}`)
-                .then(shortUrl => [say, push].forEach(medium => medium(tweet, shortUrl)));
-        }
+        // We do not have enought data, bail
+        if (!tweet.user || !tweet.text) return;
+
+        short(`${tweetStreamUrl}/${tweet.id_str}`)
+            .then(shortUrl => [say, push].forEach(medium => medium(tweet, shortUrl)));
     };
 
     const onTweetError = error => logger.error('Twitter Error', {
@@ -55,11 +55,11 @@ module.exports = app => {
         });
 
         newStream.once('connected', function(res) {
-            if (currentStream) {
-                currentStream.stop();
-            }
+            if (currentStream) currentStream.stop();
+
             newStream.on('tweet', onTweetData);
             newStream.on('error', onTweetError);
+
             currentStream = newStream;
         });
     };

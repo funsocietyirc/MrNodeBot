@@ -15,30 +15,26 @@ module.exports = app => {
     // Database not available
     if (!Models.Upvote) return scriptInfo;
 
+    // Hold timeouts
     const timeouts = new Map();
-    const defaultPattern = /gives (.*) (\+|\-)1(?: (.*))?/;
 
-    const pattern = (
-        _.isUndefined(app.Config.features.popularity) ||
-        _.isUndefined(app.Config.features.popularity.pattern) ||
-        !_.isString(app.Config.features.popularity.pattern)
-    ) ? defaultPattern : app.Config.features.popularity.pattern;
+    // Default Regex matching pattern
+    const pattern = (!_.isObject(app.Config.features.popularity) ||
+        !_.isString(app.Config.features.popularity.pattern) ||
+        _.isEmpty(app.Config.features.popularity.pattern)
+    ) ? /gives (.*) (\+|\-)1(?: (.*))?/ : app.Config.features.popularity.pattern;
 
-    const delayMins = (
-        _.isUndefined(app.Config.features.popularity) ||
-        _.isUndefined(app.Config.features.popularity.delayInMins)
-    ) ? 30 : app.Config.features.popularity.delayInMins;
+    const delayMins = (!_.isObject(app.Config.features.popularity) ||
+        !_.isSafeInteger(app.Config.features.popularity.delayInMins) ||
+        app.Config.features.popularity.delayInMins < 0
+    ) ? 30 * 60 * 1000 : app.Config.features.popularity.delayInMins * 60 * 1000;
 
-    const delay = delayMins * 60 * 1000;
-
-    const cleanJobInMins = (
-        _.isUndefined(app.Config.features.popularity) ||
-        _.isUndefined(app.Config.features.popularity.cleanJobInMins)
+    const cleanJobInMins = (!_.isObject(app.Config.features.popularity) ||
+        !_.isSafeInteger(app.Config.features.popularity.cleanJobInMins) ||
+        app.Config.features.popularity.cleanJobInMins < 0
     ) ? 30 : app.Config.features.popularity.cleanJobInMins;
 
-    const ignoredChannels = (
-        _.isUndefined(app.Config.features.popularity) ||
-        _.isUndefined(app.Config.features.popularity.ignoredChannels) ||
+    const ignoredChannels = (!_.isObject(app.Config.features.popularity) ||
         !_.isArray(app.Config.features.popularity.ignoredChannels)
     ) ? [] : app.Config.features.popularity.ignoredChannels;
 
@@ -66,12 +62,13 @@ module.exports = app => {
 
         // Trying to vote on yourself
         if (result[1] == from) {
-            app.say(from, `It is considered incredibly condescending to cast a vote for yourself`);
+            app.say(to, `It is considered incredibly condescending to cast a vote for yourself`);
             return;
         }
 
         // Users are not in channel
         if (!app._ircClient.isInChannel(to, result[1]) || !app._ircClient.isInChannel(to, from)) {
+            app.say(to, `You cannot possibly want to vote for someone who is not present ${from}`);
             return;
         }
 
@@ -79,12 +76,10 @@ module.exports = app => {
         if (timeouts.has(from)) {
             let tmpTimeout = timeouts.get(from);
             if (_.includes(tmpTimeout, result[1])) {
-                app.notice(from, `Your ${result[2]} vote for ${result[1]} has been rate limited (${delayMins} min total per candidate)`);
+                app.say(to, `Your ${result[2]} vote for ${result[1]} has been rate limited (${delayMins} min total per candidate)`);
                 return;
-            };
-        } else {
-            timeouts.set(from, []);
-        }
+            }
+        } else timeouts.set(from, []);
 
         // Create the record
         Models.Upvote.create({
@@ -111,7 +106,7 @@ module.exports = app => {
                     timeouts.set(from, tmpTimeout);
                 }, delay);
 
-                app.notice(from, `You have just given ${result[1]} a ${result[2]} vote on ${to}`)
+                app.notice(to, `You have just given ${result[1]} a ${result[2]} vote on ${to}`)
             })
             .catch(err => logger.error(`Error in Popularity Listener`, {
                 err: err

@@ -90,11 +90,11 @@ module.exports = app => {
         let token = randToken.generate(8);
 
         tokenModel
-            .query(qb => {
+            .query(qb =>
                 qb
-                    .where('user', from)
-                    .where('channel', to);
-            })
+                .where('user', from)
+                .where('channel', to)
+            )
             .fetch()
             .then(result => {
                 // If no previous tokens exist

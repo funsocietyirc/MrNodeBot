@@ -25,18 +25,15 @@ module.exports = app => {
     const randomLine = (to, from, text, message) => {
         Models.Logging.query(qb => {
                 qb.select('from', 'text').where('to', to).orderByRaw('rand()').limit(1);
-                if (text) {
-                    qb.andWhere('text', 'like', text);
-                }
+                if (text) qb.andWhere('text', 'like', text);
             })
             .fetch()
-            .then(result => {
-                if (!result) {
-                    app.say(to, `Nothing like that has ever been said in here... yet!`);
-                    return;
-                }
-                app.say(to, `${result.get('from')} : ${result.get('text')}`);
-            });
+            .then(result =>
+                app.say(to, !result ?
+                    `Nothing like that has ever been said in here... yet!` :
+                    `${result.get('from')} : ${result.get('text')}`
+                )
+            );
     };
 
     // Search channel by search terms
@@ -68,9 +65,7 @@ module.exports = app => {
                 results.forEach(result => {
                     delay = delay + 1;
                     setTimeout(
-                        () => {
-                            app.say(from, `${result.attributes.from} ${Moment(result.attributes.timestamp).fromNow()} - ${result.attributes.text}`);
-                        },
+                        () => app.say(from, `${result.attributes.from} ${Moment(result.attributes.timestamp).fromNow()} - ${result.attributes.text}`),
                         delay * 2000,
                         result,
                         from

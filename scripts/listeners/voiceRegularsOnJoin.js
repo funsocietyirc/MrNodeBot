@@ -11,31 +11,30 @@ const scheduler = require('../../lib/scheduler')
 
 module.exports = app => {
     // We are missing things
-    if (!app.Database || !app.Config.features.voiceRegulars || !app.Config.features.voiceRegulars.autoVoice) return scriptInfo;
+    if (!app.Database ||
+        _.isUndefined(app.Config.features.voiceRegulars) ||
+        _.isEmpty(app.Config.features.voiceRegulars) ||
+        !app.Config.features.voiceRegulars.autoVoice
+    ) return scriptInfo;
 
     const threshold = (
-      _.isUndefined(app.Config.features.voiceRegulars) ||
-      !_.isSafeInteger(app.Config.features.voiceRegulars) ||
-      app.Config.features.voiceRegulars < 1
+        _.isSafeInteger(app.Config.features.voiceRegulars.threshold) &&
+        app.Config.features.voiceRegulars.threshold >= 0
     ) ? app.Config.features.voiceRegulars.threshold : 250;
 
     const autoVoiceTimeInMins = (
-      _.isUndefined(app.Config.features.voiceRegulars) ||
-      !_.isSafeInteger(app.Config.features.autoVoiceTimeInMins) ||
-      app.Config.features.voiceRegulars < 1
+        _.isSafeInteger(app.Config.features.autoVoiceTimeInMins) &&
+        app.Config.features.voiceRegulars >= 1
     ) ? app.Config.features.voiceRegulars.autoVoiceTimeInMins : 40;
 
-    const autoVoiceChannelIgnore = (
-      _.isUndefined(app.Config.features.voiceRegulars) ||
-      !_.isArray(app.Config.features.autoVoiceChannelIgnore)
-    ) ? app.Config.features.voiceRegulars.autoVoiceChannelIgnore : [];
+    const autoVoiceChannelIgnore = _.isArray(app.Config.features.autoVoiceChannelIgnore) ? app.Config.features.voiceRegulars.autoVoiceChannelIgnore : [];
 
     let cronTime = new scheduler.RecurrenceRule();
     cronTime.minute = autoVoiceTimeInMins;
     scheduler.schedule('inviteRegularsInFsociety', cronTime, () =>
         _.forEach(app.channels, channel => {
             // we are not an op in said channel
-            if ( _.includes(autoVoiceChannelIgnore, channel) || !app._ircClient.isOpInChannel(channel, app.nick)) return;
+            if (_.includes(autoVoiceChannelIgnore, channel) || !app._ircClient.isOpInChannel(channel, app.nick)) return;
             voiceUsers(channel, threshold, app)
                 .then(result => logger.info(`Running Voice Regulars in ${channel}`))
                 .catch(err => logger.error(`Error in Voice Regulars: ${err.message}`));

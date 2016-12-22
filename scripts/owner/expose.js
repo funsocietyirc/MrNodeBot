@@ -43,16 +43,22 @@ module.exports = app => {
             app.say(to, `${to} is already exposed ${from}`);
             return;
         };
+
         let token = ''
         do {
             token = randToken.generate(8);
         } while (tokens.has(token));
+
         tokens.set(token, to);
+
         let path = app.WebServer.namedRoutes.build('expose', {
             token: token
         });
+
         let url = `${app.Config.express.address}${path}`;
+
         app.say(to, `-- Do not click this link if you do not wish to be Exposed -- ${app.nick} ${url}`);
+
         setTimeout(() => {
             tokens.delete(token);
             app.say(to, `Expose is no longer listening on ${to}.`);

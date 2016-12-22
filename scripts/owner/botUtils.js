@@ -27,9 +27,7 @@ module.exports = app => {
     app.Commands.set('channels', {
         desc: 'Get a list of the current joined channels',
         access: app.Config.accessLevels.owner,
-        call: (to, from, text, message) => {
-            app.say(from, `I am currently on the following channels: ${app.channels.join(', ')}`);
-        }
+        call: (to, from, text, message) => app.say(from, `I am currently on the following channels: ${app.channels.join(', ')}`)
     });
 
     app.Commands.set('conf-get', {
