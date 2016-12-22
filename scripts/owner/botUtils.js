@@ -5,6 +5,7 @@ const scriptInfo = {
     createdBy: 'IronY'
 };
 const _ = require('lodash');
+const gen = require('../generators/_showerThoughts');
 const typo = require('../lib/_ircTypography');
 
 module.exports = app => {
@@ -44,6 +45,23 @@ module.exports = app => {
                 return;
             }
             app.say(to, `The config value you requested [${key}] is ` + JSON.stringify(_.get(app.Config, key, '')));
+        }
+    });
+
+    app.Commands.set('spawn', {
+        desc: '[valid js] will return value to console',
+        access: app.Config.accessLevels.owner,
+        call: (to, from, text, message) => {
+            let config = _.cloneDeep(app.Config.irc);
+            config.password = '';
+            config.sasl = false;
+            config.nick = text.split(' ')[0];
+            config.channels = [];
+            let instance = new app._ircClient.Client(config.server, config.nick, config);
+            instance.connect(() => instance.join(to, () => gen().then(result => {
+                instance.say(to, result[0]);
+                setTimeout(() => instance.disconnect('and now I go...'), 10000);
+            })));
         }
     });
 

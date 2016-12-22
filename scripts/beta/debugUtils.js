@@ -57,7 +57,7 @@ module.exports = app => {
                         app._ircClient.cSay(
                             from,
                             to,
-                            (splitResults.shift()).replace(/([\[\]{}'`:,])/g,`\x02$1\x02`)
+                            (splitResults.shift()).replace(/([\[\]{}'`:,])/g, `\x02$1\x02`)
                         );
 
                         // If there is any results left, recurse
