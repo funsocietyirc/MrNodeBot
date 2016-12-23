@@ -109,7 +109,7 @@ module.exports = app => {
                                 ));
 
                                 // Join delay delay
-                                promises.push(new Promise(r => setTimeout(r, 5000)));
+                                promises.push(new Promise(r => setTimeout(r, ++key * 5000)));
 
                                 // We have no results
                                 if (!logs.length) _.each(
@@ -128,7 +128,7 @@ module.exports = app => {
                                 );
 
                                 // Part delay
-                                promises.push(new Promise(r => setTimeout(r, 20000)));
+                                promises.push(new Promise(r => setTimeout(r, ++key * 5000)));
 
                                 // Iterate over promises
                                 return Promise.all(promises).then(res);
