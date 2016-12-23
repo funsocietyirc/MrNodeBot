@@ -102,7 +102,7 @@ module.exports = app => {
                                 app.action(to, `looks lovingly at ${instance.nick}`);
 
                                 // We have no results
-                                if (_.isEmpty(logs)) res(_.each(results, result => instance.say(to, result)));
+                                if (_.isEmpty(!logs.length)) res(_.each(results, result => instance.say(to, result)));
 
                                 // We have resutls
                                 else {
@@ -113,7 +113,7 @@ module.exports = app => {
                                             setTimeout(() => r(instance.say(to, log.text)), key * 2500)
                                         ))
                                     );
-                                    
+
                                     return Promise.all(promises)
                                         .then(() =>
                                             setTimeout(() =>
