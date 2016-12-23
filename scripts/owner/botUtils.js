@@ -57,23 +57,31 @@ module.exports = app => {
 
             // Parse arguments
             let [nick, amount] = text.split(' ');
+
             // Make sure we have a default amount
             amount = _.isSafeInteger(parseInt(amount)) ? parseInt(amount) : 1;
+
             // Clone and modify initial config
             let config = _.cloneDeep(app.Config.irc);
+
             // Set Nick
             config.nick = (!_.isString(nick) || _.isEmpty(nick)) ? app.nick : nick;
+
             // Hold on to initial nick
             config.originalNick = config.nick;
+
             // Reset variables
             config.password = '';
             config.sasl = false;
             config.channels = [];
 
-
+            // Action to channel
             app.action(to, `focuses real hard`);
-            let instance = new app._ircClient.Client(config.server, config.nick, config);
 
+            // Create IRC Instance
+            const instance = new app._ircClient.Client(config.server, config.nick, config);
+
+            // Connect
             instance.connect(() => {
                 // Add to ignore list
                 const wasIgnored = _.includes(app.Ignore, _.toLower(config.nick));
@@ -89,26 +97,43 @@ module.exports = app => {
                             .limit(amount)
                         )
                         .fetchAll()
-                        .then(logs => {
-                            app.action(to, `looks lovingly at ${instance.nick}`);
-                            // We have no results
-                            if (_.isEmpty(logs)) _.each(results, result => instance.say(to, result));
-                            // We have resutls
-                            else _.each(logs.toJSON(), log => instance.say(to, log.text));
-                        })
-                        .then(() =>
-                            instance.part(to, 'I was only but a dream', () => {
-                                instance.disconnect();
-                                if (!wasIgnored) _.remove(app.Ignore, instance.nick);
-                            }))
+                        .then(logs =>
+                            new Promise((res, rej) => {
+                                app.action(to, `looks lovingly at ${instance.nick}`);
+
+                                // We have no results
+                                if (_.isEmpty(logs)) res(_.each(results, result => instance.say(to, result)));
+
+                                // We have resutls
+                                else {
+                                    let promises = []
+                                    _.each(
+                                        logs.toJSON(),
+                                        (log, key) => promises.push(new Promise(r =>
+                                            setTimeout(() => r(instance.say(to, log.text)), key * 2500)
+                                        ))
+                                    );
+                                    
+                                    return Promise.all(promises)
+                                        .then(() =>
+                                            setTimeout(() =>
+                                                instance.part(to, 'I was only but a dream', () => {
+                                                    instance.disconnect();
+                                                    if (!wasIgnored) _.remove(app.Ignore, instance.nick);
+                                                })
+                                            ),
+                                            20000
+                                        );
+                                }
+                            })
+                        )
                         .catch(err => {
                             console.dir(err)
                             logger.error('Something went wrong in the botUtils spawn command', {
                                 err
                             });
                             app.say('Something did not go quite right...');
-                        }))
-                );
+                        })));
 
             });
         }
