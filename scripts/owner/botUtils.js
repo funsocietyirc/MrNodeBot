@@ -99,36 +99,52 @@ module.exports = app => {
                         .fetchAll()
                         .then(logs =>
                             new Promise((res, rej) => {
-                                app.action(to, `looks lovingly at ${instance.nick}`);
+                                // Hold All The Promises
+                                let promises = []
+                                let key = 0;
+
+                                // The person we are spawning is in the channel
+                                if (instance.isInChannel(to, config.originalNick)) promises.push(new Promise(r =>
+                                    setTimeout(() => r(instance.say(to, `Well hello ${config.originalNick}, seems there are two of us`)), ++key * 2500)
+                                ));
+
+                                // Join delay delay
+                                promises.push(new Promise(r => setTimeout(r, 5000)));
 
                                 // We have no results
-                                if (_.isEmpty(!logs.length)) res(_.each(results, result => instance.say(to, result)));
+                                if (!logs.length) _.each(
+                                    results,
+                                    result => promises.push(new Promise(r =>
+                                        setTimeout(() => r(instance.say(to, result)), ++key * 2500)
+                                    ))
+                                );
 
                                 // We have resutls
-                                else {
-                                    let promises = []
-                                    _.each(
-                                        logs.toJSON(),
-                                        (log, key) => promises.push(new Promise(r =>
-                                            setTimeout(() => r(instance.say(to, log.text)), key * 2500)
-                                        ))
-                                    );
+                                else _.each(
+                                    logs.toJSON(),
+                                    log => promises.push(new Promise(r =>
+                                        setTimeout(() => r(instance.say(to, log.text)), ++key * 2500)
+                                    ))
+                                );
 
-                                    return Promise.all(promises)
-                                        .then(() =>
-                                            setTimeout(() =>
-                                                instance.part(to, 'I was only but a dream', () => {
-                                                    instance.disconnect();
-                                                    if (!wasIgnored) _.remove(app.Ignore, instance.nick);
-                                                })
-                                            ),
-                                            20000
-                                        );
-                                }
+                                // Part delay
+                                promises.push(new Promise(r => setTimeout(r, 20000)));
+
+                                // Iterate over promises
+                                return Promise.all(promises).then(res);
                             })
                         )
+                        .then(() =>
+                            // Leave the channel
+                            instance.part(to, 'I was only but a dream', () => {
+                                // Disconnect
+                                instance.disconnect();
+                                // Remove temp name from ignore list
+                                if (!wasIgnored) _.remove(app.Ignore, instance.nick);
+                            })
+                        )
+                        // We have an error
                         .catch(err => {
-                            console.dir(err)
                             logger.error('Something went wrong in the botUtils spawn command', {
                                 err
                             });
