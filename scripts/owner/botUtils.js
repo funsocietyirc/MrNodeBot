@@ -7,6 +7,8 @@ const scriptInfo = {
 const _ = require('lodash');
 const gen = require('../generators/_showerThoughts');
 const typo = require('../lib/_ircTypography');
+const Models = require('bookshelf-model-loader');
+const logger = require('../../lib/logger');
 
 module.exports = app => {
     // Change the bots nick
@@ -52,21 +54,62 @@ module.exports = app => {
         desc: '[valid js] will return value to console',
         access: app.Config.accessLevels.owner,
         call: (to, from, text, message) => {
+
+            // Parse arguments
+            let [nick, amount] = text.split(' ');
+            // Make sure we have a default amount
+            amount = _.isSafeInteger(parseInt(amount)) ? parseInt(amount) : 1;
+            // Clone and modify initial config
             let config = _.cloneDeep(app.Config.irc);
+            // Set Nick
+            config.nick = (!_.isString(nick) || _.isEmpty(nick)) ? app.nick : nick;
+            // Hold on to initial nick
+            config.originalNick = config.nick;
+            // Reset variables
             config.password = '';
             config.sasl = false;
-            config.nick = text.split(' ')[0];
             config.channels = [];
-            app.say(to, `I have always wondered what it would be like to have children ${from}, let me see...`);
+
+
+            app.action(to, `focuses real hard`);
             let instance = new app._ircClient.Client(config.server, config.nick, config);
+
             instance.connect(() => {
-              app.say(to, `I can feel ${config.nick} kicking ${from}!`);
-              instance.join(to, () => gen().then(result => {
-                  app.action(to, `looks at ${config.nick}`);
-                  instance.action(to, `looks at ${app.nick}`);
-                  instance.say(to, result[0]);
-                  setTimeout(() => instance.disconnect('and now I go...'), 10000);
-              }));
+                // Add to ignore list
+                const wasIgnored = _.includes(app.Ignore, _.toLower(config.nick));
+                if (!wasIgnored) app.Ignore.push(instance.nick);
+
+                // app.say(to, `I can feel ${config.nick} kicking ${from}!`);
+                instance.join(to, () =>
+                    gen(amount).then(results => Models.Logging.query(qb =>
+                            qb
+                            .select('text')
+                            .where('from', 'like', nick)
+                            .orderByRaw('rand()')
+                            .limit(amount)
+                        )
+                        .fetchAll()
+                        .then(logs => {
+                            app.action(to, `looks lovingly at ${instance.nick}`);
+                            // We have no results
+                            if (_.isEmpty(logs)) _.each(results, result => instance.say(to, result));
+                            // We have resutls
+                            else _.each(logs.toJSON(), log => instance.say(to, log.text));
+                        })
+                        .then(() =>
+                            instance.part(to, 'I was only but a dream', () => {
+                                instance.disconnect();
+                                if (!wasIgnored) _.remove(app.Ignore, instance.nick);
+                            }))
+                        .catch(err => {
+                            console.dir(err)
+                            logger.error('Something went wrong in the botUtils spawn command', {
+                                err
+                            });
+                            app.say('Something did not go quite right...');
+                        }))
+                );
+
             });
         }
     });
