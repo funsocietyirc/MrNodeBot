@@ -24,10 +24,12 @@ module.exports = app => {
         _.isEmpty(app.Config.features.popularity.pattern)
     ) ? /gives (.*) (\+|\-)1(?: (.*))?/ : app.Config.features.popularity.pattern;
 
-    const delayMins = (!_.isObject(app.Config.features.popularity) ||
+    const delayMs = (!_.isObject(app.Config.features.popularity) ||
         !_.isSafeInteger(app.Config.features.popularity.delayInMins) ||
         app.Config.features.popularity.delayInMins < 0
-    ) ? 30 * 60 * 1000 : app.Config.features.popularity.delayInMins * 60 * 1000;
+    ) ? 30 : app.Config.features.popularity.delayInMins;
+
+    const delayMins = delayMs * 30 * 60 * 1000;
 
     const cleanJobInMins = (!_.isObject(app.Config.features.popularity) ||
         !_.isSafeInteger(app.Config.features.popularity.cleanJobInMins) ||
@@ -76,7 +78,7 @@ module.exports = app => {
         if (timeouts.has(from)) {
             let tmpTimeout = timeouts.get(from);
             if (_.includes(tmpTimeout, result[1])) {
-                app.say(to, `Your ${result[2]} vote for ${result[1]} has been rate limited (${delayMins} min total per candidate)`);
+                app.say(to, `Your ${result[2]} vote for ${result[1]} has been rate limited (${delayMs} min total per candidate)`);
                 return;
             }
         } else timeouts.set(from, []);
