@@ -111,7 +111,7 @@ module.exports = app => {
                 app.notice(to, `You have just given ${result[1]} a ${result[2]} vote on ${to}`)
             })
             .catch(err => logger.error(`Error in Popularity Listener`, {
-                err: err
+                err: err.stack || 'No Stack available'
             }));
     };
 
