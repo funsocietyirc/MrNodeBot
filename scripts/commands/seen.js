@@ -123,7 +123,7 @@ module.exports = app => {
             if (iteration === 0 && !_.isEmpty(output.text)) output.prepend(iteration === 0 ? `Seen` : '|');
 
             // report back to IRC
-            app.say(iteration === 0 ? to : from, !_.isEmpty(output.text) ? output.text : `Something went wrong finding the active state for ${args.nick || args.user ||args.host}, ${from}`);
+            app.say(iteration === 0 ? to : from, !_.isEmpty(output.text) ? output.text : `Something went wrong finding the active state for ${result.args.nick || result.args.user || result.args.host}, ${from}`);
         };
 
         // Begin the chain
