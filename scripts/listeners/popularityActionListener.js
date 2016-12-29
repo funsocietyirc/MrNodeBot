@@ -60,8 +60,6 @@ module.exports = app => {
         // No valid result, or candidate is not in channel, or invalid vote
         if (!result || !result[0] || !result[1] || !result[2]) return;
 
-        // Channels mismatch
-
         // Trying to vote on yourself
         if (result[1] == from) {
             app.say(to, `It is considered incredibly condescending to cast a vote for yourself`);
@@ -101,7 +99,7 @@ module.exports = app => {
                     timeouts.set(from, tmpTimeout);
                 }
 
-                // Set timeout
+                // Set timeout to clear the gate
                 setTimeout(() => {
                     let tmpTimeout = timeouts.get(from);
                     _.pull(tmpTimeout, result[1]);
