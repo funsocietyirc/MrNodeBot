@@ -29,7 +29,7 @@ module.exports = app => {
         app.Config.features.popularity.delayInMins < 0
     ) ? 30 : app.Config.features.popularity.delayInMins;
 
-    const delayInMs = delayInMins * 30 * 60 * 1000;
+    const delayInMs = delayInMins * 60 * 1000;
 
     const cleanJobInMins = (!_.isObject(app.Config.features.popularity) ||
         !_.isSafeInteger(app.Config.features.popularity.cleanJobInMins) ||
@@ -45,9 +45,10 @@ module.exports = app => {
         minute: cleanJobInMins
     }, () => {
         logger.info('Cleaning up upvote data');
-        timeouts.forEach((val, key) => {
-            if (_.isEmpty(val)) timeouts.delete(key);
-        });
+        // Remove any elements with empty values
+        _(timeouts)
+            .filter(v => _.isEmpty(v))
+            .each((v, k) => timeouts.delete(k));
     });
 
     const popularity = (from, to, text, message) => {
