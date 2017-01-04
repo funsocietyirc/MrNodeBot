@@ -69,7 +69,7 @@
     "urijs": "^1.18.4",
     "watson-developer-cloud": "^2.14.4",
     "winston": "^2.3.0",
-    "winston-daily-rotate-file": "^1.4.0",
+    "winston-daily-rotate-file": "^1.4.2",
     "winston-logio-mirror": "^0.3.0",
     "x-ray": "^2.3.0"
   },
