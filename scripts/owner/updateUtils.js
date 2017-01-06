@@ -11,7 +11,6 @@ const gitlog = require('gitlog');
 const logger = require('../../lib/logger');
 const typo = require('../lib/_ircTypography');
 const short = require('../lib/_getShortService');
-const hasYarn = require('has-yarn');
 
 // Handle real time upgrades, updates, and restarts
 // Commands: update reload halt
