@@ -19,7 +19,6 @@ module.exports = app => {
     // Announce to Channels
     const say = (tweet, shortUrl) =>
         app.Config.features.twitter.channels.forEach((chan) => {
-            if (!twitterEnabled) return;
             app.say(chan, `${ircTypo.logos.twitter} ${ircTypo.icons.sideArrow} ${shortUrl} ${ircTypo.icons.sideArrow} @${tweet.user.screen_name} ${ircTypo.icons.sideArrow} ${tweet.text}`);
         });
 
@@ -78,7 +77,6 @@ module.exports = app => {
         };
 
         app._twitterClient.post('statuses/update', twitConfig, (error, tweet, response) => {
-            if (!twitterEnabled) return;
             if (error) {
                 logger.error('Twitter Error', {
                     error
