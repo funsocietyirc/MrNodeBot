@@ -7,6 +7,7 @@ const scriptInfo = {
 const _ = require('lodash');
 const os = require('os');
 const fs = require('fs');
+const path = require('path');
 const shell = require('shelljs');
 const gitlog = require('gitlog');
 const logger = require('../../lib/logger');
