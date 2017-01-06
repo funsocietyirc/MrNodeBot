@@ -6,6 +6,7 @@ const scriptInfo = {
 };
 const _ = require('lodash');
 const os = require('os');
+const fs = require('fs');
 const shell = require('shelljs');
 const gitlog = require('gitlog');
 const logger = require('../../lib/logger');
@@ -71,6 +72,7 @@ module.exports = app => {
                     return;
                 }
 
+                // TODO Hold the last commit and grab all commits since
                 let commit = _.first(commits);
 
                 // Get the files involved in the last commit
@@ -90,7 +92,11 @@ module.exports = app => {
 
                     // Decide if this is a reload or cycle
                     let shouldCycle = false;
-                    let shouldNpm = false;
+                    // Should we do a NPM/Yarn Install
+                    let shouldInstallPackages = false;
+                    // Do we have a yarn file
+                    let hasYarnLock = fs.existsSync(path.resolve(process.cwd()), 'yarn.lock');
+                    // Files affected from last commit
                     let files = _.compact(diffFiles.split(os.EOL));
 
                     // Check if we have any non scripts
@@ -103,8 +109,8 @@ module.exports = app => {
 
                     // Should we update npm packages
                     for (let file of files) {
-                        if (_.startsWith(file, 'package.json') || _.startsWith(file, 'yarn.lock')) {
-                            shouldNpm = true;
+                        if (_.startsWith(file, 'package.json') || (_.startsWith(file, 'yarn.lock') && hasYarnLock)) {
+                            shouldInstallPackages = true;
                             break;
                         }
                     }
@@ -120,19 +126,35 @@ module.exports = app => {
                             app.say(to, output.text);
 
                             // Update NPM Modules
-                            if (shell.which('npm') && shouldNpm) {
-                                let pkg = shell.which('yarn') ? 'yarn' : 'npm';
-                                app.say(to, 'Running NPM install..');
-                                shell.exec(`${pkg} install`, {
+                            if (shouldInstallPackages) {
+                                // Determine the package manager to use
+                                let pkgManager = null;
+                                if (shell.which('yarn') && hasYarnLock) pkgManager = 'yarn';
+                                else if (shell.which('npm')) pkgManager = 'npm';
+                                else {
+                                    logger.error(`Cannot find package manager during upgrade`);
+                                    app.say(to, `I am afraid we are missing the package manager ${from}`);
+                                    return;
+                                }
+
+                                // Get uppercase representation
+                                const pkgStr = pkgManager.toUpperCase();
+
+                                // Report back to IRC
+                                app.say(to, `Running ${pkgStr}`);
+
+                                // Execute the shell command
+                                shell.exec(`${pkgManager} install`, {
                                     async: true,
                                     silent: app.Config.bot.debug || false
                                 }, (npmCode, npmStdOut, npmStdErr) => {
                                     if (npmCode !== 0) {
-                                        logger.error(`Something went wrong running ${pkg.toUpperCase()} update`, {
+                                        const errMsg = `Something went wrong running ${pkgStr} install`;
+                                        logger.error(errMsg, {
                                             npmStdErr,
                                             npmStdOut
                                         });
-                                        app.say(to, `Something went wrong running ${pkg.toUpperCase()} update`);
+                                        app.say(to, errMsg);
                                         return;
                                     }
                                     halt(to, from);
