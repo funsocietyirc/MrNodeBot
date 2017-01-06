@@ -68,7 +68,7 @@ module.exports = app => {
         if (!app._twitterClient) return;
 
         if (!text) {
-            app.say(from, 'Cannot tweet nothing champ...');
+            app.say(to, 'Cannot tweet nothing champ...');
             return;
         }
 
@@ -81,10 +81,10 @@ module.exports = app => {
                 logger.error('Twitter Error', {
                     error
                 });
-                app.say(from, 'Something is not quite right with your tweet');
+                app.say(to, 'Something is not quite right with your tweet');
                 return;
             };
-            app.say(from, `We just lit up the Twittersphere Bro!`);
+            app.say(to, `We just lit up the Twittersphere Bro!`);
         });
     };
 
