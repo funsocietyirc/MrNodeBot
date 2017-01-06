@@ -121,7 +121,7 @@ module.exports = app => {
                             app.say(to, output.text);
 
                             // Update NPM Modules
-                            if ((shell.which('npm') || shell.which('yarn')) && shouldNpm) {
+                            if (shell.which('npm') && shouldNpm) {
                                 let pkg = shell.which('yarn') ? 'yarn' : 'npm';
                                 app.say(to, 'Running NPM install..');
                                 shell.exec(`${pkg} install`, {
@@ -130,7 +130,8 @@ module.exports = app => {
                                 }, (npmCode, npmStdOut, npmStdErr) => {
                                     if (npmCode !== 0) {
                                         logger.error(`Something went wrong running ${pkg.toUpperCase()} update`, {
-                                            npmStdErr
+                                            npmStdErr,
+                                            npmStdOut
                                         });
                                         app.say(to, `Something went wrong running ${pkg.toUpperCase()} update`);
                                         return;
