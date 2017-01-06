@@ -104,7 +104,7 @@ module.exports = app => {
 
                     // Should we update npm packages
                     for (let file of files) {
-                        if (_.startsWith(file, 'package.json')) {
+                        if (_.startsWith(file, 'package.json') || _.startsWith(file, 'yarn.lock')) {
                             shouldNpm = true;
                             break;
                         }
@@ -122,17 +122,17 @@ module.exports = app => {
 
                             // Update NPM Modules
                             if ((shell.which('npm') || shell.which('yarn')) && shouldNpm) {
-                                let pkg = shell.which('yarn') ? 'yarn' ? 'npm';
+                                let pkg = shell.which('yarn') ? 'yarn' : 'npm';
                                 app.say(to, 'Running NPM install..');
                                 shell.exec(`${pkg} install`, {
                                     async: true,
                                     silent: app.Config.bot.debug || false
                                 }, (npmCode, npmStdOut, npmStdErr) => {
                                     if (npmCode !== 0) {
-                                        logger.error('Something went wrong running NPM update', {
+                                        logger.error(`Something went wrong running ${pkg.toUpperCase()} update`, {
                                             npmStdErr
                                         });
-                                        app.say(to, 'Something went wrong running NPM update');
+                                        app.say(to, `Something went wrong running ${pkg.toUpperCase()} update`);
                                         return;
                                     }
                                     halt(to, from);
