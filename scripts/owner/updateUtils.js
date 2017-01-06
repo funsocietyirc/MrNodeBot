@@ -62,6 +62,9 @@ module.exports = app => {
                 return;
             }
 
+            // Give initial feedback
+            app.say(to, `I am now checking for upgrades ${from}`);
+
             // Perform GitLog for last commit
             gitlog(app.Config.gitLog, (error, commits) => {
                 // Something went wrong
