@@ -11,6 +11,7 @@ const gitlog = require('gitlog');
 const logger = require('../../lib/logger');
 const typo = require('../lib/_ircTypography');
 const short = require('../lib/_getShortService');
+const hasYarn = require('has-yarn');
 
 // Handle real time upgrades, updates, and restarts
 // Commands: update reload halt
@@ -120,9 +121,10 @@ module.exports = app => {
                             app.say(to, output.text);
 
                             // Update NPM Modules
-                            if (shell.which('npm') && shouldNpm) {
+                            if ((shell.which('npm') || shell.which('yarn')) && shouldNpm) {
+                                let pkg = shell.which('yarn') ? 'yarn' ? 'npm';
                                 app.say(to, 'Running NPM install..');
-                                shell.exec('npm install', {
+                                shell.exec(`${pkg} install`, {
                                     async: true,
                                     silent: app.Config.bot.debug || false
                                 }, (npmCode, npmStdOut, npmStdErr) => {
