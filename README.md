@@ -107,7 +107,7 @@ I am currently in the processes of providing jsdoc style docblocks for documenta
     -   [sinon](https://github.com/sinonjs/sinon)
 -   Documentation
     -   [jsdoc](https://github.com/jsdoc3/jsdoc)
-    -   [docstrap](Theme for jsdoc)
+    -   [docstrap](https://github.com/docstrap/docstrap)
 
 ## API Keys
 -   **Google API Key** - For most features a *Google API key* with **Shortener** service, **SafeSearch** service, and **YouTube search** service enabled is required, however, if one is not provided, the bot will try to gracefully fall back onto is.gd
@@ -130,3 +130,7 @@ This project is powered by knexjs and takes advantage of its migration system. I
 Have questions? Looking to chat? Join us on #fsociety on irc.freenode.net
 
 Pull Requests Welcome
+
+## Suggested Utils
+-   [Yarn](https://yarnpkg.com/) - Fast, Reliable, and secure Dep Management
+-   [Node Publish](https://www.npmjs.com/package/np) - A better NPM Publish
