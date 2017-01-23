@@ -87,7 +87,7 @@ module.exports = app => {
     const lastSaid = (to, from, text, message) => {
         // No text was provided
         if (!text) {
-            app.say(to, 'You did not enter in a word silly');
+            app.say(to, 'You did not enter in a word, silly');
             return;
         }
         Models.Logging
@@ -100,7 +100,7 @@ module.exports = app => {
             .fetch()
             .then(result => {
                 if (!result) {
-                    app.say(to, 'Nothing was ever said like that in this this channel');
+                    app.say(to, 'Nothing was ever said like that in this channel');
                     return;
                 }
 
@@ -110,7 +110,7 @@ module.exports = app => {
                 if (resTo === resFrom) {
                     // The request is from the originator of the private message
                     if (resfrom !== from) app.say(to, 'The last utterance of that was told to me in private and I am not willing to share');
-                    // Request is from someone other then who sent the message
+                    // Request is from someone other than who sent the message
                     else app.say(from, `You said "${result.get('text')}" ${Moment(result.get('timestamp')).fromNow()} in a private message`);
                 } else app.say(to, `${resFrom} said "${result.get('text')}" on ${Moment(result.get('timestamp')).fromNow()} in this channel`);
 
