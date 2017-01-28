@@ -13,7 +13,7 @@ module.exports = app => {
         desc: 'Get a reading from the Doomsday clock',
         access: app.Config.accessLevels.identified,
         call: (to, from, text, message) => gen.getTime()
-            .then(m2m => app.say(to, `${ircTypography.logos.m2m} It is currently set to ${m2m}`))
+            .then(m2m => app.say(to, `${ircTypography.logos.m2m} is currently set to ${m2m}`))
     });
     // Return the script info
     return scriptInfo;
