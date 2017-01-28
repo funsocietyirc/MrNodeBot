@@ -1,6 +1,6 @@
 'use strict';
 const scriptInfo = {
-    name: 'apocolypse Dooms day clock',
+    name: 'apocalypse Dooms day clock',
     desc: 'Give mins to midnight',
     createdBy: 'IronY'
 };
@@ -9,7 +9,7 @@ const ircTypography = require('../lib/_ircTypography');
 
 module.exports = app => {
     // Random BOFH Excuse
-    app.Commands.set('apocolypse', {
+    app.Commands.set('apocalypse', {
         desc: 'Get a reading from the Doomsday clock',
         access: app.Config.accessLevels.identified,
         call: (to, from, text, message) => gen()
