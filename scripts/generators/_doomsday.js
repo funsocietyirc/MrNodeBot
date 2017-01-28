@@ -29,23 +29,21 @@ const conf = {
  *
  * Also contains a bunch of unrelated other posts.
  */
-const _request = function() {
-    return new Promise((resolve, reject) =>
-        request(conf.source, function(error, response, body) {
-            if (error)
-                return reject(err);
-            if (response.statusCode !== 200)
-                return reject("Unexpected status code")
-            return resolve(body)
-        }))
-}
+const _request = () => new Promise((resolve, reject) =>
+    request(conf.source, function(error, response, body) {
+        if (error)
+            return reject(err);
+        if (response.statusCode !== 200)
+            return reject("Unexpected status code")
+        return resolve(body)
+    }));
 
 
 const dateToString = (d) =>
     pad(2, d.getHours() - 12) +
     ':' + pad(2, d.getMinutes()) +
     (d.getSeconds() ? ':' + pad(2, d.getSeconds()) : '') +
-    ' PM'
+    ' PM';
 
 const numberStringToInt = value => {
     switch (value.toLowerCase()) {
@@ -69,13 +67,8 @@ const numberStringToInt = value => {
             return 9;
     }
     return NaN;
-}
+};
 
-/**
- * Given a feedparser result, extract the number of minutes to midnight.
- *
- * Uses a best guess based on post title.
- */
 const _extract = function(data) {
     return new Promise((resolve, reject) => {
         const $ = cheerio.load(data)
@@ -98,20 +91,8 @@ const _extract = function(data) {
     })
 }
 
-const M2M = {
-    get: function() {
-        return _request()
-            .then(_extract)
-    },
-    getTime: function() {
-        return _request()
-            .then(_extract)
-            .then(x => dateToString(toTime(x)))
-    }
-};
-
-
-
-
+const M2M = () => _request()
+    .then(_extract)
+    .then(x => dateToString(toTime(x)));
 
 module.exports = M2M;

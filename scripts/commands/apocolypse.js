@@ -1,6 +1,6 @@
 'use strict';
 const scriptInfo = {
-    name: 'Apocolypse Dooms day clock',
+    name: 'apocolypse Dooms day clock',
     desc: 'Give mins to midnight',
     createdBy: 'IronY'
 };
@@ -12,7 +12,7 @@ module.exports = app => {
     app.Commands.set('apocolypse', {
         desc: 'Get a reading from the Doomsday clock',
         access: app.Config.accessLevels.identified,
-        call: (to, from, text, message) => gen.getTime()
+        call: (to, from, text, message) => gen()
             .then(m2m => app.say(to, `${ircTypography.logos.m2m} is currently set to ${m2m}`))
     });
     // Return the script info
