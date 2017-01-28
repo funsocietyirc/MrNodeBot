@@ -31,6 +31,7 @@ const logos = {
     reddit: c.blue.bold('REDDIT'),
     imgur: c.green.bold('IMGUR'),
     chuckNorris: c.yellow.bold('Chuck Norris'),
+    m2m: c.yellow.bold('Apocolypse Clock'),
 };
 
 // Return Green color number for numbers less then 50

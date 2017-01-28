@@ -12,10 +12,7 @@ module.exports = app => {
     app.Commands.set('bofh', {
         desc: '[Channel?] Send a BOFH excuse',
         access: app.Config.accessLevels.identified,
-        call: (to, from, text, message) => gen()
-            .then(excuse => {
-                app.say(text.split(' ')[0] || to, `${ircTypography.logos.bofh} ${excuse}`);
-            })
+        call: (to, from, text, message) => gen().then(excuse => app.say(text.split(' ')[0] || to, `${ircTypography.logos.bofh} ${excuse}`))
     });
     // Return the script info
     return scriptInfo;
