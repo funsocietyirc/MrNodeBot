@@ -639,13 +639,13 @@ dashdash@^1.12.0:
   dependencies:
     assert-plus "^1.0.0"
 
-debug@2, debug@2.6.0, debug@^2.1.3, debug@^2.2.0:
+debug@2, debug@2.6.0, debug@^2.2.0:
   version "2.6.0"
   resolved "https://registry.yarnpkg.com/debug/-/debug-2.6.0.tgz#bc596bcabe7617f11d9fa15361eded5608b8499b"
   dependencies:
     ms "0.7.2"
 
-debug@2.2.0, debug@~2.2.0:
+debug@2.2.0, debug@^2.1.3, debug@~2.2.0:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/debug/-/debug-2.2.0.tgz#f87057e995b1a1f6ae6a4960664137bc56f039da"
   dependencies:
@@ -1048,7 +1048,7 @@ fresh@0.3.0:
 
 fs-exists-sync@^0.1.0:
   version "0.1.0"
-  resolved "http://registry.npmjs.org/fs-exists-sync/-/fs-exists-sync-0.1.0.tgz#982d6893af918e72d08dec9e8673ff2b5a8d6add"
+  resolved "https://registry.yarnpkg.com/fs-exists-sync/-/fs-exists-sync-0.1.0.tgz#982d6893af918e72d08dec9e8673ff2b5a8d6add"
 
 fs-extra@^0.22.1:
   version "0.22.1"
@@ -1359,8 +1359,8 @@ iconv@^2.2.1:
     nan "^2.3.5"
 
 inflection@^1.3.5, inflection@^1.5.1:
-  version "1.10.0"
-  resolved "https://registry.yarnpkg.com/inflection/-/inflection-1.10.0.tgz#5bffcb1197ad3e81050f8e17e21668087ee9eb2f"
+  version "1.12.0"
+  resolved "https://registry.yarnpkg.com/inflection/-/inflection-1.12.0.tgz#a200935656d6f5f6bc4dc7502e1aecb703228416"
 
 inflight@^1.0.4:
   version "1.0.6"
@@ -1473,7 +1473,7 @@ is-number@^2.0.2, is-number@^2.1.0:
 
 is-posix-bracket@^0.1.0:
   version "0.1.1"
-  resolved "https://registry.yarnpkg.com/is-posix-bracket/-/is-posix-bracket-0.1.1.tgz#3334dc79774368e92f016e6fbc0a88f5cd6e6bc4"
+  resolved "http://registry.npmjs.org/is-posix-bracket/-/is-posix-bracket-0.1.1.tgz#3334dc79774368e92f016e6fbc0a88f5cd6e6bc4"
 
 is-primitive@^2.0.0:
   version "2.0.0"
@@ -1960,9 +1960,9 @@ node-icu-charset-detector@^0.2.0:
   dependencies:
     nan "^2.3.3"
 
-node-persist@^2.0.2:
-  version "2.0.7"
-  resolved "https://registry.yarnpkg.com/node-persist/-/node-persist-2.0.7.tgz#7d099aa480119d0a25e7b34d372e8e74c31a471b"
+node-persist@^2.0.8:
+  version "2.0.8"
+  resolved "https://registry.yarnpkg.com/node-persist/-/node-persist-2.0.8.tgz#553b44270a4260ce4553dee7b7df18b1cabed3d6"
   dependencies:
     mkdirp "~0.5.1"
     q "~1.1.1"
@@ -2651,7 +2651,7 @@ sinon@^1.17.7:
 
 sliced@0.0.5:
   version "0.0.5"
-  resolved "http://registry.npmjs.org/sliced/-/sliced-0.0.5.tgz#5edc044ca4eb6f7816d50ba2fc63e25d8fe4707f"
+  resolved "https://registry.yarnpkg.com/sliced/-/sliced-0.0.5.tgz#5edc044ca4eb6f7816d50ba2fc63e25d8fe4707f"
 
 sntp@1.x.x:
   version "1.0.9"
@@ -3000,9 +3000,9 @@ void-elements@^2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/void-elements/-/void-elements-2.0.1.tgz#c066afb582bb1cb4128d60ea92392e94d5e9dbec"
 
-watson-developer-cloud@^2.15.2:
-  version "2.15.2"
-  resolved "https://registry.yarnpkg.com/watson-developer-cloud/-/watson-developer-cloud-2.15.2.tgz#d215349f94487735132c861227a2f4d75b2825aa"
+watson-developer-cloud@^2.15.5:
+  version "2.15.5"
+  resolved "https://registry.yarnpkg.com/watson-developer-cloud/-/watson-developer-cloud-2.15.5.tgz#e7a2a78cc89c5cfe382df1d50dc53db5261a3169"
   dependencies:
     async "^2.0.1"
     cookie "~0.3.1"
@@ -3052,9 +3052,9 @@ window-size@0.1.0:
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/window-size/-/window-size-0.1.0.tgz#5438cd2ea93b202efa3a19fe8887aee7c94f9c9d"
 
-winston-daily-rotate-file@^1.4.3:
-  version "1.4.3"
-  resolved "https://registry.yarnpkg.com/winston-daily-rotate-file/-/winston-daily-rotate-file-1.4.3.tgz#41633910890c8b5b72f71930943e58b5fe650637"
+winston-daily-rotate-file@^1.4.4:
+  version "1.4.4"
+  resolved "https://registry.yarnpkg.com/winston-daily-rotate-file/-/winston-daily-rotate-file-1.4.4.tgz#3aecb5eb6ac9e309f5635524ff8f739037bd99a7"
 
 winston-logio-mirror@^0.3.0:
   version "0.3.0"
