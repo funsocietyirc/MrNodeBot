@@ -107,7 +107,7 @@ module.exports = app => {
                     timeouts.set(from, tmpTimeout);
                 }, delayInMs);
 
-                app.notice(to, `You have just given ${result[1]} a ${result[2]} vote on ${to}`)
+                app.notice(from, `You have just given ${result[1]} a ${result[2]} vote on ${to}`)
             })
             .catch(err => logger.error(`Error in Popularity Listener`, {
                 err: err.stack || 'No Stack available'
