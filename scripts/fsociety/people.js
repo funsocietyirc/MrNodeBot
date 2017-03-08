@@ -25,9 +25,7 @@ module.exports = app => {
                     return;
                 }
                 // If he is in the channel
-                if (app._ircClient.isInChannel(to, 'jeek')) {
-                    app.action(to, 'points to jeek');
-                }
+                if (app._ircClient.isInChannel(to, 'jeek')) app.action(to, 'points to jeek');
                 app.say(to, `Is Jeek Alive? ${results[1]}`);
             })
     });
@@ -38,9 +36,7 @@ module.exports = app => {
         access: app.Config.accessLevels.identified,
         call: (to, from, text, message) => {
             // If he is in the channel
-            if (app._ircClient.isInChannel(to, 'RaptorJesus')) {
-                app.action(to, 'prays to RaptorJesus');
-            }
+            if (app._ircClient.isInChannel(to, 'RaptorJesus')) app.action(to, 'prays to RaptorJesus');
             // Report back to IRC
             app.say(to, `Our Lord and Saviour: http://i.imgur.com/E1fQQdr.png`);
         }
@@ -74,67 +70,8 @@ module.exports = app => {
     });
 
     // Everything past this point requires the database
-    if (!Models.Logging) return $scriptInfo;
-
-    // Mother command
-    const getMother = () => {
-        let motherQuotes = [];
-        let usedQuoteCount = 0;
-        // Load Initial Mother responses from jeek
-        return Models.Logging.query(qb =>
-                qb
-                .select(['text'])
-                .where(clause =>
-                    clause
-                    .where('text', 'like', '%mother%')
-                    .orWhere('text', 'like', '%mom%')
-                    .andWhere('text', 'not like', '%moment%')
-                    .andWhere('text', 'not like', 's/%')
-                )
-                .andWhere('from', 'like', 'jeek')
-            )
-            .fetchAll()
-            .then(results => {
-                // Prepare the mother quotes
-                motherQuotes = _(results.pluck('text')).uniq().shuffle().value();
-                // Bail if we have no quotes
-                if (!motherQuotes.length) return;
-                // Expose the mother command to IRC
-                app.Commands.set('mother', {
-                    desc: 'Get a your mother line care of Jeek',
-                    access: app.Config.accessLevels.identified,
-                    call: (to, from, text, message) => {
-                        let [commands] = text.split(' ');
-                        // Arguments
-                        if (commands.length) {
-                            switch (commands) {
-                                // Report back stack statistics
-                                case 'total':
-                                    app.say(to, `On Stack: ${motherQuotes.length} Used: ${usedQuoteCount} Total: ${motherQuotes.length + usedQuoteCount}`);
-                                    return;
-                            }
-                        }
-                        // Get a random quote then omit the quote from the collection
-                        let say = () => {
-                            // We have run out of quotes, reload!
-                            if (!motherQuotes.length) return getMother().then(() => say());
-                            // Take a quote form the stack
-                            quote = motherQuotes.pop();
-                            // Increase used quotes counter
-                            usedQuoteCount = usedQuoteCount + 1;
-                            // Report to IRC
-                            app.say(to, quote);
-                        };
-                        say();
-                    }
-                });
-            })
-            .catch(err => logger.error('Error Loading jeek mother quotes quotes', {
-                err
-            }));
-    };
-    // Load Initial set of quotes
-    getMother();
+    if (!Models.Logging) return scriptInfo;
+    ///
 
     return scriptInfo;
 };
