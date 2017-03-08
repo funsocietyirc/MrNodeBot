@@ -4,11 +4,12 @@
 //   count - The amount of lines to return
 // OUTPUT:
 //   an array of strings containing FML lines
+const endPoint = 'https://www.fmylife.com/random';
 const _ = require('lodash');
 const xray = require('x-ray')();
 
 module.exports = count => new Promise(
-    (resolve, reject) => xray('https://www.fmylife.com/random', ['p.block>a'])
+    (resolve, reject) => xray(endPoint, ['p.block>a'])
     (
         (err, results) => {
             // Error In request

@@ -1,4 +1,5 @@
 'use strict';
+const endPoint = 'https://freegeoip.net/json/';
 const rp = require('request-promise-native');
  // Return GEO IP Data in the following format
  //     {
@@ -23,7 +24,7 @@ module.exports = host => new Promise((resolve, reject) => {
         return;
     }
     resolve(rp({
-            uri: `https://freegeoip.net/json/${host}`,
+            uri: `${endPoint}${host}`,
             json: true,
         })
         .catch(err => new Object())

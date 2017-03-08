@@ -1,4 +1,5 @@
 'use strict';
+const endPoint = `https://safebrowsing.googleapis.com/v4/threatMatches:find`;
 const _ = require('lodash');
 const rp = require('request-promise-native');
 const logger = require('../../lib/logger');
@@ -22,7 +23,7 @@ module.exports = url => new Promise((resolve, reject) => {
     });
 
     return rp({
-            uri: `https://safebrowsing.googleapis.com/v4/threatMatches:find`,
+            uri: endPoint,
             method: 'POST',
             json: true,
             qs: {

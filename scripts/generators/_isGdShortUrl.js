@@ -4,10 +4,11 @@
   //   text - URL to shorten
   // Returns:
   //   shorturl - The Good Url short link
+const endPoint = `https://is.gd/create.php`; 
 const rp = require('request-promise-native');
 
 module.exports = text => rp({
-  uri: `https://is.gd/create.php`,
+  uri: endPoint,
   method: 'GET',
   json: true,
   qs: {

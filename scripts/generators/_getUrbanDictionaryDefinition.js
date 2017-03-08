@@ -1,4 +1,5 @@
 'use strict';
+const endPoint = 'http://www.urbandictionary.com/define.php';
 const _ = require('lodash');
 const xray = require('x-ray')();
 const helpers = require('../../helpers');
@@ -6,7 +7,7 @@ const Logger = require('../../lib/logger');
 
 module.exports = term => new Promise((resolve, reject) => {
     if (_.isUndefined(term) || !_.isString(term) || _.isEmpty(term)) return reject(new Error('Not enough arguments provided'));
-    let url = `http://www.urbandictionary.com/define.php?term=${term}`;
+    let url = `${endPoint}?term=${term}`;
     return xray(encodeURI(url), 'div.meaning')
         (
             (err, results) => {

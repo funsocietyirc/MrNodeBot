@@ -1,10 +1,10 @@
 'use strict';
 const _ = require('lodash');
 const rp = require('request-promise-native');
-const chuckApi = 'https://api.chucknorris.io/jokes/random';
+const endPoint = 'https://api.chucknorris.io/jokes/random';
 
 module.exports = amount => rp({
-        uri: chuckApi,
+        uri: endPoint,
         json: true
     })
     .then(results => new Promise((resolve, reject) => {

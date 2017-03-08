@@ -1,4 +1,5 @@
 'use strict';
+const endPoint = 'https://www.omdbapi.com';
 const _ = require('lodash');
 const rp = require('request-promise-native');
 
@@ -10,7 +11,7 @@ const validTypes = [
 
 // Base Options for IMDB
 const baseOptions = {
-    uri: 'https://www.omdbapi.com',
+    uri: endPoint,
     qs: {
         plot: 'short',
         r: 'json'

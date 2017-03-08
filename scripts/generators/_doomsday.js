@@ -1,4 +1,6 @@
 "use strict"
+const endPoint = 'http://thebulletin.org/timeline';
+
 const request = require('request')
 const extend = require('extend')
 const cheerio = require('cheerio')
@@ -19,7 +21,7 @@ const pad = (min, input) => {
  * Minutes to midnight.
  */
 const conf = {
-    source: "http://thebulletin.org/timeline",
+    source: endPoint,
     selector: '.view-content .node-title',
     title: /(?:(\d+)|(one|two|three|four|five|six|seven|eight|nine)(.*?half)) minutes to midnight/i
 };
