@@ -86,7 +86,6 @@ module.exports = app => {
         // Get the quote text to deal with the hash map system
         var quote = quotes.keys()[randomNumber - 1];
 
-
         // Get the metadata
         var data = quotes.values()[randomNumber];
 

@@ -16,17 +16,17 @@ const jwt = require('jsonwebtoken');
 //   Features: named-routes, favicon, file upload, jade template engine, body parser, json parser
 module.exports = (app) => {
 
-  // Helper Function to return the Configuration jwt secret, or a default with a warning
-  const getJwtSecret = () => {
-    // Issue User Web Tokens
-    let jwtSecret = null;
-    if(_.isString(app.Config.express.jwt.secret) && !_.isEmpty(app.Config.express.jwt.secret)) jwtSecret = app.Config.express.jwt.secret;
-    else {
-      jwtSecret = 'mrnodebot';
-      logger.warn('You did not set a jwt api secret in express.jwt.secret, falling back to default');
+    // Helper Function to return the Configuration jwt secret, or a default with a warning
+    const getJwtSecret = () => {
+        // Issue User Web Tokens
+        let jwtSecret = null;
+        if (_.isString(app.Config.express.jwt.secret) && !_.isEmpty(app.Config.express.jwt.secret)) jwtSecret = app.Config.express.jwt.secret;
+        else {
+            jwtSecret = 'mrnodebot';
+            logger.warn('You did not set a jwt api secret in express.jwt.secret, falling back to default');
+        }
+        return jwtSecret;
     }
-    return jwtSecret;
-  }
 
     // Create Express Server
     let webServer = Express();
@@ -183,12 +183,15 @@ module.exports = (app) => {
                         message: 'Authentication failed'
                     });
 
+                    const userInfo = {
+                        nick: user.attributes.nick,
+                        id: user.attributes.id,
+                        email: user.attributes.email,
+                        admin: _.includes(app.Admins, _.toLower(user.attributes.nick)) || user.attributes.admin
+                    };
+
                     // Generate the token
-                    const token = jwt.sign({
-                      nick: user.attributes.nick,
-                      id: user.attributes.id,
-                      email: user.attributes.email,
-                    }, getJwtSecret(), {
+                    const token = jwt.sign(userInfo, getJwtSecret(), {
                         expiresIn: 60 * 60 * 24 // Expires in 24 hours
                     });
 
@@ -209,7 +212,6 @@ module.exports = (app) => {
 
         });
     });
-
 
     // Adds JSON web tokens to any route spawning from /secure
     webServer.use('/secure', (req, res, next) => {
@@ -234,22 +236,22 @@ module.exports = (app) => {
     });
 
 
-// If no port specifically set, find an available port
-if (!app.Config.express.port) {
-    require('freeport')((err, port) => {
-        if (err) {
-            logger.error('Error in freeport module', {
-                err
-            });
-            return;
-        }
-        app.Config.express.port = port;
-        websServer.listen(port);
-    });
-}
-// Bind the express server
-else webServer.listen(app.Config.express.port);
+    // If no port specifically set, find an available port
+    if (!app.Config.express.port) {
+        require('freeport')((err, port) => {
+            if (err) {
+                logger.error('Error in freeport module', {
+                    err
+                });
+                return;
+            }
+            app.Config.express.port = port;
+            websServer.listen(port);
+        });
+    }
+    // Bind the express server
+    else webServer.listen(app.Config.express.port);
 
-// Export the Web server
-return webServer;
+    // Export the Web server
+    return webServer;
 };
