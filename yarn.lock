@@ -1400,9 +1400,9 @@ i18next-sync-fs-backend@^0.1.0:
   dependencies:
     json5 "0.4.0"
 
-i18next@^7.1.1:
-  version "7.1.1"
-  resolved "https://registry.yarnpkg.com/i18next/-/i18next-7.1.1.tgz#42503f78461650ca4927d08f9719a1c9e42f6887"
+i18next@^7.1.2:
+  version "7.1.2"
+  resolved "https://registry.yarnpkg.com/i18next/-/i18next-7.1.2.tgz#3a535ac9bb05589645e2caedaeafe3b56931f823"
 
 iconv-lite@0.4.15:
   version "0.4.15"
@@ -1473,8 +1473,8 @@ is-browser@2.0.1:
   resolved "https://registry.yarnpkg.com/is-browser/-/is-browser-2.0.1.tgz#8bf0baf799a9c62fd9de5bcee4cf3397c3e7529a"
 
 is-buffer@^1.0.2:
-  version "1.1.4"
-  resolved "https://registry.yarnpkg.com/is-buffer/-/is-buffer-1.1.4.tgz#cfc86ccd5dc5a52fa80489111c6920c457e2d98b"
+  version "1.1.5"
+  resolved "https://registry.yarnpkg.com/is-buffer/-/is-buffer-1.1.5.tgz#1f3b26ef613b214b88cbca23cc6c01d87961eecc"
 
 is-dotfile@^1.0.0:
   version "1.0.2"
@@ -1514,7 +1514,7 @@ is-fullwidth-code-point@^1.0.0:
   dependencies:
     number-is-nan "^1.0.0"
 
-is-function-x@^1.0.6:
+is-function-x@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/is-function-x/-/is-function-x-1.1.0.tgz#a4493b118ab70a0763d4ec2517a2d3a0e6ba069d"
   dependencies:
@@ -1544,10 +1544,10 @@ is-number@^2.0.2, is-number@^2.1.0:
     kind-of "^3.0.2"
 
 is-object-like-x@^1.0.11:
-  version "1.0.11"
-  resolved "https://registry.yarnpkg.com/is-object-like-x/-/is-object-like-x-1.0.11.tgz#aa0a941d77859682d7511413f88d0fb4839c727e"
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/is-object-like-x/-/is-object-like-x-1.1.0.tgz#fa08a2caf41bf1e422039677a4fd5727fb00a59c"
   dependencies:
-    is-function-x "^1.0.6"
+    is-function-x "^1.1.0"
     is-primitive "^2.0.0"
 
 is-posix-bracket@^0.1.0:
@@ -2038,11 +2038,7 @@ named-routes@2.0.6:
     path-to-regexp "^1.2.1"
     xregexp "^3.1.0"
 
-nan@^2.0.8, nan@^2.3.3, nan@^2.3.5:
-  version "2.5.1"
-  resolved "https://registry.yarnpkg.com/nan/-/nan-2.5.1.tgz#d5b01691253326a97a2bbee9e61c55d8d60351e2"
-
-nan@~2.4.0:
+nan@^2.0.8, nan@^2.3.3, nan@^2.3.5, nan@~2.4.0:
   version "2.4.0"
   resolved "https://registry.yarnpkg.com/nan/-/nan-2.4.0.tgz#fb3c59d45fe4effe215f0b890f8adf6eb32d2232"
 
@@ -2446,7 +2442,7 @@ readable-stream@1.1, readable-stream@1.1.14, readable-stream@1.1.x, readable-str
     isarray "0.0.1"
     string_decoder "~0.10.x"
 
-"readable-stream@^2.0.0 || ^1.1.13", readable-stream@^2.0.2, readable-stream@~2.1.4:
+"readable-stream@^2.0.0 || ^1.1.13", readable-stream@~2.1.4:
   version "2.1.5"
   resolved "https://registry.yarnpkg.com/readable-stream/-/readable-stream-2.1.5.tgz#66fa8b720e1438b364681f2ad1a63c618448c9d0"
   dependencies:
@@ -2458,7 +2454,7 @@ readable-stream@1.1, readable-stream@1.1.14, readable-stream@1.1.x, readable-str
     string_decoder "~0.10.x"
     util-deprecate "~1.0.1"
 
-readable-stream@~2.0.5:
+readable-stream@^2.0.2, readable-stream@~2.0.5:
   version "2.0.6"
   resolved "https://registry.yarnpkg.com/readable-stream/-/readable-stream-2.0.6.tgz#8f90341e68a53ccc928788dacfcd11b36eb9b78e"
   dependencies:
@@ -3036,8 +3032,8 @@ typedarray-to-buffer@^3.1.2:
     is-typedarray "^1.0.0"
 
 uglify-js@^2.6.1:
-  version "2.8.11"
-  resolved "https://registry.yarnpkg.com/uglify-js/-/uglify-js-2.8.11.tgz#11a51c43d810b47bc00aee4d512cb3947ddd1ac4"
+  version "2.8.12"
+  resolved "https://registry.yarnpkg.com/uglify-js/-/uglify-js-2.8.12.tgz#8a50f5d482243650b7108f6080aa3a6afe2a6c55"
   dependencies:
     source-map "~0.5.1"
     uglify-to-browserify "~1.0.0"
