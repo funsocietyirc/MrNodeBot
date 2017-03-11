@@ -10,6 +10,9 @@ const expressWinston = require('express-winston');
 const rotate = require('winston-daily-rotate-file');
 const RateLimit = require('express-rate-limit');
 
+const jwt = require('jsonwebtoken');
+
+
 //   Web Server component:
 //   Features: named-routes, favicon, file upload, jade template engine, body parser, json parser
 module.exports = (app) => {
@@ -120,40 +123,127 @@ module.exports = (app) => {
 
     // Json parser
     webServer.use(bodyParser.json());
+
     // Named Routes
     router.extendExpress(webServer);
     router.registerAppHelpers(webServer);
+
     // Pretty Print json
     webServer.set('json spaces', 4);
+
     // Set the view engine
     webServer.set('view engine', 'pug');
     webServer.set('views', __dirname + '/views');
+
     // Serve Favicon
     webServer.use(favicon(__dirname + '/assets/favicon.ico'));
+
     // Static routes
     webServer.use('/assets', Express.static(__dirname + '/assets'));
+
     // Uploads
     webServer.use('/uploads', Express.static(__dirname + '/uploads'));
+
     // Use fileupload extension
     webServer.use(fileUpload());
+
     // Merge query string paramaters on duplicate
     webServer._router.mergeParams = true;
-    // If no port specifically set, find an available port
-    if (!app.Config.express.port) {
-        require('freeport')((err, port) => {
-            if (err) {
-                logger.error('Error in freeport module', {
-                    err
-                });
-                return;
-            }
-            app.Config.express.port = port;
-            websServer.listen(port);
-        });
-    }
-    // Bind the express server
-    else webServer.listen(app.Config.express.port);
 
-    // Export the Web server
-    return webServer;
+    // Issue User Web Tokens
+    let jwtSecret = null;
+    if(_.isString(app.Config.express.jwt.secret) && !_.isEmpty(app.Config.express.jwt.secret)) jwtSecret = app.Config.express.jwt.secret;
+    else {
+      jwtSecret = 'mrnodebot';
+      logger.warn('You did not set a jwt api secret in express.jwt.secret, falling back to default');
+    }
+
+    webServer.post('/authenticate', (req, res) => {
+        if (!req.body.nick || !req.body.password) return res.json({
+            success: false,
+            message: 'Both nick and password are required'
+        });
+
+        app._userManager.getByNick(req.body.nick, user => {
+            // No user available
+            if (!user) return res.json({
+                success: false,
+                message: 'Authentication failed'
+            });
+
+            // Verify user
+            app._userManager.verify(user.attributes.nick, req.body.password).then(authenticated => {
+                    // Password mismatch
+                    if (!authenticated) return res.json({
+                        success: false,
+                        message: 'Authentication failed'
+                    });
+
+                    // Generate the token
+                    const token = jwt.sign({
+                      nick: user.attributes.nick,
+                      id: user.attributes.id,
+                      email: user.attributes.email,
+                    }, jwtSecret, {
+                        expiresIn: 60 * 60 * 24 // Expires in 24 hours
+                    });
+
+                    return res.json({
+                        success: true,
+                        message: 'Enjoy your token!',
+                        token: token
+                    });
+                })
+                .catch(e => {
+                    logger.error('Something has gone wrong with user authentication', user, e.message);
+                    return res.json({
+                        success: false,
+                        message: 'Something has gone wrong'
+                    });
+
+                });
+
+        });
+    });
+
+
+    // Adds JSON web tokens to any route spawning from /secure
+    webServer.use('/secure', (req, res, next) => {
+        const token = req.body.token || req.query.token || req.headers['x-access-token'];
+
+        if (!token) return res.status(403).send({
+            success: false,
+            message: 'No Token Provided'
+        });
+
+        jwt.verify(token, jwtSecret, (err, decoded) => {
+            if (err) return res.json({
+                success: false,
+                message: 'Authentication failed'
+            });
+
+            req.decoded = decoded;
+            next();
+        });
+    });
+
+
+// If no port specifically set, find an available port
+if (!app.Config.express.port) {
+    require('freeport')((err, port) => {
+        if (err) {
+            logger.error('Error in freeport module', {
+                err
+            });
+            return;
+        }
+        app.Config.express.port = port;
+        websServer.listen(port);
+    });
+}
+// Bind the express server
+else webServer.listen(app.Config.express.port);
+
+// Export the Web server
+return webServer;
 };

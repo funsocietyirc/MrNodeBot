@@ -277,9 +277,9 @@ class MrNodeBot {
 
         // Load the Ignore list
         storage.getItem('ignored', (err, value) => {
-            if(err) {
-              logger.error('Error Loading the Ignore List'); // TODO Localize
-              return;
+            if (err) {
+                logger.error('Error Loading the Ignore List'); // TODO Localize
+                return;
             }
             this.Ignore = value || this.Ignore;
             logger.info(t('storage.ignored', {
@@ -356,9 +356,16 @@ class MrNodeBot {
 
         // Load the web routes
         this.WebRoutes.forEach(route => {
+            // We have a secure route, add it to the proper namespace
+            if (_.isBoolean(route.secure) && route.secure) {
+              // Remove any leading /
+              if(_.startsWith(route.path, '/')) route.path = route.path.substring(1);
+              route.path = '/secure/' + route.path;
+            }
             // Dynamically register the WebRoutes objects with express
             this.WebServer[route.verb || 'get'](route.path, route.name, route.handler);
         });
+        
     };
 
     /**

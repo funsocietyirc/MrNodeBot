@@ -4,6 +4,7 @@ const scriptInfo = {
     desc: 'Provides Registration and other User management functionality',
     createdBy: 'IronY'
 };
+
 const logger = require('../../lib/logger');
 
 module.exports = app => {
@@ -21,13 +22,15 @@ module.exports = app => {
             return;
         }
         app._userManager.create(from, args[0], args[1], message.host).then(result => {
-            app.say(from, 'Your account has been created');
-            // Log the user in here
-        })
-        .catch(err => {
-            logger.error('Account Registration Error', {err});
-            app.say(from, 'Something went wrong creating your account, the username may exist');
-        });
+                app.say(from, 'Your account has been created');
+                // Log the user in here
+            })
+            .catch(err => {
+                logger.error('Account Registration Error', {
+                    err
+                });
+                app.say(from, 'Something went wrong creating your account, the username may exist');
+            });
     };
 
     /**
@@ -41,14 +44,14 @@ module.exports = app => {
 
         // Process text
         text = text.split(' ');
-        let [command] = text.splice(0,1);
+        let [command] = text.splice(0, 1);
 
         switch (command) {
             case 'register':
                 register(to, from, text.join(' '), message);
                 break;
             case 'help':
-                let [subCommand] = text.splice(0,1);
+                let [subCommand] = text.splice(0, 1);
                 if (!subCommand) {
                     app.say(from, 'The following are valid commands, use account help [command], for more information.');
                     app.say(from, 'register');

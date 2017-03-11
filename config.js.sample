@@ -225,6 +225,10 @@ module.exports = {
             username: '',
             password: '',
         },
+        jwt: {
+          secret: 'mrnodebot'
+        }
+
     },
     // Feature Configuration
     features: {
