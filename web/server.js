@@ -9,7 +9,6 @@ const winston = require('winston');
 const expressWinston = require('express-winston');
 const rotate = require('winston-daily-rotate-file');
 const RateLimit = require('express-rate-limit');
-
 const jwt = require('jsonwebtoken');
 
 
@@ -17,6 +16,7 @@ const jwt = require('jsonwebtoken');
 //   Features: named-routes, favicon, file upload, jade template engine, body parser, json parser
 module.exports = (app) => {
 
+  // Helper Function to return the Configuration jwt secret, or a default with a warning
   const getJwtSecret = () => {
     // Issue User Web Tokens
     let jwtSecret = null;
@@ -215,20 +215,22 @@ module.exports = (app) => {
     webServer.use('/secure', (req, res, next) => {
         const token = req.body.token || req.query.token || req.headers['x-access-token'];
 
+        // No token provided in Request
         if (!token) return res.status(403).send({
             success: false,
             message: 'No Token Provided'
         });
 
-        jwt.verify(token, getJwtSecret(), (err, decoded) => {
+        // Verify User
+        jwt.verify(token, getJwtSecret(), (err, userInfo) => {
             if (err) return res.json({
                 success: false,
                 message: 'Authentication failed'
             });
-
-            req.decoded = decoded;
+            req.userInfo = userInfo;
             next();
         });
+
     });
 
 
