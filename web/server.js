@@ -16,6 +16,18 @@ const jwt = require('jsonwebtoken');
 //   Web Server component:
 //   Features: named-routes, favicon, file upload, jade template engine, body parser, json parser
 module.exports = (app) => {
+
+  const getJwtSecret = () => {
+    // Issue User Web Tokens
+    let jwtSecret = null;
+    if(_.isString(app.Config.express.jwt.secret) && !_.isEmpty(app.Config.express.jwt.secret)) jwtSecret = app.Config.express.jwt.secret;
+    else {
+      jwtSecret = 'mrnodebot';
+      logger.warn('You did not set a jwt api secret in express.jwt.secret, falling back to default');
+    }
+    return jwtSecret;
+  }
+
     // Create Express Server
     let webServer = Express();
 
@@ -150,14 +162,6 @@ module.exports = (app) => {
     // Merge query string paramaters on duplicate
     webServer._router.mergeParams = true;
 
-    // Issue User Web Tokens
-    let jwtSecret = null;
-    if(_.isString(app.Config.express.jwt.secret) && !_.isEmpty(app.Config.express.jwt.secret)) jwtSecret = app.Config.express.jwt.secret;
-    else {
-      jwtSecret = 'mrnodebot';
-      logger.warn('You did not set a jwt api secret in express.jwt.secret, falling back to default');
-    }
-
     webServer.post('/authenticate', (req, res) => {
         if (!req.body.nick || !req.body.password) return res.json({
             success: false,
@@ -184,7 +188,7 @@ module.exports = (app) => {
                       nick: user.attributes.nick,
                       id: user.attributes.id,
                       email: user.attributes.email,
-                    }, jwtSecret, {
+                    }, getJwtSecret(), {
                         expiresIn: 60 * 60 * 24 // Expires in 24 hours
                     });
 
@@ -216,7 +220,7 @@ module.exports = (app) => {
             message: 'No Token Provided'
         });
 
-        jwt.verify(token, jwtSecret, (err, decoded) => {
+        jwt.verify(token, getJwtSecret(), (err, decoded) => {
             if (err) return res.json({
                 success: false,
                 message: 'Authentication failed'
