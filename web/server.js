@@ -207,9 +207,7 @@ module.exports = (app) => {
                         success: false,
                         message: 'Something has gone wrong'
                     });
-
                 });
-
         });
     });
 
