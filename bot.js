@@ -115,7 +115,7 @@ class MrNodeBot {
     _initPusherAuthRoute() {
         let pusher = require('./lib/pusher');
         if (pusher && this.WebServer) {
-            logger.info('Pusher and Web Server detected, creating Pushing auth link');
+            logger.info('Pusher and Web Server detected, creating Pusher Auth link');
             this.WebServer.post('/pusher/auth', (req, res) => {
                 let socketId = req.body.socket_id;
                 let channel = req.body.channel_name;
