@@ -6,6 +6,8 @@ const scriptInfo = {
     createdBy: 'IronY'
 };
 
+const Models = require('bookshelf-model-loader');
+
 module.exports = app => {
 
     // Notification Gateway
@@ -26,6 +28,18 @@ module.exports = app => {
             // A Very basic message
             app.say(req.body.recipient, req.body.payload);
 
+            // Log to database if table is available
+            if (Models.GatewayLogging) {
+                Models.GatewayLogging.create({
+                        from: req.userInfo.nick,
+                        to: req.body.recipient,
+                        payload: req.body.payload
+                    })
+                    .catch(e => {
+                        console.dir(`Error in logging gateway interface to database ${e.message}`);
+                    });
+            }
+
             // Send back all is ok
             return res.json({
                 success: true,
@@ -35,22 +49,6 @@ module.exports = app => {
         desc: 'Gateway',
         path: '/gateway',
         name: 'landingPage',
-        verb: 'post',
-        secure: true
-    });
-
-    // General Logging Gateway
-    app.WebRoutes.set('discordLogging', {
-        handler: (req, res) => {
-            // An Admin account is needed
-            if (!req.userInfo) return res.json({
-                success: false,
-                message: 'Not enough information to complete this request'
-            });
-
-        },
-        desc: 'Discord Logging',
-        path: 'discordLogging',
         verb: 'post',
         secure: true
     });
