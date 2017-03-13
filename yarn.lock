@@ -73,8 +73,8 @@ acorn@^4.0.4, acorn@~4.0.2:
   resolved "https://registry.yarnpkg.com/acorn/-/acorn-4.0.11.tgz#edcda3bd937e7556410d42ed5860f67399c794c0"
 
 ajv@^4.9.1:
-  version "4.11.4"
-  resolved "https://registry.yarnpkg.com/ajv/-/ajv-4.11.4.tgz#ebf3a55d4b132ea60ff5847ae85d2ef069960b45"
+  version "4.11.5"
+  resolved "https://registry.yarnpkg.com/ajv/-/ajv-4.11.5.tgz#b6ee74657b993a01dce44b7944d56f485828d5bd"
   dependencies:
     co "^4.6.0"
     json-stable-stringify "^1.0.1"
@@ -1283,7 +1283,7 @@ has-symbol-support-x@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/has-symbol-support-x/-/has-symbol-support-x-1.1.0.tgz#286d792eac673c0c2308fc7b2160b75cebadd550"
 
-has-to-string-tag-x@^1.0.10, has-to-string-tag-x@^1.1.0:
+has-to-string-tag-x@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/has-to-string-tag-x/-/has-to-string-tag-x-1.1.0.tgz#fd718cf21c24d2e5e5dd94c4fe2134c1583b1e68"
   dependencies:
@@ -1476,12 +1476,12 @@ irc-colors@^1.3.1, irc-colors@^1.3.2:
   resolved "https://registry.yarnpkg.com/irc-colors/-/irc-colors-1.3.2.tgz#80ce1c549b8de8d4170b3280f8424c50f3ceb10d"
 
 is-array-buffer-x@^1.0.13:
-  version "1.0.13"
-  resolved "https://registry.yarnpkg.com/is-array-buffer-x/-/is-array-buffer-x-1.0.13.tgz#d31d8185545bd42f0944303ea4404bc560cec0b2"
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/is-array-buffer-x/-/is-array-buffer-x-1.1.0.tgz#047e20b772f8a0958224485adfbbe78d2cccf926"
   dependencies:
-    has-to-string-tag-x "^1.0.10"
-    is-object-like-x "^1.0.11"
-    to-string-tag-x "^1.0.11"
+    has-to-string-tag-x "^1.1.0"
+    is-object-like-x "^1.1.0"
+    to-string-tag-x "^1.1.0"
 
 is-browser@2.0.1:
   version "2.0.1"
@@ -1558,7 +1558,7 @@ is-number@^2.0.2, is-number@^2.1.0:
   dependencies:
     kind-of "^3.0.2"
 
-is-object-like-x@^1.0.11:
+is-object-like-x@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/is-object-like-x/-/is-object-like-x-1.1.0.tgz#fa08a2caf41bf1e422039677a4fd5727fb00a59c"
   dependencies:
@@ -2073,9 +2073,13 @@ ms@0.7.1:
   version "0.7.1"
   resolved "https://registry.yarnpkg.com/ms/-/ms-0.7.1.tgz#9cd13c03adbff25b65effde7ce864ee952017098"
 
-ms@0.7.2, ms@^0.7.0, ms@^0.7.1:
+ms@0.7.2:
   version "0.7.2"
   resolved "https://registry.yarnpkg.com/ms/-/ms-0.7.2.tgz#ae25cf2512b3885a1d95d7f037868d8431124765"
+
+ms@^0.7.0, ms@^0.7.1:
+  version "0.7.3"
+  resolved "https://registry.yarnpkg.com/ms/-/ms-0.7.3.tgz#708155a5e44e33f5fd0fc53e81d0d40a91be1fff"
 
 mysql@^2.13.0:
   version "2.13.0"
@@ -3000,7 +3004,7 @@ tildify@~1.0.0:
   dependencies:
     user-home "^1.0.0"
 
-to-string-tag-x@^1.0.11, to-string-tag-x@^1.1.0:
+to-string-tag-x@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/to-string-tag-x/-/to-string-tag-x-1.1.0.tgz#69cb42ac1fda925150f4aacd7c9638319d3c2746"
   dependencies:
@@ -3231,9 +3235,9 @@ window-size@0.1.0:
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/window-size/-/window-size-0.1.0.tgz#5438cd2ea93b202efa3a19fe8887aee7c94f9c9d"
 
-winston-daily-rotate-file@^1.4.5:
-  version "1.4.5"
-  resolved "https://registry.yarnpkg.com/winston-daily-rotate-file/-/winston-daily-rotate-file-1.4.5.tgz#d0d5159db7d5cbb676eeaaf4e41fba4fa7b602a7"
+winston-daily-rotate-file@^1.4.6:
+  version "1.4.6"
+  resolved "https://registry.yarnpkg.com/winston-daily-rotate-file/-/winston-daily-rotate-file-1.4.6.tgz#f204b6ada19a5386fdf52fe997d8e10e43ff7788"
 
 winston-logio-mirror@^0.3.0:
   version "0.3.0"
