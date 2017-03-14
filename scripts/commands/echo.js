@@ -10,9 +10,7 @@ module.exports = app => {
     app.Commands.set('echo', {
         desc: '[text] Exactly what it sounds like',
         access: app.Config.accessLevels.admin,
-        call: (to, from, text, message) => {
-            app.say(to, text);
-        }
+        call: (to, from, text, message) => app.say(to, text)
     });
 
     // Return the script info

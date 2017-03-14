@@ -29,16 +29,12 @@ module.exports = app => {
             app.say(req.body.recipient, req.body.payload);
 
             // Log to database if table is available
-            if (Models.GatewayLogging) {
-                Models.GatewayLogging.create({
-                        from: req.userInfo.nick,
-                        to: req.body.recipient,
-                        payload: req.body.payload
-                    })
-                    .catch(e => {
-                        console.dir(`Error in logging gateway interface to database ${e.message}`);
-                    });
-            }
+            if (Models.GatewayLogging) Models.GatewayLogging.create({
+                    from: req.userInfo.nick,
+                    to: req.body.recipient,
+                    payload: req.body.payload
+                })
+                .catch(e => console.dir(`Error in logging gateway interface to database ${e.message}`));
 
             // Send back all is ok
             return res.json({
