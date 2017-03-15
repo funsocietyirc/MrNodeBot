@@ -22,7 +22,7 @@ module.exports = app => {
     const pattern = (!_.isObject(app.Config.features.popularity) ||
         !_.isString(app.Config.features.popularity.pattern) ||
         _.isEmpty(app.Config.features.popularity.pattern)
-    ) ? /gives (.*) (\+|\-)1(?: (.*))?/ : app.Config.features.popularity.pattern;
+    ) ? /gives (\S*)\s+(?:a?\s+)?(\+|\-)1(?: (.*))?/ : app.Config.features.popularity.pattern;
 
     const delayInMins = (!_.isObject(app.Config.features.popularity) ||
         !_.isSafeInteger(app.Config.features.popularity.delayInMins) ||
