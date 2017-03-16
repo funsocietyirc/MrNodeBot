@@ -50,7 +50,7 @@ module.exports = app => {
             if (_.includes(app.Ignore, lowerCaseNick)) {
                 app.say(to, `${nick} has been unmuted`);
                 app.Ignore = _.without(app.Ignore, lowerCaseNick);
-                storage.setItemSync('ignore', app.Ignore);
+                storage.setItemSync('ignored', app.Ignore);
             } else app.say(to, `${nick} is not on the mute list`);
         }
     });
