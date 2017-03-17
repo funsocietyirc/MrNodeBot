@@ -1,14 +1,14 @@
-"use strict"
+'use strict';
 const endPoint = 'http://thebulletin.org/timeline';
 
-const request = require('request')
-const extend = require('extend')
-const cheerio = require('cheerio')
+const request = require('request');
+const extend = require('extend');
+const cheerio = require('cheerio');
 
-const midnight = new Date(2000, 0, 0, 0, 0, 0, 0)
+const midnight = new Date(2000, 0, 0, 0, 0, 0, 0);
 
 const toTime = mins =>
-    new Date(midnight.getTime() + mins * -60000)
+    new Date(midnight.getTime() + mins * -60000);
 
 const pad = (min, input) => {
     const out = input + ''
@@ -71,30 +71,31 @@ const numberStringToInt = value => {
     return NaN;
 };
 
-const _extract = function(data) {
-    return new Promise((resolve, reject) => {
-        const $ = cheerio.load(data)
-        const nodes = $(conf.selector).map(function() {
-            return $(this).text()
-        }).get()
+const _extract = data =>
+    new Promise((resolve, reject) => {
+        const $ = cheerio.load(data);
+        const nodes = $(conf.selector)
+            .map(function() {
+                return $(this).text()
+            })
+            .get();
+
         for (const node of nodes) {
-            const result = node.match(conf.title)
+            const result = node.match(conf.title);
             if (result) {
-                if (!isNaN(result[1]))
-                    return resolve(parseInt(result[1]))
+                if (!isNaN(result[1])) return resolve(parseInt(result[1]));
                 if (result[2]) {
-                    const whole = numberStringToInt(result[2])
-                    if (!isNaN(whole))
-                        return resolve(whole + 0.5)
+                    const whole = numberStringToInt(result[2]);
+                    if (!isNaN(whole)) return resolve(whole + 0.5);
                 }
             }
         }
-        reject("No result found")
-    })
-}
+        reject("No result found");
+    });
 
 const M2M = () => _request()
     .then(_extract)
     .then(x => dateToString(toTime(x)));
+
 
 module.exports = M2M;
