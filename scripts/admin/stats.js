@@ -20,7 +20,7 @@ module.exports = app => {
     app.Commands.set('uptime', {
         desc: 'Get the current uptime',
         access: app.Config.accessLevels.admin,
-        call: (to, from, text, message) => app.say(from, `I have been alive since ${helpers.StartTime}, about ${helpers.StartTime.fromNow()}`)
+        call: (to, from, text, message) => app.say(to, `I have been alive since ${helpers.StartTime}, about ${helpers.StartTime.fromNow()}`)
     });
 
     // Return the script info
