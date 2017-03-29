@@ -46,7 +46,7 @@
     "gitlog": "^2.0.1",
     "i18next": "^7.1.3",
     "i18next-sync-fs-backend": "^0.1.0",
-    "irc-colors": "^1.3.2",
+    "irc-colors": "^1.3.3",
     "jsonwebtoken": "^7.3.0",
     "knex": "^0.12.9",
     "lodash": "^4.17.4",
