@@ -654,9 +654,9 @@ ctype@0.5.3:
   version "0.5.3"
   resolved "https://registry.yarnpkg.com/ctype/-/ctype-0.5.3.tgz#82c18c2461f74114ef16c135224ad0b9144ca12f"
 
-"currency-symbol-map@git://github.com/funsocietyirc/currency-symbol-map.git":
-  version "3.1.1"
-  resolved "git://github.com/funsocietyirc/currency-symbol-map.git#bc1e50e4e4529f691476ff90e3cdb1242e64e32a"
+"currency-symbol-map@https://github.com/bengourley/currency-symbol-map#master":
+  version "3.1.0"
+  resolved "https://github.com/bengourley/currency-symbol-map#fb219447ee1646bb510417840dc85934b10e642a"
 
 cycle@1.0.x:
   version "1.0.3"
@@ -1475,11 +1475,7 @@ ipaddr.js@1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/ipaddr.js/-/ipaddr.js-1.2.0.tgz#8aba49c9192799585bdd643e0ccb50e8ae777ba4"
 
-irc-colors@^1.3.1:
-  version "1.3.2"
-  resolved "https://registry.yarnpkg.com/irc-colors/-/irc-colors-1.3.2.tgz#80ce1c549b8de8d4170b3280f8424c50f3ceb10d"
-
-irc-colors@^1.3.3:
+irc-colors@^1.3.1, irc-colors@^1.3.3:
   version "1.3.3"
   resolved "https://registry.yarnpkg.com/irc-colors/-/irc-colors-1.3.3.tgz#16f8fa6130a3882fdf4fab801c5b4f58328a3391"
 
@@ -1631,17 +1627,17 @@ isexe@^1.1.1:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/isexe/-/isexe-1.1.2.tgz#36f3e22e60750920f5e7241a476a8c6a42275ad0"
 
-isobject@^2.0.0, isobject@^2.1.0:
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/isobject/-/isobject-2.1.0.tgz#f065561096a3f1da2ef46272f815c840d87e0c89"
-  dependencies:
-    isarray "1.0.0"
-
-isobject@~2.0.0:
+isobject@^2.0.0, isobject@~2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/isobject/-/isobject-2.0.0.tgz#208de872bd7378c2a92af9428a3f56eb91a122c4"
   dependencies:
     isarray "0.0.1"
+
+isobject@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/isobject/-/isobject-2.1.0.tgz#f065561096a3f1da2ef46272f815c840d87e0c89"
+  dependencies:
+    isarray "1.0.0"
 
 isstream@0.1.x, isstream@~0.1.1, isstream@~0.1.2:
   version "0.1.2"
@@ -3172,9 +3168,9 @@ unpipe@1.0.0, unpipe@~1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/unpipe/-/unpipe-1.0.0.tgz#b2bf4ee8514aae6165b4817829d21b2ef49904ec"
 
-urijs@^1.18.9:
-  version "1.18.9"
-  resolved "https://registry.yarnpkg.com/urijs/-/urijs-1.18.9.tgz#06d503d4f1907dcbd906fbd808b38457ec40dee6"
+urijs@^1.18.10:
+  version "1.18.10"
+  resolved "https://registry.yarnpkg.com/urijs/-/urijs-1.18.10.tgz#b94463eaba59a1a796036a467bb633c667f221ab"
 
 user-home@^1.0.0, user-home@^1.1.1:
   version "1.1.1"
@@ -3212,9 +3208,9 @@ vary@^1.0.0, vary@~1.1.0:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/vary/-/vary-1.1.1.tgz#67535ebb694c1d52257457984665323f587e8d37"
 
-vcap_services@~0.2.0:
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/vcap_services/-/vcap_services-0.2.0.tgz#ce536a8569e2733cb39e6cc539456fc576759f28"
+vcap_services@~0.3.0:
+  version "0.3.3"
+  resolved "https://registry.yarnpkg.com/vcap_services/-/vcap_services-0.3.2.tgz#979657834326c264f4b7a4c76d6851f4b18d2462"
 
 verror@1.3.6:
   version "1.3.6"
@@ -3226,9 +3222,9 @@ void-elements@^2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/void-elements/-/void-elements-2.0.1.tgz#c066afb582bb1cb4128d60ea92392e94d5e9dbec"
 
-watson-developer-cloud@^2.27.1:
-  version "2.27.1"
-  resolved "https://registry.yarnpkg.com/watson-developer-cloud/-/watson-developer-cloud-2.27.1.tgz#71d2ee1eec18814cd423350656fb01fc07845e72"
+watson-developer-cloud@^2.28.0:
+  version "2.28.0"
+  resolved "https://registry.yarnpkg.com/watson-developer-cloud/-/watson-developer-cloud-2.28.0.tgz#6f01970e8437ca6547194c82bdf044e2fb123172"
   dependencies:
     async "^2.0.1"
     buffer-from "^0.1.1"
@@ -3241,7 +3237,7 @@ watson-developer-cloud@^2.27.1:
     request "~2.79.0"
     solr-client "~0.6.0"
     string "3.3.3"
-    vcap_services "~0.2.0"
+    vcap_services "~0.3.0"
     websocket "~1.0.22"
 
 webidl-conversions@^2.0.0:

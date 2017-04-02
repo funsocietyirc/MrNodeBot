@@ -35,7 +35,7 @@
     "bookshelf-model-loader": "^0.9.6",
     "bookshelf-modelbase": "^2.10.3",
     "bot": "0.0.3",
-    "currency-symbol-map": "git://github.com/funsocietyirc/currency-symbol-map.git",
+    "currency-symbol-map": "https://github.com/bengourley/currency-symbol-map#master",
     "express": "^4.15.2",
     "express-fileupload": "git://github.com/pajtai/express-fileupload.git",
     "express-rate-limit": "^2.6.0",
