@@ -7,3 +7,5 @@ persist
 *.back
 data.sqlite
 .tags
+.vscode/
+
