@@ -8,7 +8,7 @@ module.exports = (key, results) => new Promise(resolve => {
     // No Key provided, return the results
     if (!_.isString(key) || _.isEmpty(key)) return resolve(results);
 
-    const numberOrNa = number => number != NaN ? number : 'N/A';
+    const numberOrNa = number => !isNaN(number) ? number : 'N/A';
 
     return gen(apiKey, key)
         .then(result => {
