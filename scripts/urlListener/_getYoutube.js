@@ -26,9 +26,9 @@ module.exports = (key, results) => new Promise(resolve => {
                 dislikeCount: numberOrNa(data.statistics.dislikeCount),
                 commentCount: numberOrNa(data.statistics.commentCount)
             };
+
             // Fire off youtube data
             if (pusherApi) {
-              console.dir(psuherApi);
                 let pusherVars = {
                     to: results.to,
                     from: results.from,
@@ -37,8 +37,6 @@ module.exports = (key, results) => new Promise(resolve => {
                     youtubeKey: results.youTube.key,
                     url: results.url
                 };
-                console.dir(pusherVars);
-
                 pusherApi.trigger('public', 'youtube', pusherVars);
             }
 
