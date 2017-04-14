@@ -3,8 +3,6 @@ const _ = require('lodash');
 const gen = require('../generators/_youTubeVideoData');
 const apiKey = require('../../config').apiKeys.google;
 const logger = require('../../lib/logger');
-const pusherApi = require('../../lib/pusher');
-
 
 module.exports = (key, results) => new Promise(resolve => {
     // No Key provided, return the results
@@ -26,19 +24,6 @@ module.exports = (key, results) => new Promise(resolve => {
                 dislikeCount: numberOrNa(data.statistics.dislikeCount),
                 commentCount: numberOrNa(data.statistics.commentCount)
             };
-
-            // Fire off youtube data
-            if (pusherApi) {
-                let pusherVars = {
-                    to: results.to,
-                    from: results.from,
-                    timestamp: results.timestamp,
-                    videoTitle: results.youTube.videoTitle,
-                    youtubeKey: results.youTube.key,
-                    url: results.url
-                };
-                pusherApi.trigger('public', 'youtube', pusherVars);
-            }
 
             resolve(results);
         })
