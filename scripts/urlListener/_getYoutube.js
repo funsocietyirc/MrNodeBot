@@ -4,6 +4,9 @@ const gen = require('../generators/_youTubeVideoData');
 const apiKey = require('../../config').apiKeys.google;
 const logger = require('../../lib/logger');
 
+const pusherApi = require('../../lib/pusher');
+
+
 module.exports = (key, results) => new Promise(resolve => {
     // No Key provided, return the results
     if (!_.isString(key) || _.isEmpty(key)) return resolve(results);
@@ -18,11 +21,26 @@ module.exports = (key, results) => new Promise(resolve => {
             // Set youtube data on results object
             results.youTube = {
                 videoTitle: data.snippet.title,
-                viewCount:  numberOrNa(data.statistics.viewCount),
+                viewCount: numberOrNa(data.statistics.viewCount),
                 likeCount: numberOrNa(data.statistics.likeCount),
                 dislikeCount: numberOrNa(data.statistics.dislikeCount),
                 commentCount: numberOrNa(data.statistics.commentCount)
             };
+
+            // Fire off youtube data
+            if (pusherApi) {
+                let pusherVars = Object.assign({
+                        to,
+                        from,
+                        timestamp,
+                        key,
+                        url: results.url
+                    },
+                    results.youTube
+                );
+                pusherApi.trigger('public', 'youtube', pusherVars);
+            }
+
             resolve(results);
         })
         .catch(err => {
