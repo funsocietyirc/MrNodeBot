@@ -9,7 +9,7 @@ module.exports = results => {
     if (
         pusherApi &&
         results.youTube &&
-        results.youTube.youTube.key
+        results.youTube.youtubeKey
     ) {
         let pusherVars = {
             to: results.to,
