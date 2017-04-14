@@ -40,7 +40,7 @@ module.exports = results => new Promise(resolve => {
     // Trigger a update on the youtube channel if we have a youtube link
     // Fire off youtube data
     if (
-        pusherApi &&
+        pusher &&
         results.youTube &&
         results.youTube.key
     ) {
@@ -52,7 +52,7 @@ module.exports = results => new Promise(resolve => {
             youtubeKey: results.youTube.key,
             url: results.url
         };
-        pusherApi.trigger('public', 'youtube', pusherVars);
+        pusher.trigger('public', 'youtube', pusherVars);
     }
 
     resolve(results);
