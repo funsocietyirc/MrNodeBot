@@ -71,8 +71,10 @@ module.exports = app => {
             let paddedResult = _.padEnd(`${header}${header ? ':' : ' '}`, pad, ' ');
             app.notice(to, `${titleLine(paddedResult)} ${content}`);
         };
-        let firstDateActive = Moment(data.firstResult.timestamp);
-        let lastDateActive = Moment(data.lastResult.timestamp);
+
+        let firstDateActive = _.isUndefined(data.firstResult.timestamp) ? null : Moment(data.firstResult.timestamp);
+        let lastDateActive = _.isUndefined(data.lastResult.timestamp) ? null : Moment(data.lastResult.timestamp);
+
         let pad = 19;
         let realName = data.realName ? `(${c.white.bgblack(data.realName)})` : '';
         let primaryNick = data.primaryNick ? `${c.white.bgblack.bold('ACC: ')}${c.green.bgblack(data.primaryNick)}` : c.red.bgblack('-Unident/Offline-');
@@ -93,10 +95,16 @@ module.exports = app => {
         sayHelper('Hosts', data.hosts.join(' | '));
         sayHelper('Idents', data.idents.join(' | '));
         if (data.currentServer) sayHelper('Server', `${data.currentServer} ` + (data.secureServer ? '(SSL)' : '(Plain Text)'));
-        sayHelper('First Active', `as ${data.firstResult.from} on ${firstDateActive.format('h:mma MMM Do')} (${firstDateActive.fromNow()}) On: ${data.firstResult.to}`);
-        sayHelper('First Message', data.firstResult.text);
-        sayHelper('Last Active', `as ${data.lastResult.from} on ${lastDateActive.format('h:mma MMM Do')} (${lastDateActive.fromNow()}) On: ${data.lastResult.to}`);
-        sayHelper('Last Message', data.lastResult.text);
+
+        if(firstDateActive) {
+          sayHelper('First Active', `as ${data.firstResult.from} on ${firstDateActive.format('h:mma MMM Do')} (${firstDateActive.fromNow()}) On: ${data.firstResult.to}`);
+          sayHelper('First Message', data.firstResult.text);
+        }
+
+        if(lastDateActive) {
+          sayHelper('Last Active', `as ${data.lastResult.from} on ${lastDateActive.format('h:mma MMM Do')} (${lastDateActive.fromNow()}) On: ${data.lastResult.to}`);
+          sayHelper('Last Message', data.lastResult.text);
+        }
 
         // Display location data if it exists
         if (city || regionName || countryName || postal || timeZone || lat || long) {

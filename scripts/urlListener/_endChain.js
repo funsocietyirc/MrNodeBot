@@ -5,6 +5,7 @@ const resultsCache = require('../../lib/hashedCacheStore');
 const pusherApi = require('../../lib/pusher');
 
 module.exports = results => {
+  
     // Fire off youtube data
     if (
         pusherApi &&
