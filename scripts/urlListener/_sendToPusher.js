@@ -37,5 +37,23 @@ module.exports = results => new Promise(resolve => {
         on: timestamp
     });
 
+    // Trigger a update on the youtube channel if we have a youtube link
+    // Fire off youtube data
+    if (
+        pusherApi &&
+        results.youTube &&
+        results.youTube.key
+    ) {
+        let pusherVars = {
+            to: results.to,
+            from: results.from,
+            timestamp: results.timestamp,
+            videoTitle: results.youTube.videoTitle,
+            youtubeKey: results.youTube.key,
+            url: results.url
+        };
+        pusherApi.trigger('public', 'youtube', pusherVars);
+    }
+
     resolve(results);
 });

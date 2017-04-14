@@ -991,6 +991,5 @@ class MrNodeBot {
 
 }
 
-
 /** Expose the Bot */
 module.exports = MrNodeBot;

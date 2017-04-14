@@ -13,7 +13,8 @@ const jwt = require('jsonwebtoken');
 
 
 //   Web Server component:
-//   Features: named-routes, favicon, file upload, jade template engine, body parser, json parser
+//   Features: named-routes, favicon, file upload, jade template engine, body parser, json parser, rate limiting, simple auth
+//  json web tokens
 module.exports = (app) => {
 
     // Helper Function to return the Configuration jwt secret, or a default with a warning
@@ -232,7 +233,6 @@ module.exports = (app) => {
         });
 
     });
-
 
     // If no port specifically set, find an available port
     if (!app.Config.express.port) {

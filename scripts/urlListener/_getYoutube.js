@@ -8,7 +8,7 @@ module.exports = (key, results) => new Promise(resolve => {
     // No Key provided, return the results
     if (!_.isString(key) || _.isEmpty(key)) return resolve(results);
 
-    const numberOrNa = number => !isNaN(number) ? number : 0;
+    const numberOrZero = number => !isNaN(number) ? number : 0;
 
     return gen(apiKey, key)
         .then(result => {
@@ -19,10 +19,10 @@ module.exports = (key, results) => new Promise(resolve => {
             results.youTube = {
                 key: key,
                 videoTitle: data.snippet.title,
-                viewCount: numberOrNa(data.statistics.viewCount),
-                likeCount: numberOrNa(data.statistics.likeCount),
-                dislikeCount: numberOrNa(data.statistics.dislikeCount),
-                commentCount: numberOrNa(data.statistics.commentCount)
+                viewCount: numberOrZero(data.statistics.viewCount),
+                likeCount: numberOrZero(data.statistics.likeCount),
+                dislikeCount: numberOrZero(data.statistics.dislikeCount),
+                commentCount: numberOrZero(data.statistics.commentCount)
             };
 
             resolve(results);
