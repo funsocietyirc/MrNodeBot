@@ -42,15 +42,15 @@ module.exports = results => new Promise(resolve => {
     if (
         pusher &&
         results.youTube &&
-        results.youTube.videoResults &&
-        results.youTube.videoResults.key
+        results.youTube.video &&
+        results.youTube.video.key
     ) {
         let pusherVars = {
             to: results.to,
             from: results.from,
             timestamp: results.timestamp,
-            videoTitle: results.youTube.videoResults.videoTitle,
-            youtubeKey: results.youTube.videoResults.key,
+            videoTitle: results.youTube.video.videoTitle,
+            youtubeKey: results.youTube.video.key,
             url: results.url
         };
         pusher.trigger('public', 'youtube', pusherVars);
