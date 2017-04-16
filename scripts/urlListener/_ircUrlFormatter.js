@@ -57,7 +57,7 @@ module.exports = (results, app) => {
     append(logos.youTube);
     // We have playlist data
     if (!_.isUndefined(results.youTube.playlist)) {
-      append('Playlist');
+      append(`Playlist with ${results.youTube.playlist.videoCount} videos`);
     }
     // We have video data
     if (!_.isUndefined(results.youTube.video)) {
