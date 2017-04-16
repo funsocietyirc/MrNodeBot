@@ -7,6 +7,7 @@ const scriptInfo = {
 };
 
 const Models = require('bookshelf-model-loader');
+const logger = require('../../lib/logger');
 
 module.exports = app => {
 
@@ -34,7 +35,7 @@ module.exports = app => {
                     to: req.body.recipient,
                     payload: req.body.payload
                 })
-                .catch(e => console.dir(`Error in logging gateway interface to database ${e.message}`));
+                .catch(e => logger.error(`Error in logging gateway interface to database ${e.message}`));
 
             // Send back all is ok
             return res.json({

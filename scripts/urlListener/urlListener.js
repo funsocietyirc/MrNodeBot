@@ -106,7 +106,6 @@ module.exports = app => {
         minute: 15
     }, () => {
         logger.info('Clearing The Url Result Cache');
-        console.dir(resultsCache);
         resultsCache.clear();
     });
 

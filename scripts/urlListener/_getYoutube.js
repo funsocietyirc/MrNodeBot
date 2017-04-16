@@ -5,42 +5,46 @@ const apiKey = require('../../config').apiKeys.google;
 const logger = require('../../lib/logger');
 
 module.exports = (key, list, results) => new Promise(resolve => {
-    // No Key provided, return the results
-    if (!_.isString(key) || _.isEmpty(key)) return resolve(results);
+  // No Key provided, return the results
+  if (!_.isString(key) || _.isEmpty(key)) return resolve(results);
 
-    const numberOrZero = number => !isNaN(number) ? number : 0;
+  const numberOrZero = number => !isNaN(number) ? number : 0;
 
-    return gen(apiKey, key, list)
-        .then(result => {
-            console.dir(result);
-            let data = result.items[0];
-            // We have no data, default back to the original title grabber
-            if (!data) return resolve(results);
+  return gen(apiKey, key, list)
+    .then(result => {
+      // We have no data, default back to the original title grabber
+      if (!result) return resolve(results);
 
-            // Set youtube data on results object
-            results.youTube = {
-                key: key,
-                videoTitle: data.snippet.title || '',
-                viewCount: numberOrZero(data.statistics.itemCount),
-                likeCount: numberOrZero(data.statistics.likeCount),
-                dislikeCount: numberOrZero(data.statistics.dislikeCount),
-                commentCount: numberOrZero(data.statistics.commentCount),
-                channelTitle: data.snippet.channelTitle || '',
-            };
+      // Initialize youtube results
+      results.youTube = {};
 
-            // Playlist
-            if(list != null) {
-                results.youTube.playlist = list;
-                //results.youTube.videoCount = numberOrZero(data.contentDetails.itemCount);
-            }
+      // We have Video Results
+      if (!_.isEmpty(result.videoResults))
+        results.youTube.video = {
+          key: key,
+          videoTitle: result.videoResults.snippet.title || '',
+          viewCount: numberOrZero(result.videoResults.statistics.itemCount),
+          likeCount: numberOrZero(result.videoResults.statistics.likeCount),
+          dislikeCount: numberOrZero(result.videoResults.statistics.dislikeCount),
+          commentCount: numberOrZero(result.videoResults.statistics.commentCount),
+          channelTitle: result.videoResults.snippet.channelTitle || '',
+        };
 
-            resolve(results);
-        })
-        .catch(err => {
-            logger.warn('Error in YouTube link function', {
-                err: err.stack,
-            });
-            resolve(results);
-        });
+      // We have Playlist Results
+      if (!_.isEmpty(result.playlistResults))
+        results.youTube.playlist = {
+          key: list,
+          videoCount: numberOrZero(result.playlistResults.contentDetails.itemCount)
+        };
+
+      // Return results
+      resolve(results);
+    })
+    .catch(err => {
+      logger.warn('Error in YouTube link function', {
+        err: err.stack,
+      });
+      resolve(results);
+    });
 
 });

@@ -53,6 +53,5 @@ module.exports = app => {
             });
     });
 
-    getWeather('ottawa').then(console.dir);
     return scriptInfo;
 };

@@ -17,7 +17,7 @@ const playlist = (apiKey, list) => rp({
 });
 
 // Track only
-const track = (apiKey, key) => rp({
+const video = (apiKey, key) => rp({
   uri: endPointSingle,
   qs: {
     key: apiKey,
@@ -31,17 +31,41 @@ const track = (apiKey, key) => rp({
 module.exports = (apiKey, key, list) => {
 
   // Playlist Only
-  if (list != null && key == null) return playlist(apiKey, list);
-  else if (list == null && key != null) return track(apiKey, key);
-  // Playlist and track
-  else return new Promise((res, rej) =>
-    playlist(apiKey, list).then(playlistResults => track(apiKey, key).then(trackResults =>
-      res({
-        playlistResults,
-        trackResults
+  if (list != null && key == null) return new Promise((res, rej) => {
+    return playlist(apiKey, list)
+      .then(playlistResults => {
+        return res({
+          playlistResults: playlistResults.items[0],
+        });
       })
-    )).catch(err => rej)
-  );
+      .catch(rej);
+  });
+
+  // Video Only
+  if (list == null && key != null) return new Promise((res, rej) => {
+    return video(apiKey, key)
+      .then(videoResults => {
+        return res({
+          videoResults: videoResults.items[0],
+        });
+      })
+      .catch(rej)
+  });
+
+
+  // Playlist and Video
+  return new Promise((res, rej) => {
+    return playlist(apiKey, list)
+      .then(playlistResults => {
+        return video(apiKey, key).then(videoResults => {
+          return res({
+            playlistResults: playlistResults.items[0],
+            videoResults: videoResults.items[0],
+          });
+        });
+      })
+      .catch(rej);
+  });
 
 };
 
