@@ -53,13 +53,16 @@ module.exports = (results, app) => {
 
   // We have a YouTube video response
   if (!_.isUndefined(results.youTube)) {
+    // Append Logo
+    append(logos.youTube);
+    // We have playlist data
+    if (!_.isUndefined(results.youTube.playlist)) {
+      append('Playlist');
+    }
+    // We have video data
     if (!_.isUndefined(results.youTube.video)) {
       let yr = results.youTube.video;
-
-      append(logos.youTube);
       if (!_.isEmpty(yr.channelTitle)) append(yr.channelTitle);
-      if (!_.isUndefined(yr.list) && !_.isEmpty(yr.list)) append(`Playlist with ${yr.videoCount} videos`);
-
       append(yr.videoTitle)
         (`${icons.views} ${c.navy(formatNumber(yr.viewCount))} ${icons.upArrow} ${c.green(formatNumber(yr.likeCount))} ${icons.downArrow} ${c.red(formatNumber(yr.dislikeCount))} ${icons.comments} ${c.blue(formatNumber(yr.commentCount))}`);
     }

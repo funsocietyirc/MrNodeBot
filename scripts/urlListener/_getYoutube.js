@@ -38,8 +38,7 @@ module.exports = (key, list, results) => new Promise(resolve => {
           videoCount: numberOrZero(result.playlistResults.contentDetails.itemCount)
         };
 
-        console.dir(results.youTube.video)
-      // Return results
+     // Return results
       resolve(results);
     })
     .catch(err => {
