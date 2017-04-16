@@ -106,7 +106,6 @@ module.exports = app => {
         minute: 15
     }, () => {
         logger.info('Clearing The Url Result Cache');
-        console.dir(resultsCache);
         resultsCache.clear();
     });
 
@@ -116,7 +115,7 @@ module.exports = app => {
         access: app.Config.accessLevels.admin,
         call: (to, from, text, message) => {
             resultsCache.clear();
-            app.say(from, 'The URL Result Cache has been cleared');
+            app.say(to, 'The URL Result Cache has been cleared');
         }
     });
 
