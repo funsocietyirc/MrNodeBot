@@ -1,4 +1,5 @@
 'use strict';
+const URI = require('urijs');
 const _ = require('lodash');
 const getYoutube = require('./_getYoutube.js'); // Get the youtube key from link
 const getImdb = require('./_getImdb.js'); // Get IMDB Data
@@ -7,39 +8,66 @@ const getBitBucket = require('./_getBitBucket'); // Get BitBucket Information
 const getImgur = require('./_getImgurImage'); // Get Imgur data
 
 module.exports = results => new Promise(resolve => {
-    // Use the realUrl if available when doing matches
-    // This allows shortened urls to still hit
-    let url = results.realUrl ? results.realUrl : results.url;
+  // Use the realUrl if available when doing matches
+  // This allows shortened urls to still hit
+  let uri = new URI(results.realUrl ? results.realUrl : results.url);
 
-    // Check for youTube
-    let ytMatch = url.match(/^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/);
-    if (ytMatch && ytMatch[2].length == 11) return resolve(getYoutube(ytMatch[2], results));
+  // No URI
+  if (!uri) return resolve(results);
 
-    // Check for IMDB
-    let imdbMatch = url.match(/(?:www\.)?imdb.com\/.*title\/(tt\d+)/);
-    if (imdbMatch && imdbMatch[1]) return resolve(getImdb(imdbMatch[1], results));
-
-    // Check for Imgur Image | Gallery
-    let imgurMatch = url.match(/imgur\.com\/(image|gallery)\/(.*)/);
-    if (imgurMatch && imgurMatch[1] && imgurMatch[2]) return resolve(getImgur(imgurMatch[1], imgurMatch[2], results));
-
-    // Check for Imgur Generic
-    let imgurImageMatch = url.match(/(?:imgur\.com\/)(\w{3,7})/);
-    if (imgurImageMatch && imgurImageMatch[1]) return resolve(getImgur('image', imgurImageMatch[1], results));
-
-    // Get Generic Information
-    let matches = url.match(/(?:git@(?![\w\.]+@)|https:\/{2}|http:\/{2})([\w\.@]+)[\/:]([\w,\-,\_]+)\/([\w,\-,\_]+)(?:\.git)?\/?/);
-
-    // We have no further matches, bail
-    if (!matches) return resolve(results);
-
-    // Filter the remaining matches
-    switch (matches[1].toLowerCase()) {
-        case 'github.com':
-            return resolve(getGitHub(matches[2], matches[3], results)); // 2: User, 3: Repo
-        case 'bitbucket.org':
-            return resolve(getBitBucket(matches[2], matches[3], results)); // 2: User, 3: Repo
+  switch (uri.domain()) {
+    case 'youtube.com': // Youtube
+    case 'youtu.be':
+      switch (uri.segmentCoded(0)) {
+        case 'embed':
+        case 'watch':
+          // Playlist
+          if (uri.hasQuery('list') && uri.hasQuery('v')) return resolve(getYoutube(uri.search(true).v, uri.search(true).list, results));
+          // Single Video
+          else if (uri.hasQuery('v')) return resolve(getYoutube(uri.search(true).v, null, results));
+          break;
+        case 'playlist':
+          if (uri.hasQuery('list')) return resolve(getYoutube(null, uri.search(true).list, results));
+          break;
+      }
+      break;
+    case 'imdb.com': // IMDB
+      let segments = uri.segmentCoded();
+      if (segments.indexOf('title') != -1) {
+        let titleId = uri.segmentCoded(segments.indexOf('title') + 1);
+        if (titleId.startsWith('tt')) return resolve(getImdb(titleId, results));
+      }
+      break;
+    case 'imgur.com': // Imgur
+      if (uri.subdomain() == 'i') {
+        let segment = uri.segmentCoded(0);
+        if (!segment) break;
+        let imageId = segment.substr(0, segment.lastIndexOf('.'));
+        if (!imageId) break;
+        if (imageId) return resolve(getImgur('image', imageId, results));
+      }
+      switch (uri.segmentCoded(0)) {
+        case 'image':
+        case 'gallery':
+          if (uri.segmentCoded(1)) return resolve(getImgur(uri.segmentCoded(0), uri.segmentCoded(1), results));
+          break;
+        case 'album':
+        case 'a':
+          if (uri.segmentCoded(1)) return resolve(getImgur('album', uri.segmentCoded(1), results));
+          break;
         default:
-            return resolve(results);
-    }
+          if (uri.segment().length == 1) return resolve(getImgur('image', uri.segmentCoded(0), results));
+          break;
+      }
+      break;
+    case 'github.com': // GitHub
+      if (uri.segment().length >= 2) return resolve(getGitHub(uri.segmentCoded(0), uri.segmentCoded(1), results)); // 2: User, 3: Repo
+      break;
+    case 'bitbucket.org': // BitBucket
+      if (uri.segment().length >= 2) return resolve(getBitBucket(uri.segmentCoded(0), uri.segmentCoded(1), results)); // 2: User, 3: Repo
+      break;
+  }
+
+  // No Matches
+  return resolve(results);
 });

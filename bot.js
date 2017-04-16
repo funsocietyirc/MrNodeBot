@@ -281,7 +281,8 @@ class MrNodeBot {
                     logger.error(t('scripts.error', {
                         path: fullPath
                     }), {
-                        err
+                        err: err.message,
+                        stack: err.stack
                     });
                 }
             });
