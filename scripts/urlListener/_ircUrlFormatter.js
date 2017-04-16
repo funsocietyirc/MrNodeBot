@@ -48,19 +48,28 @@ module.exports = (results, app) => {
   else if (results.realUrl && results.url != results.realUrl) append(`${icons.anchor} ${c.red('URL Redirected')}`);
 
   // We have a Short URL
-  if (!_.isUndefined(results.shortUrl) && !_.isEmpty(results.shortUrl) && results.url.length > config.features.urls.titleMin)
+  if (!_.isEmpty(results.shortUrl) && !_.isEmpty(results.shortUrl) && results.url.length > config.features.urls.titleMin)
     append(`${icons.anchor} ${c.navy(results.shortUrl)}`);
 
   // We have a YouTube video response
-  if (!_.isUndefined(results.youTube)) {
+  if (!_.isEmpty(results.youTube)) {
     // Append Logo
     append(logos.youTube);
+
     // We have playlist data
-    if (!_.isUndefined(results.youTube.playlist)) {
-      append(`Playlist with ${results.youTube.playlist.videoCount} videos`);
+    if (!_.isEmpty(results.youTube.playlist)) {
+      console.dir(results.youTube.playlist)
+      // Playlist has a title
+      if(
+        !_.isUndefined(results.youTube.playlist.playlistTitle) &&
+        !_.isEmpty(results.youTube.playlist.playlistTitle)
+      ) append(`Playlist: ${results.youTube.playlist.playlistTitle}`);
+      // We have video count
+      if(!_.isUndefined(results.youTube.playlist.videoCount)) append(`${results.youTube.playlist.videoCount} videos`);
     }
+
     // We have video data
-    if (!_.isUndefined(results.youTube.video)) {
+    if (!_.isEmpty(results.youTube.video)) {
       let yr = results.youTube.video;
       if (!_.isEmpty(yr.channelTitle)) append(yr.channelTitle);
       append(yr.videoTitle)
@@ -69,7 +78,7 @@ module.exports = (results, app) => {
   }
 
   // We have IMDB data
-  else if (!_.isUndefined(results.imdb)) {
+  else if (!_.isEmpty(results.imdb)) {
     let imdb = results.imdb;
     append(logos.imdb)
       (imdb.title)

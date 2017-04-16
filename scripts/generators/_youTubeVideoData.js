@@ -29,7 +29,6 @@ const video = (apiKey, key) => rp({
 });
 
 module.exports = (apiKey, key, list) => {
-
   // Playlist Only
   if (list != null && key == null) return new Promise((res, rej) => {
     return playlist(apiKey, list)

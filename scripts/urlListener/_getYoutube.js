@@ -6,7 +6,10 @@ const logger = require('../../lib/logger');
 
 module.exports = (key, list, results) => new Promise(resolve => {
   // No Key provided, return the results
-  if (!_.isString(key) || _.isEmpty(key)) return resolve(results);
+  if (
+    (!_.isString(key) || _.isEmpty(key)) &&
+    (!_.isString(list) || _.isEmpty(list))
+  ) return resolve(results);
 
   // Normalize Helper
   const numberOrZero = number => !isNaN(number) ? number : 0;
@@ -15,7 +18,6 @@ module.exports = (key, list, results) => new Promise(resolve => {
     .then(result => {
       // We have no data, default back to the original title grabber
       if (!result) return resolve(results);
-
       // Initialize youtube results
       results.youTube = {};
 
@@ -35,10 +37,11 @@ module.exports = (key, list, results) => new Promise(resolve => {
       if (!_.isEmpty(result.playlistResults))
         results.youTube.playlist = {
           key: list,
-          videoCount: numberOrZero(result.playlistResults.contentDetails.itemCount)
+          videoCount: numberOrZero(result.playlistResults.contentDetails.itemCount),
+          playlistTitle: result.playlistResults.snippet.title || ''
         };
 
-     // Return results
+      // Return results
       resolve(results);
     })
     .catch(err => {
