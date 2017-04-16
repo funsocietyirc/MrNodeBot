@@ -8,6 +8,7 @@ module.exports = (key, list, results) => new Promise(resolve => {
   // No Key provided, return the results
   if (!_.isString(key) || _.isEmpty(key)) return resolve(results);
 
+  // Normalize Helper
   const numberOrZero = number => !isNaN(number) ? number : 0;
 
   return gen(apiKey, key, list)
@@ -23,7 +24,7 @@ module.exports = (key, list, results) => new Promise(resolve => {
         results.youTube.video = {
           key: key,
           videoTitle: result.videoResults.snippet.title || '',
-          viewCount: numberOrZero(result.videoResults.statistics.itemCount),
+          viewCount: numberOrZero(result.videoResults.statistics.viewCount),
           likeCount: numberOrZero(result.videoResults.statistics.likeCount),
           dislikeCount: numberOrZero(result.videoResults.statistics.dislikeCount),
           commentCount: numberOrZero(result.videoResults.statistics.commentCount),
@@ -37,6 +38,7 @@ module.exports = (key, list, results) => new Promise(resolve => {
           videoCount: numberOrZero(result.playlistResults.contentDetails.itemCount)
         };
 
+        console.dir(results.youTube.video)
       // Return results
       resolve(results);
     })
