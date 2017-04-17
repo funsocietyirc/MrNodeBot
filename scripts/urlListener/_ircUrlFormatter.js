@@ -58,7 +58,6 @@ module.exports = (results, app) => {
 
     // We have playlist data
     if (!_.isEmpty(results.youTube.playlist)) {
-      console.dir(results.youTube.playlist)
       // Playlist has a title
       if(
         !_.isUndefined(results.youTube.playlist.playlistTitle) &&

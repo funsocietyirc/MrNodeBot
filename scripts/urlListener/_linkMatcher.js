@@ -15,21 +15,22 @@ module.exports = results => new Promise(resolve => {
   // No URI
   if (!uri) return resolve(results);
 
+  // Hold on to the query args
+  let q = uri.search(true);
+
   switch (uri.domain()) {
     case 'youtube.com': // Youtube
     case 'youtu.be':
       switch (uri.segmentCoded(0)) {
         case 'embed':
         case 'watch':
-          // Hold on to the query args
-          let q = uri.search(true);
           // Playlist
           if (_.isString(q.list) && _.isString(q.v)) return resolve(getYoutube(q.v, q.list, q.index, q.t, results));
           // Single Video
-          else if (_.isString(q.v)) return resolve(getYoutube(q.v, null,  q.index, q.t, results));
+          else if (_.isString(q.v)) return resolve(getYoutube(q.v, null, q.index, q.t, results));
           break;
         case 'playlist':
-          if (_.isString(q.list)) return resolve(getYoutube(null, q.list,  q.index, q.t, results));
+          if (_.isString(q.list)) return resolve(getYoutube(null, q.list, q.index, q.t, results));
           break;
       }
       break;
