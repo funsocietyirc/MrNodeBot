@@ -40,7 +40,7 @@
     "express-fileupload": "git://github.com/pajtai/express-fileupload.git",
     "express-rate-limit": "^2.6.0",
     "express-winston": "^2.3.0",
-    "file-type": "^4.1.0",
+    "file-type": "^4.2.0",
     "freeport": "^1.0.5",
     "funsocietyirc-client": "0.0.10",
     "gitlog": "^2.0.1",
