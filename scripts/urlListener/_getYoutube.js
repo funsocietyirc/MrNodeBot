@@ -4,7 +4,8 @@ const gen = require('../generators/_youTubeVideoData');
 const apiKey = require('../../config').apiKeys.google;
 const logger = require('../../lib/logger');
 
-module.exports = (key, list, results) => new Promise(resolve => {
+
+module.exports = (key, list, index, seekTime, results) => new Promise(resolve => {
   // No Key provided, return the results
   if (
     (!_.isString(key) || _.isEmpty(key)) &&
@@ -20,6 +21,9 @@ module.exports = (key, list, results) => new Promise(resolve => {
       if (!result) return resolve(results);
       // Initialize youtube results
       results.youTube = {};
+
+      if(_.isNumber(index)) results.youTube.index = index;
+      if(_.isNumber(seekTime)) results.youTube.seekTime = seekTime;
 
       // We have Video Results
       if (!_.isEmpty(result.videoResults))

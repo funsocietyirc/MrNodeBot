@@ -21,13 +21,15 @@ module.exports = results => new Promise(resolve => {
       switch (uri.segmentCoded(0)) {
         case 'embed':
         case 'watch':
+          // Hold on to the query args
+          let q = uri.search(true);
           // Playlist
-          if (uri.hasQuery('list') && uri.hasQuery('v')) return resolve(getYoutube(uri.search(true).v, uri.search(true).list, results));
+          if (_.isString(q.list) && _.isString(q.v)) return resolve(getYoutube(q.v, q.list, q.index, q.t, results));
           // Single Video
-          else if (uri.hasQuery('v')) return resolve(getYoutube(uri.search(true).v, null, results));
+          else if (_.isString(q.v)) return resolve(getYoutube(q.v, null,  q.index, q.t, results));
           break;
         case 'playlist':
-          if (uri.hasQuery('list')) return resolve(getYoutube(null, uri.search(true).list, results));
+          if (_.isString(q.list)) return resolve(getYoutube(null, q.list,  q.index, q.t, results));
           break;
       }
       break;
