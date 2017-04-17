@@ -2,11 +2,11 @@
 const Models = require('bookshelf-model-loader');
 
 const MrRobotQuotes = Models.Base.extend({
-    tableName: 'mrrobotQuotes',
-    hasTimestamps: ['timestamp'],
-    soft: false
+  tableName: 'mrrobotQuotes',
+  hasTimestamps: ['timestamp'],
+  soft: false
 });
 
 module.exports = {
-    MrRobotQuotes: Models.Bookshelf.model('MrRobotQuotes', MrRobotQuotes)
+  MrRobotQuotes: Models.Bookshelf.model('MrRobotQuotes', MrRobotQuotes)
 };

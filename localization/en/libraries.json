@@ -1,9 +1,9 @@
 {
-    "userDoesNotExist": "User does not exist",
-    "invalidReplaceInput": "Invalid input detected in Replace All Extension",
-    "scheduler": {
-        "duplicate": "Duplicate job {{name}} for time {{time}} not loaded",
-        "missingCallback": "Command {{name}} is missing a Callback",
-        "systemTask": "{{name}} has been identified as a system task"
-    }
+  "userDoesNotExist": "User does not exist",
+  "invalidReplaceInput": "Invalid input detected in Replace All Extension",
+  "scheduler": {
+    "duplicate": "Duplicate job {{name}} for time {{time}} not loaded",
+    "missingCallback": "Command {{name}} is missing a Callback",
+    "systemTask": "{{name}} has been identified as a system task"
+  }
 }

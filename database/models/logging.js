@@ -2,11 +2,11 @@
 const Models = require('bookshelf-model-loader');
 
 const Logging = Models.Base.extend({
-    tableName: 'logging',
-    hasTimestamps: ['timestamp'],
-    soft: false
+  tableName: 'logging',
+  hasTimestamps: ['timestamp'],
+  soft: false
 });
 
 module.exports = {
-    Logging: Models.Bookshelf.model('logging', Logging)
+  Logging: Models.Bookshelf.model('logging', Logging)
 };

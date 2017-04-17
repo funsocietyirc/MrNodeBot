@@ -2,11 +2,11 @@
 const Models = require('bookshelf-model-loader');
 
 const ActionLogging = Models.Base.extend({
-    tableName: 'actionLogging',
-    hasTimestamps: ['timestamp'],
-    soft: false
+  tableName: 'actionLogging',
+  hasTimestamps: ['timestamp'],
+  soft: false
 });
 
 module.exports = {
-    ActionLogging: Models.Bookshelf.model('actionLogging', ActionLogging)
+  ActionLogging: Models.Bookshelf.model('actionLogging', ActionLogging)
 };

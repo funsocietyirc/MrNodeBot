@@ -59,12 +59,11 @@ module.exports = (results, app) => {
     // We have playlist data
     if (!_.isEmpty(results.youTube.playlist)) {
       // Playlist has a title
-      if(
-        !_.isUndefined(results.youTube.playlist.playlistTitle) &&
+      if (!_.isUndefined(results.youTube.playlist.playlistTitle) &&
         !_.isEmpty(results.youTube.playlist.playlistTitle)
       ) append(`Playlist: ${results.youTube.playlist.playlistTitle}`);
       // We have video count
-      if(!_.isUndefined(results.youTube.playlist.videoCount)) append(`${results.youTube.playlist.videoCount} videos`);
+      if (!_.isUndefined(results.youTube.playlist.videoCount)) append(`${results.youTube.playlist.videoCount} videos`);
     }
 
     // We have video data
