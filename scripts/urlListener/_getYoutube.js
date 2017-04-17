@@ -22,7 +22,9 @@ module.exports = (key, list, index, seekTime, results) => new Promise(resolve =>
       // Initialize youtube results
       results.youTube = {};
 
+      // Current Video Index
       if(_.isNumber(index)) results.youTube.index = index;
+      // Video Seek Time
       if(_.isNumber(seekTime)) results.youTube.seekTime = seekTime;
 
       // We have Video Results
