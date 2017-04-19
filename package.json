@@ -70,7 +70,7 @@
     "sqlite3": "^3.1.8",
     "twit": "^2.2.5",
     "urijs": "^1.18.10",
-    "watson-developer-cloud": "^2.28.1",
+    "watson-developer-cloud": "^2.29.0",
     "winston": "^2.3.1",
     "winston-daily-rotate-file": "^1.4.6",
     "winston-logio-mirror": "^0.3.0",
