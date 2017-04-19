@@ -44,7 +44,7 @@ module.exports = (key, list, index, seekTime, results) => new Promise(resolve =>
         results.youTube.playlist = {
           key: list,
           videoCount: numberOrZero(result.playlistResults.contentDetails.itemCount),
-          playlistTitle: result.playlistResults.snippet.title || ''
+          playlistTitle: result.playlistResults.snippet.title || '',
         };
 
       // Return results

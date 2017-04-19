@@ -10,13 +10,13 @@ const getImgur = require('./_getImgurImage'); // Get Imgur data
 module.exports = results => new Promise(resolve => {
   // Use the realUrl if available when doing matches
   // This allows shortened urls to still hit
-  let uri = new URI(results.realUrl ? results.realUrl : results.url);
+  const uri = new URI(results.realUrl ? results.realUrl : results.url);
 
   // No URI
   if (!uri) return resolve(results);
 
   // Hold on to the query args
-  let q = uri.search(true);
+  const q = uri.search(true);
 
   switch (uri.domain()) {
     case 'youtube.com': // Youtube
