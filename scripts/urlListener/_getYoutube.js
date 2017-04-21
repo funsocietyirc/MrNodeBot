@@ -23,9 +23,9 @@ module.exports = (key, list, index, seekTime, results) => new Promise(resolve =>
       results.youTube = {};
 
       // Current Video Index
-      if(_.isNumber(index)) results.youTube.index = index;
+      if(!isNaN(index)) results.youTube.index = index;
       // Video Seek Time
-      if(_.isNumber(seekTime)) results.youTube.seekTime = seekTime;
+      if(!isNaN(seekTime)) results.youTube.seekTime = seekTime;
 
       // We have Video Results
       if (!_.isEmpty(result.videoResults))

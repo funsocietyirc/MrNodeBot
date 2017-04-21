@@ -39,22 +39,13 @@ module.exports = results => new Promise(resolve => {
 
   // Trigger a update on the youtube channel if we have a youtube link
   // Fire off youtube data
-  if (
-    pusher &&
-    results.youTube &&
-    results.youTube.video &&
-    results.youTube.video.key
-  ) {
-    let pusherVars = {
-      to: results.to,
-      from: results.from,
-      timestamp: results.timestamp,
-      videoTitle: results.youTube.video.videoTitle,
-      youtubeKey: results.youTube.video.key,
-      url: results.url
-    };
-    pusher.trigger('public', 'youtube', pusherVars);
-  }
+  if (pusher && results.youTube) pusher.trigger('public', 'youtube', Object.assign(results.youTube, {
+    to: results.to,
+    from: results.from,
+    timestamp: timestamp,
+    index: results.youTube.index || 0,
+    seekTime: results.youTube.seekTime || 0
+  }));
 
   resolve(results);
 });

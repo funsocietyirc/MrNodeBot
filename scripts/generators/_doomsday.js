@@ -3,9 +3,7 @@ const endPoint = 'http://thebulletin.org/timeline';
 
 const request = require('request');
 const cheerio = require('cheerio');
-
 const midnight = new Date(2000, 0, 0, 0, 0, 0, 0);
-
 const toTime = mins =>
   new Date(midnight.getTime() + mins * -60000);
 
