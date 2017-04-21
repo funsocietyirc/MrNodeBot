@@ -2,7 +2,6 @@
 const endPoint = 'http://thebulletin.org/timeline';
 
 const request = require('request');
-const extend = require('extend');
 const cheerio = require('cheerio');
 
 const midnight = new Date(2000, 0, 0, 0, 0, 0, 0);
