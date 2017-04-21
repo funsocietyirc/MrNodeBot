@@ -138,15 +138,6 @@ module.exports = {
         port: 28777,
         host: '127.0.0.1'
     },
-    // Pusher.io Information
-    pusher: {
-        enabled: true,
-        config: {
-            appId: '',
-            key: '',
-            secret: ''
-        }
-    },
     // Nickserv configuration options
     nickserv: {
         password: '',

@@ -90,9 +90,6 @@ class MrNodeBot {
     this.Webserver = null;
     this._initWebServer();
 
-    /** Create Pusher Pair */
-    this._initPusherAuthRoute();
-
     /** User Manager */
     this._userManager = null;
     this._initUserManager();
@@ -109,20 +106,6 @@ class MrNodeBot {
     logger.info(t('webServer.started', {
       port: this.Config.express.port
     }));
-  };
-
-  /** Initialize Pusher Private Channel Auth point **/
-  _initPusherAuthRoute() {
-    let pusher = require('./lib/pusher');
-    if (pusher && this.WebServer) {
-      logger.info('Pusher and Web Server detected, creating Pusher Auth link');
-      this.WebServer.post('/pusher/auth', (req, res) => {
-        let socketId = req.body.socket_id;
-        let channel = req.body.channel_name;
-        let auth = pusher.authenticate(socketId, channel);
-        res.send(auth);
-      });
-    }
   };
 
   /**

@@ -88,7 +88,7 @@ I am currently in the processes of providing jsdoc style docblocks for documenta
     -   [URIjs](https://github.com/medialize/URI.js) Javascript URL mutation library
     -   [shelljs](https://github.com/shelljs/shelljs) Portable Unix shell commands
     -   [x-ray](https://github.com/lapwinglabs/x-ray) The next web scraper
-    -   [pusher](https://github.com/pusher/pusher-http-node) Node.js client to interact with the Pusher REST API
+    -   [socket.io](https://github.com/socketio/socket.io) Realtime application framework (Node.JS server)
     -   [bot](https://github.com/vesln/bot) Feeling lonely? You personal bot is here.
     -   [scrypt](https://github.com/barrysteyn/node-scrypt) Scrypt for Node (crypto)
     -   [watson-developer-cloud](https://github.com/watson-developer-cloud/node-sdk) Node.js library to access IBM Watson services.

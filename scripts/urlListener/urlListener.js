@@ -4,7 +4,7 @@
 //     each url and grab meta data on it. This includes checking if the URL is alive,
 //     grabbing the request header params, checking content type, extracting title. The url is also
 //     ran against matches for other APIS used to extract data, such has youtube/imdb..
-//     The resulting information is then sent back to be displayed on IRC, broadcast over Pusher, and logged via DB.
+//     The resulting information is then sent back to be displayed on IRC, broadcast over Socketio, and logged via DB.
 //     If we are in debug mode a complete chain of information will be echoed to the console.
 //
 //     The basic concept of this is a promise/function that takes in a results object, and returns either
@@ -29,7 +29,7 @@ const endChain = require('./_endChain'); // Finish the chain
 
 // Report
 const sendToDb = require('./_sendToDb'); // Log Urls to the Database
-const sendToPusher = require('./_sendToPusher'); // Send To Pusher
+const sendToSocket = require('./_sendToSocket'); // Send To Socketio
 
 // Libs
 const ircUrlFormatter = require('./_ircUrlFormatter'); // IRC Formatter
@@ -73,11 +73,12 @@ module.exports = app => {
       .then(sendToIrc) // Send Results to IRC
       .then(results => results.unreachable ? results : // If the site is unreachable, carry on in chain
         sendToDb(results) // Otherwise Log To Database
-        .then(sendToPusher) // Then broadcast to Pusher
+        .then(results => sendToSocket(app, results)) // Then broadcast to socketio
       )
       .then(endChain) // End the chain, cache results
       .catch(err => logger.warn('Error in URL Listener chain', {
-        err
+        err: err.message || '',
+        stack: err.stack || ''
       }));
   };
 

@@ -6,15 +6,14 @@ const scriptInfo = {
 };
 const _ = require('lodash');
 const logger = require('../../lib/logger');
-const pusherApi = require('../../lib/pusher');
 
 module.exports = app => {
-  // Send Announcement Over Pusher
-  const pusher = (to, from, text, message, timestamp) => {
-    // Bail if pusher client is not available
-    if (!pusherApi) return;
-    // Send to pusher.io
-    pusherApi.trigger('public', 'announce', {
+  // Send Announcement Over socket
+  const socket = (to, from, text, message, timestamp) => {
+    // Bail if socket client is not available
+    if (!app.WebServer.socketIO) return;
+    // Send to socket.io
+    app.WebServer.socketIO.emit('announce', {
       to,
       from,
       text,
@@ -57,7 +56,7 @@ module.exports = app => {
       // Take a timestamp
       const timestamp = Date.now();
       // Push to channels
-      _.each([irc, twitter, pusher], chan => chan(to, from, text, message, timestamp));
+      _.each([irc, twitter, socket], chan => chan(to, from, text, message, timestamp));
     }
   });
 

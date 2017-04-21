@@ -30,7 +30,13 @@ module.exports = (app) => {
   }
 
   // Create Express Server
-  let webServer = Express();
+  const webServer = Express();
+
+  // Hold on to HTTP Server
+  const server = require('http').createServer(webServer);
+
+  // Bind Socket.io
+  const io = webServer.socketIO  = require('socket.io')(server);
 
   // Hold on to the Logging transports
   let transports = [];
@@ -234,6 +240,7 @@ module.exports = (app) => {
 
   });
 
+
   // If no port specifically set, find an available port
   if (!app.Config.express.port) {
     require('freeport')((err, port) => {
@@ -244,11 +251,11 @@ module.exports = (app) => {
         return;
       }
       app.Config.express.port = port;
-      websServer.listen(port);
+      server.listen(port);
     });
   }
   // Bind the express server
-  else webServer.listen(app.Config.express.port);
+  else server.listen(app.Config.express.port);
 
   // Export the Web server
   return webServer;

@@ -6,7 +6,6 @@ const scriptInfo = {
 const _ = require('lodash');
 const helpers = require('../../helpers');
 const logger = require('../../lib/logger');
-const pusher = require('../../lib/pusher');
 const ircTypo = require('../lib/_ircTypography');
 const short = require('../generators/_isGdShortUrl');
 const tweetStreamUrl = 'https://twitter.com/funsocietyirc/status';
@@ -23,11 +22,11 @@ module.exports = app => {
     });
 
   const push = (tweet) => {
-    if (!app._twitterClient || !pusher) return;
+    if (!app._twitterClient || !app.WebServer.socketIO) return;
 
     let timestamp = Date.now();
 
-    pusher.trigger('public', 'tweets', {
+    app.WebServer.socketIO.emit('tweets', {
       tweet,
       timestamp
     });
