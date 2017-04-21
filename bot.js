@@ -99,6 +99,14 @@ class MrNodeBot {
     this._initIrc();
   };
 
+  /** Log Errors **/
+  _errorHandler(message, err) {
+    logger.error(message, {
+      err: err.message || '',
+      stack: err.stack || ''
+    });
+  };
+
   /** Initalize Web Server */
   _initWebServer() {
     logger.info(t('webServer.starting'));
@@ -181,10 +189,7 @@ class MrNodeBot {
         try {
           x.call();
         } catch (err) {
-          logger.error('Error in onConnected', {
-            err: err.message || '',
-            stack: err.stack || ''
-          });
+          this._errorHandler('Error in onConnected', err);
         }
       }))
       // Run The callback
@@ -270,12 +275,9 @@ class MrNodeBot {
             this.LoadedScripts.push(scriptInfo);
           }
         } catch (err) {
-          logger.error(t('scripts.error', {
+          this._errorHandler(t('scripts.error', {
             path: fullPath
-          }), {
-            err: err.message || '',
-            stack: err.stack || ''
-          });
+          }), err);
         }
       });
   };
@@ -421,12 +423,9 @@ class MrNodeBot {
       try {
         value.call(from, to, text, message);
       } catch (err) {
-        logger.error(t('errors.genericError', {
+        this._errorHandler(t('errors.genericError', {
           command: 'onAction'
-        }), {
-          err: err.message || '',
-          stack: err.stack || ''
-        });
+        }), err);
       }
     });
   };
@@ -450,12 +449,9 @@ class MrNodeBot {
       try {
         value.call(oldnick, newnick, channels, message);
       } catch (err) {
-        logger.error(t('errors.genericError', {
+        this._errorHandler(t('errors.genericError', {
           command: 'nickChange'
-        }), {
-          err: err.message || '',
-          stack: err.stack || ''
-        });
+        }), err);
       }
     });
   };
@@ -475,12 +471,9 @@ class MrNodeBot {
       try {
         value.call(from, to, text, message);
       } catch (err) {
-        logger.error(t('errors.genericError', {
+        this._errorHandler(t('errors.genericError', {
           command: 'onNotice'
-        }), {
-          err: err.message || '',
-          stack: err.stack || ''
-        });
+        }), err);
       }
     });
   };
@@ -503,12 +496,9 @@ class MrNodeBot {
       try {
         value.call(channel, nick, message);
       } catch (err) {
-        logger.error(t('errors.genericError', {
+        this._errorHandler(t('errors.genericError', {
           command: 'onJoin'
-        }), {
-          err: err.message || '',
-          stack: err.stack || ''
-        });
+        }), err);
       }
     });
   };
@@ -535,12 +525,9 @@ class MrNodeBot {
       try {
         value.call(channel, nick, reason, message);
       } catch (err) {
-        logger.error(t('errors.genericError', {
+        this._errorHandler(t('errors.genericError', {
           command: 'onPart'
-        }), {
-          err: err.message || '',
-          stack: err.stack || ''
-        });
+        }), err);
       }
     });
   };
@@ -575,12 +562,9 @@ class MrNodeBot {
       try {
         value.call(channel, nick, by, reason, message);
       } catch (err) {
-        logger.error(t('errors.genericError', {
+        this._errorHandler(t('errors.genericError', {
           command: 'onKick'
-        }), {
-          err: err.message || '',
-          stack: err.stack || ''
-        });
+        }), err);
       }
     });
   };
@@ -606,12 +590,9 @@ class MrNodeBot {
       try {
         value.call(nick, reason, channels, message);
       } catch (err) {
-        logger.error(t('errors.genericError', {
+        this._errorHandler(t('errors.genericError', {
           command: 'onQuit'
-        }), {
-          err: err.message || '',
-          stack: err.stack || ''
-        });
+        }), err);
       }
     });
   };
@@ -637,12 +618,9 @@ class MrNodeBot {
       try {
         value.call(channel, topic, nick, message);
       } catch (err) {
-        logger.error(t('errors.genericError', {
+        this._errorHandler(t('errors.genericError', {
           command: 'opTopic'
-        }), {
-          err: err.message || '',
-          stack: err.stack || ''
-        });
+        }), err);
       }
     });
   };
@@ -665,12 +643,9 @@ class MrNodeBot {
       try {
         value.call(from, to, text, type, message);
       } catch (err) {
-        logger.error(t('errors.genericError', {
+        this._errorHandler(t('errors.genericError', {
           command: 'ctcpCommands'
-        }), {
-          err: err.message || '',
-          stack: err.stack || ''
-        });
+        }), err);
       }
     });
   };
@@ -686,12 +661,9 @@ class MrNodeBot {
       try {
         value.call(message);
       } catch (err) {
-        logger.error(t('errors.genericError', {
+        this._errorHandler(t('errors.genericError', {
           command: 'handleRegistered'
-        }), {
-          err: err.message || '',
-          stack: err.stack || ''
-        });
+        }), err)
       }
     });
   };
@@ -729,12 +701,9 @@ class MrNodeBot {
         try {
           value.call(to, from, text, message, is);
         } catch (err) {
-          logger.error(t('errors.genericError', {
-            command: 'onCommand onListeners'
-          }), {
-            err: err.message || '',
-            stack: err.stack || ''
-          });
+          this._errorHandler(t('errors.genericError', {
+            command: 'onCommand OnListeners'
+          }), err);
         }
       });
     }
@@ -769,13 +738,9 @@ class MrNodeBot {
           group: helpers.AccessString(command.access),
         }));
       } catch (err) {
-        if (this.Config.bot.debug === true) console.dir(err);
-        logger.error(t('errors.procCommand', {
+        this._errorHandler(t('errors.procCommand', {
           command: cmd
-        }), {
-          err: err.message || '',
-          stack: err.stack || ''
-        });
+        }), err);
       }
     }
     // The following administration levels piggy back on services, thus we check the acc status of the account and defer
@@ -878,11 +843,11 @@ class MrNodeBot {
         group: helpers.AccessString(command.access),
       }));
     } catch (err) {
-      logger.error(t('errors.invalidIdentCommand', {
+      this._errorHandler(t('errors.invalidIdentCommand', {
         cmd: admCall.cmd,
         from: admCall.from,
         to: admCall.to,
-      }));
+      }), err);
     }
 
     // Remove the callback from the stack
