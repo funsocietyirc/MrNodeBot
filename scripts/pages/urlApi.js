@@ -68,7 +68,7 @@ module.exports = app => {
 
         // If there is a channel in the query string
         if (req.query.channel) {
-          qb.where('to', req.query.channel.replace(replaceBrPattern, '#'));
+          qb.where('to', req.query.channel.replace(hashPattern, '#'));
           init = true;
         }
         // If there is a from in the query string
