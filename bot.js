@@ -103,6 +103,14 @@ class MrNodeBot {
   _initWebServer() {
     logger.info(t('webServer.starting'));
     this.WebServer = require('./web/server')(this);
+
+    // Log Socket IO Connection
+    this.WebServer.socketIO.on('connection', sock => {
+      logger.info(`Socket IO Connection Established`);
+      sock.on('message', msg => logger.info(`Socket IO Message: ${msg}`));
+      sock.on('disconnect', msg => logger.info(`Socket IO Disconnection`));
+    });
+
     logger.info(t('webServer.started', {
       port: this.Config.express.port
     }));

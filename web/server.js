@@ -37,7 +37,7 @@ module.exports = (app) => {
 
   // Bind Socket.io
   const io = webServer.socketIO  = require('socket.io')(server);
-
+  
   // Hold on to the Logging transports
   let transports = [];
 
