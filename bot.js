@@ -182,7 +182,8 @@ class MrNodeBot {
           x.call();
         } catch (err) {
           logger.error('Error in onConnected', {
-            err
+            err: err.message || '',
+            stack: err.stack || ''
           });
         }
       }))
@@ -272,8 +273,8 @@ class MrNodeBot {
           logger.error(t('scripts.error', {
             path: fullPath
           }), {
-            err: err.message,
-            stack: err.stack
+            err: err.message || '',
+            stack: err.stack || ''
           });
         }
       });
@@ -423,7 +424,8 @@ class MrNodeBot {
         logger.error(t('errors.genericError', {
           command: 'onAction'
         }), {
-          err
+          err: err.message || '',
+          stack: err.stack || ''
         });
       }
     });
@@ -451,7 +453,8 @@ class MrNodeBot {
         logger.error(t('errors.genericError', {
           command: 'nickChange'
         }), {
-          err
+          err: err.message || '',
+          stack: err.stack || ''
         });
       }
     });
@@ -475,7 +478,8 @@ class MrNodeBot {
         logger.error(t('errors.genericError', {
           command: 'onNotice'
         }), {
-          err
+          err: err.message || '',
+          stack: err.stack || ''
         });
       }
     });
@@ -502,7 +506,8 @@ class MrNodeBot {
         logger.error(t('errors.genericError', {
           command: 'onJoin'
         }), {
-          err
+          err: err.message || '',
+          stack: err.stack || ''
         });
       }
     });
@@ -533,7 +538,8 @@ class MrNodeBot {
         logger.error(t('errors.genericError', {
           command: 'onPart'
         }), {
-          err
+          err: err.message || '',
+          stack: err.stack || ''
         });
       }
     });
@@ -572,7 +578,8 @@ class MrNodeBot {
         logger.error(t('errors.genericError', {
           command: 'onKick'
         }), {
-          err
+          err: err.message || '',
+          stack: err.stack || ''
         });
       }
     });
@@ -602,7 +609,8 @@ class MrNodeBot {
         logger.error(t('errors.genericError', {
           command: 'onQuit'
         }), {
-          err
+          err: err.message || '',
+          stack: err.stack || ''
         });
       }
     });
@@ -632,7 +640,8 @@ class MrNodeBot {
         logger.error(t('errors.genericError', {
           command: 'opTopic'
         }), {
-          err
+          err: err.message || '',
+          stack: err.stack || ''
         });
       }
     });
@@ -659,7 +668,8 @@ class MrNodeBot {
         logger.error(t('errors.genericError', {
           command: 'ctcpCommands'
         }), {
-          err
+          err: err.message || '',
+          stack: err.stack || ''
         });
       }
     });
@@ -679,7 +689,8 @@ class MrNodeBot {
         logger.error(t('errors.genericError', {
           command: 'handleRegistered'
         }), {
-          err
+          err: err.message || '',
+          stack: err.stack || ''
         });
       }
     });
@@ -721,7 +732,8 @@ class MrNodeBot {
           logger.error(t('errors.genericError', {
             command: 'onCommand onListeners'
           }), {
-            err
+            err: err.message || '',
+            stack: err.stack || ''
           });
         }
       });
@@ -761,7 +773,8 @@ class MrNodeBot {
         logger.error(t('errors.procCommand', {
           command: cmd
         }), {
-          err
+          err: err.message || '',
+          stack: err.stack || ''
         });
       }
     }
