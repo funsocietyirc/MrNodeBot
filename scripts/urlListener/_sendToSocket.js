@@ -38,12 +38,13 @@ module.exports = (app,results) => new Promise(resolve => {
 
   // Trigger a update on the youtube channel if we have a youtube link
   // Fire off youtube data
-  if (app.WebServer.socketIO && results.youTube) app.WebServer.socketIO.emit('youtube', Object.assign(results.youTube, {
+  if (app.WebServer.socketIO && results.youTube) app.WebServer.socketIO.of('/youtube').emit('message', Object.assign(results.youTube, {
     to: results.to,
     from: results.from,
     timestamp: timestamp,
     index: results.youTube.index || 0,
-    seekTime: results.youTube.seekTime || 0
+    seekTime: results.youTube.seekTime || 0,
+    hrtime: process.hrtime(),
   }));
 
   resolve(results);

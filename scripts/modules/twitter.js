@@ -55,7 +55,11 @@ module.exports = app => {
     newStream.once('connected', function(res) {
       if (currentStream) currentStream.stop();
 
+      // Fire off the listeners, being sure to clear the previous
+      // as to not overload on script reload
+      newStream.removeAllListeners('tweet');
       newStream.on('tweet', onTweetData);
+      newStream.removeAllListeners('error');
       newStream.on('error', onTweetError);
 
       currentStream = newStream;
