@@ -11,14 +11,16 @@ module.exports = app => {
     app.WebServer.socketIO.emit('youtube-control', {
       command: 'clear'
     });
+    app.say(from, `Playlist cleared`);
   };
 
   const clearQueueItem = (to, from, text, message) => {
-    if(!app.WebServer.socketIO) return;
+    if(!app.WebServer.socketIO || !text || text === '') return;
     app.WebServer.socketIO.emit('youtube-control', {
       command: 'remove',
       index: text
     });
+    app.say(from, `Item Removed`);
   };
 
   // Terminate the bot and the proc watcher that keeps it up
