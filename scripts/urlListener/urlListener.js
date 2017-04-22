@@ -101,13 +101,13 @@ module.exports = app => {
     call: listener
   });
 
-  // Allow the manual clearing of cache
+  // Expose the link matcher via a url command
   app.Commands.set('url', {
     desc: 'Validate URL',
     access: app.Config.accessLevels.identified,
     call: listener
   });
-
+  
   // Clear cache every four hours on the 30 min mark
   const clean = scheduler.schedule('urlResultCache', {
     hour: [0, 4, 8, 12, 16, 20],
