@@ -17,7 +17,7 @@ module.exports = app => {
     if(!app.WebServer.socketIO) return;
     app.WebServer.socketIO.emit('youtube-control', {
       command: 'remove',
-      index: intval(text)
+      index: text
     });
   };
 
