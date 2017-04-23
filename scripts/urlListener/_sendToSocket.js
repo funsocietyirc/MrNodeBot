@@ -43,7 +43,7 @@ module.exports = (app, results) => new Promise(resolve => {
     !_.isEmpty(results.youTube) &&
     !_.isEmpty(results.youTube.video) &&
     _.isEmpty(results.youTube.playlist)
-  ) app.WebServer.socketIO.of('/youtube').emit('message', Object.assign(results.youTube, {
+  ) app.WebServer.socketIO.of('/youtube').to(`/${results.to.toLowerCase()}`).emit('message', Object.assign(results.youTube, {
     to: results.to,
     from: results.from,
     timestamp: timestamp,

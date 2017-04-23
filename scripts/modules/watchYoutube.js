@@ -29,15 +29,17 @@ module.exports = app => {
 
     // Join a room with the channelName
     const activeChannel = `/${connection.handshake.query.activeChannel}` || '/';
-    connection.join(activeChannel);
 
-    // Listen for any reponses
+    connection.join(activeChannel);
+    console.dir(activeChannel);
+
+    // // Listen for any reponses
     connection.removeAllListeners('new-reply');
     connection.on('new-reply', data => {
       // Active Channel is not the same
-      if(data.activeChannel !== activeChannel) return;
       socket.to(activeChannel).emit('queue', data);
     });
+
 
     // Like
     connection.removeAllListeners('like');
@@ -46,7 +48,8 @@ module.exports = app => {
     });
 
     // Listen for Disconnects
-    connection.removeAllListeners('disconnect') connection.on('disconnect',
+    connection.removeAllListeners('disconnect');
+    connection.on('disconnect',
       disconnect => socket.to(activeChannel).emit('left',
         function() {
           return {
