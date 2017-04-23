@@ -28,33 +28,33 @@ module.exports = app => {
     connection.join(room);
 
     // Join a room with the channelName
-    const activeChannel = connection.handshake.query.activeChannel || '';
-    connection.join(`/${activeChannel}`);
+    const activeChannel = `/connection.handshake.query.activeChannel` || '/';
+    connection.join(activeChannel);
 
     // Listen for any reponses
     connection.removeAllListeners('new-reply');
     connection.on('new-reply', data => {
-      socket.to(room).emit('queue', data);
+      socket.to(activeChannel).emit('queue', data);
     });
 
     // Listen for Disconnects
     connection.removeAllListeners('disconnect')
     connection.on('disconnect',
-      disconnect => socket.to(room).emit('left',
+      disconnect => socket.to(activeChannel).emit('left',
         function() {
           return {
             totalListeners: socket.adapter.rooms[room].length,
-            channelListeners: socket.adapter.rooms[`/${activeChannel}`].length
+            channelListeners: socket.adapter.rooms[activeChannel].length
           };
         }()
       ));
 
     // emit new connection event to the rest of the room
-    socket.to(room).emit('new',
+    socket.to(activeChannel).emit('new',
       function() {
         return {
           totalListeners: socket.adapter.rooms[room].length,
-          channelListeners: socket.adapter.rooms[`/${activeChannel}`].length
+          channelListeners: socket.adapter.rooms[activeChannel].length
         };
       }()
     );
