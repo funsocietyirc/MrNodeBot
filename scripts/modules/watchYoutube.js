@@ -17,6 +17,9 @@ module.exports = app => {
   // Name of SocketIO Room
   const room = 'watching';
 
+  // Decorate a channel name to avoid collisions
+  const activeChannelFormat = chanName => chanName !== null ? `/${chanName.toLowerCase()}` : '/';
+
   // Join the namespace
   const socket = app.WebServer.socketIO.of(namespace);
 
@@ -24,14 +27,17 @@ module.exports = app => {
   socket.removeAllListeners('connection');
 
   socket.on('connection', connection => {
+    // Send Initial HR Time
+    socket.to(connection.id).emit('timesync', Date.now());
+
     // Join the room
     connection.join(room);
 
-    // Join a room with the channelName
-    const activeChannel = `/${connection.handshake.query.activeChannel}` || '/';
+    // Decorate the active channel name to avoid collisions
+    const activeChannel = activeChannelFormat(connection.handshake.query.activeChannel || '/');
 
+    // Join the active channel
     connection.join(activeChannel);
-    console.dir(activeChannel);
 
     // // Listen for any reponses
     connection.removeAllListeners('new-reply');
@@ -99,35 +105,46 @@ module.exports = app => {
       const cmds = {
         help: "Get Subcommand usage",
         clear: "<channel?> -- Force of a clear of all connected clients queues",
-        remove: "<index> <channel?> -- Remove a index from all connected clients queues"
+        reload: "<channel?> -- Force all clients to reload",
+        remove: "<channel> <index>-- Remove a index from all connected clients queues",
       };
 
       // Switch on the command
       switch (args[0]) {
+        // Usage Information
         case 'help':
           _(cmds).each((v, k) => app.say(to, `${k}: ${v}`));
           break;
+          // Clear a queue
         case 'clear':
-          socket.to(room).emit('control', {
-            command: 'clear',
-            channel: args[1] || to
+          socket.to(activeChannelFormat(args[1] || to)).emit('control', {
+            command: 'clear'
           });
-          app.say(to, `TV Queue cleared`);
+          app.say(to, `The queue for ${args[1] || to} has been cleared`);
           break;
+          // Remove an item from the queue index
         case 'remove':
-          // No index given
-          if (!args[1] || args[1] === '') {
-            app.say(to, `A second argument containing the index of the item you would like removed is required`);
+          // No channel / Index given
+          if (!args[1] || !args[2]) {
+            app.say(to, `A Channel and Index is required when removing a queue item`);
             return;
           }
+
           // Send event
-          socket.to(room).emit('control', {
+          socket.to(activeChannelFormat(args[1])).emit('control', {
             command: 'remove',
-            index: args[1],
-            channel: args[2] || to
+            index: args[2],
           });
+
           // Report Back
-          app.say(to, `The TV Queue item ${args[1]} has been broadcast for deletion`);
+          app.say(to, `The TV Queue item ${args[2]} has been broadcast for deletion on ${args[1]}`);
+          break;
+          // Force The Client to reload
+        case 'reload':
+          socket.to(activeChannelFormat(args[1] || to)).emit('control', {
+            command: 'reload',
+          });
+          app.say(to, `Clients on ${args[1] || to} have been Refreshed`);
           break;
         default:
           app.say(to, `Subcommand not found, available commands are ${Object.keys(cmds).join(', ')}`);
