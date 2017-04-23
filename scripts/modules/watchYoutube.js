@@ -28,7 +28,7 @@ module.exports = app => {
     connection.join(room);
 
     // Join a room with the channelName
-    const activeChannel = `/connection.handshake.query.activeChannel` || '/';
+    const activeChannel = `/${connection.handshake.query.activeChannel}` || '/';
     connection.join(activeChannel);
 
     // Listen for any reponses
