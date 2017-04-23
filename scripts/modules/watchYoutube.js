@@ -37,6 +37,12 @@ module.exports = app => {
       socket.to(activeChannel).emit('queue', data);
     });
 
+    // Like Button
+    connection.removeAllListeners('like');
+    connection.on('like', () => {
+      socket.to(activeChannel).emit('like');
+    });
+
     // Listen for Disconnects
     connection.removeAllListeners('disconnect')
     connection.on('disconnect',
