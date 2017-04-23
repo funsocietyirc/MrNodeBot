@@ -20,14 +20,16 @@ module.exports = app => {
   // Join the namespace
   const socket = app.WebServer.socketIO.of(namespace);
 
-  // Get the total listener count
-  const getTotalListeners = () => socket.adapter.rooms[room] ? socket.adapter.rooms[room].length : 0;
-
   // Attach a listener to on connection
   socket.removeAllListeners('connection');
+
   socket.on('connection', connection => {
     // Join the room
     connection.join(room);
+
+    // Join a room with the channelName
+    const activeChannel = connection.handshake.query.activeChannel || '';
+    connection.join(`/${activeChannel}`);
 
     // Listen for any reponses
     connection.removeAllListeners('new-reply');
@@ -37,18 +39,39 @@ module.exports = app => {
 
     // Listen for Disconnects
     connection.removeAllListeners('disconnect')
-    connection.on('disconnect', disconnect => socket.to(room).emit('left', getTotalListeners()));
+    connection.on('disconnect',
+      disconnect => socket.to(room).emit('left',
+        function() {
+          return {
+            totalListeners: socket.adapter.rooms[room].length,
+            channelListeners: socket.adapter.rooms[`/${activeChannel}`].length
+          };
+        }()
+      ));
 
     // emit new connection event to the rest of the room
-    socket.to(room).emit('new', getTotalListeners());
+    socket.to(room).emit('new',
+      function() {
+        return {
+          totalListeners: socket.adapter.rooms[room].length,
+          channelListeners: socket.adapter.rooms[`/${activeChannel}`].length
+        };
+      }()
+    );
+
+
   });
 
 
   // Get total Listeners (Identified)
   app.Commands.set('tv-watchers', {
-    desc: 'Get the number of all watchers of the youtube stream',
+    desc: '[channel?] Get the number of all watchers of the youtube stream',
     access: app.Config.accessLevels.identified,
-    call: (to, from, text, message) => app.say(to, `${getTotalListeners()} connections are viewing the stream`)
+    call: (to, from, text, message) => {
+      let channel = text.split(' ')[0];
+      let count = channel ? getChannelListenersOnActive(channel) : getTotalListeners();
+      app.say(to, `${count} connections are viewing the${channel ? ' ' + channel : ''} stream`);
+    }
   });
 
   // TV Administration Command
