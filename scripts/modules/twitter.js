@@ -9,7 +9,6 @@ const logger = require('../../lib/logger');
 const ircTypo = require('../lib/_ircTypography');
 const short = require('../generators/_isGdShortUrl');
 const tweetStreamUrl = 'https://twitter.com/funsocietyirc/status';
-// https://twitter.com/funsocietyirc/status/796592786782949380
 let currentStream = null;
 
 module.exports = app => {
@@ -21,7 +20,8 @@ module.exports = app => {
       app.say(chan, `${ircTypo.logos.twitter} ${ircTypo.icons.sideArrow} ${shortUrl} ${ircTypo.icons.sideArrow} @${tweet.user.screen_name} ${ircTypo.icons.sideArrow} ${tweet.text}`);
     });
 
-  const push = (tweet) => {
+    // Push to Socket
+  const push = tweet => {
     if (!app._twitterClient || !app.WebServer.socketIO) return;
 
     let timestamp = Date.now();

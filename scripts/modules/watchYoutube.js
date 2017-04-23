@@ -5,6 +5,8 @@ const scriptInfo = {
   createdBy: 'IronY'
 };
 
+const _ = require('lodash');
+
 module.exports = app => {
   // No SocketIO detected
   if (!app.WebServer.socketIO) return scriptInfo;
@@ -26,39 +28,79 @@ module.exports = app => {
 
   // Attach a listener to on connection
   socket.on('connection', connection => {
+    // Join the room
     connection.join(room);
-  });
 
-  // Force clear the queue (Admin)
-  app.Commands.set('clear-youtube-queue', {
-    desc: 'Force clear the youtube clients queue',
-    access: app.Config.accessLevels.admin,
-    call: (to, from, text, message) => {
-      socket.to(room).emit('control', {
-        command: 'clear'
-      });
-      app.say(from, `Playlist cleared`);
-    }
+    // Listen for any reponses
+    connection.removeAllListeners('new-reply');
+    connection.on('new-reply', data => {
+      socket.to(room).emit('queue', data);
+    });
+
+    // emit new connection event to the rest of the room
+    socket.to(room).emit('new');
   });
 
   // Get total Listeners (Identified)
-  app.Commands.set('get-total-watchers', {
+  app.Commands.set('tv-watchers', {
     desc: 'Get the number of all watchers of the youtube stream',
     access: app.Config.accessLevels.identified,
     call: (to, from, text, message) => app.say(to, `${getTotalListeners()} connections are viewing the stream`)
   });
 
-  // Remove an Item from the queue (Admin)
-  app.Commands.set('clear-youtube-queue-item', {
-    desc: 'Force clear the youtube clients queue',
+  // TV Administration Command
+  app.Commands.set('tv-admin', {
+    desc: 'TV Administration',
     access: app.Config.accessLevels.admin,
     call: (to, from, text, message) => {
-      if (!app.WebServer.socketIO || !text || text === '') return;
-      socket.to(room).emit('control', {
-        command: 'remove',
-        index: text
-      });
-      app.say(from, `Item Removed`);
+      // Parse the args
+      let args = text.split(' ');
+
+      // No Args Provided
+      if (!args.length) {
+        app.say(to, 'Subcommand required, use help for more information');
+        return;
+      }
+
+      // A list of available commands
+      const cmds = {
+        help: "Get Subcommand usage",
+        clear: "<channel?> -- Force of a clear of all connected clients queues",
+        remove: "<index> <channel?> -- Remove a index from all connected clients queues"
+      };
+
+      // Switch on the command
+      switch (args[0]) {
+        case 'help':
+          _(cmds).each((v, k) => app.say(to, `${k}: ${v}`));
+          break;
+        case 'clear':
+          socket.to(room).emit('control', {
+            command: 'clear',
+            channel: args[1] || to
+          });
+          app.say(to, `TV Queue cleared`);
+          break;
+        case 'remove':
+          // No index given
+          if (!args[1] || args[1] === '') {
+            app.say(to, `A second argument containing the index of the item you would like removed is required`);
+            return;
+          }
+          // Send event
+          socket.to(room).emit('control', {
+            command: 'remove',
+            index: args[1],
+            channel: args[2] || to
+          });
+          // Report Back
+          app.say(to, `The TV Queue item ${args[1]} has been broadcast for deletion`);
+          break;
+        default:
+          app.say(to, `Subcommand not found, available commands are ${Object.keys(cmds).join(', ')}`);
+          break;
+      }
+
     }
   });
 
