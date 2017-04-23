@@ -1,5 +1,7 @@
 'use strict';
 const URI = require('urijs');
+const URL = require('url').URL;
+
 const _ = require('lodash');
 const getYoutube = require('./_getYoutube.js'); // Get the youtube key from link
 const getImdb = require('./_getImdb.js'); // Get IMDB Data
@@ -10,13 +12,12 @@ const getImgur = require('./_getImgurImage'); // Get Imgur data
 module.exports = results => new Promise(resolve => {
   // Use the realUrl if available when doing matches
   // This allows shortened urls to still hit
-  const uri = new URI(results.realUrl ? results.realUrl : results.url);
+  const current = results.realUrl ? results.realUrl : results.url;
+  const uri = new URI(current); // URI JS used to parse segements
+  const url = new URL(current); // Node URL Module because the URI model has some weird query string parsing issues
 
-  // No URI
-  if (!uri) return resolve(results);
-
-  // Hold on to the query args
-  const q = uri.search(true);
+  // No URI or URL
+  if (!uri || !url) return resolve(results);
 
   switch (uri.domain()) {
     case 'youtube.com': // Youtube
@@ -25,12 +26,40 @@ module.exports = results => new Promise(resolve => {
         case 'embed':
         case 'watch':
           // Playlist
-          if (_.isString(q.list) && _.isString(q.v)) return resolve(getYoutube(q.v, q.list, q.index, q.t, results));
+          if (_.isString(url.searchParams.get('list')) && _.isString(url.searchParams.get('v')))
+            return resolve(
+              getYoutube(
+                url.searchParams.get('v'),
+                url.searchParams.get('list'),
+                url.searchParams.get('index'),
+                url.searchParams.get('t'),
+                results
+              )
+            );
           // Single Video
-          else if (_.isString(q.v)) return resolve(getYoutube(q.v, null, q.index, q.t, results));
+          else if (_.isString(url.searchParams.get('v')))
+            return resolve(
+              getYoutube(
+                url.searchParams.get('v'),
+                null,
+                url.searchParams.get('index'),
+                url.searchParams.get('t'),
+                results
+              )
+            );
           break;
+        // Play list link
         case 'playlist':
-          if (_.isString(q.list)) return resolve(getYoutube(null, q.list, q.index, q.t, results));
+          if (_.isString(url.searchParams.get('list')))
+            return resolve(
+              getYoutube(
+                null,
+                url.searchParams.get('list'),
+                url.searchParams.get('index'),
+                url.searchParams.get('t'),
+                results
+              )
+            );
           break;
       }
       break;

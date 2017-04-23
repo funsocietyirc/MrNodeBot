@@ -1,7 +1,7 @@
 'use strict';
 const _ = require('lodash');
 
-module.exports = (app,results) => new Promise(resolve => {
+module.exports = (app, results) => new Promise(resolve => {
   // Bail if we do not have socketio
   if (!app.WebServer.socketIO) return resolve(results);
 
@@ -38,7 +38,12 @@ module.exports = (app,results) => new Promise(resolve => {
 
   // Trigger a update on the youtube channel if we have a youtube link
   // Fire off youtube data
-  if (app.WebServer.socketIO && results.youTube) app.WebServer.socketIO.of('/youtube').emit('message', Object.assign(results.youTube, {
+  if (
+    app.WebServer.socketIO &&
+    !_.isEmpty(results.youTube) &&
+    !_.isEmpty(results.youTube.video) &&
+    _.isEmpty(results.youTube.playlist)
+  ) app.WebServer.socketIO.of('/youtube').emit('message', Object.assign(results.youTube, {
     to: results.to,
     from: results.from,
     timestamp: timestamp,

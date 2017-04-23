@@ -23,10 +23,8 @@ module.exports = app => {
   // Get the total listener count
   const getTotalListeners = () => socket.adapter.rooms[room] ? socket.adapter.rooms[room].length : 0;
 
-  // Add The Listeners, be sure to remove so it does not duplicate on script reload
-  socket.removeAllListeners('connection');
-
   // Attach a listener to on connection
+  socket.removeAllListeners('connection');
   socket.on('connection', connection => {
     // Join the room
     connection.join(room);
@@ -37,9 +35,14 @@ module.exports = app => {
       socket.to(room).emit('queue', data);
     });
 
+    // Listen for Disconnects
+    connection.removeAllListeners('disconnect')
+    connection.on('disconnect', disconnect => socket.to(room).emit('left', getTotalListeners()));
+
     // emit new connection event to the rest of the room
-    socket.to(room).emit('new');
+    socket.to(room).emit('new', getTotalListeners());
   });
+
 
   // Get total Listeners (Identified)
   app.Commands.set('tv-watchers', {

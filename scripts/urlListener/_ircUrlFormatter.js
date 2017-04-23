@@ -93,7 +93,8 @@ module.exports = (results, app) => {
   // We Have GitHub data
   else if (!_.isUndefined(results.gitHub)) {
     let gh = results.gitHub;
-    append(logos.gitHub)(gh.owner)(gh.name)(gh.desc);
+    append(logos.gitHub)(gh.owner)(gh.name);
+    if (gh.desc) append(gh.desc);
     if (gh.lastPush) append(`${icons.time} ${c.grey.bold('~')} ${moment(gh.lastPush).fromNow()}`);
     if (gh.isFork) append('Forked');
     if (gh.language) append(gh.language);
