@@ -34,6 +34,8 @@ module.exports = app => {
     // Listen for any reponses
     connection.removeAllListeners('new-reply');
     connection.on('new-reply', data => {
+      // Active Channel is not the same
+      if(data.activeChannel !== activeChannel) return;
       socket.to(activeChannel).emit('queue', data);
     });
 
@@ -63,10 +65,7 @@ module.exports = app => {
         };
       }()
     );
-
-
   });
-
 
   // Get total Listeners (Identified)
   app.Commands.set('tv-watchers', {
