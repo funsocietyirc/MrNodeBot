@@ -27,53 +27,38 @@ module.exports = app => {
   socket.removeAllListeners('connection');
 
   socket.on('connection', connection => {
+    // Decorate the active channel name to avoid collisions
+    const activeChannel = activeChannelFormat(connection.handshake.query.activeChannel);
+
+    // Get Channel Stats
+    const channelStats = () => Object.assign({}, {
+      totalListeners: socket.adapter.rooms[room].length,
+      channelListeners: socket.adapter.rooms[activeChannel].length
+    });
+
     // Send Initial HR Time
     socket.to(connection.id).emit('timesync', Date.now());
 
     // Join the room
     connection.join(room);
 
-    // Decorate the active channel name to avoid collisions
-    const activeChannel = activeChannelFormat(connection.handshake.query.activeChannel || '/');
-
     // Join the active channel
     connection.join(activeChannel);
 
     // // Listen for any reponses
     connection.removeAllListeners('new-reply');
-    connection.on('new-reply', data => {
-      // Active Channel is not the same
-      socket.to(activeChannel).emit('queue', data);
-    });
-
+    connection.on('new-reply', data => socket.to(activeChannel).emit('queue', data));
 
     // Like
     connection.removeAllListeners('like');
-    connection.on('like', () => {
-      socket.to(activeChannel).emit('like');
-    });
+    connection.on('like', () => socket.to(activeChannel).emit('like'));
 
     // Listen for Disconnects
     connection.removeAllListeners('disconnect');
-    connection.on('disconnect',
-      disconnect => socket.to(activeChannel).emit('left',
-        function() {
-          return {
-            totalListeners: socket.adapter.rooms[room].length,
-            channelListeners: socket.adapter.rooms[activeChannel].length
-          };
-        }()
-      ));
+    connection.on('disconnect', disconnect => socket.to(activeChannel).emit('left', channelStats()));
 
     // emit new connection event to the rest of the room
-    socket.to(activeChannel).emit('new',
-      function() {
-        return {
-          totalListeners: socket.adapter.rooms[room].length,
-          channelListeners: socket.adapter.rooms[activeChannel].length
-        };
-      }()
-    );
+    socket.to(activeChannel).emit('new', channelStats());
   });
 
   // Get total Listeners (Identified)
@@ -129,13 +114,11 @@ module.exports = app => {
             app.say(to, `A Channel and Index is required when removing a queue item`);
             return;
           }
-
           // Send event
           socket.to(activeChannelFormat(args[1])).emit('control', {
             command: 'remove',
             index: args[2],
           });
-
           // Report Back
           app.say(to, `The TV Queue item ${args[2]} has been broadcast for deletion on ${args[1]}`);
           break;

@@ -33,7 +33,7 @@ The bot currently depends on NickServ services supporting the ACC command for ce
 -   Start the bot ```node index.js [--config config.js-path]``` or ```npm start```
 
 ## Keep the Bot Running
-Included in the root directory is a sample systemd script (mrnodebot.service), you can do it this way or use forever or any other node task runner.
+Included in the root directory is a sample systemd script (misc/mrnodebot.service), you can do it this way or use forever or any other node task runner.
 If you want to be able to use commands like update, restart, and halt while having the Bot come back it is important you take this into consideration.
 
 ## Features
