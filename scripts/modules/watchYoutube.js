@@ -91,7 +91,8 @@ module.exports = app => {
         help: "Get Subcommand usage",
         clear: "<channel?> -- Force of a clear of all connected clients queues",
         reload: "<channel?> -- Force all clients to reload",
-        remove: "<channel> <index>-- Remove a index from all connected clients queues",
+        remove: "<channel> <index> -- Remove a index from all connected clients queues",
+        speak: "<channel> <message> -- Speak (or display if speak is not available) a message"
       };
 
       // Switch on the command
@@ -108,6 +109,16 @@ module.exports = app => {
           app.say(to, `The queue for ${args[1] || to} has been cleared`);
           break;
           // Remove an item from the queue index
+        case 'speak':
+          if (!args[1] || !args[2]) {
+            app.say(to, `A Channel and Message is required when speaking`);
+            return;
+          }
+          socket.to(activeChannelFormat(args[1])).emit('control', {
+            command: 'speak',
+            message: args[2],
+          });
+          break;
         case 'remove':
           // No channel / Index given
           if (!args[1] || !args[2]) {
