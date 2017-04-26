@@ -5,6 +5,12 @@ module.exports = (app, results) => new Promise(resolve => {
   // Bail if we do not have socketio
   if (!app.WebServer.socketIO) return resolve(results);
 
+  // Assure the feature is enabled
+  const watchYoutubeEnabled =     
+      app.WebServer.socketIO && // We Have socketIO
+      !_.isEmpty(app.Config.features.watchYoutube) &&
+      app.Config.features.watchYoutube; // The Feature is enabled
+
   // Decide which socketio channel to push over
   let channel = /\.(gif|jpg|jpeg|tiff|png)$/i.test(results.url) ? 'image' : 'url';
 
@@ -39,11 +45,12 @@ module.exports = (app, results) => new Promise(resolve => {
   // Trigger a update on the youtube channel if we have a youtube link
   // Fire off youtube data
   if (
-    app.WebServer.socketIO &&
-    !_.isEmpty(results.youTube) &&
-    !_.isEmpty(results.youTube.video) &&
-    _.isEmpty(results.youTube.playlist)
-  ) app.WebServer.socketIO.of('/youtube').to(`/${results.to.toLowerCase()}`).emit('message', Object.assign(results.youTube, {
+    watchYoutubeEnabled &&
+    !_.isEmpty(results.youTube) && // We Have youtube data
+    !_.isEmpty(results.youTube.video) && // We have a video key
+    _.isEmpty(results.youTube.playlist) // We do not have a playlist
+  ) 
+  app.WebServer.socketIO.of('/youtube').to(`/${results.to.toLowerCase()}`).emit('message', Object.assign(results.youTube, {
     to: results.to,
     from: results.from,
     timestamp: timestamp,

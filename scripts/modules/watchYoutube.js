@@ -8,8 +8,8 @@ const scriptInfo = {
 const _ = require('lodash');
 
 module.exports = app => {
-  // No SocketIO detected
-  if (!app.WebServer.socketIO) return scriptInfo;
+  // No SocketIO detected, or feature is disabled
+  if (!app.WebServer.socketIO || _.isEmpty(app.Config.features.watchYoutube) || !app.Config.features.watchYoutube) return scriptInfo;
 
   // Name of SocketIO namespace
   const namespace = '/youtube';

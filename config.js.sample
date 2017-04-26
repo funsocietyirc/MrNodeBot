@@ -223,6 +223,9 @@ module.exports = {
     },
     // Feature Configuration
     features: {
+        watchYoutube: {
+          enabled: true,
+        },
         voiceRegulars: {
             // Auto voice anyone who comes into the channel, or at a specified time interval
             autoVoice: true,

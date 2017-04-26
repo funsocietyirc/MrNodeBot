@@ -80,7 +80,7 @@ module.exports = app => {
 
       // Create IRC Instance
       const instance = new app._ircClient.Client(config.server, config.nick, config);
-
+      const originalNickIsActive = instance.isInChannel(to, config.originalNick);
       // Connect
       instance.connect(() => {
         // Add to ignore list
@@ -104,7 +104,7 @@ module.exports = app => {
                 let key = 0;
 
                 // The person we are spawning is in the channel
-                if (instance.isInChannel(to, config.originalNick)) promises.push(new Promise(r =>
+                if (originalNickIsActive) promises.push(new Promise(r =>
                   setTimeout(() => r(instance.say(to, `Well hello ${config.originalNick}, seems there are two of us`)), ++key * 2500)
                 ));
 
