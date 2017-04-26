@@ -114,9 +114,12 @@ module.exports = app => {
             app.say(to, `A Channel and Message is required when speaking`);
             return;
           }
+          let tmpArray = args.slice();
+          tmpArray.shift();
+          tmpArray.shift();
           socket.to(activeChannelFormat(args[1])).emit('control', {
             command: 'speak',
-            message: args[2],
+            message: args.join(' '),
           });
           break;
         case 'remove':
