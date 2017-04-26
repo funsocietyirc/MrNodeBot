@@ -118,7 +118,7 @@ module.exports = app => {
           tmpArray.splice(0,2);
           socket.to(activeChannelFormat(args[1])).emit('control', {
             command: 'speak',
-            message: args.join(' '),
+            message: tmpArray.join(' '),
           });
           break;
         case 'remove':
