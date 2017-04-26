@@ -115,8 +115,7 @@ module.exports = app => {
             return;
           }
           let tmpArray = args.slice();
-          tmpArray.shift();
-          tmpArray.shift();
+          tmpArray.splice(0,2);
           socket.to(activeChannelFormat(args[1])).emit('control', {
             command: 'speak',
             message: args.join(' '),
