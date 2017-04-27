@@ -80,7 +80,7 @@ module.exports = app => {
 
       // Create IRC Instance
       const instance = new app._ircClient.Client(config.server, config.nick, config);
-      const originalNickIsActive = instance.isInChannel(to, config.originalNick);
+      const originalNickIsActive = instance.isInChannel(to, nick);
       // Connect
       instance.connect(() => {
         // Add to ignore list
