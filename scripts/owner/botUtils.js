@@ -78,9 +78,12 @@ module.exports = app => {
       // Action to channel
       app.action(to, `focuses real hard`);
 
+      // Check if nick is already in channel
+      const originalNickIsActive = app._ircClient.isInChannel(to, nick);
+
       // Create IRC Instance
       const instance = new app._ircClient.Client(config.server, config.nick, config);
-      const originalNickIsActive = instance.isInChannel(to, nick);
+
       // Connect
       instance.connect(() => {
         // Add to ignore list
