@@ -50,7 +50,7 @@ module.exports = (app, results) => new Promise(resolve => {
     !_.isEmpty(results.youTube.video) && // We have a video key
     _.isEmpty(results.youTube.playlist) // We do not have a playlist
   )
-    app.WebServer.socketIO.of('/youtube').to(`/${results.to.toLowerCase()}`).emit('message', ({
+    app.WebServer.socketIO.of('/youtube').to(`/${results.to.toLowerCase()}`).emit('message', Object.assign({}, {
       to: results.to,
       from: results.from,
       timestamp: timestamp,
