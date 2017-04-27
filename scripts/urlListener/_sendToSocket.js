@@ -6,10 +6,10 @@ module.exports = (app, results) => new Promise(resolve => {
   if (!app.WebServer.socketIO) return resolve(results);
 
   // Assure the feature is enabled
-  const watchYoutubeEnabled =     
-      app.WebServer.socketIO && // We Have socketIO
-      !_.isEmpty(app.Config.features.watchYoutube) &&
-      app.Config.features.watchYoutube; // The Feature is enabled
+  const watchYoutubeEnabled =
+    app.WebServer.socketIO && // We Have socketIO
+    !_.isEmpty(app.Config.features.watchYoutube) &&
+    app.Config.features.watchYoutube; // The Feature is enabled
 
   // Decide which socketio channel to push over
   let channel = /\.(gif|jpg|jpeg|tiff|png)$/i.test(results.url) ? 'image' : 'url';
@@ -49,15 +49,15 @@ module.exports = (app, results) => new Promise(resolve => {
     !_.isEmpty(results.youTube) && // We Have youtube data
     !_.isEmpty(results.youTube.video) && // We have a video key
     _.isEmpty(results.youTube.playlist) // We do not have a playlist
-  ) 
-  app.WebServer.socketIO.of('/youtube').to(`/${results.to.toLowerCase()}`).emit('message', Object.assign(results.youTube, {
-    to: results.to,
-    from: results.from,
-    timestamp: timestamp,
-    index: results.youTube.index || 0,
-    seekTime: results.youTube.seekTime || 0,
-    hrtime: process.hrtime(),
-  }));
+  )
+    app.WebServer.socketIO.of('/youtube').to(`/${results.to.toLowerCase()}`).emit('message', ({
+      to: results.to,
+      from: results.from,
+      timestamp: timestamp,
+      index: results.youTube.index || 0,
+      seekTime: results.youTube.seekTime || 0,
+      hrtime: process.hrtime(),
+    }));
 
   resolve(results);
 });

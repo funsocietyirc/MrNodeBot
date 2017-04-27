@@ -111,17 +111,37 @@ class MrNodeBot {
   _initWebServer() {
     logger.info(t('webServer.starting'));
     this.WebServer = require('./web/server')(this);
-
-    // Log Socket IO Connection
-    this.WebServer.socketIO.on('connection', sock => {
-      logger.info(`Socket IO Connection Established`);
-      sock.on('message', msg => logger.info(`Socket IO Message: ${msg}`));
-      sock.on('disconnect', msg => logger.info(`Socket IO Disconnection`));
-    });
-
+    
     logger.info(t('webServer.started', {
       port: this.Config.express.port
     }));
+
+    // Initialize the SocketIO service
+    this._initSocketIO();
+  };
+  
+  /**
+    Initialize SocketIO
+  **/
+  _initSocketIO() {
+    logger.info(`SocketIO is now bound to the Express instance running on ${this.Config.express.port}`);
+    
+    // Socket IO Master connection event
+    this.WebServer.socketIO.on('connection', sock => {
+      // Logging is turned off, bail
+      if(!_.isObject(this.Config.socketIO) || !this.Config.socketIO.logging) return;
+      // Log Connection
+      logger.info(`Socket IO Connection Established`);
+      // Log Message
+      sock.on('message', msg => logger.info(`Socket IO Message: ${msg}`));
+      // Log Disconnect
+      sock.on('disconnect', msg => logger.info(`Socket IO Disconnection`)); 
+      // Log Error
+      sock.on('error', err => logger.error(`SocketIO Error`, {
+        message: err.message || '',
+        stack: err.stack || ''
+      }));
+    });
   };
 
   /**

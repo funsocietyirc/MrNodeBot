@@ -65,6 +65,10 @@ module.exports = {
         salt: 'samplesalt',
         keyLength: 64
     },
+    // Socket IO Configuration
+    socketIO: {
+      logging: true
+    },
     // Command aliasinging
     commandBindings: [{
         command: 'update',

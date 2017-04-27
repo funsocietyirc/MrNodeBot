@@ -45,6 +45,11 @@ If you want to be able to use commands like update, restart, and halt while havi
 -   A Seen/Last-seen command to track usage
 -   API Endpoints connected to Analytics
 -   Express/Pug Web Front end
+-   SocketIO connected to Express to deliver real time notifictions and bi-directional communication with the client
+
+## Debugging
+You will find various debugging flags inside the config file. These will granually conroll file based debugging options. This framework does take advantage of SocketIO and express, which
+both utilize the ``Debug`` module. If you would like to see very intricate debugging for both express and socketIO, start the bot with the following command ``DEBUG=* node index.js``.
 
 ## Unit Testing
 Unit testing is being introduced and has a long way to go to catch up. To run available tests ```npm test```

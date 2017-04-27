@@ -31,10 +31,10 @@ module.exports = app => {
     const activeChannel = activeChannelFormat(connection.handshake.query.activeChannel);
 
     // Get Channel Stats
-    const channelStats = () => Object.assign({}, {
-      totalListeners: socket.adapter.rooms[room].length,
-      channelListeners: socket.adapter.rooms[activeChannel].length
-    });
+    const channelStats = () => ({
+      totalListeners: socket.adapter.rooms[room] ? socket.adapter.rooms[room].length : 0,
+      channelListeners: socket.adapter.rooms[activeChannel] ? socket.adapter.rooms[activeChannel].length: 0
+    }));
 
     // Send Initial HR Time
     socket.to(connection.id).emit('timesync', Date.now());
