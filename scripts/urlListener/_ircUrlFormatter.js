@@ -80,7 +80,7 @@ module.exports = (results, app) => {
 
     }
   }
-
+  
   // We have IMDB data
   else if (!_.isEmpty(results.imdb)) {
     let imdb = results.imdb;

@@ -14,7 +14,7 @@ module.exports = results => new Promise(resolve => {
   // This allows shortened urls to still hit
   const current = results.realUrl ? results.realUrl : results.url;
   const uri = new URI(current); // URI JS used to parse segements
-  const url = new URL(current); // Node URL Module because the URI model has some weird query string parsing issues
+  const url = new URL(current); // TODO Node URL Module because the URI model has some weird query string parsing issues
 
   // No URI or URL
   if (!uri || !url) return resolve(results);

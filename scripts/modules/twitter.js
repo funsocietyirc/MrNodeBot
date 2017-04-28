@@ -20,7 +20,7 @@ module.exports = app => {
       app.say(chan, `${ircTypo.logos.twitter} ${ircTypo.icons.sideArrow} ${shortUrl} ${ircTypo.icons.sideArrow} @${tweet.user.screen_name} ${ircTypo.icons.sideArrow} ${tweet.text}`);
     });
 
-    // Push to Socket
+  // Push to Socket
   const push = tweet => {
     if (!app._twitterClient || !app.WebServer.socketIO) return;
 
@@ -31,6 +31,9 @@ module.exports = app => {
       timestamp
     });
   };
+
+  // Mediums to pipe the tweets through
+  const medium = [push, say];
 
   const onTweetData = tweet => {
     // We do not have enought data, bail
