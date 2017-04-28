@@ -48,10 +48,12 @@ module.exports = (app, results) => new Promise(resolve => {
     watchYoutubeEnabled &&
     !_.isEmpty(results.youTube) && // We Have youtube data
     !_.isEmpty(results.youTube.video) && // We have a video key
-    _.isEmpty(results.youTube.playlist) &&// We do not have a playlist,
+    _.isEmpty(results.youTube.playlist) && // We do not have a playlist,
     !results.youTube.video.restrictions // We do not have georestrictions
   )
-    app.WebServer.socketIO.of('/youtube').to(`/${results.to.toLowerCase()}`).emit('message', Object.assign({}, {
+  {
+
+    app.WebServer.socketIO.of('/youtube').to(`/${results.to.toLowerCase()}`).emit('message', Object.assign(results.youTube, {
       to: results.to,
       from: results.from,
       timestamp: timestamp,
@@ -59,6 +61,7 @@ module.exports = (app, results) => new Promise(resolve => {
       seekTime: results.youTube.seekTime || 0,
       hrtime: process.hrtime(),
     }));
+  }
 
   resolve(results);
 });
