@@ -22,8 +22,8 @@ const video = (apiKey, key) => rp({
   qs: {
     key: apiKey,
     id: key,
-    fields: 'items(id,snippet(channelId,title,categoryId),statistics)',
-    part: 'snippet,statistics'
+    fields: 'items(id,snippet(channelId,title,categoryId),statistics, contentDetails)',
+    part: 'snippet,statistics,contentDetails'
   },
   json: true
 });
