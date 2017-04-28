@@ -72,8 +72,11 @@ module.exports = (results, app) => {
       if (!_.isEmpty(yr.channelTitle)) append(yr.channelTitle);
       append(yr.videoTitle)
         (`${icons.views} ${c.navy(formatNumber(yr.viewCount))} ${icons.upArrow} ${c.green(formatNumber(yr.likeCount))} ${icons.downArrow} ${c.red(formatNumber(yr.dislikeCount))} ${icons.comments} ${c.blue(formatNumber(yr.commentCount))}`);
-      if (results.youTube.video.embeddable) append(`${c.red('*')}Non-embeddable`);
-      if (results.youTube.video.restrictions) append(`${c.red('*')}Content Restrictions`);
+
+      // Video is non embeddable
+      if (results.youTube.video.embeddable) append(`${c.red('*')} Non-embeddable`);
+      // Video has content restrictions
+      if (results.youTube.video.restrictions) append(`${c.red('*')} Content Restrictions`);
 
     }
   }
