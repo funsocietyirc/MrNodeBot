@@ -74,13 +74,13 @@ module.exports = (results, app) => {
         (`${icons.views} ${c.navy(formatNumber(yr.viewCount))} ${icons.upArrow} ${c.green(formatNumber(yr.likeCount))} ${icons.downArrow} ${c.red(formatNumber(yr.dislikeCount))} ${icons.comments} ${c.blue(formatNumber(yr.commentCount))}`);
 
       // Video is non embeddable
-      if (results.youTube.video.embeddable) append(`${c.red('*')} Non-embeddable`);
+      if (!results.youTube.video.embeddable) append(`${c.red('*')} Non-embeddable`);
       // Video has content restrictions
       if (results.youTube.video.restrictions) append(`${c.red('*')} Content Restrictions`);
 
     }
   }
-  
+
   // We have IMDB data
   else if (!_.isEmpty(results.imdb)) {
     let imdb = results.imdb;
