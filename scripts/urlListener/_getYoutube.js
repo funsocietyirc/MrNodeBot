@@ -37,7 +37,8 @@ module.exports = (key, list, index, seekTime, results) => new Promise(resolve =>
           dislikeCount: numberOrZero(result.videoResults.statistics.dislikeCount),
           commentCount: numberOrZero(result.videoResults.statistics.commentCount),
           channelTitle: result.videoResults.snippet.channelTitle || '',
-          restrictions: _.isObject(result.videoResults.contentDetails.regionRestriction)
+          restrictions: _.isObject(result.videoResults.contentDetails.regionRestriction),
+          embeddable: _.isObject(result.videoResults.status) && result.videoResults.status.embeddable
         };
 
       // We have Playlist Results

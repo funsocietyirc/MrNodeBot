@@ -72,7 +72,8 @@ module.exports = (results, app) => {
       if (!_.isEmpty(yr.channelTitle)) append(yr.channelTitle);
       append(yr.videoTitle)
         (`${icons.views} ${c.navy(formatNumber(yr.viewCount))} ${icons.upArrow} ${c.green(formatNumber(yr.likeCount))} ${icons.downArrow} ${c.red(formatNumber(yr.dislikeCount))} ${icons.comments} ${c.blue(formatNumber(yr.commentCount))}`);
-      if (results.youTube.video.restrictions) append(c.red(`(Geo Restrictions)`));
+      if (results.youTube.video.restrictions || !results.youTube.video.embeddable) append(c.red(`(*watchYoutube Geo Restrictions or non embeddable video)`));
+
     }
   }
 
