@@ -1,4 +1,5 @@
 'use static';
+
 const scriptInfo = {
   name: 'watchYoutube',
   desc: 'watchYoutube module',
@@ -6,6 +7,7 @@ const scriptInfo = {
 };
 
 const _ = require('lodash');
+const gen = require('../generators/_youTubeVideoData');
 
 module.exports = app => {
   // No SocketIO detected, or feature is disabled
@@ -61,14 +63,27 @@ module.exports = app => {
     socket.to(activeChannel).emit('new', channelStats());
   });
 
+  // Play
+  app.Commands.set('tv-play', {
+    desc: '<song title> - Play something on the channels station',
+    access: app.Config.accessLevels.identified,
+    call: (to, from, text, message) => {
+
+    }
+  });
+
   // Get total Listeners (Identified)
   app.Commands.set('tv-watchers', {
     desc: '[channel?] Get the number of all watchers of the youtube stream',
     access: app.Config.accessLevels.identified,
     call: (to, from, text, message) => {
+      // Get specified channel
       let channel = text.split(' ')[0];
-      let count = channel ? getChannelListenersOnActive(channel) : getTotalListeners();
-      app.say(to, `${count} connections are viewing the${channel ? ' ' + channel : ''} stream`);
+      channel = channel ? activeChannelFormat(channel) : activeChannelFormat(to);
+      let count = socket.adapter.rooms[channel] ? socket.adapter.rooms[channel].length : 0;
+      let roomCount = socket.adapter.rooms[room] ? socket.adapter.rooms[room].length : 0;
+      let diff = roomCount - count;
+      app.say(to, `${count} connections are viewing the${channel ? ' ' + channel : ''} stream, ${diff} are watching other Channels`);
     }
   });
 
@@ -92,7 +107,8 @@ module.exports = app => {
         clear: "<channel?> -- Force of a clear of all connected clients queues",
         reload: "<channel?> -- Force all clients to reload",
         remove: "<channel> <index> -- Remove a index from all connected clients queues",
-        speak: "<channel> <message> -- Speak (or display if speak is not available) a message"
+        speak: "<channel> <message> -- Speak (or display if speak is not available) a message",
+        skip: "<channel?> -- Skip the current Video (Only if the queue contains additional videos)"
       };
 
       // Switch on the command
@@ -142,6 +158,14 @@ module.exports = app => {
           });
           app.say(to, `Clients on ${args[1] || to} have been Refreshed`);
           break;
+          // Force The Client to reload
+        case 'skip':
+          socket.to(activeChannelFormat(args[1] || to)).emit('control', {
+            command: 'skip',
+          });
+          app.say(to, `Current Video on ${args[1] || to} has been skipped`);
+          break;
+
         default:
           app.say(to, `Subcommand not found, available commands are ${Object.keys(cmds).join(', ')}`);
           break;

@@ -5,28 +5,39 @@ const endPointList = 'https://www.googleapis.com/youtube/v3/playlists';
 const rp = require('request-promise-native');
 
 // Playlist Only
-const playlist = (apiKey, list) => rp({
-  uri: endPointList,
-  qs: {
-    key: apiKey,
-    id: list,
+const playlist = (apiKey, list) => {
+  let base = {
     fields: 'items(id,snippet(channelId,title,channelTitle),contentDetails)',
     part: 'snippet,contentDetails'
-  },
-  json: true
-});
+  };
+
+  return rp({
+    uri: endPointList,
+    qs: Object.assign(base, {
+      key: apiKey,
+      id: list,
+    }),
+    json: true
+  });
+
+}
 
 // Track only
-const video = (apiKey, key) => rp({
-  uri: endPointSingle,
-  qs: {
-    key: apiKey,
-    id: key,
+const video = (apiKey, key) => {
+  let base = {
     fields: 'items(id,snippet(channelId,title,categoryId),statistics,contentDetails,status)',
     part: 'snippet,statistics,contentDetails,status'
-  },
-  json: true
-});
+  };
+
+  return rp({
+    uri: endPointSingle,
+    qs: Object.assign(base, {
+      key: apiKey,
+      id: key
+    }),
+    json: true
+  });
+}
 
 module.exports = (apiKey, key, list) => {
   // Playlist Only
@@ -34,7 +45,7 @@ module.exports = (apiKey, key, list) => {
     return playlist(apiKey, list)
       .then(playlistResults => {
         return res({
-          playlistResults: playlistResults.items[0],
+          playlistResults: playlistResults.items,
         });
       })
       .catch(rej);
@@ -45,7 +56,7 @@ module.exports = (apiKey, key, list) => {
     return video(apiKey, key)
       .then(videoResults => {
         return res({
-          videoResults: videoResults.items[0],
+          videoResults: videoResults.items,
         });
       })
       .catch(rej)
@@ -58,8 +69,8 @@ module.exports = (apiKey, key, list) => {
       .then(playlistResults => {
         return video(apiKey, key).then(videoResults => {
           return res({
-            playlistResults: playlistResults.items[0],
-            videoResults: videoResults.items[0],
+            playlistResults: playlistResults.items,
+            videoResults: videoResults.items,
           });
         });
       })
