@@ -1025,9 +1025,9 @@ express-rate-limit@^2.6.0:
   dependencies:
     defaults "^1.0.3"
 
-express-winston@^2.3.0:
-  version "2.3.0"
-  resolved "https://registry.yarnpkg.com/express-winston/-/express-winston-2.3.0.tgz#8dea98617f96a53cc9c073159d08b0dc38c5f231"
+express-winston@^2.4.0:
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/express-winston/-/express-winston-2.4.0.tgz#27ab6cd93053e2dfdc35bceea14a077dc7d52e49"
   dependencies:
     chalk "~0.4.0"
     lodash "~4.11.1"
@@ -1148,21 +1148,13 @@ forever-agent@~0.6.0, forever-agent@~0.6.1:
   version "0.6.1"
   resolved "https://registry.yarnpkg.com/forever-agent/-/forever-agent-0.6.1.tgz#fbc71f0c41adeb37f96c577ad1ed42d8fdacca91"
 
-form-data@1.0.0-rc3:
+form-data@1.0.0-rc3, form-data@~1.0.0-rc1:
   version "1.0.0-rc3"
   resolved "https://registry.yarnpkg.com/form-data/-/form-data-1.0.0-rc3.tgz#d35bc62e7fbc2937ae78f948aaa0d38d90607577"
   dependencies:
     async "^1.4.0"
     combined-stream "^1.0.5"
     mime-types "^2.1.3"
-
-form-data@~1.0.0-rc1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/form-data/-/form-data-1.0.1.tgz#ae315db9a4907fa065502304a66d7733475ee37c"
-  dependencies:
-    async "^2.0.1"
-    combined-stream "^1.0.5"
-    mime-types "^2.1.11"
 
 form-data@~2.1.1:
   version "2.1.2"
@@ -1235,11 +1227,11 @@ function-bind@^1.0.2:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/function-bind/-/function-bind-1.1.0.tgz#16176714c801798e4e8f2cf7f7529467bb4a5771"
 
-funsocietyirc-client@0.0.10:
-  version "0.0.10"
-  resolved "https://registry.yarnpkg.com/funsocietyirc-client/-/funsocietyirc-client-0.0.10.tgz#25049f2effb7b6cb4c410c022c974ce3c63d3d29"
+funsocietyirc-client@0.0.12:
+  version "0.0.12"
+  resolved "https://registry.yarnpkg.com/funsocietyirc-client/-/funsocietyirc-client-0.0.12.tgz#dd8b486141a84af90b4c3c5c8b466e19ed43c25d"
   dependencies:
-    irc-colors "^1.3.1"
+    irc-colors "^1.3.3"
     lodash "^4.17.4"
   optionalDependencies:
     iconv "^2.2.1"
@@ -1517,9 +1509,9 @@ i18next-sync-fs-backend@^0.1.0:
   dependencies:
     json5 "0.4.0"
 
-i18next@^8.0.0:
-  version "8.0.0"
-  resolved "https://registry.yarnpkg.com/i18next/-/i18next-8.0.0.tgz#487ea70d422e98d0b9ff2246e44bd91d851a46b7"
+i18next@^8.1.0:
+  version "8.1.0"
+  resolved "https://registry.yarnpkg.com/i18next/-/i18next-8.1.0.tgz#522ed2a6bedafa84ae106409ed520bc216a00bc1"
 
 iconv-lite@0.4.15:
   version "0.4.15"
@@ -1577,7 +1569,7 @@ ipaddr.js@1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/ipaddr.js/-/ipaddr.js-1.2.0.tgz#8aba49c9192799585bdd643e0ccb50e8ae777ba4"
 
-irc-colors@^1.3.1, irc-colors@^1.3.3:
+irc-colors@^1.3.3:
   version "1.3.3"
   resolved "https://registry.yarnpkg.com/irc-colors/-/irc-colors-1.3.3.tgz#16f8fa6130a3882fdf4fab801c5b4f58328a3391"
 
@@ -1933,9 +1925,9 @@ klaw@~1.3.0:
   optionalDependencies:
     graceful-fs "^4.1.9"
 
-knex@^0.12.9:
-  version "0.12.9"
-  resolved "https://registry.yarnpkg.com/knex/-/knex-0.12.9.tgz#aa852138c09ed46181e890fd698270bbe7761124"
+knex@^0.13.0:
+  version "0.13.0"
+  resolved "https://registry.yarnpkg.com/knex/-/knex-0.13.0.tgz#08dd494f6bb64928934eec9dac34787a14ca5fa4"
   dependencies:
     babel-runtime "^6.11.6"
     bluebird "^3.4.6"
@@ -2162,7 +2154,7 @@ mime-db@~1.26.0:
   version "1.26.0"
   resolved "https://registry.yarnpkg.com/mime-db/-/mime-db-1.26.0.tgz#eaffcd0e4fc6935cf8134da246e2e6c35305adff"
 
-mime-types@^2.0.10, mime-types@^2.1.11, mime-types@^2.1.12, mime-types@^2.1.3, mime-types@~2.1.11, mime-types@~2.1.13, mime-types@~2.1.2, mime-types@~2.1.7:
+mime-types@^2.0.10, mime-types@^2.1.12, mime-types@^2.1.3, mime-types@~2.1.11, mime-types@~2.1.13, mime-types@~2.1.2, mime-types@~2.1.7:
   version "2.1.14"
   resolved "https://registry.yarnpkg.com/mime-types/-/mime-types-2.1.14.tgz#f7ef7d97583fcaf3b7d282b6f8b5679dab1e94ee"
   dependencies:
@@ -3375,9 +3367,9 @@ void-elements@^2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/void-elements/-/void-elements-2.0.1.tgz#c066afb582bb1cb4128d60ea92392e94d5e9dbec"
 
-watson-developer-cloud@^2.29.0:
-  version "2.29.0"
-  resolved "https://registry.yarnpkg.com/watson-developer-cloud/-/watson-developer-cloud-2.29.0.tgz#4a343a8dc3116113ce8b6d047f62470c60183ac5"
+watson-developer-cloud@^2.30.0:
+  version "2.30.0"
+  resolved "https://registry.yarnpkg.com/watson-developer-cloud/-/watson-developer-cloud-2.30.0.tgz#bd9f8be04897b8bc38c0f834b4adee6bc91d0dfe"
   dependencies:
     async "^2.0.1"
     buffer-from "^0.1.1"

@@ -91,7 +91,7 @@ module.exports = app => {
     _(extractUrls(text))
       .uniq() // Assure No Duplicated URLS on the same line return multiple results
       .filter(url => url.match(/^(www|http[s]?)/im)) // Filter out undesired protocols
-      .map(url => url.startsWith('http') ? url : `http://${url}`)
+      .map(url => url.startsWith('http') ? url : `http://${url}`) // Does not start with a protocol, prepend http://
       .each(url => processUrl(url, to, from, text, message, is));
   };
 
@@ -107,7 +107,7 @@ module.exports = app => {
     access: app.Config.accessLevels.identified,
     call: listener
   });
-  
+
   // Clear cache every four hours on the 30 min mark
   const clean = scheduler.schedule('urlResultCache', {
     hour: [0, 4, 8, 12, 16, 20],

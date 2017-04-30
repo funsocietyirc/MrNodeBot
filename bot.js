@@ -16,7 +16,7 @@ const storage = require('node-persist');
 const helpers = require('./helpers');
 const logger = require('./lib/logger');
 const scheduler = require('./lib/scheduler');
-const randomString = require('./lib/randomString');
+const preprocessText = require('./lib/preprocessText');
 const t = require('./lib/localize');
 
 // Extend For Un-cache
@@ -111,7 +111,7 @@ class MrNodeBot {
   _initWebServer() {
     logger.info(t('webServer.starting'));
     this.WebServer = require('./web/server')(this);
-    
+
     logger.info(t('webServer.started', {
       port: this.Config.express.port
     }));
@@ -119,13 +119,13 @@ class MrNodeBot {
     // Initialize the SocketIO service
     this._initSocketIO();
   };
-  
+
   /**
     Initialize SocketIO
   **/
   _initSocketIO() {
     logger.info(`SocketIO is now bound to the Express instance running on ${this.Config.express.port}`);
-    
+
     // Socket IO Master connection event
     this.WebServer.socketIO.on('connection', sock => {
       // Logging is turned off, bail
@@ -135,7 +135,7 @@ class MrNodeBot {
       // Log Message
       sock.on('message', msg => logger.info(`Socket IO Message: ${msg}`));
       // Log Disconnect
-      sock.on('disconnect', msg => logger.info(`Socket IO Disconnection`)); 
+      sock.on('disconnect', msg => logger.info(`Socket IO Disconnection`));
       // Log Error
       sock.on('error', err => logger.error(`SocketIO Error`, {
         message: err.message || '',
@@ -882,7 +882,7 @@ class MrNodeBot {
    */
   say(target, message) {
     if (!_.isString(message) || _.isEmpty(message.trim())) return;
-    let msg = randomString(message);
+    let msg = preprocessText(message);
     logger.info(t('events.sentMessage', {
       target: target,
       message: c.stripColorsAndStyle(msg)
@@ -900,7 +900,7 @@ class MrNodeBot {
    */
   action(target, message) {
     if (!_.isString(message) || _.isEmpty(message.trim())) return;
-    let msg = randomString(message);
+    let msg = preprocessText(message);
     logger.info(t('events.sentAction', {
       target: target,
       message: c.stripColorsAndStyle(msg)
@@ -918,7 +918,7 @@ class MrNodeBot {
    */
   notice(target, message) {
     if (!_.isString(message) || _.isEmpty(message.trim())) return;
-    let msg = randomString(message);
+    let msg = preprocessText(message);
 
     logger.info(t('events.sentNotice', {
       target: target,
