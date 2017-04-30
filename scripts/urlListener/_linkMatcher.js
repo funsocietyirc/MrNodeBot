@@ -1,6 +1,6 @@
 'use strict';
 const URI = require('urijs');
-const URL = require('url').URL;
+const URL = require('url').URL; // TODO Here until we can figure why URI is not parsing the whole query string
 
 const _ = require('lodash');
 const getYoutube = require('./_getYoutube.js'); // Get the youtube key from link

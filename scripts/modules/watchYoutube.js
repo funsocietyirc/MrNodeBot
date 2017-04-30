@@ -20,6 +20,7 @@ module.exports = app => {
   const room = 'watching';
 
   // Decorate a channel name to avoid collisions
+  // Invalid args return the root channel '/'
   const activeChannelFormat = chanName => chanName !== null ? `/${chanName.toLowerCase()}` : '/';
 
   // Join the namespace
@@ -68,7 +69,7 @@ module.exports = app => {
     desc: '<song title> - Play something on the channels station',
     access: app.Config.accessLevels.identified,
     call: (to, from, text, message) => {
-
+      // TODO Implement
     }
   });
 
