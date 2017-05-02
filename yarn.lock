@@ -858,16 +858,9 @@ domutils@1.4:
   dependencies:
     domelementtype "1"
 
-domutils@1.5, domutils@1.5.1:
+domutils@1.5, domutils@1.5.1, domutils@^1.5.1:
   version "1.5.1"
   resolved "https://registry.yarnpkg.com/domutils/-/domutils-1.5.1.tgz#dcd8488a26f563d61079e48c9f7b7e32373682cf"
-  dependencies:
-    dom-serializer "0"
-    domelementtype "1"
-
-domutils@^1.5.1:
-  version "1.6.0"
-  resolved "https://registry.yarnpkg.com/domutils/-/domutils-1.6.0.tgz#853de07f013287f976b7fe0461740222ea14ecbb"
   dependencies:
     dom-serializer "0"
     domelementtype "1"
@@ -1032,9 +1025,9 @@ expand-tilde@^1.2.2:
     fs-extra "^0.22.1"
     streamifier "^0.1.1"
 
-express-rate-limit@^2.6.0:
-  version "2.6.0"
-  resolved "https://registry.yarnpkg.com/express-rate-limit/-/express-rate-limit-2.6.0.tgz#ecd359e15aa7f596dc80a604555765c02a3b2436"
+express-rate-limit@^2.7.0:
+  version "2.7.0"
+  resolved "https://registry.yarnpkg.com/express-rate-limit/-/express-rate-limit-2.7.0.tgz#259c6b1c15c48c08c972e5e3c74dd772b7a179d5"
   dependencies:
     defaults "^1.0.3"
 
@@ -2966,9 +2959,9 @@ sinon-chai@^2.10.0:
   version "2.10.0"
   resolved "https://registry.yarnpkg.com/sinon-chai/-/sinon-chai-2.10.0.tgz#6ab3008bb8cae9929e744d766574b4cf35f34b5b"
 
-sinon@^2.1.0:
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/sinon/-/sinon-2.1.0.tgz#e057a9d2bf1b32f5d6dd62628ca9ee3961b0cafb"
+sinon@^2.2.0:
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/sinon/-/sinon-2.2.0.tgz#3b1b42ff5defcbf51a52a62aca6d61171b9fd262"
   dependencies:
     diff "^3.1.0"
     formatio "1.2.0"
