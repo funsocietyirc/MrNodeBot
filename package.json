@@ -72,7 +72,7 @@
     "twit": "^2.2.5",
     "underscore": "^1.8.3",
     "urijs": "^1.18.10",
-    "watson-developer-cloud": "^2.30.0",
+    "watson-developer-cloud": "^2.31.0",
     "winston": "^2.3.1",
     "winston-daily-rotate-file": "^1.4.6",
     "winston-logio-mirror": "^0.3.0",
@@ -86,6 +86,6 @@
     "jsdoc": "^3.4.3",
     "mocha": "^3.3.0",
     "sinon": "^2.1.0",
-    "sinon-chai": "^2.9.0"
+    "sinon-chai": "^2.10.0"
   }
 }
