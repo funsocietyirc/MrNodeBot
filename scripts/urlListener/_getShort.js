@@ -3,13 +3,17 @@ const _ = require('lodash');
 const short = require('../lib/_getShortService');
 const logger = require('../../lib/logger');
 
-module.exports = results => new Promise(resolve => short(results.url)
-  .then(url => resolve(_.merge(results, {
-    shortUrl: url
-  })))
-  .catch(err => {
+module.exports = async results => {
+  try {
+    let shortUrl = await short(results.url);
+    Object.assign(results, {
+      shortUrl: shortUrl
+    });
+  } catch (err) {
     logger.warn('Error in URL Shortner function', {
       err
     });
-    resolve(results);
-  }));
+  } finally {
+    return results;
+  }
+};

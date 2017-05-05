@@ -23,14 +23,14 @@ const baseOptions = {
 const getRpOptions = (text, type) => {
   switch (type) {
     case 'id':
-      return _.merge(baseOptions, {
+      return Object.assign(baseOptions, {
         qs: {
           i: text
         }
       });
     case 'title':
     default:
-      return _.merge(baseOptions, {
+      return Object.assign(baseOptions, {
         qs: {
           t: text
         }
