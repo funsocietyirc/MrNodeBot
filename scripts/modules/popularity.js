@@ -24,7 +24,8 @@ module.exports = app => {
     call: async(to, from, text, message) => {
       let [voter,
         candidate,
-        channel] = text.split(' ');
+        channel
+      ] = text.split(' ');
 
       if (!voter || !candidate) {
         app.say(to, `I need more information to properly rate feels`);
@@ -37,7 +38,7 @@ module.exports = app => {
 
         if (!result) {
           let out = `${voter} has zero feels for ${candidate}`;
-          if(channel) out = out + ` in matters of ${channel}`;
+          if (channel) out = out + ` in matters of ${channel}`;
           app.say(to, out);
           return;
         }
@@ -51,7 +52,9 @@ module.exports = app => {
         app.say(to, output);
 
       } catch (err) {
-        logger.error('Error in popularityFeels command', {err});
+        logger.error('Error in popularityFeels command', {
+          err
+        });
         app.say(to, `An Error has occured with your popularity-feels command`);
       }
     }
@@ -61,10 +64,12 @@ module.exports = app => {
   app.Commands.set('popularity-ranking', {
     desc: '[channel?] - Get popularity ranking for a channel',
     access: app.Config.accessLevels.identified,
-    call: (to, from, text, message) => {
+    call: async(to, from, text, message) => {
       let channel = text || to;
       // Get result from generator then return
-      getChanPopRank(channel).then(result => {
+      try {
+        let result = await getChanPopRank(channel);
+
         if (!result || !result.rankings || !result.rankings.length) {
           app.say(to, `There are no popularity statistics for ${channel}`);
           return;
@@ -72,13 +77,17 @@ module.exports = app => {
 
         app.say(to, `The  Rankings have been messaged to you ${from}`);
         app.say(from, `Popularity Rankings for ${channel}`);
-        _.forEach(result.rankings, (v, k) => app.say(from, `[${k + 1}] Candidate: ${v.candidate} Score: ${typo.colorSignedNumber(v.score)} Votes: ${v.votes}`));
-        app.say(from, `Mean Score: ${result.meanScore} Total Score: ${typo.colorSignedNumber(result.totalScore)} Total Votes: ${result.totalVotes}`);
 
-      }).catch(err => {
-        logger.error('Error in pupularityRaking command', {err});
+        _.forEach(result.rankings, (v, k) => app.say(from, `[${k + 1}] Candidate: ${v.candidate} Score: ${typo.colorSignedNumber(v.score)} Votes: ${v.votes}`));
+
+        app.say(from, `Mean Score: ${result.meanScore} Total Score: ${typo.colorSignedNumber(result.totalScore)} Total Votes: ${result.totalVotes}`);
+      } catch (err) {
+        logger.error('Error in pupularityRaking command', {
+          err
+        });
         app.say(to, `An Error has occured with your popularity-ranking command`);
-      });
+
+      }
     }
   });
 
@@ -86,31 +95,40 @@ module.exports = app => {
   app.Commands.set('popularity-contest', {
     desc: '[user?] [channel?] - Get results on popularity',
     access: app.Config.accessLevels.identified,
-    call: (to, from, text, message) => {
+    call: async(to, from, text, message) => {
       let [nick,
-        channel] = text.split(' ');
+        channel
+      ] = text.split(' ');
 
       // default to current user if no user specified
       nick = nick || from;
-      getCanPopRank(nick, channel).then(result => {
-        let inChan = channel
-          ? ` in ${channel}`
-          : '';
+
+      try {
+        let result = await getCanPopRank(nick, channel);
+        let inChan = channel ?
+          ` in ${channel}` :
+          '';
+
         if (!result) {
           app.say(to, `There are no results available for ${nick}${inChan}`);
           return;
         }
 
-        app.say(to, ` for candidate ${nick}${inChan} has been messaged to you ${from}`);
+        app.say(to, `Popularity for candidate ${nick}${inChan} has been messaged to you ${from}`);
         app.say(from, `Popularity for candidate ${nick}${inChan}`);
 
         _.forEach(result.rankings, (value, key) => app.say(from, `[${key + 1}] Voter: ${value.voter} Score: ${typo.colorSignedNumber(value.score)} Votes: ${value.votes}`));
 
         app.say(from, `Mean Score: ${result.meanScore} Total Score: ${typo.colorSignedNumber(result.totalScore)} Total Votes: ${result.totalVotes}`);
-      }).catch(err => {
-        logger.error('Error in popularity-contest', {err});
+      } catch (err) {
+
+        logger.error('Error in popularity-contest', {
+          err
+        });
+
         app.say(to, `An Error has occured with your popularity-contest command`);
-      });
+      }
+
     }
   });
 
@@ -118,16 +136,20 @@ module.exports = app => {
   app.Commands.set('popularity', {
     desc: '[nick?] [channel?] Get a users popularity',
     access: app.Config.accessLevels.identified,
-    call: (to, from, text, message) => {
+    call: async(to, from, text, message) => {
       let [nick,
-        channel] = text.split(' ');
+        channel
+      ] = text.split(' ');
       nick = nick || from;
 
-      getCanPopRank(nick, channel).then(result => {
+      try {
+        let result = await getCanPopRank(nick, channel);
+
         if (!result || !result.totalVotes) {
           app.say(to, `There is no popularity data for ${nick}`);
           return;
         }
+
         app.say(to, `Popularity of ${nick}${channel
           ? ' On ' + channel
           : ''} ${typo.icons.sideArrow} ${result.totalVotes} ${typo.icons.views} ${typo.icons.sideArrow} Total ${typo.colorSignedNumber(result.totalScore)} ` + `${result.totalScore > 0
@@ -135,10 +157,13 @@ module.exports = app => {
             : typo.icons.sad} ${typo.icons.sideArrow} Mean ${result.meanScore} ${result.meanScore > 0
               ? typo.icons.happy
               : typo.icons.sad}`);
-      }).catch(err => {
-        logger.error('Error in pupularity command', {err});
+      } catch (err) {
+        logger.error('Error in pupularity command', {
+          err
+        });
+
         app.say(to, `An Error has occured with your popularity command`);
-      });
+      }
     }
   });
 
