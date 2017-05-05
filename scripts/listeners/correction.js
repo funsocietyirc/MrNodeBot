@@ -93,7 +93,7 @@ module.exports = app => {
     }).fetchAll();
 
     // Bail if we have no results
-    if (!results || !results.length)
+    if (!results || !results.length) 
       return;
 
     // Interate over the database results
@@ -135,7 +135,7 @@ module.exports = app => {
         : `${from}${colorDelim}${resultFrom}`;
       app.say(to, `${c.grey.bold('[')}${c.red('SED')} ${headerText}${c.grey.bold(']')} ${finalReplacement}`);
     });
-    
+
   };
 
   // Listen and Correct
