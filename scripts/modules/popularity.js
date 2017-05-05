@@ -33,7 +33,7 @@ module.exports = app => {
 
       try {
         // Get result from generator, then return
-        let result = getPopSent(voter, candidate, channel);
+        let result = await getPopSent(voter, candidate, channel);
 
         if (!result) {
           app.say(to, `${voter} has zero feels for ${candidate} in matters of ${channel}`);
