@@ -2,6 +2,7 @@
 
 *An IronY / FSociety Production*
 
+[![Build Status](https://travis-ci.org/funsocietyirc/MrNodeBot.svg?branch=master)](https://travis-ci.org/funsocietyirc/MrNodeBot)
 [![Dependencies](https://david-dm.org/funsocietyirc/mrnodebot.svg)](https://david-dm.org/funsocietyirc/mrnodebot)
 [![devDependencies Status](https://david-dm.org/funsocietyirc/mrnodebot/dev-status.svg)](https://david-dm.org/funsocietyirc/mrnodebot?type=dev)
 
