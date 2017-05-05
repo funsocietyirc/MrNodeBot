@@ -36,11 +36,13 @@ module.exports = app => {
         let result = await getPopSent(voter, candidate, channel);
 
         if (!result) {
-          app.say(to, `${voter} has zero feels for ${candidate} in matters of ${channel}`);
+          let out = `${voter} has zero feels for ${candidate}`;
+          if(channel) out = out + ` in matters of ${channel}`;
+          app.say(to, out);
           return;
         }
 
-        let output = `${result.voter} feels ${result.adjective} (${typo.colorSignedNumber(result.score)} score) about ${result.candidate}`;
+        let output = `${result.voter} feels ${result.adjective} (Sum of ${typo.colorSignedNumber(result.score)}) about ${result.candidate}`;
 
         if (channel)
           output = output + ` in matters of ${result.channel}`;
