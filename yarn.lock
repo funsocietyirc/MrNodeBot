@@ -715,9 +715,9 @@ ctype@0.5.3:
   version "0.5.3"
   resolved "https://registry.yarnpkg.com/ctype/-/ctype-0.5.3.tgz#82c18c2461f74114ef16c135224ad0b9144ca12f"
 
-"currency-symbol-map@https://github.com/bengourley/currency-symbol-map#master":
+currency-symbol-map@^4.0.0:
   version "4.0.0"
-  resolved "https://github.com/bengourley/currency-symbol-map#40a3ec66905ac25dbf57bac0f7890ebbb798fac2"
+  resolved "https://registry.yarnpkg.com/currency-symbol-map/-/currency-symbol-map-4.0.0.tgz#15471404541d8773e8cda4fa6dd77a41a64a2d57"
 
 cycle@1.0.x:
   version "1.0.3"

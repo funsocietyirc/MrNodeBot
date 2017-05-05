@@ -9,7 +9,7 @@
     "test-watch": "./node_modules/mocha/bin/mocha test/**/*.js --reporter spec -w",
     "generate-docs": "node_modules/.bin/jsdoc -c jsdoc.json"
   },
-  "author": "Dave Richer <dave@develops.io>",
+  "author": "Dave Richer <davericher@gmail.com>",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -36,7 +36,7 @@
     "bookshelf-modelbase": "^2.10.3",
     "bot": "0.0.3",
     "cheerio": "^0.22.0",
-    "currency-symbol-map": "https://github.com/bengourley/currency-symbol-map#master",
+    "currency-symbol-map": "^4.0.0",
     "express": "^4.15.2",
     "express-fileupload": "git://github.com/pajtai/express-fileupload.git",
     "express-rate-limit": "^2.7.0",
