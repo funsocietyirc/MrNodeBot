@@ -31,7 +31,7 @@ module.exports = async(apiKey, title) => {
     };
 
   } catch (err) {
-    logger.log('Error in the youtube search generator');
+    logger.log('Error in the youTube search generator');
     return {
       items: []
     };

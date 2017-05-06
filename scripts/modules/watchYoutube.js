@@ -10,6 +10,9 @@ const _ = require('lodash');
 const gen = require('../generators/_youTubeVideoData');
 const logger = require('../../lib/logger');
 const searchYoutube = require('../generators/_searchYoutubeVideos');
+const shortUrl = require('../generators/_googleShortUrl');
+
+const youTubeRoute = 'https://www.youtube.com/watch?v=';
 
 module.exports = app => {
   // No SocketIO detected, or feature is disabled
@@ -107,7 +110,9 @@ module.exports = app => {
             }
           });
 
-          app.say(to, `I am now playing ${video.title} on the ${to} station for you ${from}`);
+          let link =  await shortUrl(youTubeRoute + video.videoId) || `${youTubeRoute}${video.videoId}`;
+
+          app.say(to, `I am now playing ${video.title} on the ${to} station for you ${from} | ${link}`);
 
         } catch (err) {
           logger.error('Something went wrong getting results for the tv-play command', {
