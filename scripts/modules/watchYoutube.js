@@ -84,12 +84,10 @@ module.exports = app => {
           app.say(to, `I need something to search ${from}`);
           return;
         }
-
         try {
           const result = await searchYoutube(app.Config.apiKeys.google, text);
-          console.dir(result);
 
-          if(!result || !result.items) {
+          if (!result || !result.items) {
             app.say(to, `I was unable to find anything ${from}`);
             return;
           }
@@ -97,21 +95,21 @@ module.exports = app => {
           // Todo filter
           const video = result.items[0];
 
-          console.dir(video);
-
+          // Send to socket
           socket.to(activeChannelFormat(to)).emit('message', {
             to: to,
             from: from,
             timestamp: Date.now(),
             seekTime: 0,
-            videoTitle: video.title,
-            key: video.videoId
+            video: {
+              videoTitle: video.title,
+              key: video.videoId
+            }
           });
 
           app.say(to, `I am now playing ${video.title} on the ${to} station for you ${from}`);
 
-        }
-        catch (err) {
+        } catch (err) {
           logger.error('Something went wrong getting results for the tv-play command', {
             message: err.message || '',
             stack: err.stack || ''

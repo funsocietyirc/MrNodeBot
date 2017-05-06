@@ -54,7 +54,6 @@ module.exports = (app, results) => new Promise(resolve => {
     to: results.to,
     from: results.from,
     timestamp: timestamp,
-    index: results.youTube.index || 0,
     seekTime: results.youTube.seekTime || 0,
   }));
 

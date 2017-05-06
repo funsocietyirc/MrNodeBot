@@ -5,8 +5,6 @@ const rp = require('request-promise-native');
 const logger = require('../../lib/logger');
 
 module.exports = async(apiKey, title) => {
-  console.dir(apiKey, title);
-
   if (!apiKey || !title) return {
     items: []
   };
