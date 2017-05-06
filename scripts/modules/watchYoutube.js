@@ -9,10 +9,15 @@ const scriptInfo = {
 const _ = require('lodash');
 const gen = require('../generators/_youTubeVideoData');
 const logger = require('../../lib/logger');
-const searchYoutube = require('../generators/_searchYoutubeVideos');
 const shortUrl = require('../generators/_googleShortUrl');
-
+const searchYoutube = require('../generators/_searchYoutubeVideos');
 const youTubeRoute = 'https://www.youtube.com/watch?v=';
+// Typography
+const {
+  logos,
+  icons,
+  StringBuilder
+} = require('../lib/_ircTypography');
 
 module.exports = app => {
   // No SocketIO detected, or feature is disabled
@@ -107,8 +112,16 @@ module.exports = app => {
               key: video.videoId
             }
           }));
+
+          let sb = new StringBuilder({
+            logo: 'youTubeTv'
+          });
+
           let link = await shortUrl(youTubeRoute + video.videoId);
-          app.say(to, `I am now playing ${video.title} on the ${to} station for you ${from} || ${link || youTubeRoute + video.videoId }`);
+
+          sb.append(`I am now playing ${video.title} on the ${to} station for you ${from}`).insertLogo('youTube').insertIcon('anchor').insert(link || youTubeRoute + video.videoId);
+          app.say(to, sb.toString());
+
         } catch (err) {
           logger.error('Something went wrong getting results for the tv-play command', {
             message: err.message || '',

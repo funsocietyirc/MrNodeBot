@@ -15,11 +15,13 @@ const icons = {
   happy: c.green.bold('☺'),
   sad: c.red.bold('☹'),
   time: c.grey.bold('@'),
+  tv: c.blue.bold('📺'),
 };
 
 // Misc Logos
 const logos = {
   youTube: c.grey.bold('You') + c.red.bold('Tube'),
+  youTubeTv: `${c.grey.bold('You')}${c.red.bold('Tube')} ${icons.tv}`,
   gitHub: c.grey.bold('GitHub'),
   bitBucket: c.navy.bold('BitBucket'),
   imdb: c.brown.bold('IMDB'),
@@ -103,7 +105,11 @@ class StringBuilder {
   };
   // Append an icon
   insertIcon(icon, spaceBetween = true) {
-    if (!_.isUndefined(icon) && _.isString(icon) && !_isEmpty(string) && _.has(icons, icon)) this.buffer = `${this.buffer}${spaceBetween ? ' ': ''}${icons[icon]}`;
+    if (!_.isUndefined(icon) && _.isString(icon) && !_.isEmpty(icon) && _.has(icons, icon)) this.buffer = `${this.buffer}${spaceBetween ? ' ': ''}${icons[icon]}`;
+    return this;
+  };
+  insertLogo(logo, spaceBetween = true) {
+    if (!_.isUndefined(logo) && _.isString(logo) && !_.isEmpty(logo) && _.has(logos, logo)) this.buffer = `${this.buffer}${spaceBetween ? ' ': ''}${logos[logo]}`;
     return this;
   };
   // Insert divider
