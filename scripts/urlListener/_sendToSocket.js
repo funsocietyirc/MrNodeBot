@@ -22,7 +22,7 @@ module.exports = (app, results) => new Promise(resolve => {
     url: results.url,
     to: results.to,
     from: results.from,
-    timestamp,
+    timestamp: timestamp,
     title: results.title || '',
     threat: _.isEmpty(results.threats)
   };
