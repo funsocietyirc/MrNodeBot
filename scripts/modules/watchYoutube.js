@@ -97,15 +97,16 @@ module.exports = app => {
           // Todo filter
           const video = result.items[0];
 
-          // Fire off the Web Socket
-          app.WebServer.socketIO.of('/youtube').to(`/${to.toLowerCase()}`).emit('message', Object.assign({}, {
+          console.dir(video);
+
+          socket.to(activeChannelFormat(to)).emit('message', {
             to: to,
             from: from,
             timestamp: Date.now(),
             seekTime: 0,
             videoTitle: video.title,
             key: video.videoId
-          }));
+          });
 
           app.say(to, `I am now playing ${video.title} on the ${to} station for you ${from}`);
 
