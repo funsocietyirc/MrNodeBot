@@ -1,30 +1,44 @@
 'use strict';
 
 const endPoint = 'https://www.googleapis.com/youtube/v3/search';
-const _ = require('lodash');
 const rp = require('request-promise-native');
+const logger = require('../../lib/logger');
 
-module.exports = (apiKey, title) => rp({
-    uri: endPoint,
-    qs: {
-      part: 'id,snippet',
-      q: title,
-      maxResults: 1
-    },
-    json: true
-  })
-  .then(results => {
-    if (!results || _.isEmpty(results) || _.isEmpty(results.items)) return [];
-    let item = results.items[0];
+module.exports = async(apiKey, title) => {
+  console.dir(apiKey, title);
+
+  if (!apiKey || !title) return {
+    items: []
+  };
+
+  try {
+    // Fetch Results
+    const results = await rp({
+      uri: endPoint,
+      qs: {
+        part: 'id,snippet',
+        q: title,
+        order: 'title',
+        maxResults: 10,
+        key: apiKey,
+      },
+      json: true
+    });
+    return (!results || !results.items) ? {
+      items: []
+    } : {
+      items: results.items.map(item => Object.assign({}, item.snippet, {
+        videoId: item.id.videoId
+      }))
+    };
+
+  } catch (err) {
+    logger.log('Error in the youtube search generator');
     return {
-      title: item.snippet.title,
-      key: item.id.videoId
-    }
-  })
-  .catch(err => {
-    // TODO Handle Logging
-    return {};
-  });
+      items: []
+    };
+  }
+};
 
 /**
 {

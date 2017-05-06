@@ -8,10 +8,13 @@ const scriptInfo = {
 
 const _ = require('lodash');
 const gen = require('../generators/_youTubeVideoData');
+const logger = require('../../lib/logger');
+const searchYoutube = require('../generators/_searchYoutubeVideos');
 
 module.exports = app => {
   // No SocketIO detected, or feature is disabled
-  if (!app.WebServer.socketIO || _.isEmpty(app.Config.features.watchYoutube) || !app.Config.features.watchYoutube) return scriptInfo;
+  if (!app.WebServer.socketIO || _.isEmpty(app.Config.features.watchYoutube) || !app.Config.features.watchYoutube)
+    return scriptInfo;
 
   // Name of SocketIO namespace
   const namespace = '/youtube';
@@ -21,7 +24,9 @@ module.exports = app => {
 
   // Decorate a channel name to avoid collisions
   // Invalid args return the root channel '/'
-  const activeChannelFormat = chanName => chanName !== null ? `/${chanName.toLowerCase()}` : '/';
+  const activeChannelFormat = chanName => chanName !== null
+    ? `/${chanName.toLowerCase()}`
+    : '/';
 
   // Join the namespace
   const socket = app.WebServer.socketIO.of(namespace);
@@ -35,8 +40,12 @@ module.exports = app => {
 
     // Get Channel Stats
     const channelStats = () => Object.assign({}, {
-      totalListeners: socket.adapter.rooms[room] ? socket.adapter.rooms[room].length : 0,
-      channelListeners: socket.adapter.rooms[activeChannel] ? socket.adapter.rooms[activeChannel].length : 0
+      totalListeners: socket.adapter.rooms[room]
+        ? socket.adapter.rooms[room].length
+        : 0,
+      channelListeners: socket.adapter.rooms[activeChannel]
+        ? socket.adapter.rooms[activeChannel].length
+        : 0
     });
 
     // Send Initial HR Time
@@ -64,14 +73,53 @@ module.exports = app => {
     socket.to(activeChannel).emit('new', channelStats());
   });
 
-  // Play
-  app.Commands.set('tv-play', {
-    desc: '<song title> - Play something on the channels station',
-    access: app.Config.accessLevels.identified,
-    call: (to, from, text, message) => {
-      // TODO Implement
-    }
-  });
+  // TV Play Command
+  if (app.Config.apiKeys.google && !_.isEmpty(app.Config.apiKeys.google))
+    app.Commands.set('tv-play', {
+      desc: '<video name>',
+      access: app.Config.accessLevels.identified,
+      call: async(to, from, text, message) => {
+        // Nothing was given
+        if (_.isEmpty(text)) {
+          app.say(to, `I need something to search ${from}`);
+          return;
+        }
+
+        try {
+          const result = await searchYoutube(app.Config.apiKeys.google, text);
+          console.dir(result);
+
+          if(!result || !result.items) {
+            app.say(to, `I was unable to find anything ${from}`);
+            return;
+          }
+
+          // Todo filter
+          const video = result.items[0];
+
+          // Fire off the Web Socket
+          app.WebServer.socketIO.of('/youtube').to(`/${to.toLowerCase()}`).emit('message', Object.assign({}, {
+            to: to,
+            from: from,
+            timestamp: Date.now(),
+            seekTime: 0,
+            videoTitle: video.title,
+            key: video.videoId
+          }));
+
+          app.say(to, `I am now playing ${video.title} on the ${to} station for you ${from}`);
+
+        }
+        catch (err) {
+          logger.error('Something went wrong getting results for the tv-play command', {
+            message: err.message || '',
+            stack: err.stack || ''
+          });
+          app.say(to, `Something went wrong getting your results ${from}`);
+        }
+
+      }
+    });
 
   // Get total Listeners (Identified)
   app.Commands.set('tv-watchers', {
@@ -80,11 +128,19 @@ module.exports = app => {
     call: (to, from, text, message) => {
       // Get specified channel
       let channel = text.split(' ')[0];
-      channel = channel ? activeChannelFormat(channel) : activeChannelFormat(to);
-      let count = socket.adapter.rooms[channel] ? socket.adapter.rooms[channel].length : 0;
-      let roomCount = socket.adapter.rooms[room] ? socket.adapter.rooms[room].length : 0;
+      channel = channel
+        ? activeChannelFormat(channel)
+        : activeChannelFormat(to);
+      let count = socket.adapter.rooms[channel]
+        ? socket.adapter.rooms[channel].length
+        : 0;
+      let roomCount = socket.adapter.rooms[room]
+        ? socket.adapter.rooms[room].length
+        : 0;
       let diff = roomCount - count;
-      app.say(to, `${count} connections are viewing the${channel ? ' ' + channel : ''} stream, ${diff} are watching other Channels`);
+      app.say(to, `${count} connections are viewing the${channel
+        ? ' ' + channel
+        : ''} stream, ${diff} are watching other Channels`);
     }
   });
 
@@ -114,15 +170,13 @@ module.exports = app => {
 
       // Switch on the command
       switch (args[0]) {
-        // Usage Information
+          // Usage Information
         case 'help':
           _(cmds).each((v, k) => app.say(to, `${k}: ${v}`));
           break;
           // Clear a queue
         case 'clear':
-          socket.to(activeChannelFormat(args[1] || to)).emit('control', {
-            command: 'clear'
-          });
+          socket.to(activeChannelFormat(args[1] || to)).emit('control', {command: 'clear'});
           app.say(to, `The queue for ${args[1] || to} has been cleared`);
           break;
           // Remove an item from the queue index
@@ -135,7 +189,7 @@ module.exports = app => {
           tmpArray.splice(0, 2);
           socket.to(activeChannelFormat(args[1])).emit('control', {
             command: 'speak',
-            message: tmpArray.join(' '),
+            message: tmpArray.join(' ')
           });
           break;
         case 'remove':
@@ -147,23 +201,19 @@ module.exports = app => {
           // Send event
           socket.to(activeChannelFormat(args[1])).emit('control', {
             command: 'remove',
-            index: args[2],
+            index: args[2]
           });
           // Report Back
           app.say(to, `The TV Queue item ${args[2]} has been broadcast for deletion on ${args[1]}`);
           break;
           // Force The Client to reload
         case 'reload':
-          socket.to(activeChannelFormat(args[1] || to)).emit('control', {
-            command: 'reload',
-          });
+          socket.to(activeChannelFormat(args[1] || to)).emit('control', {command: 'reload'});
           app.say(to, `Clients on ${args[1] || to} have been Refreshed`);
           break;
           // Force The Client to reload
         case 'skip':
-          socket.to(activeChannelFormat(args[1] || to)).emit('control', {
-            command: 'skip',
-          });
+          socket.to(activeChannelFormat(args[1] || to)).emit('control', {command: 'skip'});
           app.say(to, `Current Video on ${args[1] || to} has been skipped`);
           break;
 

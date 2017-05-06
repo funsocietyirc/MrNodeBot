@@ -48,7 +48,6 @@ module.exports = (app, results) => new Promise(resolve => {
     watchYoutubeEnabled &&
     !_.isEmpty(results.youTube) && // We Have youtube data
     !_.isEmpty(results.youTube.video) && // We have a video key
-    _.isEmpty(results.youTube.playlist) && // We do not have a playlist,
     !results.youTube.video.restrictions && // We do not have georestrictions
     results.youTube.video.embeddable // The video is embeddable
   ) app.WebServer.socketIO.of('/youtube').to(`/${results.to.toLowerCase()}`).emit('message', Object.assign(results.youTube, {
