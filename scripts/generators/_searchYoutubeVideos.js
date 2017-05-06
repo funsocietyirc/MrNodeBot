@@ -16,7 +16,7 @@ module.exports = async(apiKey, title) => {
       qs: {
         part: 'id,snippet',
         q: title,
-        order: 'title',
+        order: 'views',
         maxResults: 10,
         key: apiKey,
       },
