@@ -1,4 +1,4 @@
-'use static';
+'use strict';
 
 const scriptInfo = {
   name: 'watchYoutube',
@@ -9,9 +9,10 @@ const scriptInfo = {
 const _ = require('lodash');
 const gen = require('../generators/_youTubeVideoData');
 const logger = require('../../lib/logger');
-const shortUrl = require('../generators/_googleShortUrl');
+const shortService = require('../lib/_getShortService');
 const searchYoutube = require('../generators/_searchYoutubeVideos');
 const youTubeRoute = 'https://www.youtube.com/watch?v=';
+
 // Typography
 const {
   logos,
@@ -91,8 +92,10 @@ module.exports = app => {
           return;
         }
         try {
+          // Fetch Results
           const result = await searchYoutube(app.Config.apiKeys.google, text);
 
+          // No Results
           if (!result || !result.items) {
             app.say(to, `I was unable to find anything ${from}`);
             return;
@@ -113,20 +116,35 @@ module.exports = app => {
             }
           }));
 
-          let sb = new StringBuilder({
+          // Construct String Builder
+          const sb = new StringBuilder({
             logo: 'youTubeTv'
           });
 
-          let link = await shortUrl(youTubeRoute + video.videoId);
+          // Grab the short URL
+          const link = await shortService(youTubeRoute + video.videoId);
 
-          sb.append(`I am now playing ${video.title} on the ${to} station for you ${from}`).insertLogo('youTube').insertIcon('anchor').insert(link || youTubeRoute + video.videoId);
-          app.say(to, sb.toString());
+          // Build String
+          sb
+            .append(`I am now playing ${video.title} on the ${to} station for you ${from}`)
+            .insertLogo('youTube')
+            .insertIcon('anchor')
+            .insert(link || youTubeRoute + video.videoId);
 
-        } catch (err) {
+          // Report Back
+          app.say(
+            to,
+            sb.toString()
+          );
+        }
+        // Catch Error
+        catch (err) {
+          // Log
           logger.error('Something went wrong getting results for the tv-play command', {
             message: err.message || '',
             stack: err.stack || ''
           });
+          // Report
           app.say(to, `Something went wrong getting your results ${from}`);
         }
 
@@ -139,19 +157,23 @@ module.exports = app => {
     access: app.Config.accessLevels.identified,
     call: (to, from, text, message) => {
       // Get specified channel
-      let channel = text.split(' ')[0];
-      channel = channel ?
+      const channel = text.split(' ')[0];
+      const procChannel = channel ?
         activeChannelFormat(channel) :
         activeChannelFormat(to);
-      let count = socket.adapter.rooms[channel] ?
-        socket.adapter.rooms[channel].length :
+
+      const count = socket.adapter.rooms[procChannel] ?
+        socket.adapter.rooms[procChannel].length :
         0;
-      let roomCount = socket.adapter.rooms[room] ?
+
+      const roomCount = socket.adapter.rooms[room] ?
         socket.adapter.rooms[room].length :
         0;
-      let diff = roomCount - count;
-      app.say(to, `${count} connections are viewing the${channel
-        ? ' ' + channel
+
+      const diff = roomCount - count;
+
+      app.say(to, `${count} connections are viewing the${procChannel
+        ? ' ' + procChannel
         : ''} stream, ${diff} are watching other Channels`);
     }
   });
@@ -162,10 +184,10 @@ module.exports = app => {
     access: app.Config.accessLevels.admin,
     call: (to, from, text, message) => {
       // Parse the args
-      let args = text.split(' ');
+      const args = text.split(' ');
 
       // No Args Provided
-      if (!args.length) {
+      if (_.isEmpty(args)) {
         app.say(to, 'Subcommand required, use help for more information');
         return;
       }
@@ -234,7 +256,6 @@ module.exports = app => {
           });
           app.say(to, `Current Video on ${args[1] || to} has been skipped`);
           break;
-
         default:
           app.say(to, `Subcommand not found, available commands are ${Object.keys(cmds).join(', ')}`);
           break;

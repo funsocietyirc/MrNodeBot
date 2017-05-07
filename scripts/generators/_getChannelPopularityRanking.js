@@ -23,7 +23,6 @@ module.exports = channel => new Promise((resolve, reject) => {
       .groupBy('candidate')
       .orderBy('score', 'desc')
       .orderBy('result', 'desc')
-
     )
     .fetchAll()
     .then(results => {
@@ -32,7 +31,7 @@ module.exports = channel => new Promise((resolve, reject) => {
         resolve({});
         return;
       }
-      let scores = results.pluck('score');
+      const scores = results.pluck('score');
       return {
         meanScore: _.mean(scores).toFixed(2),
         totalScore: _.sum(scores),

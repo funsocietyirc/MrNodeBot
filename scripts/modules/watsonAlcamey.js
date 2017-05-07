@@ -20,7 +20,7 @@ module.exports = app => {
   ) return scriptInfo;
 
   // Space helper
-  let space = ` ${typo.icons.sideArrow} `;
+  const space = ` ${typo.icons.sideArrow} `;
 
   const aL = new AlchemyLanguageV1({
     headers: {

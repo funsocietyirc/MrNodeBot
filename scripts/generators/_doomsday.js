@@ -8,10 +8,10 @@ const toTime = mins =>
   new Date(midnight.getTime() + mins * -60000);
 
 const pad = (min, input) => {
-  const out = input + ''
+  let out = input + '';
   while (out.length < min)
-    out = '0' + out
-  return out
+    out = '0' + out;
+  return out;
 }
 
 /**
@@ -33,8 +33,8 @@ const _request = () => new Promise((resolve, reject) =>
     if (error)
       return reject(err);
     if (response.statusCode !== 200)
-      return reject("Unexpected status code")
-    return resolve(body)
+      return reject("Unexpected status code");
+    return resolve(body);
   }));
 
 
@@ -73,20 +73,22 @@ const _extract = data =>
     const $ = cheerio.load(data);
     const nodes = $(conf.selector)
       .map(function() {
-        return $(this).text()
+        return $(this).text();
       })
       .get();
 
     for (const node of nodes) {
       const result = node.match(conf.title);
       if (result) {
-        if (!isNaN(result[1])) return resolve(parseInt(result[1]));
+        if (!isNaN(result[1]))
+          return resolve(parseInt(result[1]));
         if (result[2]) {
           const whole = numberStringToInt(result[2]);
           if (!isNaN(whole)) return resolve(whole + 0.5);
         }
       }
     }
+
     reject("No result found");
   });
 
