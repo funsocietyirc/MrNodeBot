@@ -7,13 +7,15 @@ const config = require('../../config');
 
 const isGd = require('../generators/_isGdShortUrl');
 const google = require('../generators/_googleShortUrl');
+const bitly = require('../generators/_getBitlyShort');
 
 module.exports = domain => {
 
+  const secondary = !_.isEmpty(config.apiKeys.bitly) ? bitly :  isGd;
   // default
-  const defaultShort = !_.isUndefined(config.apiKeys.google) && _.isString(config.apiKeys.google) && !_.isEmpty(config.apiKeys.google)
+  const defaultShort = !_.isEmpty(config.apiKeys.google)
     ? google
-    : isGd;
+    : secondary;
 
   // No Domain provided
   if (_.isEmpty(domain))
@@ -22,7 +24,7 @@ module.exports = domain => {
   // Domain Exceptions
   switch (domain) {
     case 'dropboxusercontent.com':
-      return isGd;
+      return secondary;
     default:
       return defaultShort
   }

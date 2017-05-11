@@ -151,6 +151,7 @@ module.exports = {
     },
     // API Keys
     apiKeys: {
+        bitly: '',
         imgur: {
             clientId: '',
             clientSecret: '',
