@@ -1,5 +1,4 @@
 'use strict';
-const URI = require('urijs');
 const URL = require('url').URL; // TODO Here until we can figure why URI is not parsing the whole query string
 
 const _ = require('lodash');
@@ -13,16 +12,18 @@ module.exports = results => new Promise(resolve => {
   // Use the realUrl if available when doing matches
   // This allows shortened urls to still hit
   const current = results.realUrl ? results.realUrl : results.url;
-  const uri = new URI(current); // URI JS used to parse segements
   const url = new URL(current); // TODO Node URL Module because the URI model has some weird query string parsing issues
 
   // No URI or URL
-  if (!uri || !url) return resolve(results);
+  if (!results.uri || !url) return resolve(results);
 
-  switch (uri.domain()) {
+  const segment = results.uri.segment;
+  const segmentCoded = results.uri.segmentCoded;
+
+  switch (results.uri.domain()) {
     case 'youtube.com': // Youtube
     case 'youtu.be':
-      switch (uri.segmentCoded(0)) {
+      switch (segmentCoded(0)) {
         case 'embed':
         case 'watch':
           // Playlist
@@ -64,39 +65,38 @@ module.exports = results => new Promise(resolve => {
       }
       break;
     case 'imdb.com': // IMDB
-      let segments = uri.segmentCoded();
-      if (segments.indexOf('title') != -1) {
-        let titleId = uri.segmentCoded(segments.indexOf('title') + 1);
+      if (segmentsCoded.indexOf('title') != -1) {
+        let titleId = segmentCoded(segmentsCoded.indexOf('title') + 1);
         if (titleId.startsWith('tt')) return resolve(getImdb(titleId, results));
       }
       break;
     case 'imgur.com': // Imgur
       if (uri.subdomain() == 'i') {
-        let segment = uri.segmentCoded(0);
+        let segment = segmentCoded(0);
         if (!segment) break;
-        let imageId = segment.substr(0, segment.lastIndexOf('.'));
+        let imageId = results.segment.substr(0, segment.lastIndexOf('.'));
         if (!imageId) break;
         if (imageId) return resolve(getImgur('image', imageId, results));
       }
-      switch (uri.segmentCoded(0)) {
+      switch (segmentCoded(0)) {
         case 'image':
         case 'gallery':
-          if (uri.segmentCoded(1)) return resolve(getImgur(uri.segmentCoded(0), uri.segmentCoded(1), results));
+          if (segmentCoded(1)) return resolve(getImgur(segmentCoded(0), segmentCoded(1), results));
           break;
         case 'album':
         case 'a':
-          if (uri.segmentCoded(1)) return resolve(getImgur('album', uri.segmentCoded(1), results));
+          if (segmentCoded(1)) return resolve(getImgur('album', segmentCoded(1), results));
           break;
         default:
-          if (uri.segment().length == 1) return resolve(getImgur('image', uri.segmentCoded(0), results));
+          if (segment().length == 1) return resolve(getImgur('image', segmentCoded(0), results));
           break;
       }
       break;
     case 'github.com': // GitHub
-      if (uri.segment().length >= 2) return resolve(getGitHub(uri.segmentCoded(0), uri.segmentCoded(1), results)); // 2: User, 3: Repo
+      if (segment().length >= 2) return resolve(getGitHub(segmentCoded(0), segmentCoded(1), results)); // 2: User, 3: Repo
       break;
     case 'bitbucket.org': // BitBucket
-      if (uri.segment().length >= 2) return resolve(getBitBucket(uri.segmentCoded(0), uri.segmentCoded(1), results)); // 2: User, 3: Repo
+      if (segment().length >= 2) return resolve(getBitBucket(segmentCoded(0), segmentCoded(1), results)); // 2: User, 3: Repo
       break;
   }
 

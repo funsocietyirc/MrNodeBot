@@ -1,4 +1,5 @@
 'use strict';
+const URI = require('urijs');
 
 module.exports = (url, to, from, text, message, is) => new Promise((resolve, reject) => {
   if (!url || !to || !from || !text || !message) return reject({
@@ -15,5 +16,6 @@ module.exports = (url, to, from, text, message, is) => new Promise((resolve, rej
     secure: url.startsWith('https://'),
     history: [],
     threats: [],
+    uri: new URI(url)
   });
 });
