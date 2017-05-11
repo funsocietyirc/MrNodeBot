@@ -8,7 +8,7 @@ const _ = require('lodash');
 const gen = require('../generators/_imdbData');
 const logger = require('../../lib/logger');
 const ircTypography = require('../lib/_ircTypography');
-const short = require('../lib/_getShortService');
+const short = require('../lib/_getShortService')();
 
 module.exports = app => {
   // Register IMDB Command

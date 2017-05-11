@@ -9,7 +9,7 @@ const scriptInfo = {
 const _ = require('lodash');
 const gen = require('../generators/_youTubeVideoData');
 const logger = require('../../lib/logger');
-const shortService = require('../lib/_getShortService');
+const shortService = require('../lib/_getShortService')();
 const searchYoutube = require('../generators/_searchYoutubeVideos');
 const youTubeRoute = 'https://www.youtube.com/watch?v=';
 

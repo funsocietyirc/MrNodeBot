@@ -4,7 +4,7 @@ const scriptInfo = {
   desc: 'Grab a let me google that for you link',
   createdBy: 'IronY'
 };
-const gen = require('../lib/_getShortService');
+const gen = require('../lib/_getShortService')();
 const logger = require('../../lib/logger');
 const ircTypography = require('../lib/_ircTypography');
 

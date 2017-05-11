@@ -8,7 +8,7 @@ const _ = require('lodash');
 const util = require('util');
 const logger = require('../../lib/logger.js');
 const dict = require('../generators/_getUrbanDictionaryDefinition');
-const short = require('../lib/_getShortService');
+const short = require('../lib/_getShortService')();
 
 module.exports = app => {
   app.Commands.set('urban', {
