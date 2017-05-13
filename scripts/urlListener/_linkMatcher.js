@@ -17,13 +17,10 @@ module.exports = results => new Promise(resolve => {
   // No URI or URL
   if (!results.uri || !url) return resolve(results);
 
-  const segment = results.uri.segment;
-  const segmentCoded = results.uri.segmentCoded;
-
   switch (results.uri.domain()) {
     case 'youtube.com': // Youtube
     case 'youtu.be':
-      switch (segmentCoded(0)) {
+      switch (results.uri.segmentCoded(0)) {
         case 'embed':
         case 'watch':
           // Playlist
@@ -65,38 +62,39 @@ module.exports = results => new Promise(resolve => {
       }
       break;
     case 'imdb.com': // IMDB
-      if (segmentsCoded.indexOf('title') != -1) {
-        let titleId = segmentCoded(segmentsCoded.indexOf('title') + 1);
+      let segments = results.uri.segmentCoded();
+      if (segments.indexOf('title') != -1) {
+        let titleId = results.uri.segmentCoded(segments.indexOf('title') + 1);
         if (titleId.startsWith('tt')) return resolve(getImdb(titleId, results));
       }
       break;
     case 'imgur.com': // Imgur
-      if (uri.subdomain() == 'i') {
-        let segment = segmentCoded(0);
+      if (results.uri.subdomain() == 'i') {
+        let segment = results.uri.segmentCoded(0);
         if (!segment) break;
-        let imageId = results.segment.substr(0, segment.lastIndexOf('.'));
+        let imageId = segment.substr(0, segment.lastIndexOf('.'));
         if (!imageId) break;
         if (imageId) return resolve(getImgur('image', imageId, results));
       }
-      switch (segmentCoded(0)) {
+      switch (results.uri.segmentCoded(0)) {
         case 'image':
         case 'gallery':
-          if (segmentCoded(1)) return resolve(getImgur(segmentCoded(0), segmentCoded(1), results));
+          if (results.uri.segmentCoded(1)) return resolve(getImgur(results.uri.segmentCoded(0), results.uri.segmentCoded(1), results));
           break;
         case 'album':
         case 'a':
-          if (segmentCoded(1)) return resolve(getImgur('album', segmentCoded(1), results));
+          if (results.uri.segmentCoded(1)) return resolve(getImgur('album', results.uri.segmentCoded(1), results));
           break;
         default:
-          if (segment().length == 1) return resolve(getImgur('image', segmentCoded(0), results));
+          if (results.uri.segment().length == 1) return resolve(getImgur('image', results.uri.segmentCoded(0), results));
           break;
       }
       break;
     case 'github.com': // GitHub
-      if (segment().length >= 2) return resolve(getGitHub(segmentCoded(0), segmentCoded(1), results)); // 2: User, 3: Repo
+      if (results.uri.segment().length >= 2) return resolve(getGitHub(results.uri.segmentCoded(0), results.uri.segmentCoded(1), results)); // 2: User, 3: Repo
       break;
     case 'bitbucket.org': // BitBucket
-      if (segment().length >= 2) return resolve(getBitBucket(segmentCoded(0), segmentCoded(1), results)); // 2: User, 3: Repo
+      if (results.uri.segment().length >= 2) return resolve(getBitBucket(results.uri.segmentCoded(0), results.uri.segmentCoded(1), results)); // 2: User, 3: Repo
       break;
   }
 
