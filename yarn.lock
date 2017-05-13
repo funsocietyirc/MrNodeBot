@@ -543,8 +543,8 @@ cheerio@~0.20.0:
     jsdom "^7.0.2"
 
 clean-css@^3.3.0:
-  version "3.4.25"
-  resolved "https://registry.yarnpkg.com/clean-css/-/clean-css-3.4.25.tgz#9e9a52d5c1e6bc5123e1b2783fa65fe958946ede"
+  version "3.4.26"
+  resolved "https://registry.yarnpkg.com/clean-css/-/clean-css-3.4.26.tgz#55323b344ff3bcee684a2eac81c93df8fa73deeb"
   dependencies:
     commander "2.8.x"
     source-map "0.4.x"
@@ -766,8 +766,8 @@ deep-eql@^0.1.3:
     type-detect "0.1.1"
 
 deep-extend@~0.4.0:
-  version "0.4.1"
-  resolved "https://registry.yarnpkg.com/deep-extend/-/deep-extend-0.4.1.tgz#efe4113d08085f4e6f9687759810f807469e2253"
+  version "0.4.2"
+  resolved "https://registry.yarnpkg.com/deep-extend/-/deep-extend-0.4.2.tgz#48b699c27e334bf89f10892be432f6e4c7d34a7f"
 
 deep-is@~0.1.3:
   version "0.1.3"
@@ -1530,9 +1530,9 @@ i18next-sync-fs-backend@^0.1.0:
   dependencies:
     json5 "0.4.0"
 
-i18next@^8.2.0:
-  version "8.2.0"
-  resolved "https://registry.yarnpkg.com/i18next/-/i18next-8.2.0.tgz#24212d87774d1243e0c48c575331e2a53346b38e"
+i18next@^8.2.1:
+  version "8.2.1"
+  resolved "https://registry.yarnpkg.com/i18next/-/i18next-8.2.1.tgz#6d2e8884516c320b4020c5af63e0316be626ac95"
 
 iconv-lite@0.4.15:
   version "0.4.15"
@@ -2185,9 +2185,13 @@ mime-types@^2.0.10, mime-types@^2.1.11, mime-types@^2.1.12, mime-types@^2.1.3, m
   dependencies:
     mime-db "~1.27.0"
 
-mime@1.3.4, mime@^1.3.4:
+mime@1.3.4:
   version "1.3.4"
   resolved "https://registry.yarnpkg.com/mime/-/mime-1.3.4.tgz#115f9e3b6b3daf2959983cb38f149a2d40eb5d53"
+
+mime@^1.3.4:
+  version "1.3.6"
+  resolved "https://registry.yarnpkg.com/mime/-/mime-1.3.6.tgz#591d84d3653a6b0b4a3b9df8de5aa8108e72e5e0"
 
 minimatch@^3.0.0, minimatch@^3.0.2:
   version "3.0.4"
@@ -3101,7 +3105,7 @@ streamsearch@0.1.2:
   version "0.1.2"
   resolved "https://registry.yarnpkg.com/streamsearch/-/streamsearch-0.1.2.tgz#808b9d0e56fc273d809ba57338e929919a1a9f1a"
 
-string-width@^1.0.1:
+string-width@^1.0.1, string-width@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/string-width/-/string-width-1.0.2.tgz#118bdf5b8cdc51a2a7e70d211e07e2b0b9b107d3"
   dependencies:
@@ -3449,10 +3453,10 @@ which@^1.2.12:
     isexe "^2.0.0"
 
 wide-align@^1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/wide-align/-/wide-align-1.1.0.tgz#40edde802a71fea1f070da3e62dcda2e7add96ad"
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/wide-align/-/wide-align-1.1.2.tgz#571e0f1b0604636ebc0dfc21b0339bbe31341710"
   dependencies:
-    string-width "^1.0.1"
+    string-width "^1.0.2"
 
 window-size@0.1.0:
   version "0.1.0"
