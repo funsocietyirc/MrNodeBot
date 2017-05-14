@@ -12,6 +12,7 @@ const bitly = require('../generators/_getBitlyShort');
 module.exports = domain => {
 
   const secondary = !_.isEmpty(config.apiKeys.bitly) ? bitly :  isGd;
+
   // default
   const defaultShort = !_.isEmpty(config.apiKeys.google)
     ? google
