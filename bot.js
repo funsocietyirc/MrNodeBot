@@ -880,9 +880,9 @@ class MrNodeBot {
    * @param {string} target Nick / Channel to say it to
    * @param {string} message What to say
    */
-  say(target, message) {
+  say(target, message, processor) {
     if (!_.isString(message) || _.isEmpty(message.trim())) return;
-    let msg = preprocessText(message);
+    let msg = preprocessText(message, processor);
     logger.info(t('events.sentMessage', {
       target: target,
       message: c.stripColorsAndStyle(msg)

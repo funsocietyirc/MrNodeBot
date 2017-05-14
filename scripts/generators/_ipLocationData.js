@@ -1,6 +1,9 @@
 'use strict';
-const endPoint = 'https://freegeoip.net/json/';
+
 const rp = require('request-promise-native');
+const logger = require('../../lib/logger');
+
+const endPoint = 'https://freegeoip.net/json/';
 // Return GEO IP Data in the following format
 //     {
 //     ip: '',
@@ -18,15 +21,29 @@ const rp = require('request-promise-native');
 //
 // If the host is invalid, and the request fails, a empty object will be returned
 
-module.exports = host => new Promise((resolve, reject) => {
-  if (!host) {
-    reject(new Error('No host was provided.'));
-    return;
-  }
-  resolve(rp({
+module.exports = async(host) => {
+  let results = Object.assign({});
+  
+  if (!host)
+    throw new Error('No host was provided.');
+
+  try {
+    const request = await rp({
       uri: `${endPoint}${host}`,
-      json: true,
-    })
-    .catch(err => new Object())
-  );
-});
+      json: true
+    });
+
+    Object.assign(results, request);
+  }
+  // Catch Errors
+  catch (err) {
+    logger.error('Error in the _ipLocationData generator', {
+      message: err.message || '',
+      stack: err.stack || ''
+    });
+  }
+  // Return results
+  finally {
+    return results;
+  }
+};

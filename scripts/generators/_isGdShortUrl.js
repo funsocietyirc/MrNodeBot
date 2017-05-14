@@ -4,16 +4,31 @@
 //   text - URL to shorten
 // Returns:
 //   shorturl - The Good Url short link
-const endPoint = `https://is.gd/create.php`;
+const logger = require('../../lib/logger');
 const rp = require('request-promise-native');
 
-module.exports = text => rp({
-    uri: endPoint,
-    method: 'GET',
-    json: true,
-    qs: {
-      format: 'json',
-      url: text
-    }
-  })
-  .then(results => results.shorturl || '');
+const endPoint = `https://is.gd/create.php`;
+
+module.exports = async(text) => {
+  try {
+    const results = rp({
+      uri: endPoint,
+      method: 'GET',
+      json: true,
+      qs: {
+        format: 'json',
+        url: text
+      }
+    });
+
+    return results.shortUrl || '';
+
+  } catch (err) {
+    logger.error('Error in the _.isGdShortUrl generator', {
+      message: err.message || '',
+      stack: err.stack || ''
+    });
+
+    throw err;
+  }
+};
