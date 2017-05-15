@@ -146,7 +146,7 @@ module.exports = app => {
 
   // Subtract a topic segment
   app.Commands.set('topic-subtract', {
-    desc: 'Remove a segement from the channels topic',
+    desc: 'Remove a segment from the channels topic',
     access: app.Config.accessLevels.admin,
     call: async(to, from, text, message) => {
       // Bot is does not have permissions to modify topic
@@ -225,7 +225,7 @@ module.exports = app => {
         }
         // Report back
         app.say(to, `I have oh so personally delivered that information via private message ${from}`);
-        app.say(from, `Here are the topic segements for ${to}`);
+        app.say(from, `Here are the topic segments for ${to}`);
         topicSegments.forEach((r, x) => app.say(from, `[${x + 1}] ${r}`));
       }
       // Log Error

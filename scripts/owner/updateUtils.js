@@ -45,7 +45,7 @@ module.exports = app => {
     // Do git update
     shell.exec('git pull', {
       async: true,
-      sielnt: app.Config.bot.debug || false
+      silent: app.Config.bot.debug || false
     }, (code, stdout, stderr) => {
       // The Code did not exit properly
       if (code !== 0) {

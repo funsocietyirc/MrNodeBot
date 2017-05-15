@@ -73,27 +73,27 @@ module.exports = app => {
             output.insert('Parting')
               .insertBold(lastAction.channel)
               .insert(Moment(lastAction.timestamp).fromNow());
-            if (!lastSaid || lastAction.nick != lastSaid.from) output.insert('as').insertBold(lastAction.nick);
+            if (!lastSaid || lastAction.nick !== lastSaid.from) output.insert('as').insertBold(lastAction.nick);
             output.appendBold(lastAction.reason);
             break;
           case 'quit':
             output.insert('Quitting').insertBold(!_.isEmpty(lastAction.channels) ? `[${lastAction.channels.replace(',',', ')}]` : 'on');
             output.insert(Moment(lastAction.timestamp).fromNow());
-            if (!lastSaid || lastAction.nick != lastSaid.from) output.insert('as').insertBold(lastAction.nick);
+            if (!lastSaid || lastAction.nick !== lastSaid.from) output.insert('as').insertBold(lastAction.nick);
             output.insert(lastAction.reason);
             break;
           case 'kick':
             output.insert('Getting kicked from')
               .insertBold(lastAction.channel)
               .insert(lastAction.timestamp);
-            if (!lastSaid || lastAction.nick != lastSaid.from) output.insert('as').insertBold(lastAction.nick);
+            if (!lastSaid || lastAction.nick !== lastSaid.from) output.insert('as').insertBold(lastAction.nick);
             output.insert(lastAction.reason);
             break;
           case 'join':
             output.insert('Joining')
               .insertBold(lastAction.channel)
               .insert(Moment(lastAction.timestamp).fromNow());
-            if (!lastSaid || lastAction.nick != lastSaid.from) output.insert('as').insertBold(lastAction.nick);
+            if (!lastSaid || lastAction.nick !== lastSaid.from) output.insert('as').insertBold(lastAction.nick);
             break;
           case 'aliasOld':
             output.insert('Changing their nick to').insertBold(lastAction.newnick)

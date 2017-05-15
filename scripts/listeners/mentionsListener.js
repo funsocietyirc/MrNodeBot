@@ -32,7 +32,7 @@ module.exports = app => {
     // Filter out duplicates, and verify the users are in the channel
     results = _(results)
       .uniqBy(r => r.toLowerCase())
-      .filter(r => app._ircClient.isInChannel(to, r) && r.toLowerCase() != from.toLowerCase())
+      .filter(r => app._ircClient.isInChannel(to, r) && r.toLowerCase() !== from.toLowerCase())
       .value();
 
     // No results after filtering, bail

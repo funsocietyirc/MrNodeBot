@@ -29,7 +29,7 @@ module.exports = app => {
     app.say(nick, body);
 
     // Report back
-    if (nick != to) app.say(t('tell:reportBack', {
+    if (nick !== to) app.say(t('tell:reportBack', {
       nick,
       body
     }));

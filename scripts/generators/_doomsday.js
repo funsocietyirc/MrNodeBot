@@ -20,7 +20,8 @@ const pad = (min, input) => {
 const conf = {
   source: endPoint,
   selector: '.view-content .node-title',
-  title: /(?:(\d+)|(one|two|three|four|five|six|seven|eight|nine)(.*?half)) minutes to midnight/i
+    //language=JSRegexp
+    title: /(?:(\d+)|(one|two|three|four|five|six|seven|eight|nine)(.*?half)) minutes to midnight/i
 };
 
 /**

@@ -28,7 +28,7 @@ module.exports = app => {
   // Listen and Log
   const mrRobotQuoteLogging = (to, from, text, message) => {
     // False result
-    if (!text || to != '#MrRobot' || from != 'MrRobot' || _.includes(includeExceptions, text) || text.split(' ').length < 3) return;
+    if (!text || to !== '#MrRobot' || from !== 'MrRobot' || _.includes(includeExceptions, text) || text.split(' ').length < 3) return;
 
     quoteModel.query(qb => qb
         .select(['quote'])

@@ -69,8 +69,8 @@ module.exports = app => {
     let lowerCaseChannel = channel.toLowerCase();
     // Make sure we are not reporting ourselves
     if (
-      nick != app.nick &&
-      lowerCaseChannel != mainChannel &&
+      nick !== app.nick &&
+      lowerCaseChannel !== mainChannel &&
       !_.includes(app.Config.features.fsociety.greetIgnore, lowerCaseChannel) &&
       !app._ircClient.isInChannel(app.Config.features.fsociety.mainChannel, nick)
     ) {
@@ -102,7 +102,7 @@ module.exports = app => {
       .then(() => app.say(from, `Greet cache has been cleared for ${channel}`))
       .catch(err => {
         app.say(from, `Something went wrong clearing the greet cache for ${channel}`);
-        logger.error('Error in greet chache clear command', {
+        logger.error('Error in greet cache clear command', {
           err
         });
       });

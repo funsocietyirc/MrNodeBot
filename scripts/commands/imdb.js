@@ -22,7 +22,7 @@ module.exports = app => {
       }
       gen(text, 'title')
         .then(data => {
-          if (!data || data.Response == 'False') {
+          if (!data || data.Response === 'False') {
             app.say(to, 'Your IMDB request rendered no results, better luck next time');
             return;
           }

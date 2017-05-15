@@ -32,7 +32,7 @@ if (config.knex.engine === 'sqlite') knexBuilder.useNullAsDefault = true;
 const knex = require('knex')(knexBuilder);
 
 // Make sure sqlite uses UTF8
-if (config.knex.engine == 'sqlite') knex.raw('PRAGMA encoding = "UTF-8"');
+if (config.knex.engine === 'sqlite') knex.raw('PRAGMA encoding = "UTF-8"');
 
 // Update database to latest migration
 knex.migrate

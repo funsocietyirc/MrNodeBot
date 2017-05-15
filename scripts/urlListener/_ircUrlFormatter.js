@@ -22,7 +22,7 @@ module.exports = (results, app) => {
 
   // Output chain helper functions
   let output = '';
-  let space = () => output != '' ? ' ' + icons.sideArrow + ' ' : ' ';
+  let space = () => output !== '' ? ' ' + icons.sideArrow + ' ' : ' ';
   let append = text => {
     output = output + space() + text;
     return append;
@@ -32,11 +32,11 @@ module.exports = (results, app) => {
   if (results.history.length) {
     let history = _.first(results.history);
     let subOutput = '';
-    if (history.from != results.from) {
+    if (history.from !== results.from) {
       subOutput = subOutput + history.from;
     }
-    if (history.to != results.to) {
-      subOutput = subOutput + (history.from != results.from ? '/' : '') + history.to;
+    if (history.to !== results.to) {
+      subOutput = subOutput + (history.from !== results.from ? '/' : '') + history.to;
     }
     if (!_.isEmpty(subOutput)) {
       append(subOutput);
@@ -44,8 +44,8 @@ module.exports = (results, app) => {
   }
 
   // Print real URL
-  if (results.realUrl && results.url != results.realUrl && results.realUrl.length < 160) append(`${icons.anchor} ${c.navy(results.realUrl)}`);
-  else if (results.realUrl && results.url != results.realUrl) append(`${icons.anchor} ${c.red('URL Redirected')}`);
+  if (results.realUrl && results.url !== results.realUrl && results.realUrl.length < 160) append(`${icons.anchor} ${c.navy(results.realUrl)}`);
+  else if (results.realUrl && results.url !== results.realUrl) append(`${icons.anchor} ${c.red('URL Redirected')}`);
 
   // We have a Short URL
   if (!_.isEmpty(results.shortUrl) && !_.isEmpty(results.shortUrl) && results.url.length > config.features.urls.titleMin)
@@ -91,7 +91,7 @@ module.exports = (results, app) => {
       (_.capitalize(imdb.type));
     if (imdb.seasons) append(`${c.bold('Seasons:')} ${imdb.seasons}`);
     if (imdb.rated) append(`${c.bold('Rated:')} ${imdb.rated}`);
-    if (imdb.metaScore && imdb.metaScore != 'N/A') append(`${c.bold('MetaScore:')} ${imdb.metaScore}`);
+    if (imdb.metaScore && imdb.metaScore !== 'N/A') append(`${c.bold('MetaScore:')} ${imdb.metaScore}`);
 
     append(c[imdb.imdbRating < 5 ? 'red' : 'green'](`Rating: ${imdb.imdbRating}`))
       (`${icons.views} ${c.navy(imdb.imdbVotes)}`);
@@ -105,7 +105,7 @@ module.exports = (results, app) => {
     if (gh.isFork) append('Forked');
     if (gh.language) append(gh.language);
     if (gh.stars) append(`${icons.star} ${c.yellow(formatNumber(gh.stars))}`);
-    if (gh.views && gh.views != gh.stars) append(`${icons.views} ${c.navy(formatNumber(gh.watchers))}`);
+    if (gh.views && gh.views !== gh.stars) append(`${icons.views} ${c.navy(formatNumber(gh.watchers))}`);
     if (gh.forks) append(`${c.bold(`Forks:`)} ${formatNumber(gh.forks)}`);
     if (gh.issues) append(`${icons.sad} ${c.red(formatNumber(gh.issues))}`);
   }
@@ -122,11 +122,11 @@ module.exports = (results, app) => {
   else if (!_.isUndefined(results.imgur) && results.imgur.matchType === 'image') {
     let imgur = results.imgur;
     append(`${logos.imgur} Image`);
-    if (imgur.title && imgur.title != 'null') append(imgur.title);
+    if (imgur.title && imgur.title !== 'null') append(imgur.title);
     append(_.capitalize(imgur.type))
       (moment.unix(imgur.datetime).fromNow());
-    if (imgur.section && imgur.section != 'null') append(imgur.section);
-    if (imgur.description && imgur.description != 'null') append(imgur.description);
+    if (imgur.section && imgur.section !== 'null') append(imgur.section);
+    if (imgur.description && imgur.description !== 'null') append(imgur.description);
     append(`${imgur.width}x${imgur.height}`);
     if (imgur.animated) append('Animated');
     if (imgur.nswf) append(c.red('NSFW'));
@@ -136,11 +136,11 @@ module.exports = (results, app) => {
   else if (!_.isUndefined(results.imgur) && results.imgur.matchType === 'gallery') {
     let imgur = results.imgur;
     append(`${logos.imgur} Gallery`)(imgur.account_url);
-    if (imgur.title && imgur.title != 'null') append(imgur.title);
+    if (imgur.title && imgur.title !== 'null') append(imgur.title);
     append(moment.unix(imgur.datetime).fromNow());
-    if (imgur.description && imgur.description != null) append(imgur.description);
-    if (imgur.topic && imgur.topic != 'null') append(imgur.topic);
-    if (imgur.section && imgur.section != 'null') append(imgur.section);
+    if (imgur.description && imgur.description !== null) append(imgur.description);
+    if (imgur.topic && imgur.topic !== 'null') append(imgur.topic);
+    if (imgur.section && imgur.section !== 'null') append(imgur.section);
     append(`${imgur.images_count} ${imgur.images_count > 1 ? 'Images' : 'Image'}`)
     append(`${icons.views} ${c.navy(formatNumber(imgur.views))}`)
       (`${icons.happy} ${c.green(formatNumber(imgur.ups))}`)
@@ -153,21 +153,21 @@ module.exports = (results, app) => {
   else if (!_.isUndefined(results.imgur) && results.imgur.matchType === 'album') {
     let imgur = results.imgur;
     // This is not a public gallery
-    if (imgur.privacy != 'public') {
+    if (imgur.privacy !== 'public') {
       append('Private Imgur Album');
     } else {
       append(`${logos.imgur} Album`)(imgur.account_url);
-      if (imgur.title && imgur.title != 'null') append(imgur.title);
+      if (imgur.title && imgur.title !== 'null') append(imgur.title);
       append(moment.unix(imgur.datetime).fromNow());
-      if (imgur.description && imgur.description != null) append(imgur.description);
-      if (imgur.section && imgur.section != 'null') append(imgur.section);
+      if (imgur.description && imgur.description !== null) append(imgur.description);
+      if (imgur.section && imgur.section !== 'null') append(imgur.section);
       append(`${imgur.images_count} ${imgur.images_count > 1 ? 'Images' : 'Image'}`)
       append(`${icons.views} ${c.navy(formatNumber(imgur.views))}`);
       if (imgur.nswf) append(c.red('NSFW'));
     }
   }
   // We have title
-  else if (results.title && results.title != '') append(results.title);
+  else if (results.title && results.title !== '') append(results.title);
   // We have nothing but the malicious data
   else if (results.threats.length) append(`posted a malicious Link`);
   // Finished

@@ -33,7 +33,7 @@ module.exports = app => {
   };
 
   const onTweetData = tweet => {
-    // We do not have enought data, bail
+    // We do not have enough data, bail
     if (!tweet.user || !tweet.text) return;
 
     short(`${tweetStreamUrl}/${tweet.id_str}`)

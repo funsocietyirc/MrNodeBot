@@ -62,7 +62,7 @@ module.exports = app => {
     if (!result || !result[0] || !result[1] || !result[2]) return;
 
     // Trying to vote on yourself
-    if (result[1] == from) {
+    if (result[1] === from) {
       app.say(to, `It is considered incredibly condescending to cast a vote for yourself`);
       return;
     }
@@ -87,7 +87,7 @@ module.exports = app => {
         candidate: result[1],
         voter: from,
         channel: to,
-        result: result[2] == '+' ? 1 : -1,
+        result: result[2] === '+' ? 1 : -1,
         text: !_.isUndefined(result[3]) ? result[3] : null,
         host: message.host,
         user: message.user

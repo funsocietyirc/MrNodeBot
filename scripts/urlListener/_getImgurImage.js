@@ -18,7 +18,7 @@ module.exports = (type, key, results) => new Promise((resolve, reject) => {
         }
       })
       .then(data => {
-        if (!data.success || data.status != 200 || !data.data) return reject(new Error('Problem with result'));
+        if (!data.success || data.status !== 200 || !data.data) return reject(new Error('Problem with result'));
         results.imgur = data.data;
         results.imgur.matchType = type;
         resolve(results);

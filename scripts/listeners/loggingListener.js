@@ -1,7 +1,7 @@
 'use strict';
 const scriptInfo = {
   name: 'loggingListener',
-  desc: 'Log IRC evets to the database',
+  desc: 'Log IRC events to the database',
   createdBy: 'IronY'
 };
 const _ = require('lodash');

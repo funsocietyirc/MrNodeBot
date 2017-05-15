@@ -34,6 +34,8 @@ module.exports = async(host) => {
     });
 
     Object.assign(results, request);
+
+    return results;
   }
   // Catch Errors
   catch (err) {
@@ -41,9 +43,7 @@ module.exports = async(host) => {
       message: err.message || '',
       stack: err.stack || ''
     });
-  }
-  // Return results
-  finally {
+
     return results;
   }
 };

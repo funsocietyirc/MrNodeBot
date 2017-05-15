@@ -22,7 +22,7 @@ module.exports = (voter, candidate, channel) => new Promise((resolve, reject) =>
         .where('candidate', 'like', candidate)
         .andWhere('voter', 'like', voter)
         .groupBy('candidate')
-        .orderBy('result', 'desc')
+        .orderBy('result', 'desc');
       if (channel) qb.andWhere('channel', 'like', channel);
     })
     .fetch()

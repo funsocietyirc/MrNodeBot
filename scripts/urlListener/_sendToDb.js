@@ -25,7 +25,7 @@ module.exports = results => new Promise(resolve => {
   // If we have a google URL key
   if (!_.isUndefined(config.apiKeys.google) && _.isString(config.apiKeys.google) && !_.isEmpty(config.apiKeys.google))
     // And the threat array is not empty, record the link is malicious
-    data.threat = !_.isEmpty(results.threats) ? true : false;
+    data.threat = !_.isEmpty(results.threats);
 
   // Do the magic
   return Models.Url.create(data)

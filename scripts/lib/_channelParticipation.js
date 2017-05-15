@@ -13,7 +13,7 @@ const moment = require('moment');
 const logger = require('../../lib/logger');
 
 const defaultUsageOptions = {
-  timeUnit: 1, // Numberic Time  measurement
+  timeUnit: 1, // Numeric Time  measurement
   timeMeasure: 'months', // String Time Unit, (Moment.js)
   timeOperator: '>=', // Operator to compare time elements
   nicks: [], // Nicks to filter on
@@ -45,7 +45,7 @@ module.exports = (channel, options) => new Promise((resolve, reject) => {
 
   // Query
   Models.Logging.query(qb => {
-      // Starty The query
+      // Start The query
       qb
         .select([
           'from as nick',
@@ -85,6 +85,6 @@ module.exports = (channel, options) => new Promise((resolve, reject) => {
       logger.error('DB Error in getChannelUsage', {
         err
       });
-      reject(new Error('A database error occured'));
+      reject(new Error('A database error occurred'));
     });
 });

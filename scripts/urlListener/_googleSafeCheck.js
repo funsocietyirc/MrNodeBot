@@ -32,6 +32,4 @@ module.exports = results => new Promise(resolve => {
       });
       resolve(results);
     });
-
-  resolve(results);
 });

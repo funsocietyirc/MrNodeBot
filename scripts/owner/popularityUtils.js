@@ -31,7 +31,7 @@ module.exports = app => {
           logger.error('Error in popularityClear command', {
             err
           });
-          app.say(to, `An Error has occured with your popularity-clear command`);
+          app.say(to, `An Error has occurred with your popularity-clear command`);
         });
     }
   });
@@ -56,10 +56,10 @@ module.exports = app => {
         .destroy()
         .then(result => app.say(to, `All popularity results for ${nick} on ${channel} have been removed`))
         .catch(err => {
-          logger.error('Error in pupularityPurge command', {
+          logger.error('Error in popularityPurge command', {
             err
           });
-          app.say(to, `An Error has occured with your popularity-clear command`);
+          app.say(to, `An Error has occurred with your popularity-clear command`);
         });
     }
   });

@@ -62,10 +62,10 @@ module.exports = app => {
     .then(() => {
       // Clean up when done
       cleanImages(false);
-      app.say(to, 'The Image URL enteries have been successfully rebuilt');
+      app.say(to, 'The Image URL entries have been successfully rebuilt');
     });
 
-  // Destory All images in the URL Table
+  // Destroy All images in the URL Table
   const destroyImages = (to, from, text, message) =>
     Models.Url.query(qb =>
       qb
@@ -153,7 +153,7 @@ module.exports = app => {
 
   // Command to clean URLS
   app.Commands.set('clean-images', {
-    desc: 'clean images from the logging database if they are no longer relevent',
+    desc: 'clean images from the logging database if they are no longer relevant',
     access: app.Config.accessLevels.owner,
     call: to => cleanImages(to)
   });

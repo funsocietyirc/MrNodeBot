@@ -63,13 +63,13 @@ module.exports = results => new Promise(resolve => {
       break;
     case 'imdb.com': // IMDB
       let segments = results.uri.segmentCoded();
-      if (segments.indexOf('title') != -1) {
+      if (segments.indexOf('title') !== -1) {
         let titleId = results.uri.segmentCoded(segments.indexOf('title') + 1);
         if (titleId.startsWith('tt')) return resolve(getImdb(titleId, results));
       }
       break;
     case 'imgur.com': // Imgur
-      if (results.uri.subdomain() == 'i') {
+      if (results.uri.subdomain() === 'i') {
         let segment = results.uri.segmentCoded(0);
         if (!segment) break;
         let imageId = segment.substr(0, segment.lastIndexOf('.'));
@@ -86,7 +86,7 @@ module.exports = results => new Promise(resolve => {
           if (results.uri.segmentCoded(1)) return resolve(getImgur('album', results.uri.segmentCoded(1), results));
           break;
         default:
-          if (results.uri.segment().length == 1) return resolve(getImgur('image', results.uri.segmentCoded(0), results));
+          if (results.uri.segment().length === 1) return resolve(getImgur('image', results.uri.segmentCoded(0), results));
           break;
       }
       break;

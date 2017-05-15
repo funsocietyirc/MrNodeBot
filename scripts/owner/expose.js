@@ -42,9 +42,9 @@ module.exports = app => {
     if (mapSearch(tokens, to)) {
       app.say(to, `${to} is already exposed ${from}`);
       return;
-    };
+    }
 
-    let token = ''
+    let token = '';
     do {
       token = randToken.generate(8);
     } while (tokens.has(token));

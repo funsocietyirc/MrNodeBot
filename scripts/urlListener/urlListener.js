@@ -1,6 +1,6 @@
 'use strict';
 //   MrNodeBot URL Announce feature:
-//     This will take in a line of text, parse it for URLS, it will then itterate through
+//     This will take in a line of text, parse it for URLS, it will then iterate through
 //     each url and grab meta data on it. This includes checking if the URL is alive,
 //     grabbing the request header params, checking content type, extracting title. The url is also
 //     ran against matches for other APIS used to extract data, such has youtube/imdb..

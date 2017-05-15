@@ -17,7 +17,7 @@ module.exports = app => {
     access: app.Config.accessLevels.owner,
     call: (to, from, text, message) => {
       let oldNick = app.nick;
-      if (app.nick == text || _.isEmpty(text)) {
+      if (app.nick === text || _.isEmpty(text)) {
         app.say(to, `I am already ${app.nick}, what else would you like me to go by ${from}`);
         return;
       }
@@ -116,7 +116,7 @@ module.exports = app => {
         // app.say(to, `I can feel ${config.nick} kicking ${from}!`);
         instance.join(to, () => gen(amount).then(results => Models.Logging.query(qb => qb.select('text').where('from', 'like', nick).orderByRaw('rand()').limit(amount)).fetchAll().then(logs => new Promise((res, rej) => {
           // Hold All The Promises
-          let promises = []
+          let promises = [];
           let key = 0;
 
           // The person we are spawning is in the channel
@@ -128,7 +128,7 @@ module.exports = app => {
 
           // We have no results
           if (!logs.length)
-            _.each(results, result => promises.push(new Promise(r => setTimeout(() => r(instance.say(to, result)), ++key * 2500)))); // We have resutls
+            _.each(results, result => promises.push(new Promise(r => setTimeout(() => r(instance.say(to, result)), ++key * 2500)))); // We have results
           else
             _.each(logs.toJSON(), log => promises.push(new Promise(r => setTimeout(() => r(instance.say(to, log.text)), ++key * 2500))));
 

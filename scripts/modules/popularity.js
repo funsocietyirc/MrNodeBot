@@ -55,7 +55,7 @@ module.exports = app => {
         logger.error('Error in popularityFeels command', {
           err
         });
-        app.say(to, `An Error has occured with your popularity-feels command`);
+        app.say(to, `An Error has occurred with your popularity-feels command`);
       }
     }
   });
@@ -82,10 +82,10 @@ module.exports = app => {
 
         app.say(from, `Mean Score: ${result.meanScore} Total Score: ${typo.colorSignedNumber(result.totalScore)} Total Votes: ${result.totalVotes}`);
       } catch (err) {
-        logger.error('Error in pupularityRaking command', {
+        logger.error('Error in popularityRaking command', {
           err
         });
-        app.say(to, `An Error has occured with your popularity-ranking command`);
+        app.say(to, `An Error has occurred with your popularity-ranking command`);
 
       }
     }
@@ -126,7 +126,7 @@ module.exports = app => {
           err
         });
 
-        app.say(to, `An Error has occured with your popularity-contest command`);
+        app.say(to, `An Error has occurred with your popularity-contest command`);
       }
 
     }
@@ -158,11 +158,11 @@ module.exports = app => {
               ? typo.icons.happy
               : typo.icons.sad}`);
       } catch (err) {
-        logger.error('Error in pupularity command', {
+        logger.error('Error in popularity command', {
           err
         });
 
-        app.say(to, `An Error has occured with your popularity command`);
+        app.say(to, `An Error has occurred with your popularity command`);
       }
     }
   });

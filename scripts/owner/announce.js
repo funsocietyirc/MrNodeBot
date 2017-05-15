@@ -26,7 +26,7 @@ module.exports = app => {
     // IRC Client does not seem to be available
     if (_.isUndefined(app._ircClient) || !_.isArray(app.channels) || _.isEmpty(app.channels)) return;
     app.channels.forEach(channel => {
-      if (channel == to.toLowerCase()) app.say(channel, 'Your announcement has been made successfully.');
+      if (channel === to.toLowerCase()) app.say(channel, 'Your announcement has been made successfully.');
       else app.say(channel, text);
     });
   };

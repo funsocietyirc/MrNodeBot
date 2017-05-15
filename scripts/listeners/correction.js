@@ -52,7 +52,7 @@ module.exports = app => {
       return;
 
     // Remove any trailing delimiters
-    if (text[text.length - 1] == delimiter)
+    if (text[text.length - 1] === delimiter)
       text = text.slice(0, -1);
 
     // Remove the trigger, and escape double delimiters with special char
@@ -96,7 +96,7 @@ module.exports = app => {
     if (!results || !results.length) 
       return;
 
-    // Interate over the database results
+    // Iterate over the database results
     results.forEach(result => {
       let resultText = result.get('text');
       let resultFrom = result.get('from');
@@ -111,7 +111,7 @@ module.exports = app => {
       // Set the found flag
       found = true;
 
-      // Is the corector the correctee
+      // Is the corrector the corrected
       let isSamePerson = resultFrom === from && resultTo === to;
 
       // Make final replacement, and bail if it ends up an empty string
@@ -119,8 +119,8 @@ module.exports = app => {
       if (!finalReplacement)
         return;
 
-      // The correctee and the corrector are the same person, modify the database
-      // This will allow for chaning
+      // The corrected and the corrector are the same person, modify the database
+      // This will allow for chaining
       if (isSamePerson) {
         result.set('text', finalReplacement);
         result.save();

@@ -155,7 +155,7 @@ module.exports = app => {
     }
 
     // Insignificant information
-    if (!whoisResults || (!whoisResults.user && subCommand == 'ident')) {
+    if (!whoisResults || (!whoisResults.user && subCommand === 'ident')) {
       app.say(to, 'The user is either offline or I do not have any information on them');
       return;
     }
@@ -244,7 +244,7 @@ module.exports = app => {
     let subCommand = txtArray.shift();
     let argument = txtArray.shift();
 
-    if (nick == app.nick) {
+    if (nick === app.nick) {
       app.say(from, 'I have never really been good at self analysis');
       return;
     }

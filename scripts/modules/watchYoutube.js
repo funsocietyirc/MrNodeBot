@@ -64,7 +64,7 @@ module.exports = app => {
     // Join the active channel
     connection.join(activeChannel);
 
-    // // Listen for any reponses
+    // // Listen for any responses
     connection.removeAllListeners('new-reply');
     connection.on('new-reply', data => socket.to(activeChannel).emit('queue', data));
 

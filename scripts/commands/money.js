@@ -9,7 +9,7 @@ require('lodash-addons');
 const request = require('request-promise-native');
 const logger = require('../../lib/logger');
 const scheduler = require('../../lib/scheduler');
-// Get a monatary symbol
+// Get a monetary symbol
 const getSymbol = require('currency-symbol-map');
 // Money and Accounting
 const fx = require('money');
@@ -22,7 +22,7 @@ module.exports = app => {
   // Base currency
   const baseCur = _.getString(_.get(app.Config, 'features.exchangeRate.base'), 'USD').toUpperCase();
   const updateScheduleTime = _.get(app.Config, 'features.exchangeRate.updateScheduleTime', {
-    hour: [...Array(24).keys()], // Every hour
+    hour: [...new Array(24).keys()], // Every hour
     minute: 0 // On the hour
   });
 
@@ -129,7 +129,7 @@ module.exports = app => {
         to: cTo
       });
 
-      // Format result and amount throught accounting.js
+      // Format result and amount through accounting.js
       result = accounting.formatMoney(result, {
         symbol: getSymbol(cTo) || ''
       });

@@ -58,7 +58,7 @@ const colorSignedNumber = num => {
   if (num > 0) return c.green(num);
   if (num < 50) return c.red(num);
   return c.blue(num);
-}
+};
 
 // IRC Title line, Bold
 const title = text => c.bold(text);
@@ -148,7 +148,7 @@ class StringBuilder {
   get text() {
     return this.toString();
   };
-};
+}
 
 
 // Exports

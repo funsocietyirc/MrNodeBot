@@ -11,7 +11,7 @@ module.exports = (key, results) => new Promise(resolve => {
   return gen(key, 'id')
     .then(data => {
       // No Data, or malformed data, bail
-      if (!data || !data.Response || data.Response == 'False') return resolve(results);
+      if (!data || !data.Response || data.Response === 'False') return resolve(results);
       // Append Results
       results.imdb = {
         title: data.Title,

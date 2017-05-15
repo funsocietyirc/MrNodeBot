@@ -258,7 +258,7 @@ class MrNodeBot {
 
   /**
    * Extension Loader
-   * @description Read all JS files in the script diectories and require them.
+   * @description Read all JS files in the script directories and require them.
    * @param {string} dir Directory to load scripts from
    * @param {boolean} [clearCache] - Should the files be cleared from the node cache
    */
@@ -734,7 +734,7 @@ class MrNodeBot {
     // Grab Command
     let command = this.Commands.get(cmd);
 
-    // The user is the owner, them them throught
+    // The user is the owner, let them through
     if (
       // User is the owner, let them through
       (from === this.Config.owner.nick && message.host === this.Config.owner.host) ||

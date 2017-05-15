@@ -73,7 +73,7 @@ module.exports = app => {
           //showSourceText: 1, // Show Source Text for debugging
           extract: 'taxonomy,concept,doc-sentiment,doc-emotion'
         }, (err, response) => {
-          if (err || !response || response.status != 'OK') {
+          if (err || !response || response.status !== 'OK') {
             app.say(to, 'Something went wrong completing your combined command');
             logger.error('Sentiment Error', {
               err
@@ -132,7 +132,7 @@ module.exports = app => {
           //showSourceText: 1, // Show Source Text for debugging
           extract: 'taxonomy,concept,doc-sentiment,doc-emotion'
         }, (err, response) => {
-          if (err || !response || response.status != 'OK') {
+          if (err || !response || response.status !== 'OK') {
             app.say(to, 'Something went wrong completing your combined command');
             logger.error('Sentiment Error', {
               err

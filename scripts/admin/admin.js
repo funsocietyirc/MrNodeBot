@@ -72,7 +72,7 @@ module.exports = app => {
         }
 
         // Adding the bot to the admin list
-        if (user.toLowerCase() == app.nick.toLowerCase()) {
+        if (user.toLowerCase() === app.nick.toLowerCase()) {
           app.say(from, t('admin:cannotAddBot'));
           return;
         }
@@ -88,7 +88,7 @@ module.exports = app => {
         break;
         // Delete Administrator
       case 'del':
-        if (user.toLowerCase() == app.nick.toLowerCase()) {
+        if (user.toLowerCase() === app.nick.toLowerCase()) {
           app.say(from, t('admin:cannotAddBot'));
           return;
         }
@@ -104,7 +104,7 @@ module.exports = app => {
         }
 
         // Exit if trying to remove owner
-        if (user == _.toLower(app.Config.owner.nick)) {
+        if (user === _.toLower(app.Config.owner.nick)) {
           app.say(from, t('admin:cannotRemove', {
             nick: cappedUser
           }));
