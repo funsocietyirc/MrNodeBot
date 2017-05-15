@@ -45,7 +45,7 @@ module.exports = (channel, options) => new Promise((resolve, reject) => {
 
   // Query
   Models.Logging.query(qb => {
-      // Start The query
+      // Start the query
       qb
         .select([
           'from as nick',
@@ -62,7 +62,7 @@ module.exports = (channel, options) => new Promise((resolve, reject) => {
           clause.andWhere('timestamp', options.timeOperator, options.compiledTime);
         })
         .andWhere(clause => {
-          // If we have been given a non empty array of nicks
+          // If we have been given a non-empty array of nicks
           if (_.isArray(options.nicks) && options.nicks.length) {
             clause.where('from', 'like', options.nicks.shift());
             _.each(options.nicks, nick => clause.orWhere('from', 'like', nick));
