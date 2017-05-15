@@ -50,7 +50,7 @@ module.exports = app => {
     setTimeout(() => {
       if (
         _.includes(darkChannels, channel) && (!app._ircClient.isTopicLocked(channel) || app._ircClient.isOpInChannel(channel)) &&
-        (!_.includes(topic, app.Config.features.fsociety.mainChannel) || topic == '')
+        (!_.includes(topic, app.Config.features.fsociety.mainChannel) || topic === '')
       ) app._ircClient.send('topic', channel, `${topic} | ${app.Config.features.fsociety.mainChannel}`);
     }, 5000);
   };

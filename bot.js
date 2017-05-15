@@ -54,7 +54,7 @@ class MrNodeBot {
 
     /** Configuration Object */
     this.Config = require(configPath || './config');
-    // Failsafe to prevent against autoconnect
+    // Fail-safe to prevent against auto-connect
     this.Config.irc.autoConnect = false;
 
     /** Script Directories */
@@ -87,7 +87,7 @@ class MrNodeBot {
     this._initDbSubSystem();
 
     /** Web Server Instance */
-    this.Webserver = null;
+    this.WebServer = null;
     this._initWebServer();
 
     /** User Manager */
@@ -100,14 +100,14 @@ class MrNodeBot {
   };
 
   /** Log Errors **/
-  _errorHandler(message, err) {
+  static _errorHandler(message, err) {
     logger.error(message, {
       err: err.message || '',
       stack: err.stack || ''
     });
   };
 
-  /** Initalize Web Server */
+  /** Initialize Web Server */
   _initWebServer() {
     logger.info(t('webServer.starting'));
     this.WebServer = require('./web/server')(this);
@@ -159,7 +159,7 @@ class MrNodeBot {
       }))
       // If there is a password and we are on the same nick we were configured for, identify
       .then(() => {
-        if (!this.Config.nickserv.password || this.Config.irc.nick != this._ircClient.nick) return;
+        if (!this.Config.nickserv.password || this.Config.irc.nick !== this._ircClient.nick) return;
         let first = this.Config.nickserv.host ? `@${this.Config.nickserv.host}` : '';
         let nickserv = `${this.Config.nickserv.nick}${first}`;
         this._ircClient.say(nickserv, `identify ${this.Config.nickserv.password}`);
@@ -171,35 +171,35 @@ class MrNodeBot {
         logger.info(t('listeners.init'));
         _({
             // Handle OnAction
-            action: (nick, to, text, message) => this._handleAction(nick, to, text, message),
-            // Handle On First Line recieved from IRC Client
+            'action': (nick, to, text, message) => this._handleAction(nick, to, text, message),
+            // Handle On First Line received from IRC Client
             'registered': message => this._handleRegistered(message),
             // Handle Channel Messages
             'message#': (nick, to, text, message) => this._handleCommands(nick, to, text, message),
             // Handle Private Messages
-            pm: (nick, text, message) => this._handleCommands(nick, nick, text, message),
+            'pm': (nick, text, message) => this._handleCommands(nick, nick, text, message),
             // Handle Notices, also used to check validation for NickServ requests
-            notice: (nick, to, text, message) => {
+            'notice': (nick, to, text, message) => {
               // Check for auth command, return if we have one
               if (_.toLower(nick) === _.toLower(this.Config.nickserv.nick)) this._handleAuthenticatedCommands(nick, to, text, message);
               else this._handleOnNotice(nick, to, text, message);
             },
             // Handle CTCP Requests
-            ctcp: (nick, to, text, type, message) => this._handleCtcpCommands(nick, to, text, type, message),
+            'ctcp': (nick, to, text, type, message) => this._handleCtcpCommands(nick, to, text, type, message),
             // Handle Nick changes
-            nick: (oldnick, newnick, channels, message) => this._handleNickChanges(oldnick, newnick, channels, message),
+            'nick': (oldnick, newnick, channels, message) => this._handleNickChanges(oldnick, newnick, channels, message),
             // Handle Joins
-            join: (channel, nick, message) => this._handleOnJoin(channel, nick, message),
+            'join': (channel, nick, message) => this._handleOnJoin(channel, nick, message),
             // Handle On Parts
-            part: (channel, nick, reason, message) => this._handleOnPart(channel, nick, reason, message),
+            'part': (channel, nick, reason, message) => this._handleOnPart(channel, nick, reason, message),
             // Handle On Kick
-            kick: (channel, nick, by, reason, message) => this._handleOnKick(channel, nick, by, reason, message),
+            'kick': (channel, nick, by, reason, message) => this._handleOnKick(channel, nick, by, reason, message),
             // Handle On Quit
-            quit: (nick, reason, channels, message) => this._handleOnQuit(nick, reason, channels, message),
+            'quit': (nick, reason, channels, message) => this._handleOnQuit(nick, reason, channels, message),
             // Handle Topic changes
-            topic: (channel, topic, nick, message) => this._handleOnTopic(channel, topic, nick, message),
+            'topic': (channel, topic, nick, message) => this._handleOnTopic(channel, topic, nick, message),
             // Catch all to prevent drop on error
-            error: message => {}
+            'error': message => {}
           })
           // Add the listeners to the IRC Client
           .each((value, key) => this._ircClient.addListener(key, value));
@@ -209,7 +209,7 @@ class MrNodeBot {
         try {
           x.call();
         } catch (err) {
-          this._errorHandler('Error in onConnected', err);
+          MrNodeBot._errorHandler('Error in onConnected', err);
         }
       }))
       // Run The callback
@@ -218,7 +218,7 @@ class MrNodeBot {
       });
   };
 
-  /** Initialize Databse Subsystem */
+  /** Initialize Database Subsystem */
   _initDbSubSystem() {
     // We have a Database available
     if (this.Config.knex.enabled) {
@@ -228,7 +228,7 @@ class MrNodeBot {
       return;
     }
 
-    // We haave no Database available
+    // We have no Database available
     logger.error(t('database.missing', {
       feature: 'Database Core'
     }));
@@ -252,7 +252,7 @@ class MrNodeBot {
    * Clear file from Node cache
    * @param {string} fullPath Path to cached file
    */
-  _clearCache(fullPath) {
+  static _clearCache(fullPath) {
     require.uncache(require.resolve(fullPath));
   };
 
@@ -260,7 +260,7 @@ class MrNodeBot {
    * Extension Loader
    * @description Read all JS files in the script diectories and require them.
    * @param {string} dir Directory to load scripts from
-   * @param {bool} [clearCache] - Should the files be cleared from the node cache
+   * @param {boolean} [clearCache] - Should the files be cleared from the node cache
    */
   _loadScriptsFromDir(dir, clearCache) {
     logger.info(t('scripts.initializing', {
@@ -277,12 +277,12 @@ class MrNodeBot {
         let fullPath = `${normalizedPath}${path.sep}${file}`;
         // Attempt to Load the module
         try {
-          // Clear the chache if specified
+          // Clear the cache if specified
           if (clearCache === true && !_.endsWith(file, 'Store.js')) {
-            this._clearCache(fullPath);
+            MrNodeBot._clearCache(fullPath);
           }
           // If we are not dealing with a partial file _something.js
-          if (file[0] != '_' && _.endsWith(file, '.js')) {
+          if (file[0] !== '_' && _.endsWith(file, '.js')) {
             logger.info(t('scripts.loaded', {
               file
             }));
@@ -295,7 +295,7 @@ class MrNodeBot {
             this.LoadedScripts.push(scriptInfo);
           }
         } catch (err) {
-          this._errorHandler(t('scripts.error', {
+          MrNodeBot._errorHandler(t('scripts.error', {
             path: fullPath
           }), err);
         }
@@ -336,7 +336,7 @@ class MrNodeBot {
 
   /** Read the configuration and alias any commands specified*/
   _createCommandAliases() {
-    // Read in command rebindings
+    // Read in command rebinding
     if (!this.Config.commandBindings || !_.isArray(this.Config.commandBindings)) return;
 
     this.Config.commandBindings.forEach(commandBinding => {
@@ -364,7 +364,7 @@ class MrNodeBot {
 
   /**
    * Reload all dynamic assets
-   * @param {bool} [clearCahce=false] Should the assets also be uncached
+   * @param {boolean} [clearCache=false] Should the assets also be un-cached
    */
   _loadDynamicAssets(clearCache = false) {
     // Clear dynamic assets
@@ -401,8 +401,8 @@ class MrNodeBot {
   };
 
   /**
-   *  Boostrap the Bot, by either killing the process or reloading dynamic assets
-   * @param {bool} [hard=false] Should We terminate the process
+   *  Bootstrap the Bot, by either killing the process or reloading dynamic assets
+   * @param {boolean} [hard=false] Should We terminate the process
    */
   Bootstrap(hard = false) {
     if (hard) {
@@ -416,10 +416,10 @@ class MrNodeBot {
   };
 
   /**
-   *  Normalie text, replacing non print chars with nothing and fake space chars with a real space
+   *  Normalize text, replacing non print chars with nothing and fake space chars with a real space
    * @param {string} text The text to normalize
    */
-  _normalizeText(text) {
+  static _normalizeText(text) {
     if (_.isUndefined(text) || !_.isString(text)) return text;
     return c
       .stripColorsAndStyle(text) // Strip styles and color
@@ -436,14 +436,14 @@ class MrNodeBot {
    * @param {object} message IRC information such as user, and host
    */
   _handleAction(from, to, text, message) {
-    text = this._normalizeText(text);
+    text = MrNodeBot._normalizeText(text);
     // Do not handle our own actions, or those on the ignore list
-    if (from == this.nick || _.includes(this.Ignore, _.toLower(from))) return;
+    if (from === this.nick || _.includes(this.Ignore, _.toLower(from))) return;
     this.OnAction.forEach((value, key) => {
       try {
         value.call(from, to, text, message);
       } catch (err) {
-        this._errorHandler(t('errors.genericError', {
+        MrNodeBot._errorHandler(t('errors.genericError', {
           command: 'onAction'
         }), err);
       }
@@ -469,7 +469,7 @@ class MrNodeBot {
       try {
         value.call(oldnick, newnick, channels, message);
       } catch (err) {
-        this._errorHandler(t('errors.genericError', {
+        MrNodeBot._errorHandler(t('errors.genericError', {
           command: 'nickChange'
         }), err);
       }
@@ -485,13 +485,13 @@ class MrNodeBot {
    */
   _handleOnNotice(from, to, text, message) {
     // Do not handle our own actions, or those on the ignore list
-    if (from == this.nick || _.includes(this.Ignore, _.toLower(from))) return;
+    if (from === this.nick || _.includes(this.Ignore, _.toLower(from))) return;
 
     this.OnNotice.forEach((value, key) => {
       try {
         value.call(from, to, text, message);
       } catch (err) {
-        this._errorHandler(t('errors.genericError', {
+        MrNodeBot._errorHandler(t('errors.genericError', {
           command: 'onNotice'
         }), err);
       }
@@ -508,7 +508,7 @@ class MrNodeBot {
     // Handle Ignore
     if (_.includes(this.Ignore, _.toLower(nick))) return;
 
-    if (nick == this.nick) logger.info(t('events.channelJoined', {
+    if (nick === this.nick) logger.info(t('events.channelJoined', {
       channel
     }));
 
@@ -516,7 +516,7 @@ class MrNodeBot {
       try {
         value.call(channel, nick, message);
       } catch (err) {
-        this._errorHandler(t('errors.genericError', {
+        MrNodeBot._errorHandler(t('errors.genericError', {
           command: 'onJoin'
         }), err);
       }
@@ -531,12 +531,12 @@ class MrNodeBot {
    * @param {object} message IRC information such as user, and host
    */
   _handleOnPart(channel, nick, reason, message) {
-    reason = this._normalizeText(reason);
+    reason = MrNodeBot._normalizeText(reason);
 
     // Handle Ignore
     if (_.includes(this.Ignore, _.toLower(nick))) return;
 
-    if (nick == this.nick) logger.info(t('events.channelParted', {
+    if (nick === this.nick) logger.info(t('events.channelParted', {
       channel,
       reason
     }));
@@ -545,7 +545,7 @@ class MrNodeBot {
       try {
         value.call(channel, nick, reason, message);
       } catch (err) {
-        this._errorHandler(t('errors.genericError', {
+        MrNodeBot._errorHandler(t('errors.genericError', {
           command: 'onPart'
         }), err);
       }
@@ -561,18 +561,18 @@ class MrNodeBot {
    * @param {object} message IRC information such as user, and host
    */
   _handleOnKick(channel, nick, by, reason, message) {
-    reason = this._normalizeText(reason);
+    reason = MrNodeBot._normalizeText(reason);
 
     //  Handle Ignore
     if (_.includes(this.Ignore, _.toLower(nick))) return;
 
-    if (nick == this.nick) logger.info(t('events.kickLoggingBy', {
+    if (nick === this.nick) logger.info(t('events.kickLoggingBy', {
       channel,
       by,
       reason
     }));
 
-    if (by == this.nick) logger.info(t('events.kickLoggingFrom', {
+    if (by === this.nick) logger.info(t('events.kickLoggingFrom', {
       nick,
       channel,
       reason
@@ -582,7 +582,7 @@ class MrNodeBot {
       try {
         value.call(channel, nick, by, reason, message);
       } catch (err) {
-        this._errorHandler(t('errors.genericError', {
+        MrNodeBot._errorHandler(t('errors.genericError', {
           command: 'onKick'
         }), err);
       }
@@ -597,11 +597,11 @@ class MrNodeBot {
    * @param {object} message IRC information such as user, and host
    */
   _handleOnQuit(nick, reason, channels, message) {
-    reason = this._normalizeText(reason);
+    reason = MrNodeBot._normalizeText(reason);
     //  Handle Ignore
     if (_.includes(this.Ignore, _.toLower(nick))) return;
 
-    if (nick == this.nick) logger.info(t('events.quitLogging', {
+    if (nick === this.nick) logger.info(t('events.quitLogging', {
       channels: channels.join(', '),
       reason
     }));
@@ -610,7 +610,7 @@ class MrNodeBot {
       try {
         value.call(nick, reason, channels, message);
       } catch (err) {
-        this._errorHandler(t('errors.genericError', {
+        MrNodeBot._errorHandler(t('errors.genericError', {
           command: 'onQuit'
         }), err);
       }
@@ -625,11 +625,11 @@ class MrNodeBot {
    * @param {object} message IRC information such as user, and host
    */
   _handleOnTopic(channel, topic, nick, message) {
-    topic = this._normalizeText(topic);
+    topic = MrNodeBot._normalizeText(topic);
     //  Handle Ignore
     if (_.includes(this.Ignore, _.toLower(nick))) return;
 
-    if (nick == this.nick) logger.info(t('events.topicLogging', {
+    if (nick === this.nick) logger.info(t('events.topicLogging', {
       channel,
       topic
     }));
@@ -638,7 +638,7 @@ class MrNodeBot {
       try {
         value.call(channel, topic, nick, message);
       } catch (err) {
-        this._errorHandler(t('errors.genericError', {
+        MrNodeBot._errorHandler(t('errors.genericError', {
           command: 'opTopic'
         }), err);
       }
@@ -654,16 +654,16 @@ class MrNodeBot {
    * @param {object} message IRC information such as user, and host
    */
   _handleCtcpCommands(from, to, text, type, message) {
-    text = this._normalizeText(text);
+    text = MrNodeBot._normalizeText(text);
 
     //  Bail on self or ignore
-    if (from == this.nick || _.includes(this.Ignore, _.toLower(from)) || (type == 'privmsg' && text.startsWith('ACTION'))) return;
+    if (from === this.nick || _.includes(this.Ignore, _.toLower(from)) || (type === 'privmsg' && text.startsWith('ACTION'))) return;
 
     this.OnCtcp.forEach((value, key) => {
       try {
         value.call(from, to, text, type, message);
       } catch (err) {
-        this._errorHandler(t('errors.genericError', {
+        MrNodeBot._errorHandler(t('errors.genericError', {
           command: 'ctcpCommands'
         }), err);
       }
@@ -681,7 +681,7 @@ class MrNodeBot {
       try {
         value.call(message);
       } catch (err) {
-        this._errorHandler(t('errors.genericError', {
+        MrNodeBot._errorHandler(t('errors.genericError', {
           command: 'handleRegistered'
         }), err)
       }
@@ -697,7 +697,7 @@ class MrNodeBot {
    */
   _handleCommands(from, to, text, message) {
     // Normalize text
-    text = this._normalizeText(text);
+    text = MrNodeBot._normalizeText(text);
 
     // Build the is object to pass along to the command router
     let is = {
@@ -721,7 +721,7 @@ class MrNodeBot {
         try {
           value.call(to, from, text, message, is);
         } catch (err) {
-          this._errorHandler(t('errors.genericError', {
+          MrNodeBot._errorHandler(t('errors.genericError', {
             command: 'onCommand OnListeners'
           }), err);
         }
@@ -758,7 +758,7 @@ class MrNodeBot {
           group: helpers.AccessString(command.access),
         }));
       } catch (err) {
-        this._errorHandler(t('errors.procCommand', {
+        MrNodeBot._errorHandler(t('errors.procCommand', {
           command: cmd
         }), err);
       }
@@ -799,7 +799,7 @@ class MrNodeBot {
    * @returns {boolean} command status
    */
   _handleAuthenticatedCommands(nick, to, text, message) {
-    text = this._normalizeText(text);
+    text = MrNodeBot._normalizeText(text);
 
     // Parse vars
     let [user, acc, code] = text.split(' ');
@@ -812,7 +812,7 @@ class MrNodeBot {
       admTextArray = admCall.text.split(' ');
 
     // Check if the user is identified, pass it along in the is object
-    admCall.is.identified = code == this.Config.nickserv.accCode;
+    admCall.is.identified = code === this.Config.nickserv.accCode;
 
     // Clean the output
     admTextArray.splice(0, admCall.to === admCall.from ? 1 : 2);
@@ -863,7 +863,7 @@ class MrNodeBot {
         group: helpers.AccessString(command.access),
       }));
     } catch (err) {
-      this._errorHandler(t('errors.invalidIdentCommand', {
+      MrNodeBot._errorHandler(t('errors.invalidIdentCommand', {
         cmd: admCall.cmd,
         from: admCall.from,
         to: admCall.to,
@@ -875,11 +875,12 @@ class MrNodeBot {
     return true;
   };
 
-  /**
-   * Say something over IRC
-   * @param {string} target Nick / Channel to say it to
-   * @param {string} message What to say
-   */
+    /**
+     * Say something over IRC
+     * @param {string} target Nick / Channel to say it to
+     * @param {string} message What to say
+     * @param {function} processor
+     */
   say(target, message, processor) {
     if (!_.isString(message) || _.isEmpty(message.trim())) return;
     let msg = preprocessText(message, processor);
@@ -934,7 +935,7 @@ class MrNodeBot {
   reloadConfiguration() {
     logger.info(t('bootstrap.reloadConfig'));
 
-    this._clearCache('./config.js');
+    MrNodeBot._clearCache('./config.js');
     this.Config = require('./config.js');
     // Assure AutoConnect flag is not reset
     this.Config.irc.autoConnect = false;
