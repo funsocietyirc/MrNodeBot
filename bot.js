@@ -602,7 +602,7 @@ class MrNodeBot {
     if (_.includes(this.Ignore, _.toLower(nick))) return;
 
     if (nick === this.nick) logger.info(t('events.quitLogging', {
-      channels: channels.join(', '),
+      channels: _.isArray(channels) ? channels.join(', ') : channels,
       reason
     }));
 

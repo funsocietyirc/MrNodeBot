@@ -11,32 +11,45 @@ module.exports = app => {
   // Register a User
   // Current use case: User is already registered with services, but can register and be able to
   // identify with other nicks/hosts
-  const register = (to, from, text, message) => {
+  const register = async(to, from, text, message) => {
     let args = text.split(' ');
+
     if (!args[0]) {
       app.say(from, 'A Email is required');
       return;
     }
+
     if (!args[1]) {
       app.say(from, 'A Password is required');
       return;
     }
-    app._userManager.create(from, args[0], args[1], message.host).then(result => {
+
+    try {
+        await app._userManager.create(from, args[0], args[1], message.host);
         app.say(from, 'Your account has been created');
-        // Log the user in here
-      })
-      .catch(err => {
+    }
+    catch(err) {
+        // Known MariaDB / MySql duplicate error
+        if(err.errno === 1062) {
+            app.say(from, `The account ${from} has already been registered`);
+            return;
+        }
+
+        // Log
         logger.error('Account Registration Error', {
-          err
+            err
         });
+
+        // Give back generic error
         app.say(from, 'Something went wrong creating your account, the username may exist');
-      });
+    }
+
   };
 
   /**
     Master Account command, used for delegating to other commands or providing help
   **/
-  const account = (to, from, text, message) => {
+  const account = async(to, from, text, message) => {
     if (!text) {
       app.say(from, 'Please refer to my help before you tamper with me.');
       return;
@@ -48,7 +61,7 @@ module.exports = app => {
 
     switch (command) {
       case 'register':
-        register(to, from, text.join(' '), message);
+        let result = await register(to, from, text.join(' '), message);
         break;
       case 'help':
         let [subCommand] = text.splice(0, 1);

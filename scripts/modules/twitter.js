@@ -7,7 +7,7 @@ const _ = require('lodash');
 const helpers = require('../../helpers');
 const logger = require('../../lib/logger');
 const ircTypo = require('../lib/_ircTypography');
-const short = require('../generators/_isGdShortUrl');
+const short = require('../lib/_getShortService')();
 const tweetStreamUrl = 'https://twitter.com/funsocietyirc/status';
 let currentStream = null;
 

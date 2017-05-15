@@ -10,12 +10,13 @@ const expressWinston = require('express-winston');
 const rotate = require('winston-daily-rotate-file');
 const RateLimit = require('express-rate-limit');
 const jwt = require('jsonwebtoken');
+const logger = require('../lib/logger');
 
 
 //   Web Server component:
 //   Features: named-routes, favicon, file upload, jade template engine, body parser, json parser, rate limiting, simple auth
 //  json web tokens
-module.exports = (app) => {
+module.exports = app => {
 
   // Helper Function to return the Configuration jwt secret, or a default with a warning
   const getJwtSecret = () => {
@@ -27,7 +28,7 @@ module.exports = (app) => {
       logger.warn('You did not set a jwt api secret in express.jwt.secret, falling back to default');
     }
     return jwtSecret;
-  }
+  };
 
   // Create Express Server
   const webServer = Express();
@@ -108,9 +109,9 @@ module.exports = (app) => {
           credentials.name !== app.Config.express.simpleAuth.username ||
           credentials.pass !== app.Config.express.simpleAuth.password
         ) {
-          res.statusCode = 401
+          res.statusCode = 401;
           let realm = _.isString(app.Config.express.simpleAuth.realm) && !_.isEmpty(app.Config.express.simpleAuth.realm) ? app.Config.express.simpleAuth.realm : 'MrNodeBot';
-          res.setHeader('WWW-Authenticate', 'Basic realm="' + realm + '"')
+          res.setHeader('WWW-Authenticate', 'Basic realm="' + realm + '"');
           res.end('I\'m sorry Dave, I\'m afraid I can\'t do that')
         } else next();
       }
@@ -166,7 +167,7 @@ module.exports = (app) => {
   // Use fileupload extension
   webServer.use(fileUpload());
 
-  // Merge query string paramaters on duplicate
+  // Merge query string parameters on duplicate
   webServer._router.mergeParams = true;
 
   webServer.post('/authenticate', (req, res) => {
@@ -181,6 +182,7 @@ module.exports = (app) => {
         success: false,
         message: 'Authentication failed'
       });
+
 
       // Verify user
       app._userManager.verify(user.attributes.nick, req.body.password).then(authenticated => {
@@ -215,6 +217,8 @@ module.exports = (app) => {
             message: 'Something has gone wrong'
           });
         });
+
+
     });
   });
 

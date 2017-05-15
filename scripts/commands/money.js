@@ -70,7 +70,7 @@ module.exports = app => {
         // Find the base currency in the btc info
         let btc = _.find(data, o => o.code === baseCur);
         if (!btc || !btc.code || isNaN(btc.rate) || btc.rate === 0) {
-          logger.error('Error fetching BitCoin data, data returned is not formated correctly', {
+          logger.error('Error fetching BitCoin data, data returned is not formatted correctly', {
             data
           });
           return;
@@ -129,13 +129,13 @@ module.exports = app => {
         to: cTo
       });
 
-      // Format result and amount through accounting.js
+      // Format result and amount thought accounting.js
       result = accounting.formatMoney(result, {
         symbol: getSymbol(cTo) || ''
       });
       amount = accounting.formatMoney(amount, {
         symbol: getSymbol(cFrom) || ''
-      })
+      });
 
       // Report back to IRC
       app.say(to, `At the current exchange rate ${amount} ${cFrom} is ${result} ${cTo}, ${from}`);
