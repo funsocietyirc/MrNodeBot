@@ -11,7 +11,7 @@ const endPoint = `https://is.gd/create.php`;
 
 module.exports = async(text) => {
   try {
-    const results = rp({
+    const results = await rp({
       uri: endPoint,
       method: 'GET',
       json: true,
