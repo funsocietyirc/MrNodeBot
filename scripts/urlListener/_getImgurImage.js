@@ -14,20 +14,20 @@ module.exports = (type, key, results) => new Promise((resolve, reject) => {
         method: 'GET',
         json: true,
         headers: {
-          'Authorization': `Client-ID ${clientId}`
+            'Authorization': `Client-ID ${clientId}`
         }
-      })
-      .then(data => {
-        if (!data.success || data.status !== 200 || !data.data) return reject(new Error('Problem with result'));
-        results.imgur = data.data;
-        results.imgur.matchType = type;
-        resolve(results);
-      })
+    })
+        .then(data => {
+            if (!data.success || data.status !== 200 || !data.data) return reject(new Error('Problem with result'));
+            results.imgur = data.data;
+            results.imgur.matchType = type;
+            resolve(results);
+        })
 
-  })
-  .catch(err => {
-    logger.warn('Error in Imgur link function', {
-      err
+})
+    .catch(err => {
+        logger.warn('Error in Imgur link function', {
+            err
+        });
+        return results;
     });
-    return results;
-  });

@@ -17,7 +17,7 @@ module.exports = app => {
                 const result = await gen();
                 app.say(to, `${ircTypography.logos.m2m} is currently set to ${result}`);
             }
-            catch(err) {
+            catch (err) {
                 app.say(to, `${ircTypography.logos.m2m} was unable to get the time, perhaps the world has already ended`);
             }
         }

@@ -1,7 +1,7 @@
 'use strict';
 const scriptInfo = {
-  name: 'robotTweet',
-  createdBy: 'IronY'
+    name: 'robotTweet',
+    createdBy: 'IronY'
 };
 const _ = require('lodash');
 const helpers = require('../../helpers');
@@ -12,100 +12,101 @@ const tweetStreamUrl = 'https://twitter.com/funsocietyirc/status';
 let currentStream = null;
 
 module.exports = app => {
-  if (!app._twitterClient) return scriptInfo;
+    if (!app._twitterClient) return scriptInfo;
 
-  // Announce to Channels
-  const say = (tweet, shortUrl) =>
-    app.Config.features.twitter.channels.forEach((chan) => {
-      app.say(chan, `${ircTypo.logos.twitter} ${ircTypo.icons.sideArrow} ${shortUrl} ${ircTypo.icons.sideArrow} @${tweet.user.screen_name} ${ircTypo.icons.sideArrow} ${tweet.text}`);
-    });
+    // Announce to Channels
+    const say = (tweet, shortUrl) =>
+        app.Config.features.twitter.channels.forEach((chan) => {
+            app.say(chan, `${ircTypo.logos.twitter} ${ircTypo.icons.sideArrow} ${shortUrl} ${ircTypo.icons.sideArrow} @${tweet.user.screen_name} ${ircTypo.icons.sideArrow} ${tweet.text}`);
+        });
 
     // Push to Socket
-  const push = tweet => {
-    if (!app._twitterClient || !app.WebServer.socketIO) return;
+    const push = tweet => {
+        if (!app._twitterClient || !app.WebServer.socketIO) return;
 
-    let timestamp = Date.now();
+        let timestamp = Date.now();
 
-    app.WebServer.socketIO.emit('tweets', {
-      tweet,
-      timestamp
-    });
-  };
-
-  const onTweetData = tweet => {
-    // We do not have enough data, bail
-    if (!tweet.user || !tweet.text) return;
-
-    short(`${tweetStreamUrl}/${tweet.id_str}`)
-      .then(shortUrl => [say, push].forEach(medium => medium(tweet, shortUrl)));
-  };
-
-  const onTweetError = error => logger.error('Twitter Error', {
-    error
-  });
-
-  // the Main twitter watcher
-  const watcher = () => {
-    if (!app._twitterClient) return;
-
-    let newStream = app._twitterClient.stream('user', {
-      with: app.Config.features.twitter.followers
-    });
-
-    newStream.once('connected', function(res) {
-      if (currentStream) currentStream.stop();
-
-      // Fire off the listeners, being sure to clear the previous
-      // as to not overload on script reload
-      newStream.removeAllListeners('tweet');
-      newStream.on('tweet', onTweetData);
-      newStream.removeAllListeners('error');
-      newStream.on('error', onTweetError);
-
-      currentStream = newStream;
-    });
-  };
-
-  // Tweet a message
-  const tweetCmd = (to, from, text, message) => {
-    if (!app._twitterClient) return;
-
-    if (!text) {
-      app.say(to, 'Cannot tweet nothing champ...');
-      return;
-    }
-
-    let twitConfig = {
-      status: text
+        app.WebServer.socketIO.emit('tweets', {
+            tweet,
+            timestamp
+        });
     };
 
-    app._twitterClient.post('statuses/update', twitConfig, (error, tweet, response) => {
-      if (error) {
-        logger.error('Twitter Error', {
-          error
-        });
-        app.say(to, 'Something is not quite right with your tweet');
-        return;
-      };
-      app.say(to, `We just lit up the Twittersphere Bro!`);
+    const onTweetData = tweet => {
+        // We do not have enough data, bail
+        if (!tweet.user || !tweet.text) return;
+
+        short(`${tweetStreamUrl}/${tweet.id_str}`)
+            .then(shortUrl => [say, push].forEach(medium => medium(tweet, shortUrl)));
+    };
+
+    const onTweetError = error => logger.error('Twitter Error', {
+        error
     });
-  };
+
+    // the Main twitter watcher
+    const watcher = () => {
+        if (!app._twitterClient) return;
+
+        let newStream = app._twitterClient.stream('user', {
+            with: app.Config.features.twitter.followers
+        });
+
+        newStream.once('connected', function (res) {
+            if (currentStream) currentStream.stop();
+
+            // Fire off the listeners, being sure to clear the previous
+            // as to not overload on script reload
+            newStream.removeAllListeners('tweet');
+            newStream.on('tweet', onTweetData);
+            newStream.removeAllListeners('error');
+            newStream.on('error', onTweetError);
+
+            currentStream = newStream;
+        });
+    };
+
+    // Tweet a message
+    const tweetCmd = (to, from, text, message) => {
+        if (!app._twitterClient) return;
+
+        if (!text) {
+            app.say(to, 'Cannot tweet nothing champ...');
+            return;
+        }
+
+        let twitConfig = {
+            status: text
+        };
+
+        app._twitterClient.post('statuses/update', twitConfig, (error, tweet, response) => {
+            if (error) {
+                logger.error('Twitter Error', {
+                    error
+                });
+                app.say(to, 'Something is not quite right with your tweet');
+                return;
+            }
+            ;
+            app.say(to, `We just lit up the Twittersphere Bro!`);
+        });
+    };
 
 
-  // Register Listener
-  app.OnConnected.set('watcher', {
-    call: watcher,
-    desc: 'Twitter watcher',
-    name: 'TwitterWatcher'
-  });
+    // Register Listener
+    app.OnConnected.set('watcher', {
+        call: watcher,
+        desc: 'Twitter watcher',
+        name: 'TwitterWatcher'
+    });
 
-  // Register Tweet Command
-  app.Commands.set('tweet', {
-    desc: '[message] - Send a message to the Twittersphere',
-    access: app.Config.accessLevels.admin,
-    call: tweetCmd
-  });
+    // Register Tweet Command
+    app.Commands.set('tweet', {
+        desc: '[message] - Send a message to the Twittersphere',
+        access: app.Config.accessLevels.admin,
+        call: tweetCmd
+    });
 
-  // Return the script info
-  return scriptInfo;
+    // Return the script info
+    return scriptInfo;
 };

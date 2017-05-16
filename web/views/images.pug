@@ -18,7 +18,7 @@ block content
             if !currentChannel
                 each channel in channels
                     span.channelLink
-                        a.btn.btn-info.btn-sm(href=url('urls',{channel: channel})) #{channel}
+                        a.btn.btn-info.btn-sm(href=url('urls', {channel: channel})) #{channel}
             else
                 span.channelLink
                     a.btn.btn-danger.btn-sm(href=url('urls')) #{currentChannel}
@@ -34,10 +34,10 @@ block content
                 if !currentUser
                     each user in users
                         span.channelLink
-                            a.btn.btn-info.btn-sm(href=url('urls',{channel: currentChannel, user:user})) #{user}
+                            a.btn.btn-info.btn-sm(href=url('urls', {channel: currentChannel, user: user})) #{user}
                 else
                     span.channelLink
-                        a.btn.btn-danger.btn-sm(href=url('urls',{channel: currentChannel})) #{currentUser}
+                        a.btn.btn-danger.btn-sm(href=url('urls', {channel: currentChannel})) #{currentUser}
             .col-md-12.text-left
                 if !currentUser
                     span.help-block Click a User name to filter.
@@ -48,16 +48,16 @@ block content
     each link in results
         div.panel.panel-primary.text-center
             div.panel-heading
-                a(style="color:white",href=url('urls', {channel: link.to})) #{link.to}
+                a(style="color:white", href=url('urls', {channel: link.to})) #{link.to}
                 span.padded /
-                a(style="color:white",href=url('urls', {channel: link.to, user: link.from})) #{link.from}
+                a(style="color:white", href=url('urls', {channel: link.to, user: link.from})) #{link.from}
                 span.padded /
                 span #{moment(link.timestamp).format('h:mma MMM Do')}
             div.panel-body.text-center
-                a(style="color:white",href=link.url)
+                a(style="color:white", href=link.url)
                     img(src=link.url).center-block.img-responsive
             div.panel-footer.text-right
-                a(style="color:white",href=link.url, download=link.url).btn.btn-primary.btn-sm
+                a(style="color:white", href=link.url, download=link.url).btn.btn-primary.btn-sm
                     i.fa.fa-download.icon-spin
     div.row
         div.col-md-12

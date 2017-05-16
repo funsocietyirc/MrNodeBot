@@ -1,45 +1,39 @@
-html
-{
+html {
     /* give this to all tags from html to .fullscreen */
     height: 100%;
 
     background-color: black;
     -webkit-background-size: cover;
-       -moz-background-size: cover;
-         -o-background-size: cover;
-            background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
 }
 
-body
-{
+body {
     min-height: calc(100% - 60px);
 
     background: black;
     background: rgba(0, 0, 0, .8);
 }
 
-.padded
-{
+.padded {
     margin-right: 0;
     margin-left: 0;
     padding-right: 5px;
     padding-left: 5px;
 }
 
-.site-wrapper
-{
+.site-wrapper {
     margin-top: 60px;
 }
 
-.channelLink
-{
+.channelLink {
     display: inline-block;
 
     margin-top: 5px;
 }
 
-.channelLink:not(:only-of-type):not(:last-of-type):after
-{
+.channelLink:not(:only-of-type):not(:last-of-type):after {
     display: inline-block;
 
     margin-right: 5px;
@@ -48,73 +42,58 @@ body
     content: '|';
 }
 
-.help-block
-{
+.help-block {
     color: #737373;
 }
 
-.typed-cursor
-{
+.typed-cursor {
     font-size: 2em;
 
     -webkit-animation: blink .7s infinite;
-       -moz-animation: blink .7s infinite;
-            animation: blink .7s infinite;
+    -moz-animation: blink .7s infinite;
+    animation: blink .7s infinite;
 
     opacity: 1;
     color: #0f0;
 }
 
-@keyframes blink
-{
-    0%
-    {
+@keyframes blink {
+    0% {
         opacity: 1;
     }
-    50%
-    {
+    50% {
         opacity: 0;
     }
-    100%
-    {
+    100% {
         opacity: 1;
     }
 }
 
-@-webkit-keyframes blink
-{
-    0%
-    {
+@-webkit-keyframes blink {
+    0% {
         opacity: 1;
     }
-    50%
-    {
+    50% {
         opacity: 0;
     }
-    100%
-    {
+    100% {
         opacity: 1;
     }
 }
 
-@-moz-keyframes blink
-{
-    0%
-    {
+@-moz-keyframes blink {
+    0% {
         opacity: 1;
     }
-    50%
-    {
+    50% {
         opacity: 0;
     }
-    100%
-    {
+    100% {
         opacity: 1;
     }
 }
 
-.message
-{
+.message {
     font-size: 2em;
 
     padding-top: calc(15% - 60px);

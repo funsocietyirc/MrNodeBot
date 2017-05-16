@@ -1,8 +1,8 @@
 'use strict';
 const scriptInfo = {
-  name: 'mrrobot',
-  desc: 'Watch for quotes from the MrRobot bot, log them, clean them, and allow for announcement of them',
-  createdBy: 'IronY'
+    name: 'mrrobot',
+    desc: 'Watch for quotes from the MrRobot bot, log them, clean them, and allow for announcement of them',
+    createdBy: 'IronY'
 };
 const _ = require('lodash');
 const Models = require('bookshelf-model-loader');
@@ -11,104 +11,104 @@ const scheduler = require('../../lib/scheduler');
 const ircTypography = require('../lib/_ircTypography');
 
 module.exports = app => {
-  // Do not load module if we have no database
-  if (!Models.MrRobotQuotes) return scriptInfo;
+    // Do not load module if we have no database
+    if (!Models.MrRobotQuotes) return scriptInfo;
 
-  const quoteModel = Models.MrRobotQuotes;
-  const includeExceptions = [
-    'i am Mr. Robot (~mrrobot@unaffiliated/kl4200/bot/mrrobot)',
-    'Error:',
-    'Get a random fact from the database of weird facts',
-    'I\'m now ignoring you for 5 minutes.',
-    'I don\'t recognize you. You can message me either of these two commands:',
-    'invalid commands within the last',
-    'Quote #'
-  ];
+    const quoteModel = Models.MrRobotQuotes;
+    const includeExceptions = [
+        'i am Mr. Robot (~mrrobot@unaffiliated/kl4200/bot/mrrobot)',
+        'Error:',
+        'Get a random fact from the database of weird facts',
+        'I\'m now ignoring you for 5 minutes.',
+        'I don\'t recognize you. You can message me either of these two commands:',
+        'invalid commands within the last',
+        'Quote #'
+    ];
 
-  // Listen and Log
-  const mrRobotQuoteLogging = (to, from, text, message) => {
-    // False result
-    if (!text || to !== '#MrRobot' || from !== 'MrRobot' || _.includes(includeExceptions, text) || text.split(' ').length < 3) return;
+    // Listen and Log
+    const mrRobotQuoteLogging = (to, from, text, message) => {
+        // False result
+        if (!text || to !== '#MrRobot' || from !== 'MrRobot' || _.includes(includeExceptions, text) || text.split(' ').length < 3) return;
 
-    quoteModel.query(qb => qb
-        .select(['quote'])
-        .where('quote', 'like', text)
-        .limit(1)
-      )
-      .fetch()
-      .then(result => {
-        if (result) return;
-        quoteModel
-          .insert({
-            quote: text
-          })
-          .then(result => logger.info(`Added New MrRobot show quote: ${text}`))
-          .catch(err => logger.error('Error saving result from DB in MrRobotQuote', {
-            err
-          }));
-      })
-      .catch(err => logger.error('Error getting result from DB in MrRobotQuote', {
-        err
-      }));
-  };
-  app.Listeners.set('mrrobotquotes', {
-    desc: 'Log quotes from #MrRobot',
-    call: mrRobotQuoteLogging
-  });
+        quoteModel.query(qb => qb
+            .select(['quote'])
+            .where('quote', 'like', text)
+            .limit(1)
+        )
+            .fetch()
+            .then(result => {
+                if (result) return;
+                quoteModel
+                    .insert({
+                        quote: text
+                    })
+                    .then(result => logger.info(`Added New MrRobot show quote: ${text}`))
+                    .catch(err => logger.error('Error saving result from DB in MrRobotQuote', {
+                        err
+                    }));
+            })
+            .catch(err => logger.error('Error getting result from DB in MrRobotQuote', {
+                err
+            }));
+    };
+    app.Listeners.set('mrrobotquotes', {
+        desc: 'Log quotes from #MrRobot',
+        call: mrRobotQuoteLogging
+    });
 
-  // Clean and merge quotes
-  const cleanQuotes = (to, from, text, message) => {
-    quoteModel.query(qb => {
-        qb.where('quote', 'like', '%(1 more message)%')
-          .select(['id', 'quote']);
-      })
-      .fetchAll()
-      .then(results => {
-        if (!results.length) {
-          logger.info('Running MrRobot Quote clean up job, nothing to clean up...');
-          return;
-        }
-        results.forEach(result => quoteModel
-          .where('id', result.attributes.id + 1)
-          .fetch()
-          .then(secondLine => result.set('quote', `${result.get('quote').replace('(1 more message)','')} ${secondLine.get('quote')}`).save().then(() => {
-            logger.info(`Cleaned up MrRobot show quotes, merged quote ${result.get('id')} and ${secondLine.get('id')}`);
-            secondLine.destroy();
-          }))
-        );
-      });
-  };
-  app.Commands.set('mrrobot-clean', {
-    desc: 'Clean multi-line quotes',
-    access: app.Config.accessLevels.owner,
-    call: cleanQuotes
-  });
+    // Clean and merge quotes
+    const cleanQuotes = (to, from, text, message) => {
+        quoteModel.query(qb => {
+            qb.where('quote', 'like', '%(1 more message)%')
+                .select(['id', 'quote']);
+        })
+            .fetchAll()
+            .then(results => {
+                if (!results.length) {
+                    logger.info('Running MrRobot Quote clean up job, nothing to clean up...');
+                    return;
+                }
+                results.forEach(result => quoteModel
+                    .where('id', result.attributes.id + 1)
+                    .fetch()
+                    .then(secondLine => result.set('quote', `${result.get('quote').replace('(1 more message)', '')} ${secondLine.get('quote')}`).save().then(() => {
+                        logger.info(`Cleaned up MrRobot show quotes, merged quote ${result.get('id')} and ${secondLine.get('id')}`);
+                        secondLine.destroy();
+                    }))
+                );
+            });
+    };
+    app.Commands.set('mrrobot-clean', {
+        desc: 'Clean multi-line quotes',
+        access: app.Config.accessLevels.owner,
+        call: cleanQuotes
+    });
 
-  // Schedule job
-  let cronTime = new scheduler.RecurrenceRule();
-  cronTime.minute = 0;
-  scheduler.schedule('cleanMrRobotQuotes', cronTime, cleanQuotes);
+    // Schedule job
+    let cronTime = new scheduler.RecurrenceRule();
+    cronTime.minute = 0;
+    scheduler.schedule('cleanMrRobotQuotes', cronTime, cleanQuotes);
 
-  const mrrobot = (to, from, text, message) => {
-    let chan = _.first(text) === '#' ? _.first(text.split(' ')) : false;
+    const mrrobot = (to, from, text, message) => {
+        let chan = _.first(text) === '#' ? _.first(text.split(' ')) : false;
 
-    quoteModel.query(qb => {
-        qb.select('quote').orderByRaw('rand()').limit(1);
-        if (text && !chan) {
-          qb.andWhere('quote', 'like', text);
-        }
-      })
-      .fetch()
-      .then(result => app.say(
-        chan || to, !result ? `I have not yet encountered anything like that.` : `${ircTypography.logos.mrrobot} ${result.get('quote')}`
-      ));
-  };
+        quoteModel.query(qb => {
+            qb.select('quote').orderByRaw('rand()').limit(1);
+            if (text && !chan) {
+                qb.andWhere('quote', 'like', text);
+            }
+        })
+            .fetch()
+            .then(result => app.say(
+                chan || to, !result ? `I have not yet encountered anything like that.` : `${ircTypography.logos.mrrobot} ${result.get('quote')}`
+            ));
+    };
 
-  app.Commands.set('mrrobot', {
-    desc: '[Channel / Search Text] Mr Robot quotes powered by #MrRobot',
-    access: app.Config.accessLevels.identified,
-    call: mrrobot
-  });
+    app.Commands.set('mrrobot', {
+        desc: '[Channel / Search Text] Mr Robot quotes powered by #MrRobot',
+        access: app.Config.accessLevels.identified,
+        call: mrrobot
+    });
 
-  return scriptInfo;
+    return scriptInfo;
 };

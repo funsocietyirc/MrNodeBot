@@ -2,11 +2,11 @@
 const Models = require('bookshelf-model-loader');
 
 const CtcpLogging = Models.Base.extend({
-  tableName: 'ctcpLogging',
-  hasTimestamps: ['timestamp'],
-  soft: false
+    tableName: 'ctcpLogging',
+    hasTimestamps: ['timestamp'],
+    soft: false
 });
 
 module.exports = {
-  CtcpLogging: Models.Bookshelf.model('ctcpLogging', CtcpLogging)
+    CtcpLogging: Models.Bookshelf.model('ctcpLogging', CtcpLogging)
 };

@@ -21,29 +21,29 @@ const endPoint = 'https://freegeoip.net/json/';
 //
 // If the host is invalid, and the request fails, a empty object will be returned
 
-module.exports = async(host) => {
-  let results = Object.assign({});
-  
-  if (!host)
-    throw new Error('No host was provided.');
+module.exports = async (host) => {
+    let results = Object.assign({});
 
-  try {
-    const request = await rp({
-      uri: `${endPoint}${host}`,
-      json: true
-    });
+    if (!host)
+        throw new Error('No host was provided.');
 
-    Object.assign(results, request);
+    try {
+        const request = await rp({
+            uri: `${endPoint}${host}`,
+            json: true
+        });
 
-    return results;
-  }
-  // Catch Errors
-  catch (err) {
-    logger.error('Error in the _ipLocationData generator', {
-      message: err.message || '',
-      stack: err.stack || ''
-    });
+        Object.assign(results, request);
 
-    return results;
-  }
+        return results;
+    }
+        // Catch Errors
+    catch (err) {
+        logger.error('Error in the _ipLocationData generator', {
+            message: err.message || '',
+            stack: err.stack || ''
+        });
+
+        return results;
+    }
 };

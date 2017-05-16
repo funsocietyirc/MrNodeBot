@@ -2,11 +2,11 @@
 const Models = require('bookshelf-model-loader');
 
 const Url = Models.Base.extend({
-  tableName: 'url',
-  hasTimestamps: ['timestamp'],
-  soft: false
+    tableName: 'url',
+    hasTimestamps: ['timestamp'],
+    soft: false
 });
 
 module.exports = {
-  Url: Models.Bookshelf.model('url', Url)
+    Url: Models.Bookshelf.model('url', Url)
 };

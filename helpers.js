@@ -15,40 +15,42 @@ const _ = require('lodash');
  * @returns {String} A String representation of the access value
  */
 const AccessString = module.exports.AccessString = str => {
-  switch (str) {
-    case 0:
-      return 'Guest';
-    case 1:
-      return 'Identified';
-    case 2:
-      return 'Administrator';
-    case 3:
-      return 'Owner';
-    case 4:
-      return 'ChannelOp';
-    case 5:
-      return 'ChannelVoice';
-    case 6:
-      return 'ChannelOpIdentified';
-    case 7:
-      return 'ChannelVoiceIdentified';
-    default:
-      return 'Unknown';
-  }
+    switch (str) {
+        case 0:
+            return 'Guest';
+        case 1:
+            return 'Identified';
+        case 2:
+            return 'Administrator';
+        case 3:
+            return 'Owner';
+        case 4:
+            return 'ChannelOp';
+        case 5:
+            return 'ChannelVoice';
+        case 6:
+            return 'ChannelOpIdentified';
+        case 7:
+            return 'ChannelVoiceIdentified';
+        default:
+            return 'Unknown';
+    }
 };
 
 /**
  * Search a iterable for a value and return the first key
  * @param {Map} map The Iterable
  * @param {Object} value The value to search for
- * @returns {Object} the first match found
+ * @returns {Boolean} the first match found
  */
-const MapSearch = module.exports.MapSearch = (map, value) => {
-  for (const [t, v] of map) {
-    if (v === value) return t;
-  }
-  return false;
-};
+const MapSearch = /**
+ */
+    module.exports.MapSearch = (map, value) => {
+        for (const [t, v] of map) {
+            if (v === value) return t;
+        }
+        return false;
+    };
 
 /** Start Time in moment format */
 const StartTime = module.exports.StartTime = moment();
@@ -73,7 +75,7 @@ const RedSlashes = module.exports.RedSlashes = text => text.replace(/(\/)/g, c.r
  * @param {String} text Unformatted String
  * @returns {String} Formatted String
  */
-const TitleLine = module.exports.TitleLine = text => c.white.bold.bgblack(text)
+const TitleLine = module.exports.TitleLine = text => c.white.bold.bgblack(text);
 
 /**
  * Plural - Basic Pluralization
@@ -98,8 +100,8 @@ const StripNewLine = module.exports.StripNewLine = text => text.replace(/\r?\n|\
  * @returns {String} haystack with needles replaced by replacement
  */
 const ReplaceAll = module.exports.ReplaceAll = (haystack, needle, replacement) => {
-  if (!_.isString(haystack) || !_.isString(needle) || !_.isString(replacement)) return haystack;
-  return haystack.replace(new RegExp(needle.replace(/([\/\,\!\\\^\$\{\}\[\]\(\)\.\*\+\?\|\<\>\-\&])/g, '\\$&'), 'g'), replacement.replace(/\$/g, '$$$$'));
+    if (!_.isString(haystack) || !_.isString(needle) || !_.isString(replacement)) return haystack;
+    return haystack.replace(new RegExp(needle.replace(/([\/\,\!\\\^\$\{\}\[\]\(\)\.\*\+\?\|\<\>\-\&])/g, '\\$&'), 'g'), replacement.replace(/\$/g, '$$$$'));
 };
 
 /**
