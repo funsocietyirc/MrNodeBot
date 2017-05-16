@@ -27,7 +27,7 @@ module.exports = app => {
         }
     });
 
-    // Set the 'Drunk' addon
+    // Set the 'Drunk' add-on
     app.Commands.set('drunk', {
         desc: 'It\'s party time',
         access: app.Config.accessLevels.owner,

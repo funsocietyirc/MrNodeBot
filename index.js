@@ -19,9 +19,7 @@ if (_.isObject(args.config)) {
 
 const bot = new Bot(app => {
     // Set the ENV Flag for Request strict TLS
-    if (!_.isUndefined(app.Config.bot.strictTLS) || !app.Config.bot.strictTLS) {
-        process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
-    }
+    if (!_.isUndefined(app.Config.bot.strictTLS) || !app.Config.bot.strictTLS) process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
 
     // Extend the max socket listeners
     process.setMaxListeners(0);
