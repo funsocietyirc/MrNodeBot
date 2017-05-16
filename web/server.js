@@ -164,7 +164,7 @@ module.exports = app => {
     // Uploads
     webServer.use('/uploads', Express.static(__dirname + '/uploads'));
 
-    // Use fileupload extension
+    // Use file-upload extension
     webServer.use(fileUpload());
 
     // Merge query string parameters on duplicate

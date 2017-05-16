@@ -1,12 +1,16 @@
 'use strict';
+
 // We are testing
 process.env.NODE_ENV = 'test';
 
+const {describe, it} = require('mocha');
+
 const chai = require('chai');
 const expect = chai.expect;
-const _ = require('lodash');
 
+const _ = require('lodash');
 const pre = require('../../lib/preprocessText');
+
 const config = require('../../config');
 
 const beforeEach = () => {

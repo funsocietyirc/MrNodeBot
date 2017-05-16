@@ -2,11 +2,15 @@
 // We are testing
 process.env.NODE_ENV = 'test';
 
+const {describe, it, beforeEach} = require('mocha');
+
 const chai = require('chai');
 const sinon = require('sinon');
 const sinonChai = require("sinon-chai");
+
 chai.expect();
 chai.use(sinonChai);
+
 const expect = chai.expect;
 
 const _ = require('lodash');
@@ -49,7 +53,7 @@ describe('String Builder', () => {
         expect(string.text).to.equal('hello / world');
     });
 
-    it('inserts custom dividers proerply', () => {
+    it('inserts custom dividers properly', () => {
         let string = new ircTypo.StringBuilder();
         string.insert('hello');
         string.insertDivider('|');

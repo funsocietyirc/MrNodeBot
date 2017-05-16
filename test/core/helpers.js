@@ -2,6 +2,9 @@
 // We are testing
 process.env.NODE_ENV = 'test';
 
+const {describe, it,  beforeEach} = require('mocha');
+
+
 const chai = require('chai');
 chai.use(require('chai-moment'));
 const moment = require('moment');
@@ -133,7 +136,7 @@ describe('Access Strings', () => {
         // We get valid translations from the helpers
         it('value should be numeric', () => {
             for (const value in config.accessLevels) {
-                expect(config.accessLevels[value]).to.be.a.number;
+                const result = expect(config.accessLevels[value]).to.be.a.number;
             }
         });
     });
