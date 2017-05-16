@@ -57,7 +57,7 @@ module.exports = app => {
   });
 
   // Clean and merge quotes
-  const cleanQuotes = (to, from, text, mesasage) => {
+  const cleanQuotes = (to, from, text, message) => {
     quoteModel.query(qb => {
         qb.where('quote', 'like', '%(1 more message)%')
           .select(['id', 'quote']);
@@ -65,7 +65,7 @@ module.exports = app => {
       .fetchAll()
       .then(results => {
         if (!results.length) {
-          logger.info('Runnig MrRobot Quote clean up job, nothing to clean up...');
+          logger.info('Running MrRobot Quote clean up job, nothing to clean up...');
           return;
         }
         results.forEach(result => quoteModel

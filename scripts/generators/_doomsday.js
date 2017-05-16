@@ -1,101 +1,108 @@
 'use strict';
+
+// API Endpoint
 const endPoint = 'http://thebulletin.org/timeline';
 
-const request = require('request');
+// Node Modules
+const rp = require('request-promise-native');
+const logger = require('../../lib/logger');
 const cheerio = require('cheerio');
+
+// Date of Midnight
 const midnight = new Date(2000, 0, 0, 0, 0, 0, 0);
-const toTime = mins =>
-  new Date(midnight.getTime() + mins * -60000);
 
+// Format a time string
+const toTime = minutes => new Date(midnight.getTime() + minutes * -60000);
+
+// Format date to string
+const dateToString = d => `${pad(2, d.getHours() - 12)}:${pad(2, d.getMinutes())}${d.getSeconds() ? ':' + pad(2, d.getSeconds()) : ''} PM`;
+
+// Pad with 0's
 const pad = (min, input) => {
-  let out = input + '';
-  while (out.length < min)
-    out = '0' + out;
-  return out;
-}
+    let out = input + '';
+    while (out.length < min)
+        out = '0' + out;
+    return out;
+};
 
-/**
- * Minutes to midnight.
- */
+// General Configuration
 const conf = {
-  source: endPoint,
-  selector: '.view-content .node-title',
-    //language=JSRegexp
+    selector: '.view-content .node-title',
     title: /(?:(\d+)|(one|two|three|four|five|six|seven|eight|nine)(.*?half)) minutes to midnight/i
 };
 
-/**
- * Request the current minutes to midnight feed.
- *
- * Also contains a bunch of unrelated other posts.
- */
-const _request = () => new Promise((resolve, reject) =>
-  request(conf.source, function(error, response, body) {
-    if (error)
-      return reject(err);
-    if (response.statusCode !== 200)
-      return reject("Unexpected status code");
-    return resolve(body);
-  }));
-
-
-const dateToString = (d) =>
-  pad(2, d.getHours() - 12) +
-  ':' + pad(2, d.getMinutes()) +
-  (d.getSeconds() ? ':' + pad(2, d.getSeconds()) : '') +
-  ' PM';
-
+// Numbers to english string
 const numberStringToInt = value => {
-  switch (value.toLowerCase()) {
-    case 'one':
-      return 1;
-    case 'two':
-      return 2;
-    case 'three':
-      return 3;
-    case 'four':
-      return 4;
-    case 'five':
-      return 5;
-    case 'six':
-      return 6;
-    case 'seven':
-      return 7;
-    case 'eight':
-      return 8;
-    case 'nine':
-      return 9;
-  }
-  return NaN;
+    switch (value.toLowerCase()) {
+        case 'one':
+            return 1;
+        case 'two':
+            return 2;
+        case 'three':
+            return 3;
+        case 'four':
+            return 4;
+        case 'five':
+            return 5;
+        case 'six':
+            return 6;
+        case 'seven':
+            return 7;
+        case 'eight':
+            return 8;
+        case 'nine':
+            return 9;
+    }
+    return NaN;
 };
 
-const _extract = data =>
-  new Promise((resolve, reject) => {
+// Request the current minutes to midnight feed.
+const _request = async () => {
+    try {
+        return await rp({uri: endPoint, json: true});
+    }
+    catch (err) {
+        throw new Error("Unexpected Status Code");
+    }
+};
+
+// Extract the relevant data
+const _extract = data => {
     const $ = cheerio.load(data);
+
     const nodes = $(conf.selector)
-      .map(function() {
-        return $(this).text();
-      })
-      .get();
+        .map(function () {
+            return $(this).text();
+        })
+        .get();
 
     for (const node of nodes) {
-      const result = node.match(conf.title);
-      if (result) {
-        if (!isNaN(result[1]))
-          return resolve(parseInt(result[1]));
-        if (result[2]) {
-          const whole = numberStringToInt(result[2]);
-          if (!isNaN(whole)) return resolve(whole + 0.5);
+        const result = node.match(conf.title);
+        if (result) {
+            if (!isNaN(result[1]))
+                return parseInt(result[1]);
+            if (result[2]) {
+                const whole = numberStringToInt(result[2]);
+                if (!isNaN(whole)) return whole + 0.5;
+            }
         }
-      }
     }
 
-    reject("No result found");
-  });
+    throw new Error("No result found");
+};
 
-const M2M = () => _request()
-  .then(_extract)
-  .then(x => dateToString(toTime(x)));
-
-
-module.exports = M2M;
+// Export the chain
+module.exports = async () => {
+    try {
+        const requested = await _request();
+        const extracted = await _extract(requested);
+        return dateToString(toTime(extracted));
+    }
+    catch (err) {
+        logger.error('Error in the _doomsday Generator', {
+            message: err.message || '',
+            stack: err.stack || '',
+        });
+        throw err;
+    }
+};

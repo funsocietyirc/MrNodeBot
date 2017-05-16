@@ -141,7 +141,7 @@ module.exports = app => {
     Models.QuitLogging.create({
         nick: nick,
         reason: reason,
-        channels: channels.join(),
+        channels: _.isArray(channels) ? channels.join() : '',
         user: message.user,
         host: message.host
       })

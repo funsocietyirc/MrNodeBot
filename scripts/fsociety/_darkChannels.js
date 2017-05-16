@@ -17,7 +17,7 @@ const fn = l => {
   if (l === '_') return l;
   // Letter is in fact not a letter at all
   if (!isNaN(l)) return shift(l, digits);
-  // Letter is upercase
+  // Letter is uppercase
   if (l === l.toUpperCase()) return shift(l, upperCaseLetters);
   // Letter is lowercase
   if (l === l.toLowerCase()) return shift(l, lowerCaseLetters);
@@ -27,7 +27,7 @@ const fn = l => {
 const channel = seed => {
   let string = '';
   // Iterate over the seed length and get a channel name
-  for (var i = 0, len = seed.length; i < len; i++) string = string + fn(seed[i]);
+  for (let i = 0, len = seed.length; i < len; i++) string = string + fn(seed[i]);
   return string;
 };
 
@@ -35,7 +35,7 @@ const channel = seed => {
 const channels = total => {
   let output = [],
     seed = channel(initialSeed);
-  for (var x = 0; x < total; x++) {
+  for (let x = 0; x < total; x++) {
     output.push(ircChannelPrefix + prefix + seed);
     seed = channel(seed);
   }
