@@ -58,7 +58,7 @@
     "procCommand": "Error processing Command: {{command}}",
     "genericError": "Error in: {{command}}",
     "moreInformation": "I need some more information, {{- nick}}",
-    "invalidCommand": "I am sorry {{- from}}, I am unable to do that. Let me clarify {{cmd}} is an invalid Command",
+    "invalidCommand": "I am sorry, {{- from}}, I am unable to do that. Let me clarify, {{cmd}} is an invalid Command",
     "invalidIdentCommand": "Error with Identified Command {{cmd}} from {{- from}} to {{- to}}"
   }
 }
