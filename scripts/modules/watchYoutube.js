@@ -49,11 +49,22 @@ module.exports = app => {
 
         // Get Channel Stats
         const channelStats = () => Object.assign({}, {
-            totalListeners: socket.adapter.rooms[room] ?
-                socket.adapter.rooms[room].length : 0,
-            channelListeners: socket.adapter.rooms[activeChannel] ?
-                socket.adapter.rooms[activeChannel].length : 0
+            // Total Server listeners
+            totalListeners: socket.adapter.rooms[room] ? socket.adapter.rooms[room].length : 0,
+            // Total Listeners of active channel
+            channelListeners: socket.adapter.rooms[activeChannel] ? socket.adapter.rooms[activeChannel].length : 0,
+            // Channel List
+            channels: _(socket.adapter.rooms).pickBy(
+                    (v, k) => !_.startsWith(k, namespace) && !_.startsWith(k, room)
+                )
+                .map((v, k) => Object.assign({}, {
+                    channel: k.substring(1).toUpperCase(),
+                    count: v.length || 0,
+                }))
+                .orderBy(['length','desc'])
+                .value(),
         });
+
 
         // Send Initial HR Time
         socket.to(connection.id).emit('timesync', Date.now());

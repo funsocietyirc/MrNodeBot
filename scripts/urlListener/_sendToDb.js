@@ -6,14 +6,12 @@ const config = require('../../config');
 // Ignore URL logging for specific channels
 const urlLoggerIgnore = config.features.urls.loggingIgnore || [];
 
-module.exports = results => new Promise(resolve => {
-    // Filter the ignore list
-    let ignored = urlLoggerIgnore.some(hash => {
-        if (_.includes(hash, _.toLower(results.to))) return true;
-    });
+module.exports = async(results) => {
+    // Ignore
+    let ignored = urlLoggerIgnore.some(hash => _.includes(hash, _.toLower(results.to)));
 
     // Gate
-    if (!Models.Url || ignored) return resolve(results);
+    if (!Models.Url || ignored) return results;
 
     let data = {
         url: results.url,
@@ -27,44 +25,51 @@ module.exports = results => new Promise(resolve => {
     // And the threat array is not empty, record the link is malicious
         data.threat = !_.isEmpty(results.threats);
 
-    // Do the magic
-    return Models.Url.create(data)
-        .then(record => {
-            results.id = record.id;
-            results.delivered.push({
-                protocol: 'urlDatabase',
-                on: Date.now()
-            });
-            return results;
-        })
-        // Log Youtube Url
-        .then(results => {
-            // There are no youtube results, bail
-            if (_.isUndefined(results.youTube)) return results;
-            // Return the record
-            return Models.YouTubeLink.create({
+
+    try {
+        // Crate the record
+        const record = await Models.url.create(data);
+
+        // Assign the ID
+        results.id = record.id;
+
+        // Push delivered status
+        results.delivered.push({
+            protocol: 'urlDatabase',
+            recordId: results.id,
+            on: Date.now()
+        });
+
+        // Log Youtube Video
+        if(
+            !_.isUndefined(results.youTube) &&
+            !_.isUndefined(results.youTube.video)
+        ) {
+            // Create YouTube record
+            const youTubeRecord = await Models.YouTubeLink.create({
                 url: results.url,
                 to: results.to,
                 from: results.from,
-                title: results.youTube.videoTitle,
+                title: results.youTube.video.videoTitle,
                 user: results.message.user,
                 host: results.message.host
             });
-        })
-        .then(record => {
+            // Push delivered status
             results.delivered.push({
                 protocol: 'youTubeDatabase',
+                recordId: youTubeRecord.id,
                 on: Date.now(),
                 id: record.id
             });
-            return results;
-        })
-        .then(resolve)
-        .catch(err => {
-            logger.warn('Error in the DB URL function', {
-                err
-            });
-            resolve(results);
-        });
+        }
 
-});
+        return results;
+    }
+    catch (err) {
+        logger.error('Error In the URL Listener logging function', {
+            message: err.message || '',
+            stack: err.stack || ''
+        });
+        return results;
+    }
+};
