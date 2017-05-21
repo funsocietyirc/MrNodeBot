@@ -58,7 +58,7 @@ module.exports = app => {
                     (v, k) => !_.startsWith(k, namespace) && !_.startsWith(k, room)
                 )
                 .map((v, k) => Object.assign({}, {
-                    channel: k.substring(1).toUpperCase(),
+                    channel: k === '/' ? 'Lobby' : k.substring(1).toUpperCase(),
                     count: v.length || 0,
                 }))
                 .orderBy(['length','desc'])
