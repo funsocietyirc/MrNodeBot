@@ -54,6 +54,7 @@ module.exports = async(results) => {
                 user: results.message.user,
                 host: results.message.host
             });
+            
             // Push delivered status
             results.delivered.push({
                 protocol: 'youTubeDatabase',

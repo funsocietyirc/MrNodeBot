@@ -6,7 +6,7 @@ const logger = require('../../lib/logger');
 
 module.exports = async (url) => {
     try {
-        const results = rp({
+        const results = await rp({
             uri: `https://www.googleapis.com/urlshortener/v1/url`,
             method: 'POST',
             json: true,

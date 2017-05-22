@@ -112,11 +112,17 @@ module.exports = (results, app) => {
     // We Have BitBucket data
     else if (!_.isUndefined(results.bitBucket)) {
         let bb = results.bitBucket;
-        append(`${logos.bitBucket} ${icons.sideArrow} ${bb.ownerDisplayName} ${icons.sideArrow} ${bb.desc ? bb.desc : 'BitBucket Repository'}`)
-        (`${icons.time} ${c.grey.bold('~')} ${ moment(bb.lastPush).fromNow()}`);
+        append(`${logos.bitBucket}`);
+        if(!bb.privateRepo) {
+            append(`${bb.ownerDisplayName} ${icons.sideArrow} ${bb.desc ? bb.desc : 'BitBucket Repository'}`)
+            (`${icons.time} ${c.grey.bold('~')} ${ moment(bb.lastPush).fromNow()}`);
 
-        if (bb.language) append(bb.language);
-        if (bb.hasIssues) append(icons.sad);
+            if (bb.language) append(bb.language);
+            if (bb.hasIssues) append(icons.sad);
+        }
+        else {
+            append(`Private Repository, Access Denied`);
+        }
     }
     // We have Imgur image
     else if (!_.isUndefined(results.imgur) && results.imgur.matchType === 'image') {
