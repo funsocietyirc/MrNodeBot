@@ -27,15 +27,15 @@ const bot = new Bot(app => {
     // Code here will be executed after the bot is finished connecting
     if (process.stdin.setRawMode) process.stdin.setRawMode(true);
 
-    process.stdin.on('data', (b) => {
+    // Hook into control-c termination
+    process.stdin.on('data', b => {
         if (b[0] === 3) {
             if (!app._ircClient.conn) process.exit();
             else app._ircClient.disconnect('I have been terminated from the Console. Goodbye cruel world...', () => {
-                if (process.stdin.setRawMode) {
-                    process.stdin.setRawMode(false);
-                }
+                if (process.stdin.setRawMode) process.stdin.setRawMode(false);
                 process.exit();
             });
         }
     });
+
 }, args.config);

@@ -199,13 +199,13 @@ module.exports = app => {
 
             // No Args Provided
             if (_.isEmpty(args)) {
-                app.say(to, 'Subcommand required, use help for more information');
+                app.say(to, 'Sub-command required, use help for more information');
                 return;
             }
 
             // A list of available commands
             const cmds = {
-                help: "Get Subcommand usage",
+                help: "Get Sub-command usage",
                 clear: "<channel?> -- Force of a clear of all connected clients queues",
                 reload: "<channel?> -- Force all clients to reload",
                 remove: "<channel> <index> -- Remove a index from all connected clients queues",
@@ -268,7 +268,7 @@ module.exports = app => {
                     app.say(to, `Current Video on ${args[1] || to} has been skipped`);
                     break;
                 default:
-                    app.say(to, `Subcommand not found, available commands are ${Object.keys(cmds).join(', ')}`);
+                    app.say(to, `Sub-command not found, available commands are ${Object.keys(cmds).join(', ')}`);
                     break;
             }
 

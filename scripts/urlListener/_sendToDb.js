@@ -28,7 +28,7 @@ module.exports = async(results) => {
 
     try {
         // Crate the record
-        const record = await Models.url.create(data);
+        const record = await Models.Url.create(data);
 
         // Assign the ID
         results.id = record.id;
