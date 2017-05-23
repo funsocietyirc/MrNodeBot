@@ -1,0 +1,23 @@
+# Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
+version: v1.7.0
+# ignores vulnerabilities until expiry date; change duration by modifying expiry date
+ignore:
+  'npm:qs:20170213':
+    - x-ray > x-ray-crawler > superagent > qs:
+        reason: None given
+        expires: '2017-06-22T21:00:06.050Z'
+  'npm:shelljs:20140723':
+    - shelljs:
+        reason: None given
+        expires: '2017-06-22T21:00:06.050Z'
+# patches apply the minimum changes required to fix a vulnerability
+patch:
+  'npm:ms:20170412':
+    - x-ray > debug > ms:
+        patched: '2017-05-23T21:00:06.210Z'
+    - x-ray > x-ray-crawler > ms:
+        patched: '2017-05-23T21:00:06.210Z'
+    - socket.io > socket.io-adapter > debug > ms:
+        patched: '2017-05-23T21:00:06.210Z'
+    - socket.io > socket.io-client > debug > ms:
+        patched: '2017-05-23T21:00:06.210Z'
