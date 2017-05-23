@@ -17,7 +17,7 @@ const short = require('../lib/_getShortService')();
 // Handle real time upgrades, updates, and restarts
 // Commands: update reload halt
 module.exports = app => {
-  
+
     // Cycle the bot (quit process)
     const halt = (to, from) => {
         app.action(to, 'I will be restarting soon');
@@ -88,7 +88,8 @@ module.exports = app => {
                     if (diffCode !== 0 || _.isEmpty(diffFiles)) {
                         logger.error('Was unable to read the commit ', {
                             diffCode,
-                            diffFiles
+                            diffFiles,
+                            diffErr,
                         });
                         app.say(to, 'I was unable to read the commit log');
                         return;
@@ -103,20 +104,12 @@ module.exports = app => {
                     // Files affected from last commit
                     const files = _.compact(diffFiles.split(os.EOL));
 
-                    // Check if we have any non scripts
+                    // Check updated files
                     for (let file of files) {
-                        if (!_.startsWith(file, 'scripts') && _.endsWith(file, '.js')) {
-                            shouldCycle = true;
-                            break;
-                        }
-                    }
-
-                    // Should we update npm packages
-                    for (let file of files) {
-                        if (_.startsWith(file, 'package.json') || (_.startsWith(file, 'yarn.lock') && hasYarnLock)) {
-                            shouldInstallPackages = true;
-                            break;
-                        }
+                        // Should we update npm packages
+                        if (_.startsWith(file, 'package.json') || (_.startsWith(file, 'yarn.lock') && hasYarnLock)) shouldInstallPackages = true;
+                        // Check if we have any non scripts
+                        if (!_.startsWith(file, 'scripts') && _.endsWith(file, '.js')) shouldCycle = true;
                     }
 
                     // begin shorten chain
