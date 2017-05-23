@@ -108,6 +108,7 @@ module.exports = app => {
                     for (let file of files) {
                         // Should we update npm packages
                         if (_.startsWith(file, 'package.json') || (_.startsWith(file, 'yarn.lock') && hasYarnLock)) shouldInstallPackages = true;
+
                         // Check if we have any non scripts
                         if (!_.startsWith(file, 'scripts') && _.endsWith(file, '.js')) shouldCycle = true;
                     }
