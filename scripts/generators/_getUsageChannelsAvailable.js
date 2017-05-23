@@ -107,6 +107,7 @@ module.exports = (app, channel) => new Promise((resolve, reject) => {
                 // Get current participants and seperate them into participants / voices / op
                 if (channelsObject[value].isWatching) {
                     let users = app._ircClient.getUsers(value);
+
                     _.forEach(users, user => {
                         if (app._ircClient.isOpInChannel(value, user)) {
                             channelsObject[value].currentOps.push(user);
@@ -115,7 +116,7 @@ module.exports = (app, channel) => new Promise((resolve, reject) => {
                         } else {
                             channelsObject[value].currentParticipants.push(user);
                         }
-                    })
+                    });
                 }
 
             });

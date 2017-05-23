@@ -185,7 +185,8 @@ module.exports = app => {
             let defaultValue = _.get(app.Config, key);
 
             // Attempt to parse JSON
-            let json = null;
+            let json;
+
             try {
                 json = JSON.parse(value);
             } catch (err) {
