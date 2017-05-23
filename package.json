@@ -7,7 +7,9 @@
     "start": "node ./index.js",
     "test": "./node_modules/mocha/bin/mocha test/**/*.js --reporter spec",
     "test-watch": "./node_modules/mocha/bin/mocha test/**/*.js --reporter spec -w",
-    "generate-docs": "node_modules/.bin/jsdoc -c jsdoc.json"
+    "generate-docs": "node_modules/.bin/jsdoc -c jsdoc.json",
+    "snyk-protect": "snyk protect",
+    "prepublish": "npm run snyk-protect"
   },
   "author": "Dave Richer <davericher@gmail.com>",
   "license": "MIT",
@@ -76,7 +78,8 @@
     "winston": "^2.3.1",
     "winston-daily-rotate-file": "^1.4.6",
     "winston-logio-mirror": "^0.3.0",
-    "x-ray": "^2.3.2"
+    "x-ray": "^2.3.2",
+    "snyk": "^1.30.1"
   },
   "devDependencies": {
     "chai": "^3.5.0",
@@ -87,5 +90,6 @@
     "mocha": "^3.4.1",
     "sinon": "^2.2.0",
     "sinon-chai": "^2.10.0"
-  }
+  },
+  "snyk": true
 }
