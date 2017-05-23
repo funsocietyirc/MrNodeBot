@@ -6,6 +6,10 @@
 [![Dependencies](https://david-dm.org/funsocietyirc/mrnodebot.svg)](https://david-dm.org/funsocietyirc/mrnodebot)
 [![devDependencies Status](https://david-dm.org/funsocietyirc/mrnodebot/dev-status.svg)](https://david-dm.org/funsocietyirc/mrnodebot?type=dev)
 
+## Snyk Intergration
+Since this is an IRC bot, and one cannot predict the type of character the bot may encounter in the wild, this project makes use of the Snyk vulnerabilitie
+patching system. You should regularly check the snyk patching system by running ```npm run snyk-protect```.
+
 ## Special Considerations
 The bot currently depends on NickServ services supporting the ACC command for certain command authentication types. Networks confirmed to work include
 -   freenode

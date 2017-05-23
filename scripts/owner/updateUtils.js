@@ -156,12 +156,32 @@ module.exports = app => {
                                         const errMsg = `Something went wrong running ${pkgStr} install`;
                                         logger.error(errMsg, {
                                             npmStdErr,
+                                            npmStdErr,
                                             npmStdOut
                                         });
                                         app.say(to, errMsg);
                                         return;
                                     }
-                                    halt(to, from);
+
+                                    // Run Secure
+                                    app.say(to, 'Securing...');
+                                    shell.exec(`npm run snyk-protect`, {
+                                      async: true,
+                                      silent: app.Config.bot.debug || false
+                                    }, (snykCode, snykStdOut, snykStdErr) => {
+                                      // Something went wrong running snyk
+                                      if (snykCode !== 0) {
+                                        logger.error('Something went wrong securing packages with Snyk', {
+                                          snykCode,
+                                          snykStdOut,
+                                          snykStdErr
+                                        });
+                                        app.say(to, `Something went wrong securing my modules!`);
+                                        return;
+                                      }
+                                      // Halt
+                                      halt(to, from);
+                                    });
                                 });
                             }
                             // Final check
