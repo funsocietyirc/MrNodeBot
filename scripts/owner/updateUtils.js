@@ -17,7 +17,7 @@ const short = require('../lib/_getShortService')();
 // Handle real time upgrades, updates, and restarts
 // Commands: update reload halt
 module.exports = app => {
-
+  
     // Cycle the bot (quit process)
     const halt = (to, from) => {
         app.action(to, 'I will be restarting soon');
@@ -77,7 +77,7 @@ module.exports = app => {
                 }
 
                 // TODO Hold the last commit and grab all commits since
-                let commit = _.first(commits);
+                const commit = _.first(commits);
 
                 // Get the files involved in the last commit
                 shell.exec(`git diff-tree --no-commit-id --name-only -r ${commit.abbrevHash}`, {
@@ -99,9 +99,9 @@ module.exports = app => {
                     // Should we do a NPM/Yarn Install
                     let shouldInstallPackages = false;
                     // Do we have a yarn file
-                    let hasYarnLock = fs.existsSync(path.resolve(process.cwd()), 'yarn.lock');
+                    const hasYarnLock = fs.existsSync(path.resolve(process.cwd()), 'yarn.lock');
                     // Files affected from last commit
-                    let files = _.compact(diffFiles.split(os.EOL));
+                    const files = _.compact(diffFiles.split(os.EOL));
 
                     // Check if we have any non scripts
                     for (let file of files) {
@@ -148,17 +148,20 @@ module.exports = app => {
                                 app.say(to, `Running ${pkgStr}`);
 
                                 // Execute the shell command
-                                shell.exec(`${pkgManager} install`, {
+                                shell.exec(`${pkgManager} update`, {
                                     async: true,
                                     silent: app.Config.bot.debug || false
                                 }, (npmCode, npmStdOut, npmStdErr) => {
+                                    // Something went wrong updating packages
                                     if (npmCode !== 0) {
+                                        // Log Error
                                         const errMsg = `Something went wrong running ${pkgStr} install`;
                                         logger.error(errMsg, {
                                             npmStdErr,
                                             npmStdErr,
                                             npmStdOut
                                         });
+                                        // Announce error
                                         app.say(to, errMsg);
                                         return;
                                     }
@@ -171,14 +174,19 @@ module.exports = app => {
                                     }, (snykCode, snykStdOut, snykStdErr) => {
                                       // Something went wrong running snyk
                                       if (snykCode !== 0) {
+                                        // Log Error
                                         logger.error('Something went wrong securing packages with Snyk', {
                                           snykCode,
                                           snykStdOut,
                                           snykStdErr
                                         });
+                                        // Report error
                                         app.say(to, `Something went wrong securing my modules!`);
                                         return;
                                       }
+
+                                      // Report success
+                                      app.action(to, `is very much in his safe space`);
                                       // Halt
                                       halt(to, from);
                                     });
