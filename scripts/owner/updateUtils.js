@@ -142,14 +142,14 @@ module.exports = app => {
                                 app.say(to, `Running ${pkgStr}`);
 
                                 // Execute the shell command
-                                shell.exec(`${pkgManager} upgrade`, {
+                                shell.exec(`${pkgManager} install`, {
                                     async: true,
                                     silent: app.Config.bot.debug || false
                                 }, (npmCode, npmStdOut, npmStdErr) => {
                                     // Something went wrong updating packages
                                     if (npmCode !== 0) {
                                         // Log Error
-                                        const errMsg = `Something went wrong running ${pkgStr} upgrade`;
+                                        const errMsg = `Something went wrong running ${pkgStr} install`;
                                         logger.error(errMsg, {
                                             npmStdErr,
                                             npmStdErr,
