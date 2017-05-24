@@ -135,7 +135,7 @@ module.exports = app => {
     }
 
     // No Commits found
-    if (_.isUndefined(commits.stdOut) || _.isEmpty(commits.stdOut) || !_.isArray(commits.stdOut) || _.isEmpty(commits.stdOut)) {
+    if (_.isUndefined(commits) || _.isEmpty(commits) || !_.isArray(commits) || _.isEmpty(commits)) {
       app.say(to, 'Something went wrong finding the last commit');
       return;
     }
