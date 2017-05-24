@@ -54,7 +54,7 @@ module.exports = app => {
     // Something went wrong updating packages
     if (code !== 0) {
       // Log Error
-      const errMsg = `Something went wrong running ${pkgStr} install`;
+      const errMsg = `Something went wrong running ${pkgManager.toUpperCase()} install`;
       logger.error(errMsg, {code, stdErr, stdOut});
       return reject(new Error(errMsg));
     }
@@ -212,11 +212,8 @@ module.exports = app => {
         return;
       }
 
-      // Get uppercase representation
-      const pkgStr = pkgManager.toUpperCase();
-
       // Run the package manager, hold results
-      app.say(to, `Running ${pkgStr}`);
+      app.say(to, `Running ${pkgManager.toUpperCase()}`);
       let pkgResults;
       try {
         pkgResults = await updatePackages(pkgManager);
