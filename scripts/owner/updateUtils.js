@@ -123,7 +123,7 @@ module.exports = app => {
     }
 
     // Give initial feedback
-    app.say(to, `I am now checking for upgrades ${from}`);
+    app.say(to, `I am now checking for upgrades, ${from}`);
 
     // Grab the commits
     let commits;
@@ -208,7 +208,7 @@ module.exports = app => {
         pkgManager = 'npm';
       else {
         logger.error(`Cannot find package manager during upgrade`);
-        app.say(to, `I am afraid we are missing the package manager ${from}`);
+        app.say(to, `I am afraid we are missing the package manager, ${from}`);
         return;
       }
 

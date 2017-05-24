@@ -22,8 +22,6 @@ const endPoint = 'https://freegeoip.net/json/';
 // If the host is invalid, and the request fails, a empty object will be returned
 
 module.exports = async (host) => {
-    let results = Object.assign({});
-
     if (!host)
         throw new Error('No host was provided.');
 
@@ -32,10 +30,7 @@ module.exports = async (host) => {
             uri: `${endPoint}${host}`,
             json: true
         });
-
-        Object.assign(results, request);
-
-        return results;
+        return request;
     }
         // Catch Errors
     catch (err) {
@@ -44,6 +39,6 @@ module.exports = async (host) => {
             stack: err.stack || ''
         });
 
-        return results;
+        return {};
     }
 };
