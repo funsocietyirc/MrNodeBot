@@ -141,7 +141,7 @@ module.exports = app => {
     }
 
     // Grab the last commit
-    const commit = _.first(commits.stdOut);
+    const commit = _.first(commits);
 
     // Grab the diff results
     let diffResults;
