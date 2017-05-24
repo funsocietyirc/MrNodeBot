@@ -27,11 +27,6 @@ module.exports = app => {
     'Quote #'
   ];
 
-  // Schedule job
-  const cronTime = new scheduler.RecurrenceRule();
-  cronTime.minute = 0;
-  scheduler.schedule('cleanMrRobotQuotes', cronTime, cleanQuotes);
-
   const cleanQuotes = async(to, from, text, message) => {
     try {
       // Get Results from database
@@ -61,6 +56,11 @@ module.exports = app => {
       });
     }
   };
+
+  // Schedule job
+  const cronTime = new scheduler.RecurrenceRule();
+  cronTime.minute = 0;
+  scheduler.schedule('cleanMrRobotQuotes', cronTime, cleanQuotes);
 
   // Clean and merge quotes
   app.Commands.set('mrrobot-clean', {
