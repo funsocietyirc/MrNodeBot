@@ -87,7 +87,7 @@ module.exports = app => {
 
   // Cycle the bot (quit process)
   const halt = (to, from) => {
-    app.action(to, 'I will be restarting soon');
+    app.action(to, 'will be restarting soon');
     // Defer for 5 seconds so everything has a chance to send
     app._ircClient.disconnect(`${from} has asked me if I could leave for a second and do something important, I shall return`, () => process.exit());
   };
