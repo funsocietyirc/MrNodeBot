@@ -113,7 +113,7 @@ module.exports = (results, app) => {
     else if (!_.isUndefined(results.bitBucket)) {
         let bb = results.bitBucket;
         append(`${logos.bitBucket}`);
-        if(!bb.privateRepo) {
+        if (!bb.privateRepo) {
             append(`${bb.ownerDisplayName} ${icons.sideArrow} ${bb.desc ? bb.desc : 'BitBucket Repository'}`)
             (`${icons.time} ${c.grey.bold('~')} ${ moment(bb.lastPush).fromNow()}`);
 

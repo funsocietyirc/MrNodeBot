@@ -60,7 +60,7 @@ module.exports = text => new Promise((resolve, reject) => {
     let getSex = (male, female) => {
         if (male > female) return 'Male';
         if (male < female) return 'Female';
-        return 'Unkown';
+        return 'Unknown';
     };
 
     // Return results

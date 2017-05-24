@@ -67,7 +67,7 @@ module.exports = app => {
         // Remove the replacement from the text, and trim
         text = _.replace(text, replacement, '').trim();
 
-        // Remove the leading delimiter, and unescape special char, then trim the replacement
+        // Remove the leading delimiter, and un-escape special char, then trim the replacement
         replacement = replacement.substr(1).replace(unescapePattern, doubleDelimiter).trim();
 
         // Unescape and trim the text

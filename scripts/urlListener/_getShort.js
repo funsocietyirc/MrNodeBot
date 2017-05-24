@@ -12,7 +12,7 @@ module.exports = async (results) => {
         });
 
     } catch (err) {
-        logger.warn('Error in URL Shortner function', {
+        logger.warn('Error in URL Shortener function', {
             message: err.message || '',
             stack: err.stack || ''
         });

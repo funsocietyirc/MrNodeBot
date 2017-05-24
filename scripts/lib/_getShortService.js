@@ -1,5 +1,5 @@
 'use strict';
-// Return the google shortner service if the api key is available, otherwise default to isGd
+// Return the google shortener service if the api key is available, otherwise default to isGd
 // The Reason for this, although isGd does not require an api key, it blocks a lot of vpn services
 // from using it
 const _ = require('lodash');

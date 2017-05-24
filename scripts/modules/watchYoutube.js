@@ -55,13 +55,13 @@ module.exports = app => {
             channelListeners: socket.adapter.rooms[activeChannel] ? socket.adapter.rooms[activeChannel].length : 0,
             // Channel List
             channels: _(socket.adapter.rooms).pickBy(
-                    (v, k) => !_.startsWith(k, namespace) && !_.startsWith(k, room)
-                )
+                (v, k) => !_.startsWith(k, namespace) && !_.startsWith(k, room)
+            )
                 .map((v, k) => Object.assign({}, {
                     channel: k === '/' ? 'Lobby' : k.substring(1).toUpperCase(),
                     count: v.length || 0,
                 }))
-                .orderBy(['length','desc'])
+                .orderBy(['length', 'desc'])
                 .value(),
         });
 

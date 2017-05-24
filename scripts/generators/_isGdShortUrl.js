@@ -1,5 +1,5 @@
 'use strict';
-// Get a response from the Is Good URl Shortner
+// Get a response from the Is Good URl Shortener
 // Input:
 //   text - URL to shorten
 // Returns:

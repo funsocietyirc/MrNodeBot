@@ -16,7 +16,7 @@ module.exports = app => {
     if (!Models.Mention || !Models.Mentioned) return scriptInfo;
     // Parse for mentions
     const mentions = (to, from, text, message) => {
-        // Priv message or empty string, bail
+        // Private message or empty string, bail
         if (to === from || !_.trim(text)) return;
 
         // Setup variables

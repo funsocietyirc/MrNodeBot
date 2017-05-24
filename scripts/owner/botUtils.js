@@ -50,6 +50,7 @@ module.exports = app => {
         call: (to, from, text, message) => app.say(from, `I am currently on the following channels: ${app.channels.join(', ')}`)
     });
 
+    // Get a configuration item and send it back
     app.Commands.set('conf-get', {
         desc: '[key] - Get a configuration key',
         access: app.Config.accessLevels.owner,

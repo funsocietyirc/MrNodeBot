@@ -6,7 +6,7 @@ const config = require('../../config');
 // Ignore URL logging for specific channels
 const urlLoggerIgnore = config.features.urls.loggingIgnore || [];
 
-module.exports = async(results) => {
+module.exports = async (results) => {
     // Ignore
     let ignored = urlLoggerIgnore.some(hash => _.includes(hash, _.toLower(results.to)));
 
@@ -25,7 +25,6 @@ module.exports = async(results) => {
     // And the threat array is not empty, record the link is malicious
         data.threat = !_.isEmpty(results.threats);
 
-
     try {
         // Crate the record
         const record = await Models.Url.create(data);
@@ -41,7 +40,7 @@ module.exports = async(results) => {
         });
 
         // Log Youtube Video
-        if(
+        if (
             !_.isUndefined(results.youTube) &&
             !_.isUndefined(results.youTube.video)
         ) {
@@ -54,7 +53,7 @@ module.exports = async(results) => {
                 user: results.message.user,
                 host: results.message.host
             });
-            
+
             // Push delivered status
             results.delivered.push({
                 protocol: 'youTubeDatabase',

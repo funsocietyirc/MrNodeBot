@@ -59,20 +59,20 @@ const StartTime = module.exports.StartTime = moment();
 
 /**
  * ColorHelpArgs - Colorize brackets
- * @param {String} text Unformatted String
- * @returns {String} Unformatted String
+ * @param {String} text Un-formatted String
+ * @returns {String} Un-formatted String
  */
 const ColorHelpArgs = module.exports.ColorHelpArgs = text => text.replace(/([\[\],])/g, c.red.bold('$1'));
 /**
  * RedSlashes - Colorize Slashes
- * @param {String} text Unformatted String
+ * @param {String} text Un-formatted String
  * @returns {String} Formatted String
  */
 const RedSlashes = module.exports.RedSlashes = text => text.replace(/(\/)/g, c.red.bold('$1'));
 
 /**
  * TitleLine - Format a Title Line
- * @param {String} text Unformatted String
+ * @param {String} text Un-formatted String
  * @returns {String} Formatted String
  */
 const TitleLine = module.exports.TitleLine = text => c.white.bold.bgblack(text);
@@ -87,13 +87,13 @@ const Plural = module.exports.Plural = (text, number) => number > 1 || number ==
 
 /**
  * StripNewLine - Strip New Lines
- * @param {String} text Unformatted Text
+ * @param {String} text Un-formatted Text
  * @returns {String} Formatted Text
  */
 const StripNewLine = module.exports.StripNewLine = text => text.replace(/\r?\n|\r/g, ' ');
 
 /**
- * Replace all occurences of needle in haystack with replacement
+ * Replace all occurrences of needle in haystack with replacement
  * @param {String} haystack the text to search in
  * @param {String} needle what we are looking for
  * @param {String} replacement what to replace the needle with
@@ -105,8 +105,8 @@ const ReplaceAll = module.exports.ReplaceAll = (haystack, needle, replacement) =
 };
 
 /**
- * Rot13 - 13 Letter shift encoder/decoer
- * @param {String} text Unformatted Text
+ * Rot13 - 13 Letter shift encoder/decoder
+ * @param {String} text Un-formatted Text
  * @returns {String} Formatted Text
  */
 const Rot13 = module.exports.Rot13 = text => text.replace(/[a-zA-Z]/g, c => String.fromCharCode((c <= "Z" ? 90 : 122) >= (c = c.charCodeAt(0) + 13) ? c : c - 26));

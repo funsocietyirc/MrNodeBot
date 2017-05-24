@@ -87,7 +87,6 @@ module.exports = app => {
                 app.say(to, 'Something is not quite right with your tweet');
                 return;
             }
-            ;
             app.say(to, `We just lit up the Twittersphere Bro!`);
         });
     };
