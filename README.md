@@ -5,6 +5,7 @@
 [![Build Status](https://travis-ci.org/funsocietyirc/MrNodeBot.svg?branch=master)](https://travis-ci.org/funsocietyirc/MrNodeBot)
 [![Dependencies](https://david-dm.org/funsocietyirc/mrnodebot.svg)](https://david-dm.org/funsocietyirc/mrnodebot)
 [![devDependencies Status](https://david-dm.org/funsocietyirc/mrnodebot/dev-status.svg)](https://david-dm.org/funsocietyirc/mrnodebot?type=dev)
+[![Known Vulnerabilities](https://snyk.io/test/github/funsocietyirc/mrnodebot/badge.svg)](https://snyk.io/test/github/funsocietyirc/mrnodebot)
 
 ## Snyk Intergration
 Since this is an IRC bot, and one cannot predict the type of character the bot may encounter in the wild, this project makes use of the Snyk vulnerabilitie
