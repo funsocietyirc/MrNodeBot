@@ -1,7 +1,7 @@
 {
   "name": "mrnodebot",
   "version": "1.0.11-0",
-  "description": "Your Friendly NodeJS IRC Bot",
+  "description": "Your Friendly NodeJS IRC Bot..",
   "main": "index.js",
   "scripts": {
     "start": "node ./index.js",
