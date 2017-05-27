@@ -51,7 +51,9 @@ module.exports = async (results) => {
                 from: results.from,
                 title: results.youTube.video.videoTitle,
                 user: results.message.user,
-                host: results.message.host
+                host: results.message.host,
+                restrictions: results.youTube.video.restrictions,
+                embeddable: results.youTube.video.embeddable,
             });
 
             // Push delivered status
