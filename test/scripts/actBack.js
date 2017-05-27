@@ -33,7 +33,7 @@ describe('test the actBack script', () => {
 
     it('sends action when triggered correctly', () => {
         actback.actions.actBack('from', 'to', `kick ${app.nick} in the face`, 'message');
-        const result = expect(app.action).to.be.called.once;
+        const result = expect(app.action).to.be.called;
     });
 
     it('does not send action when triggered incorrect', () => {
@@ -41,5 +41,5 @@ describe('test the actBack script', () => {
         const result = expect(app.action).to.not.be.called;
     });
 
-    it('registers the listener', () => expect(app.OnAction.set).to.be.called.once);
+    it('registers the listener', () => expect(app.OnAction.set).to.be.called);
 });

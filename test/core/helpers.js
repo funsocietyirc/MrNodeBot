@@ -122,7 +122,6 @@ describe('Pluralize Helper', () => {
 });
 
 describe('Start Time', () => {
-    it('is a valid number', () => expect(helpers.StartTime).to.be.a.number);
     it('is a valid Moment.js object', () => expect(helpers.StartTime._isAMomentObject).to.be.true);
     it('is in the future', () => expect(helpers.StartTime).to.be.beforeMoment(moment()));
 });
@@ -136,7 +135,7 @@ describe('Access Strings', () => {
         // We get valid translations from the helpers
         it('value should be numeric', () => {
             for (const value in config.accessLevels) {
-                const result = expect(config.accessLevels[value]).to.be.a.number;
+                const result = expect(config.accessLevels[value]).to.be.a('number');
             }
         });
     });
