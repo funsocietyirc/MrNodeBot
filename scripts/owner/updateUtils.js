@@ -195,10 +195,10 @@ module.exports = app => {
 
         // Build Output
         let output = new typo.StringBuilder();
-        output.appendBold('Maeve mode activated').append(commit.subject).append(commit.authorDateRel).append(url);
+        output.appendBold('Pulling myself from the nefarious cloud').append(commit.subject).append(commit.authorDateRel).append(url);
         app.say(to, output.text);
 
-        // Update NPM Modules
+        // Update Modules
         if (shouldInstallPackages) {
             // Determine the package manager to use
             let pkgManager;
@@ -234,10 +234,10 @@ module.exports = app => {
 
             // Halt
             halt(to, from, output.text);
-        } else if (shouldCycle) {
+        } else if (shouldCycle) { // Halt the process
             halt(to, from, output.text);
         } else {
-            reload(to, from);
+            reload(to, from); // Reload scripts
         }
     };
 
