@@ -216,7 +216,7 @@ module.exports = app => {
             app.say(to, `Running ${pkgManager.toUpperCase()}`);
             let pkgResults;
             try {
-                pkgResults = await updatePackages(pkgManager);
+               await updatePackages(pkgManager);
             } catch (err) {
                 app.say(to, err.message);
                 return;
@@ -226,7 +226,7 @@ module.exports = app => {
             app.action(to, `is getting all up in his safe space`);
             let secureResults;
             try {
-                secureResults = await protect();
+                await protect();
             } catch (err) {
                 app.say(to, err.message);
                 return;
@@ -248,7 +248,7 @@ module.exports = app => {
         call: updateCommand
     });
 
-    // Terminate the bot and the proc watcher that keeps it up
+    // Terminate the bot
     app.Commands.set('halt', {
         desc: 'Halt and catch fire (Quit bot / watcher proc)',
         access: app.Config.accessLevels.owner,
@@ -273,7 +273,6 @@ module.exports = app => {
     });
 
     // Reload both the scripts and the Config
-    // Live reload the scripts
     app.Commands.set('reload', {
         desc: 'Live reload the Bot from local storage',
         access: app.Config.accessLevels.owner,
@@ -291,6 +290,7 @@ module.exports = app => {
             try {
                 app.say(to, `Attempting to secure modules`);
                 const secureResults = await protect();
+                app.say(to, 'Successfully secured modules')
             } catch (err) {
                 app.say(`Something went wrong securing my modules`);
             }
