@@ -196,7 +196,7 @@ module.exports = app => {
 
         // Build Output
         let output = new typo.StringBuilder();
-        output.appendBold('Pulling myself from the nefarious cloud').append(commit.subject).append(commit.authorDateRel).append(url);
+        output.appendBold('Update').append(commit.subject).append(commit.authorDateRel).append(url);
         app.say(to, output.text);
 
         // Update Modules
