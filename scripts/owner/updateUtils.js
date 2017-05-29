@@ -108,16 +108,16 @@ module.exports = app => {
         }
 
         // Pull From Git
-        let commited;
+        let committed;
         try {
-            commited = await pullFromGit();
+            committed = await pullFromGit();
         } catch (err) {
             app.say(to, err.message);
             return;
         }
 
         // No updates available
-        if (_.isString(commited.stdOut) && _.includes(commited.stdOut.toLowerCase(), 'up-to-date')) {
+        if (_.isString(committed.stdOut) && _.includes(committed.stdOut.toLowerCase(), 'up-to-date')) {
             app.action(to, `is still lemony fresh, nothing to be done here`);
             return;
         }
@@ -289,9 +289,8 @@ module.exports = app => {
         access: app.Config.accessLevels.owner,
         call: async (to, from, text, message) => {
             try {
-                app.action(to, `is attempting to secure modules`);
                 const secureResults = await protect();
-                app.action(to, 'Successfully secured modules!')
+                app.action(to, 'successfully secured modules!')
             } catch (err) {
                 app.say(`Something went wrong securing my modules`);
             }
@@ -304,8 +303,8 @@ module.exports = app => {
         access: app.Config.accessLevels.owner,
         call: async (to, from, text, message) => {
             try {
-                app.action(to, 'is Attempting to pull himself from source!');
                 const pullResults = await pullFromGit();
+                app.action(to, 'has successfully pulled himself from source!');
             }
             catch (err) {
                 app.say(to, err.message);
