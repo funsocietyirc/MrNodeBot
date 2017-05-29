@@ -118,12 +118,12 @@ module.exports = app => {
 
         // No updates available
         if (_.isString(commited.stdOut) && _.includes(commited.stdOut.toLowerCase(), 'up-to-date')) {
-            app.say(to, 'I am still lemony fresh, no update required');
+            app.action(to, `is still lemony fresh, nothing to be done here`);
             return;
         }
 
         // Give initial feedback
-        app.say(to, `I am now checking for upgrades, ${from}`);
+        app.action(to, `is now forecasting the clouds for new data`);
 
         // Grab the commits
         let commits;
@@ -137,6 +137,7 @@ module.exports = app => {
         // No Commits found
         if (_.isUndefined(commits) || _.isEmpty(commits) || !_.isArray(commits) || _.isEmpty(commits)) {
             app.say(to, 'Something went wrong finding the last commit');
+            logger.error(`Something went wrong finding the last commit data in updateUtils.js`);
             return;
         }
 
@@ -154,7 +155,7 @@ module.exports = app => {
 
         // No Diff results found
         if (!diffResults || _.isEmpty(diffResults.stdOut)) {
-            app.say(to, 'I was unable to read the commit log');
+            app.action(to, 'was unable to read the commit log');
             return;
         }
 
@@ -288,9 +289,9 @@ module.exports = app => {
         access: app.Config.accessLevels.owner,
         call: async (to, from, text, message) => {
             try {
-                app.say(to, `Attempting to secure modules`);
+                app.action(to, `is attempting to secure modules`);
                 const secureResults = await protect();
-                app.say(to, 'Successfully secured modules')
+                app.action(to, 'Successfully secured modules!')
             } catch (err) {
                 app.say(`Something went wrong securing my modules`);
             }
@@ -299,11 +300,11 @@ module.exports = app => {
 
     // Pull From git
     app.Commands.set('pull', {
-        desc: 'Pull the Bot from github',
+        desc: 'Pull the Bot from source',
         access: app.Config.accessLevels.owner,
         call: async (to, from, text, message) => {
             try {
-                app.say(to, 'Attempting to pull myself from GitHub');
+                app.action(to, 'is Attempting to pull himself from source!');
                 const pullResults = await pullFromGit();
             }
             catch (err) {
