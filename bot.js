@@ -785,7 +785,7 @@ class MrNodeBot {
             this.say(`${this.Config.nickserv.nick}${first}`, `acc ${from}`);
         }
         // Invalid Command
-        else this.say(to, t('errors.invalidCommand', {
+        else this.say(from, t('errors.invalidCommand', {
                 from,
                 cmd
             }));
