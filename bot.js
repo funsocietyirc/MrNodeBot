@@ -137,10 +137,7 @@ class MrNodeBot {
             // Log Disconnect
             sock.on('disconnect', msg => logger.info(`Socket IO Disconnection`));
             // Log Error
-            sock.on('error', err => logger.error(`SocketIO Error`, {
-                message: err.message || '',
-                stack: err.stack || ''
-            }));
+            sock.on('error', err => MrNodeBot._errorHandler('Socket.IO Error', err));
         });
     };
 
@@ -771,14 +768,16 @@ class MrNodeBot {
             command.access === this.Config.accessLevels.channelVoiceIdentified ||
             command.access === this.Config.accessLevels.channelOpIdentified
         ) {
-            this.AdmCallbacks.set(from, {
+            // Append timestamp to allow
+            this.AdmCallbacks.set(`${from}.${Date.now()}`, {
                 cmd: cmd,
                 from: from,
                 to: to,
                 text: text,
                 message: message,
-                is: is
+                is: is,
             });
+
             // Send a check to nickserv to see if the user is registered
             // Will spawn the notice listener to do the rest of the work
             let first = this.Config.nickserv.host ? `@${this.Config.nickserv.host}` : '';
@@ -805,10 +804,30 @@ class MrNodeBot {
         // Parse vars
         let [user, acc, code] = text.split(' ');
 
-        // Does not exist in call back, return
-        if (!this.AdmCallbacks.has(user)) return false;
+        let currentUser = null;
+        let currentIndex = null;
+        let currentTimestamp = null;
 
-        let admCall = this.AdmCallbacks.get(user),
+        // // Does not exist in call back, return
+        // if (!this.AdmCallbacks.has(user)) return false;
+
+        this.AdmCallbacks.forEach((v,i,m) => {
+            if(currentIndex || !_.isString(i) || _.isEmpty(i) || !_.isObject(v)) return;
+            const matches = i.match(/([^.]*).(.*)/);
+            if(!matches[0] || !matches[1] || !matches[2]) return;
+
+            if (matches[1] === user) {
+                currentIndex = matches[0];
+                currentUser = matches[1];
+                currentTimestamp = matches[2];
+            }
+        });
+
+        // Does not exist in call back, return
+        if (!currentUser || !currentTimestamp || !currentIndex) return false;
+
+
+        let admCall = this.AdmCallbacks.get(currentIndex),
             admCmd = this.Commands.get(admCall.cmd),
             admTextArray = admCall.text.split(' ');
 
@@ -822,7 +841,7 @@ class MrNodeBot {
         // This is a identified command and the user is not identified
         if (!admCall.is.identified) {
             this.say(admCall.from, t('auth.notIdentified'));
-            this.AdmCallbacks.delete(user);
+            this.AdmCallbacks.delete(currentIndex);
             return false;
         }
 
@@ -845,7 +864,7 @@ class MrNodeBot {
                 group: group,
                 type: admCall.cmd
             }));
-            this.AdmCallbacks.delete(user);
+            this.AdmCallbacks.delete(currentIndex);
             return false;
         }
 
@@ -872,7 +891,7 @@ class MrNodeBot {
         }
 
         // Remove the callback from the stack
-        this.AdmCallbacks.delete(user);
+        this.AdmCallbacks.delete(currentIndex);
         return true;
     };
 
