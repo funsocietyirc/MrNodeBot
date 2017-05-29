@@ -808,9 +808,6 @@ class MrNodeBot {
         let currentIndex = null;
         let currentTimestamp = null;
 
-        // // Does not exist in call back, return
-        // if (!this.AdmCallbacks.has(user)) return false;
-
         this.AdmCallbacks.forEach((v,i,m) => {
             if(currentIndex || !_.isString(i) || _.isEmpty(i) || !_.isObject(v)) return;
             const matches = i.match(/([^.]*).(.*)/);
