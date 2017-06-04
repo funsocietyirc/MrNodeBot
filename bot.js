@@ -710,8 +710,13 @@ class MrNodeBot {
         textArray.splice(0, is.privateMsg ? 1 : 2);
         let output = textArray.join(' ');
 
+        const nickMatched = text.startsWith(this._ircClient.nick);
+        const hasCommand = this.Commands.has(cmd);
+        const validMatchedCommand = nickMatched && hasCommand;
+        const matchedInvalidCommand = nickMatched && !hasCommand;
+
         // Check on trigger for private messages
-        is.triggered = (is.privateMsg && this.Commands.has(cmd) ? true : (text.startsWith(this._ircClient.nick) && this.Commands.has(cmd)));
+        is.triggered = is.privateMsg && hasCommand ? true : validMatchedCommand;
 
         // Process the listeners
         if (!is.triggered && !is.ignored && !is.self) {
@@ -726,8 +731,19 @@ class MrNodeBot {
             });
         }
 
+        // Invalid Matched Command
+        if(matchedInvalidCommand) {
+            const actualText = `${cmd} ${output}`;
+            this.say(to, t('errors.invalidCommand', {
+                from,
+                cmd: actualText
+            }));
+            return false;
+        }
+
         // Nothing to see here
-        if (!is.triggered || is.ignored || is.self || !this.Commands.has(cmd)) return;
+        if (!is.triggered || is.ignored || is.self || !hasCommand) return false;
+
 
         // Grab Command
         let command = this.Commands.get(cmd);
@@ -869,9 +885,9 @@ class MrNodeBot {
         try {
             // Call the command
             let command = this.Commands.get(admCall.cmd);
-            // Command not available
+            // Command not available, this should technically never be reachable
             if(!_.isFunction(command)) {
-                this.say(from, t('errors.invalidCommand', {
+                this.say(to, t('errors.invalidCommand', {
                     from: nick,
                     command: admCall.cmd
                 }));
