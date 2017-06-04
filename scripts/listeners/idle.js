@@ -6,6 +6,7 @@ const scriptInfo = {
 };
 const _ = require('lodash');
 const fml = require('../generators/_fmlLine');
+const twss = require('../generators/_twssLine');
 const bofh = require('../generators/_bofhExcuse');
 const shower = require('../generators/_showerThoughts');
 const moment = require('moment');
@@ -60,7 +61,7 @@ module.exports = app => {
                         // Verify the channel has been active
                         if (timeDiffInMins < timeoutInMins) return;
                         // Send to the message
-                        _.sample([fml, bofh, shower])(1)
+                        _.sample([fml, bofh, shower, twss])(1)
                             .then(message => app.notice(channel, _.first(message)));
                     })
             );
