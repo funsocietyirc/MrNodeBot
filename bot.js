@@ -869,6 +869,14 @@ class MrNodeBot {
         try {
             // Call the command
             let command = this.Commands.get(admCall.cmd);
+            // Command not available
+            if(!_.isFunction(command)) {
+                this.say(from, t('errors.invalidCommand', {
+                    from: nick,
+                    command: admCall.cmd
+                }));
+                return false;
+            }
             command.call(admCall.to, admCall.from, output, admCall.message, admCall.is);
             // Record Stats
             this.Stats.set(admCall.cmd, this.Stats.has(admCall.cmd) ? this.Stats.get(admCall.cmd) + 1 : 1);
