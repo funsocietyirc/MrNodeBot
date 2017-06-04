@@ -716,7 +716,7 @@ class MrNodeBot {
         const matchedInvalidCommand = nickMatched && !hasCommand;
 
         // Check on trigger for private messages
-        is.triggered = is.privateMsg && hasCommand ? true : validMatchedCommand;
+        is.triggered = (is.privateMsg && hasCommand) || validMatchedCommand;
 
         // Process the listeners
         if (!is.triggered && !is.ignored && !is.self) {
@@ -743,7 +743,6 @@ class MrNodeBot {
 
         // Nothing to see here
         if (!is.triggered || is.ignored || is.self || !hasCommand) return false;
-
 
         // Grab Command
         let command = this.Commands.get(cmd);
@@ -800,7 +799,7 @@ class MrNodeBot {
             this.say(`${this.Config.nickserv.nick}${first}`, `acc ${from}`);
         }
         // Invalid Command
-        else this.say(from, t('errors.invalidCommand', {
+        else this.say(to, t('errors.invalidCommand', {
                 from,
                 cmd
             }));
@@ -885,14 +884,6 @@ class MrNodeBot {
         try {
             // Call the command
             let command = this.Commands.get(admCall.cmd);
-            // Command not available, this should technically never be reachable
-            if(!_.isFunction(command)) {
-                this.say(to, t('errors.invalidCommand', {
-                    from: nick,
-                    command: admCall.cmd
-                }));
-                return false;
-            }
             command.call(admCall.to, admCall.from, output, admCall.message, admCall.is);
             // Record Stats
             this.Stats.set(admCall.cmd, this.Stats.has(admCall.cmd) ? this.Stats.get(admCall.cmd) + 1 : 1);

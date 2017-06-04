@@ -12,7 +12,7 @@ module.exports = app => {
     // Hello Test command
     app.Commands.set('hello', {
         desc: 'The hello test command, its quite colorful',
-        access: app.Config.accessLevels.channelVoice,
+        access: app.Config.accessLevels.guest,
         call: (to, from, text, message) => app.say(to, color.rainbow(`{${introduction}} {${salutation}} ${from}`))
     });
 

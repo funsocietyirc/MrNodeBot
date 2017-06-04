@@ -64,7 +64,7 @@ module.exports = app => {
 
     const mainChannel = app.Config.features.fsociety.mainChannel.toLowerCase();
 
-    // Provide a onjoin handler
+    // Provide a onJoin handler
     const onJoin = (channel, nick, message) => {
         let lowerCaseChannel = channel.toLowerCase();
         // Make sure we are not reporting ourselves
