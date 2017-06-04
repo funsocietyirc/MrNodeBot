@@ -852,7 +852,7 @@ class MrNodeBot {
 
         // This is a identified command and the user is not identified
         if (!admCall.is.identified) {
-            this.say(admCall.from, t('auth.notIdentified'));
+            this.say(admCall.to, t('auth.notIdentified'));
             this.AdmCallbacks.delete(currentIndex);
             return false;
         }
