@@ -6,18 +6,34 @@ const scriptInfo = {
 };
 const _ = require('lodash');
 const moment = require('moment');
+const scheduler = require("../../lib/scheduler.js");
+
 // Extend moment with countdown
 require('moment-countdown');
 
 module.exports = app => {
     const showTime = new Date(2017, 10, 4, 22, 0, 0, 0);
+
+    // Season 3 Countdown
+    const getCountdown = () => moment(showTime).countdown();
+
+    // Season 3 Countdown Message
+    const getCountdownMessage = () => `Season 3 of Mr. Robot is Happening in ${getCountdown().toString()}!!`;
+
+    // Scheduled every night
+    let cronTime = new scheduler.RecurrenceRule();
+    cronTime.second = 0;
+    cronTime.minute = 0;
+    cronTime.hour = 0;
+    scheduler.schedule('timeUntilMrRobot', cronTime, () => app.say('#fsociety', getCountdownMessage()));
+
+    // IRC Command
     app.Commands.set('happening', {
         desc: 'Mr. Robot Season 3 countdown',
         access: app.Config.accessLevels.admin,
-        call: (to, from, text, message) => {
-            const countdown = moment(showTime).countdown();
-            app.say(to, `Season 3 of Mr. Robot is Happening in ${countdown.toString()}!!`)
-        }
+        call: (to, from, text, message) => app.say(to, getCountdownMessage())
     });
+
+
     return scriptInfo;
 };
