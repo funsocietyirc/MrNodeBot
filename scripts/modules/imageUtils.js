@@ -165,7 +165,7 @@ module.exports = app => {
         call: buildImages
     });
 
-    // Comand to destroy images
+    // Command to destroy images
     app.Commands.set('destroy-images', {
         desc: '',
         access: app.Config.accessLevels.owner,

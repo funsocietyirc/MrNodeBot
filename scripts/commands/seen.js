@@ -132,7 +132,8 @@ module.exports = app => {
         }
         catch (err) {
             logger.error('Error in the last active Promise.all chain', {
-                err: err.stack || 'No stack available'
+                message: err.message || '',
+                stack: err.stack || '',
             });
             app.say(to, `Something went wrong finding the active state for ${err.args.nick || err.args.user || err.args.host || text}, ${from} [${err.inner.message || ''}]`);
         }
