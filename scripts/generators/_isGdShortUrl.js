@@ -3,7 +3,7 @@
 // Input:
 //   text - URL to shorten
 // Returns:
-//   shorturl - The Good Url short link
+//   shortUrl - The Good Url short link
 const logger = require('../../lib/logger');
 const rp = require('request-promise-native');
 

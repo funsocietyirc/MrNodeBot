@@ -1,7 +1,7 @@
 'use strict';
 const scriptInfo = {
     name: 'quotes',
-    desc: 'Privates add-quote, del-qutote, and quote. Allows rudenemntary quote system',
+    desc: 'Privates add-quote, del-quote, and quote. Allows rudimentary quote system',
     createdBy: 'IronY'
 };
 const Moment = require('moment');
@@ -10,7 +10,6 @@ const storage = require('node-persist');
 const random = require('../../lib/randomEngine');
 const logger = require('../../lib/logger');
 const _ = require('lodash');
-
 /**
  Keep Track of quotes
  Commands: quote-add quote-del quote
@@ -52,7 +51,7 @@ module.exports = app => {
     const delQuote = (to, from, text, message) => {
         // No Quote provided
         if (_.isEmpty(text)) {
-            app.say(to, 'Invalid quote sepcified');
+            app.say(to, 'Invalid quote specified');
             return;
         }
 

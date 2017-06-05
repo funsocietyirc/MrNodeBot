@@ -22,7 +22,7 @@
     "admins": "Total Admins: {{total}}"
   },
   "aliases": {
-    "imporperStructure": "Improper structure in config.js for commandBindings",
+    "improperStructure": "Improper structure in config.js for commandBindings",
     "doesNotExist": "The Alias {{alias}} for the command {{command}} does not exist",
     "alreadyExists": "The Alias {{alias}} for the command {{command}} already exists"
   },
@@ -48,7 +48,7 @@
   "auth": {
     "notMemberOfGroup": "You are not a member of the group {{group}}. Access Denied",
     "notMemberOfGroupLogging": "{{- nick}} on {{- channel}} tried to use the {{group}} command {{type}}",
-    "notIdentified": "You must be identified with NickServ to use this command"
+    "notIdentified": "You must be identified with NickServ to use the {{- cmd }} command {{- from}}"
   },
   "webServer": {
     "starting": "Starting Web Server...",
