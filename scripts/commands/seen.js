@@ -26,7 +26,7 @@ module.exports = app => {
         !Models.Alias) return scriptInfo;
 
     // Show activity of given host mask
-    const seen = (to, from, text, message, iteration = 0, descending = true) => {
+    const seen =  async (to, from, text, message, iteration = 0, descending = true) => {
         // Gate
         if (!_.isString(text) || _.isEmpty(text)) {
             app.say(to, `I need someone to look for ${from}`);
@@ -126,17 +126,16 @@ module.exports = app => {
             app.say(iteration === 0 ? to : from, !_.isEmpty(output.text) ? output.text : `Something went wrong finding the active state for ${result.args.nick || result.args.user || result.args.host}, ${from}`);
         };
 
-        // Begin the chain
-        gen(text, {
-            descending
-        })
-            .then(sendToIRC)
-            .catch(err => {
-                logger.error('Error in the last active Promise.all chain', {
-                    err: err.stack || 'No stack available'
-                });
-                app.say(to, `Something went wrong finding the active state for ${err.args.nick || err.args.user || err.args.host || text}, ${from} [${err.inner.message || ''}]`);
+        try {
+            const result = await gen(text, {descending});
+            sendToIRC(result);
+        }
+        catch (err) {
+            logger.error('Error in the last active Promise.all chain', {
+                err: err.stack || 'No stack available'
             });
+            app.say(to, `Something went wrong finding the active state for ${err.args.nick || err.args.user || err.args.host || text}, ${from} [${err.inner.message || ''}]`);
+        }
     };
 
     // Command
