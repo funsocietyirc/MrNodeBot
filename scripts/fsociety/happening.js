@@ -17,8 +17,11 @@ module.exports = app => {
     // Season 3 Countdown
     const getCountdown = () => moment(showTime).countdown();
 
+    // Countdown text options
+    const textOptions = '{is Happening in|is Coming to a screen near you in|is Hacking all the things in|will be brought to you in|drops in|is hacking your democracy in}';
+
     // Season 3 Countdown Message
-    const getCountdownMessage = () => `Season 3 of Mr. Robot is Happening in ${getCountdown().toString()}!!`;
+    const getCountdownMessage = () => `Season 3 of Mr. Robot is ${textOptions} ${getCountdown().toString()}!!`;
 
     // Scheduled every night
     let cronTime = new scheduler.RecurrenceRule();
@@ -33,7 +36,6 @@ module.exports = app => {
         access: app.Config.accessLevels.admin,
         call: (to, from, text, message) => app.say(to, getCountdownMessage())
     });
-
 
     return scriptInfo;
 };
