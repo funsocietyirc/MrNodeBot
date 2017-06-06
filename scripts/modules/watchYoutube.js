@@ -114,9 +114,9 @@ module.exports = app => {
 
                     const video = result.items[0];
 
-                    if(!video.videoId) {
-                       app.say(to, `Something went wrong finding the video ID`);
-                       return;
+                    if (!video || !video.videoId || !video.title) {
+                        app.say(to, `your search rendered no results ${from}`);
+                        return;
                     }
 
                     // Send to socket
@@ -126,7 +126,7 @@ module.exports = app => {
                         timestamp: Date.now(),
                         seekTime: 0,
                         video: {
-                            videoTitle: video.title || 'Title Unavailable',
+                            videoTitle: video.title,
                             key: video.videoId
                         }
                     }));
@@ -214,7 +214,7 @@ module.exports = app => {
                 reload: "<channel?> -- Force all clients to reload",
                 remove: "<channel> <index> -- Remove a index from all connected clients queues",
                 speak: "<channel> <message> -- Speak (or display if speak is not available) a message",
-                skip: "<channel?> -- Skip the current Video (Only if the queue contains additional videos)"
+                skip: "<channel?> -- Skip the current Video (Only if the queue contains additional videos)",
             };
 
             // Switch on the command

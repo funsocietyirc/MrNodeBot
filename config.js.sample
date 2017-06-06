@@ -33,7 +33,7 @@ module.exports = {
             // Scripts that have mix of everything
             '/scripts/modules',
             // Fsociety Module -- For #fsociety on Freenode
-            '/scripts/fsociety',
+            // '/scripts/fsociety',
             // URL Listener feature
             '/scripts/urlListener',
             // Only load in development
