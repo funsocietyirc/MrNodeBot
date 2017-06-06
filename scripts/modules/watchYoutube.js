@@ -94,7 +94,7 @@ module.exports = app => {
     // TV Play Command
     if (app.Config.apiKeys.google && !_.isEmpty(app.Config.apiKeys.google))
         app.Commands.set('tv-play', {
-            desc: '<video name>',
+            desc: '<video title>',
             access: app.Config.accessLevels.identified,
             call: async (to, from, text, message) => {
                 // Nothing was given
@@ -112,8 +112,12 @@ module.exports = app => {
                         return;
                     }
 
-                    // Todo filter
                     const video = result.items[0];
+
+                    if(!video.videoId) {
+                       app.say(to, `Something went wrong finding the video ID`);
+                       return;
+                    }
 
                     // Send to socket
                     socket.to(activeChannelFormat(to)).emit('message', Object.assign({}, {
@@ -122,7 +126,7 @@ module.exports = app => {
                         timestamp: Date.now(),
                         seekTime: 0,
                         video: {
-                            videoTitle: video.title,
+                            videoTitle: video.title || 'Title Unavailable',
                             key: video.videoId
                         }
                     }));
