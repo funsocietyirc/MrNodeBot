@@ -99,7 +99,7 @@ module.exports = app => {
             call: async (to, from, text, message) => {
                 // Nothing was given
                 if (_.isEmpty(text)) {
-                    app.say(to, `I need something to search ${from}`);
+                    app.say(to, `I need something to search, ${from}`);
                     return;
                 }
                 try {
@@ -108,14 +108,14 @@ module.exports = app => {
 
                     // No Results
                     if (!result || !result.items) {
-                        app.say(to, `I was unable to find anything ${from}`);
+                        app.say(to, `I was unable to find anything, ${from}`);
                         return;
                     }
 
                     const video = result.items[0];
 
                     if (!video || !video.videoId || !video.title) {
-                        app.say(to, `your search rendered no results ${from}`);
+                        app.say(to, `your search rendered no results, ${from}`);
                         return;
                     }
 
@@ -141,7 +141,7 @@ module.exports = app => {
 
                     // Build String
                     sb
-                        .append(`I am now playing ${video.title} on the ${to} station for you ${from}`)
+                        .append(`I am now playing ${video.title} on the ${to} station for you, ${from}`)
                         .insertLogo('youTube')
                         .insertIcon('anchor')
                         .insert(link || youTubeRoute + video.videoId);
@@ -160,7 +160,7 @@ module.exports = app => {
                         stack: err.stack || ''
                     });
                     // Report
-                    app.say(to, `Something went wrong getting your results ${from}`);
+                    app.say(to, `Something went wrong getting your results, ${from}`);
                 }
 
             }
@@ -271,6 +271,7 @@ module.exports = app => {
                     });
                     app.say(to, `Current Video on ${args[1] || to} has been skipped`);
                     break;
+                // Command not found
                 default:
                     app.say(to, `Sub-command not found, available commands are ${Object.keys(cmds).join(', ')}`);
                     break;

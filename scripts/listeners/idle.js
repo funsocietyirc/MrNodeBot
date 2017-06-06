@@ -5,10 +5,9 @@ const scriptInfo = {
     createdBy: 'IronY'
 };
 const _ = require('lodash');
-const fml = require('../generators/_fmlLine');
-const twss = require('../generators/_twssLine');
-const bofh = require('../generators/_bofhExcuse');
-const shower = require('../generators/_showerThoughts');
+
+const randomWebLine = require('../generators/_randomWebline');
+
 const moment = require('moment');
 const logger = require('../../lib/logger');
 const Models = require('bookshelf-model-loader');
@@ -28,9 +27,7 @@ module.exports = app => {
     // Clear cache every four hours on the 30 min mark
     scheduler.schedule('checkIdleChat', {
         minute: 0 // First min of every hour
-    }, () => {
-        isActive();
-    });
+    }, () => isActive());
 
     const isActive = () => {
         let promises = [];
@@ -53,7 +50,7 @@ module.exports = app => {
                     .limit(1)
                 )
                     .fetch()
-                    .then(result => {
+                    .then(async (result) => {
                         // Parse timestamp into Moment.js
                         let lastTime = moment(result.get('timestamp'));
                         // Get time diff between now and previous timestamp
@@ -61,8 +58,13 @@ module.exports = app => {
                         // Verify the channel has been active
                         if (timeDiffInMins < timeoutInMins) return;
                         // Send to the message
-                        _.sample([fml, bofh, shower, twss])(1)
-                            .then(message => app.notice(channel, _.first(message)));
+                        try {
+                            const line = await randomWebLine();
+                            app.notice(channel, line);
+                        }
+                        catch (err) {
+                            app.notice(channel, 'is not feeling very well');
+                        }
                     })
             );
         });

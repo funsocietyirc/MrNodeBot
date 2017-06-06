@@ -130,7 +130,7 @@ describe('Access Strings', () => {
 
     // The Configuration File portion
     describe('Configuration File', () => {
-        // The confiuration file is ok
+        // The configuration file is ok
         it('has valid configuration file', () => expect(config.accessLevels).to.be.an('object'));
         // We get valid translations from the helpers
         it('value should be numeric', () => {
