@@ -9,7 +9,7 @@ const gen = require('../generators/_randomWebline');
 
 module.exports = app => {
     app.Commands.set('random-webline', {
-        desc: '[text] Encode a rot13 string',
+        desc: 'Get a random web line',
         access: app.Config.accessLevels.identified,
         call: async (to, from, text, message) => {
             try {
