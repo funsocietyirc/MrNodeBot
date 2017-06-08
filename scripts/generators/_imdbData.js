@@ -10,12 +10,6 @@ const validTypes = [
     'id' // Get Movie By Name
 ];
 
-// Base Options for IMDB
-const baseOptions = {
-        plot: 'short',
-        r: 'json',
-        apikey: config.apiKeys.omdb || '',
-};
 
 // Build the Request Options object
 const getRpOptions = (text, type) => {
@@ -25,8 +19,10 @@ const getRpOptions = (text, type) => {
                 uri: endPoint,
                 json: true,
                 qs: {
-                    ...baseOptions,
+                    plot: 'short',
+                    r: 'json',
                     i: text,
+                    apikey: config.apiKeys.omdb || '',
                 }
             };
         case 'title':
@@ -35,8 +31,10 @@ const getRpOptions = (text, type) => {
                 uri: endPoint,
                 json: true,
                 qs: {
-                    ...baseOptions,
                     t: text,
+                    plot: 'short',
+                    r: 'json',
+                    apikey: config.apiKeys.omdb || '',
                 }
             };
     }
