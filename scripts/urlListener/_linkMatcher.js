@@ -65,7 +65,7 @@ module.exports = results => new Promise(resolve => {
             let segments = results.uri.segmentCoded();
             if (segments.indexOf('title') !== -1) {
                 let titleId = results.uri.segmentCoded(segments.indexOf('title') + 1);
-                if (titleId.startsWith('tt')) return resolve(getImdb(titleId, results));
+                if ( _.isString(titleId) && titleId.startsWith('tt')) return resolve(getImdb(titleId, results));
             }
             break;
         case 'imgur.com': // Imgur
