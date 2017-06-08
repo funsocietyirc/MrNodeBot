@@ -10,7 +10,6 @@ const validTypes = [
     'id' // Get Movie By Name
 ];
 
-
 // Base Options for IMDB
 const baseOptions = {
     uri: endPoint,
