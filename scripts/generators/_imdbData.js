@@ -12,31 +12,33 @@ const validTypes = [
 
 // Base Options for IMDB
 const baseOptions = {
-    uri: endPoint,
-    qs: {
         plot: 'short',
         r: 'json',
         apikey: config.apiKeys.omdb || '',
-    },
-    json: true
 };
 
 // Build the Request Options object
 const getRpOptions = (text, type) => {
     switch (type) {
         case 'id':
-            return Object.assign(baseOptions, {
+            return {
+                uri: endPoint,
+                json: true,
                 qs: {
-                    i: text
+                    ...baseOptions,
+                    i: text,
                 }
-            });
+            };
         case 'title':
         default:
-            return Object.assign(baseOptions, {
+            return {
+                uri: endPoint,
+                json: true,
                 qs: {
-                    t: text
+                    ...baseOptions,
+                    t: text,
                 }
-            });
+            };
     }
 };
 
