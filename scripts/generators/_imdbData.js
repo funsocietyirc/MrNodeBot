@@ -42,6 +42,11 @@ const getRpOptions = (text, type) => {
 
 // Export the generator
 module.exports = (text, type) => {
+    // No Key available, throw error
+    if (!_.isString(config.apiKeys.omdb) || _.isEmpty(config.apiKeys.omdb)) {
+        throw new Error('The OMDB API key is missing');
+    }
+
     [type] = type.split(' ');
     return rp(getRpOptions(text, _.includes(validTypes, type) ? type : validTypes[0]));
 };

@@ -11,6 +11,9 @@ const ircTypography = require('../lib/_ircTypography');
 const short = require('../lib/_getShortService')();
 
 module.exports = app => {
+    // No OMDB API key provided
+    if(!_.isString(app.Config.apiKeys.omdb) || _.isEmpty(app.Config.apiKeys.omdb)) return scriptInfo;
+
     // Register IMDB Command
     app.Commands.set('imdb', {
         desc: '[title] - Get IMDB info for a given title',

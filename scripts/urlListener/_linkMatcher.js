@@ -1,4 +1,7 @@
 'use strict';
+
+const config = require('../../config');
+
 const URL = require('url').URL; // TODO Here until we can figure why URI is not parsing the whole query string
 
 const _ = require('lodash');
@@ -7,6 +10,7 @@ const getImdb = require('./_getImdb.js'); // Get IMDB Data
 const getGitHub = require('./_getGithub'); // Get GitHub Information
 const getBitBucket = require('./_getBitBucket'); // Get BitBucket Information
 const getImgur = require('./_getImgurImage'); // Get Imgur data
+
 
 module.exports = results => new Promise(resolve => {
     // Use the realUrl if available when doing matches
@@ -62,6 +66,8 @@ module.exports = results => new Promise(resolve => {
             }
             break;
         case 'imdb.com': // IMDB
+            // No API key for OMDB Provided
+            if(!_.isString(config.apiKeys.omdb) || _.isEmpty(config.apiKeys.omdb)) break;
             let segments = results.uri.segmentCoded();
             if (segments.indexOf('title') !== -1) {
                 let titleId = results.uri.segmentCoded(segments.indexOf('title') + 1);
