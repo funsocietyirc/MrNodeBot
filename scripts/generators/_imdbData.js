@@ -2,6 +2,7 @@
 const endPoint = 'https://www.omdbapi.com';
 const _ = require('lodash');
 const rp = require('request-promise-native');
+const config = require('../../config');
 
 // Accept call types
 const validTypes = [
@@ -9,12 +10,14 @@ const validTypes = [
     'id' // Get Movie By Name
 ];
 
+
 // Base Options for IMDB
 const baseOptions = {
     uri: endPoint,
     qs: {
         plot: 'short',
-        r: 'json'
+        r: 'json',
+        apikey: config.apiKeys.omdb || '',
     },
     json: true
 };

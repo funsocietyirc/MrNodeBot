@@ -125,6 +125,7 @@ I am currently in the processes of providing jsdoc style docblocks for documenta
 -   **Imgur API Key** - A *Imgur API key* is required to extract meta data on Imgur links in the URL announcer
 -   **Twitter API Key** A *Twitter API key* is required to be able to send tweets, subscribe to tweets, or have a tweet sent out during the announce process
 -   **Bitly API Key** A *Bitly API key* assists the amount of url shortners you have available to you
+-   **OMDB API Key** Used in the imdb command and in the link matcher to pull info for imdb links
 
 ## URL Shortner service
 The Url shortner service, found in *scripts/libs/_getShortService* will provide a url shortner based on your API key availability.
