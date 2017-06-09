@@ -37,7 +37,7 @@
     "bookshelf-model-loader": "^0.9.6",
     "bookshelf-modelbase": "^2.10.4",
     "bot": "0.0.3",
-    "cheerio": "^0.22.0",
+    "cheerio": "^1.0.0-rc.1",
     "countdown": "^2.6.0",
     "currency-symbol-map": "^4.0.1",
     "express": "^4.15.3",
