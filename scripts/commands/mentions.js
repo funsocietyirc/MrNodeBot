@@ -33,10 +33,7 @@ module.exports = app => {
 
 
             // Report back status
-            app.say(to, to !== from ?
-                'You have no mentions available at this time' :
-                `Sending your last ${results.length} mentions via private message, ${from}`
-            );
+            app.say(to,`Sending your last ${results.length} mentions via private message, ${from}`);
 
             // Report back results
             app.say(from, 'Mentions:');
