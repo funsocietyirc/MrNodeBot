@@ -31,13 +31,15 @@ module.exports = app => {
                 return;
             }
 
+
             // Report back status
-            app.say(from, to !== from ?
+            app.say(to, to !== from ?
                 'You have no mentions available at this time' :
-                `Sending your last ${results.length} mentions`
+                `Sending your last ${results.length} mentions via private message, ${from}`
             );
 
             // Report back results
+            app.say(from, 'Mentions:');
             _.forEach(results.toJSON(), (result, key) => app.say(
                 from,
                 `[${key + 1}] - ${Moment(result.timestamp).fromNow()} - By ${result.mention.by} - On ${result.mention.channel}: ${result.mention.text}`
