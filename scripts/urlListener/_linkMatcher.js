@@ -22,8 +22,21 @@ module.exports = results => new Promise(resolve => {
     if (!results.uri || !url) return resolve(results);
 
     switch (results.uri.domain()) {
-        case 'youtube.com': // Youtube
         case 'youtu.be':
+            const id = results.uri.segmentCoded(0);
+            if(_.isString(id) && !_.isEmpty(id)) {
+              return resolve(
+                  getYoutube(
+                      id,
+                      url.searchParams.get('list'),
+                      url.searchParams.get('index'),
+                      url.searchParams.get('t'),
+                      results
+                  )
+              );
+            }
+            break;
+        case 'youtube.com': // Youtube
             switch (results.uri.segmentCoded(0)) {
                 case 'embed':
                 case 'watch':
