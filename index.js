@@ -30,8 +30,11 @@ const bot = new Bot(app => {
     // Hook into control-c termination
     process.stdin.on('data', b => {
         if (b[0] === 3) {
+            // No Connection, Halt
             if (!app._ircClient.conn) process.exit();
+            // Currently connected, terminate connection first
             else app._ircClient.disconnect('I have been terminated from the Console. Goodbye cruel world...', () => {
+                // disconnect complete, end process
                 if (process.stdin.setRawMode) process.stdin.setRawMode(false);
                 process.exit();
             });
