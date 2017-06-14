@@ -150,6 +150,8 @@ module.exports = app => {
             diffResults = await checkDiff(commit.abbrevHash);
         } catch (err) {
             app.say(to, err.message);
+            halt(to, from, `I am unsure why I am in need of a restart, but I am!`);
+            return;
         }
 
         // No Diff results found
