@@ -150,7 +150,6 @@ module.exports = app => {
             diffResults = await checkDiff(commit.abbrevHash);
         } catch (err) {
             app.say(to, err.message);
-            return;
         }
 
         // No Diff results found
