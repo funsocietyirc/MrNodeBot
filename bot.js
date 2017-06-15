@@ -733,7 +733,7 @@ class MrNodeBot {
 
         // Invalid Matched Command
         if(matchedInvalidCommand) {
-            const actualText = `${cmd} ${output}`;
+            const actualText = `${cmd} ${output}`.trim();
             this.say(to, t('errors.invalidCommand', {
                 from,
                 cmd: actualText
@@ -801,7 +801,7 @@ class MrNodeBot {
         // Invalid Command
         else this.say(to, t('errors.invalidCommand', {
                 from,
-                cmd: cmd.trim()
+                cmd
             }));
     };
 
