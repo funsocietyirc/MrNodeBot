@@ -200,10 +200,7 @@ module.exports = app => {
             let locResults = null;
             try {
                 let locResults = await getLocationData(whoisResults.host);
-            } catch (err) {
-                app.say(to, locationErrorMessage);
-                return;
-            }
+            } catch (err) {}
 
             processor(to, renderData(nick, subCommand, dbResults.toJSON(), whoisResults, locResults));
         } else {

@@ -801,7 +801,7 @@ class MrNodeBot {
         // Invalid Command
         else this.say(to, t('errors.invalidCommand', {
                 from,
-                cmd
+                cmd: cmd.trim()
             }));
     };
 
