@@ -67,7 +67,7 @@ module.exports = app => {
     const reportToIrc = async (to, data) => {
         const sayHelper = (header, content) => {
             let paddedResult = _.padEnd(`${header}${header ? ':' : ' '}`, pad, ' ');
-            app.notice(to, `${titleLine(paddedResult)} ${content}`);
+            app.say(to, `${titleLine(paddedResult)} ${content}`);
         };
 
         let firstDateActive = _.isUndefined(data.firstResult.timestamp) ? null : Moment(data.firstResult.timestamp);
@@ -84,8 +84,8 @@ module.exports = app => {
         let lat = data.lat ? `Lat(${data.lat}) ` : '';
         let long = data.long ? `Long(${data.long}) ` : '';
         let paddedResult = _.padStart(`Searching VIA ${data.subCommand}`, pad * 4, ' ');
-        app.notice(to, `${c.underline.red.bgblack(paddedResult)}`);
-        app.notice(to, `${primaryNick} ${c.white.bgblack.bold('Current:')} ${c.white.bgblack(data.currentNick)}!${c.red.bgblack(data.currentIdent)}@${c.blue.bgblack.bold(data.currentHost)} ${realName}`);
+        app.say(to, `${c.underline.red.bgblack(paddedResult)}`);
+        app.say(to, `${primaryNick} ${c.white.bgblack.bold('Current:')} ${c.white.bgblack(data.currentNick)}!${c.red.bgblack(data.currentIdent)}@${c.blue.bgblack.bold(data.currentHost)} ${realName}`);
 
         sayHelper('Nicks', data.nicks.join(' | '));
         sayHelper('Past Channels', data.pastChannels.join(' | '));
