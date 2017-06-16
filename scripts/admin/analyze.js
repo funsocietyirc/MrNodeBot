@@ -180,7 +180,7 @@ module.exports = app => {
             }
 
             if (!results.length) {
-                app.say(to, 'No results are available');
+                app.say(to, `No results are available on ${nick}`);
                 return;
             }
 
@@ -197,7 +197,7 @@ module.exports = app => {
             }
 
             if(!dbResults.length) {
-                app.say(to, 'No results are available');
+                app.say(to, `No results are available on ${nick}`);
                 return;
             }
 
@@ -224,7 +224,7 @@ module.exports = app => {
             }
 
             if(!dbResults.length) {
-                app.say(to, 'No results are available');
+                app.say(to, `No results are available on ${nick}`);
                 return;
             }
 

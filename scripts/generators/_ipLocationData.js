@@ -18,7 +18,7 @@ module.exports = async (host) => {
     }
         // Catch Errors
     catch (err) {
-        logger.error('Error in the _ipLocationData generator', {
+        logger.warn('Error in the _ipLocationData generator', {
             message: err.message || '',
             stack: err.stack || ''
         });
