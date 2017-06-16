@@ -179,7 +179,7 @@ module.exports = app => {
                 return;
             }
 
-            if (!results) {
+            if (!results.length) {
                 app.say(to, 'No results are available');
                 return;
             }
