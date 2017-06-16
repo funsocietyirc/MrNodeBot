@@ -179,8 +179,7 @@ module.exports = app => {
                 return;
             }
 
-            console.dir(results);
-            if (!results) {
+            if (!results.length) {
                 app.say(to, 'No results are available');
                 return;
             }
@@ -197,8 +196,7 @@ module.exports = app => {
                 return;
             }
 
-            console.dir(dbResults);
-            if(!dbResults) {
+            if(!dbResults.length) {
                 app.say(to, 'No results are available');
                 return;
             }
@@ -225,8 +223,7 @@ module.exports = app => {
                 return;
             }
 
-            console.dir(dbResults);
-            if(!dbResults) {
+            if(!dbResults.length) {
                 app.say(to, 'No results are available');
                 return;
             }
