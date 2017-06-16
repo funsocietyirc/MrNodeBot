@@ -179,7 +179,7 @@ module.exports = app => {
                 return;
             }
 
-            if (!results.length) {
+            if (!results) {
                 app.say(to, 'No results are available');
                 return;
             }
@@ -193,6 +193,11 @@ module.exports = app => {
                 dbResults = await queryBuilder(convertSubFrom(subCommand), whoisResults[convertSubInfo(subCommand)]);
             } catch (err) {
                 app.say(to, errorMessage);
+                return;
+            }
+
+            if(!dbResults) {
+                app.say(to, 'No results are available');
                 return;
             }
 
@@ -215,6 +220,11 @@ module.exports = app => {
             }
             catch (err) {
                 app.say(to, errorMessage);
+                return;
+            }
+
+            if(!dbResults) {
+                app.say(to, 'No results are available');
                 return;
             }
 
