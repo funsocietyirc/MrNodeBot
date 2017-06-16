@@ -22,9 +22,9 @@ module.exports = async (host) => {
             message: err.message || '',
             stack: err.stack || ''
         });
-    }
 
-    return null;
+        return Object.create({});
+    }
 };
 
 // Return GEO IP Data in the following format

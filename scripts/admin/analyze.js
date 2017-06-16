@@ -203,12 +203,13 @@ module.exports = app => {
             } catch (err) {
                 // Ignore Error
             }
+            finally {
+                processor(to, renderData(nick, subCommand, dbResults.toJSON(), whoisResults, locResults));
+            }
 
-            processor(to, renderData(nick, subCommand, dbResults.toJSON(), whoisResults, locResults));
         } else {
             // Hold on to the dbResults
             let dbResults;
-
             try {
                 dbResults = await queryBuilder(convertSubFrom(subCommand), whoisResults[convertSubInfo(subCommand)]);
             }
@@ -227,8 +228,10 @@ module.exports = app => {
             catch (err) {
                 // Ignore Error
             }
+            finally {
+                processor(to, renderData(nick, subCommand, dbResults.toJSON(), whoisResults, locResults));
+            }
 
-            processor(to, renderData(nick, subCommand, dbResults.toJSON(), whoisResults, locResults));
         }
     };
 
