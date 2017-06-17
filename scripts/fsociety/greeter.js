@@ -124,7 +124,7 @@ module.exports = app => {
         greetModel
             .where('channel', 'like', channel)
             .count()
-            .then(total => app.say(from, `A total of ${total} greets have been sent out for the channel ${channel}`))
+            .then(total => app.say(to, `A total of ${total} greets have been sent out for the channel ${channel}`))
             .catch(err => {
                 app.say(to, `Something went wrong fetching the greet total for ${channel}`);
                 logger.error('Error in getting greet total', {
