@@ -37,7 +37,7 @@ module.exports = async (app) => {
                 }
 
                 const disposition = result.get('result') === 1 ? '{likes|adores}' : '{dislikes|hates}';
-                let output = `${result.attributes.get('voter')} ${disposition} ${result.get('candidate')} ${result.get('text')} [${Moment(result.get('timestamp')).fromNow()}]`;
+                let output = `${result.get('voter')} ${disposition} ${result.get('candidate')} ${result.get('text')} [${Moment(result.get('timestamp')).fromNow()}]`;
                 app.say(to, output);
             }
             catch (err) {
