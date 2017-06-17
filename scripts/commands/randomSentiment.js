@@ -24,7 +24,7 @@ module.exports = async (app) => {
             try {
                 const result = await Models.Upvote.query(
                     qb => qb
-                        .select('candidate', 'voter','text','result','channel')
+                        .select('candidate', 'voter','text','result','channel','timestamp')
                         .where('channel', to)
                         .whereNotNull('text')
                         .orderByRaw('rand()')
