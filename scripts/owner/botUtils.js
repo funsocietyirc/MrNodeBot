@@ -69,7 +69,7 @@ module.exports = app => {
     });
 
     app.Commands.set('spawn', {
-        desc: '[valid js] will return value to console',
+        desc: '[nick] Will conjure someone magically',
         access: app.Config.accessLevels.owner,
         call: (to, from, text, message) => {
 
@@ -142,7 +142,7 @@ module.exports = app => {
                     // Leave the channel
                     instance.part(to, 'I was only but a dream', () => {
                             // Disconnect
-                            instance.disconnect();
+                            instance.disconnect('Vici Vidi Vici');
                             // Remove temp name from ignore list
                             if (!wasIgnored)
                                 _.remove(app.Ignore, instance.nick);

@@ -15,12 +15,12 @@ const _ = require('lodash');
 module.exports = app => {
     const actBack = scriptInfo.actions.actBack = (from, to, text, message) => {
         if (!_.isString(text) || _.isEmpty(text)) return;
-        let matches = text.match(new RegExp('^(.*)\\s' + app.nick + '(?:\\s(.*))?$', 'i'));
+        const matches = text.match(new RegExp('^(.*)\\s' + app.nick + '(?:\\s(.*))?$', 'i'));
 
         // No matches available, bail
         if (!matches || !matches[0] || !matches[1]) return;
-        let action = matches[1];
-        let context = matches[2];
+        const action = matches[1];
+        const context = matches[2];
 
         app.action(to, `${action} ${from} ${context || ''}`);
     };

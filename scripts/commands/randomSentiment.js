@@ -10,7 +10,6 @@ const _ = require('lodash');
 const Moment = require('moment');
 const Models = require('bookshelf-model-loader');
 const logger = require('../../lib/logger');
-const typo = require('../lib/_ircTypography');
 
 module.exports = async (app) => {
     // Database not available

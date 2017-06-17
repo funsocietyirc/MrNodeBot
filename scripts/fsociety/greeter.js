@@ -75,7 +75,7 @@ module.exports = app => {
             !app._ircClient.isInChannel(app.Config.features.fsociety.mainChannel, nick)
         ) {
             checkChannel(channel, nick, message.host, () => {
-                if (app.Config.features.fsociety.report) app.say(app.Config.owner.nick, `${nick} joined the Dark Army Channel:  ${channel}`);
+                if (app.Config.features.fsociety.report) app.say(app.Config.owner.nick, `${nick} joined the Dark Army Channel: ${channel}`);
                 setTimeout(() => {
                     app.say(nick, `{${salutations}} ${nick}, {${appends}}. The time is now, ${app.Config.features.fsociety.mainChannel} needs your help. Joins us.`);
                     app._ircClient.send('invite', nick, app.Config.features.fsociety.mainChannel);
