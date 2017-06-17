@@ -4,6 +4,7 @@ const scriptInfo = {
     desc: 'Get FML Quote',
     createdBy: 'IronY'
 };
+
 const _ = require('lodash');
 const gen = require('../generators/_fmlLine');
 const logger = require('../../lib/logger');
@@ -39,6 +40,7 @@ module.exports = app => {
         access: app.Config.accessLevels.identified,
         call: fmlLine
     });
+
     return scriptInfo;
 };
 

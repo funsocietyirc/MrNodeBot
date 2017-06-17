@@ -92,16 +92,16 @@ module.exports = app => {
     const cleanGreetDb = (to, from, text, message) => {
         let textArray = text.split(' ');
         if (!textArray.length) {
-            app.say(from, 'You must specify a channel when clearing the greeter cache');
+            app.say(to, 'You must specify a channel when clearing the greeter cache');
             return;
         }
         let [channel] = textArray;
         greetModel
             .where('channel', 'like', channel)
             .destroy()
-            .then(() => app.say(from, `Greet cache has been cleared for ${channel}`))
+            .then(() => app.say(to, `Greet cache has been cleared for ${channel}`))
             .catch(err => {
-                app.say(from, `Something went wrong clearing the greet cache for ${channel}`);
+                app.say(to, `Something went wrong clearing the greet cache for ${channel}`);
                 logger.error('Error in greet cache clear command', {
                     err
                 });
@@ -117,7 +117,7 @@ module.exports = app => {
     const getTotalGreetedByChannel = (to, from, text, message) => {
         let textArray = text.split(' ');
         if (!textArray.length) {
-            app.say(from, 'You must specify a channel when clearing the greeter cache');
+            app.say(to, 'You must specify a channel when clearing the greeter cache');
             return;
         }
         let [channel] = textArray;
@@ -126,7 +126,7 @@ module.exports = app => {
             .count()
             .then(total => app.say(from, `A total of ${total} greets have been sent out for the channel ${channel}`))
             .catch(err => {
-                app.say(from, `Something went wrong fetching the greet total for ${channel}`);
+                app.say(to, `Something went wrong fetching the greet total for ${channel}`);
                 logger.error('Error in getting greet total', {
                     err
                 });
