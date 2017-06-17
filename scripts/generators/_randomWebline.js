@@ -3,13 +3,12 @@ const _ = require('lodash');
 const logger = require('../../lib/logger');
 
 const fml = require('../generators/_fmlLine');
-const twss = require('../generators/_twssLine');
 const bofh = require('../generators/_bofhExcuse');
 const shower = require('../generators/_showerThoughts');
 
 module.exports = async () => {
     try {
-        const results = await _.sample([fml, bofh, shower, twss])(1);
+        const results = await _.sample([fml, bofh, shower])(1);
         return _(results).first();
     }
     catch(err) {
