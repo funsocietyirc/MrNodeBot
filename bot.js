@@ -284,10 +284,12 @@ class MrNodeBot {
                         logger.info(t('scripts.loaded', {
                             file
                         }));
+
                         let scriptInfo = {
                             fullPath: fullPath,
                             info: require(`./${dir}/${file}`)(this)
                         };
+
                         // If we have a name field, run it through a start case filter
                         if (scriptInfo.info.name) scriptInfo.info.name = _.startCase(scriptInfo.info.name);
                         this.LoadedScripts.push(scriptInfo);
