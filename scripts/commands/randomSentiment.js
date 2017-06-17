@@ -7,6 +7,7 @@ const scriptInfo = {
 };
 
 const _ = require('lodash');
+const moment = require('moment');
 const Models = require('bookshelf-model-loader');
 const logger = require('../../lib/logger');
 const typo = require('../lib/_ircTypography');
@@ -35,9 +36,8 @@ module.exports = async (app) => {
                     return;
                 }
 
-                const disposition = result.attributes.result === 1 ? '{likes|adores}' : '{dislikes|hates}';
-                let output = `${result.attributes.voter} ${disposition} ${result.attributes.candidate}`;
-                if(result.attributes.text) output = `${output} ${result.attributes.text}`;
+                const disposition = result.get('result') === 1 ? '{likes|adores}' : '{dislikes|hates}';
+                let output = `${result.attributes.get('voter')} ${disposition} ${result.get('candidate')} ${result.get('text')} [${Moment(result.get('timestamp')).fromNow()}]`;
                 app.say(to, output);
             }
             catch (err) {
