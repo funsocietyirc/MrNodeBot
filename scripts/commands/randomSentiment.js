@@ -31,7 +31,7 @@ module.exports = async (app) => {
                 return;
             }
 
-            const disposition = result.attributes.result === 1 ? 'likes' : 'dislikes';
+            const disposition = result.attributes.result === 1 ? '{likes|adores}' : '{dislikes|hates}';
             let output = `${result.attributes.voter} ${disposition} ${result.attributes.candidate}`;
             if(result.attributes.text) output = `${output} ${result.attributes.text}`;
             app.say(to, output);
