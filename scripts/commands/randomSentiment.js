@@ -33,7 +33,7 @@ module.exports = async (app) => {
 
             const disposition = result.attributes.result === 1 ? 'likes' : 'dislikes';
             let output = `${result.attributes.voter} ${disposition} ${result.attributes.candidate}`;
-            if(result.attributes.text) output = `${output} because ${result.attributes.text}`;
+            if(result.attributes.text) output = `${output} ${result.attributes.text}`;
             app.say(to, output);
         }
     });
