@@ -10,7 +10,7 @@ const helpers = require('../../helpers');
 module.exports = app => {
     app.Commands.set('rot13', {
         desc: '[text] Encode a rot13 string',
-        access: app.Config.accessLevels.admin,
+        access: app.Config.accessLevels.identified,
         call: (to, from, text, message) => app.say(to, (!_.isString(text) || _.isEmpty(text)) ? `I need something to encode ${from}` : app.say(to, helpers.Rot13(text)))
     });
 
