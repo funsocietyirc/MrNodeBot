@@ -15,15 +15,13 @@ const scriptInfo = {
     desc: 'The URL Express API',
     createdBy: 'IronY'
 };
-const Models = require('bookshelf-model-loader');
 const _ = require('lodash');
+const Models = require('bookshelf-model-loader');
 const hashPattern = new RegExp('%23', 'g');
 
 module.exports = app => {
     // Bail out if we do not have a database
-    if (!app.Database && Models.Url) {
-        return;
-    }
+    if (!Models.Url) return scriptInfo;
 
     // Where clause to filter for images
     const whereClause = clause => clause
@@ -34,81 +32,94 @@ module.exports = app => {
 
     // Get the available sources.
     // Returns a unique list of combined nicks and channels
-    const imageSourceHandler = (req, res) => {
-        Models.Url.query(qb => {
-            qb
+    const imageSourceHandler = async (req, res) => {
+        try {
+            const results = await Models.Url.query(qb => qb
                 .select(['to', 'from', 'id', 'timestamp'])
                 .where(whereClause)
-                .orderBy('timestamp', 'desc');
-        })
-            .fetchAll()
-            .then(results => {
-                let channels = _(results.pluck('to')).uniq().value();
-                let nicks = _(results.pluck('from')).uniq().value();
-                res.json({
-                    status: 'success',
-                    results: {
-                        channels,
-                        nicks
-                    }
-                });
+                .orderBy('timestamp', 'desc'))
+                .fetchAll();
+
+            res.json({
+                status: 'success',
+                results: {
+                    channels:  _(results.pluck('to')).uniq().value(),
+                    nicks: _(results.pluck('from')).uniq().value()
+                }
             });
+        }
+        catch(err){
+            res.json({
+                status: 'error',
+                message: err.message || ''
+            });
+        }
     };
 
     // Get list of available urls
-    const urlHandler = (req, res) => {
-        Models.Url.query(qb => {
-            let init = false;
-            let getWhere = () => init ? 'andWhere' : 'where';
+    const urlHandler = async (req, res) => {
+        try {
+            const results = await Models.Url
+                .query(qb => {
+                    let init = false;
+                    let getWhere = () => init ? 'andWhere' : 'where';
 
-            // Select the appropriate fields
-            qb.select([
-                'id', 'to', 'from', 'url', 'timestamp', 'title'
-            ]);
+                    // Select the appropriate fields
+                    qb.select([
+                        'id', 'to', 'from', 'url', 'timestamp', 'title'
+                    ]);
 
-            // If there is a channel in the query string
-            if (req.query.channel) {
-                qb.where('to', req.query.channel.replace(hashPattern, '#'));
-                init = true;
-            }
-            // If there is a from in the query string
-            if (req.query.user) {
-                qb[getWhere()]('from', req.query.user);
-                init = true;
-            }
-
-            // Search for images only
-            if (req.query.type) {
-                switch (req.query.type) {
-                    case 'image':
-                    case 'images':
-                        qb[getWhere()](whereClause);
+                    // If there is a channel in the query string
+                    if (req.query.channel) {
+                        qb.where('to', req.query.channel.replace(hashPattern, '#'));
                         init = true;
-                        break;
-                    default:
-                }
-            }
+                    }
 
-            // Build Up Query
-            qb
-                .orderBy('timestamp', req.query.sort || 'desc');
-        })
-            .fetchPage({
-                pageSize: req.query.pageSize || 25,
-                page: req.query.page || 1
-            })
-            .then(results => {
-                res.json({
-                    rowCount: results.pagination.rowCount,
-                    pageCount: results.pagination.pageCount,
-                    page: results.pagination.page,
-                    pageSize: results.pagination.pageSize,
-                    status: 'success',
-                    results: results.toJSON()
+                    // If there is a from in the query string
+                    if (req.query.user) {
+                        qb[getWhere()]('from', req.query.user);
+                        init = true;
+                    }
+
+                    // Search for images only
+                    if (req.query.type) {
+                        switch (req.query.type) {
+                            case 'image':
+                            case 'images':
+                                qb[getWhere()](whereClause);
+                                init = true;
+                                break;
+                            default:
+                        }
+                    }
+
+                    // Build Up Query
+                    qb.orderBy('timestamp', req.query.sort || 'desc');
+                })
+                .fetchPage({
+                    pageSize: req.query.pageSize || 25,
+                    page: req.query.page || 1
                 });
+
+            res.json({
+                rowCount: results.pagination.rowCount,
+                pageCount: results.pagination.pageCount,
+                page: results.pagination.page,
+                pageSize: results.pagination.pageSize,
+                status: 'success',
+                results: results.toJSON()
             });
+
+        }
+        catch (err) {
+            res.json({
+                status: 'error',
+                message: err.message || ''
+            });
+        }
     };
-    // Subscribe to web service
+
+    // Url Route
     app.WebRoutes.set('api.urls', {
         handler: urlHandler,
         desc: 'URL Link API',
@@ -117,6 +128,7 @@ module.exports = app => {
         verb: 'get'
     });
 
+    // Sources Route
     app.WebRoutes.set('api.sources', {
         handler: imageSourceHandler,
         desc: 'Get the available sources',
@@ -124,6 +136,7 @@ module.exports = app => {
         name: 'api.sources',
         verb: 'get'
     });
+
     // Return the script info
     return scriptInfo;
 };

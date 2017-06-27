@@ -20,7 +20,7 @@ module.exports = app => {
             const results = await model.query(qb => qb.distinct('to').orderBy('to')).fetchAll();
             res.json({
                 status: 'success',
-                data: results.pluck('to'),
+                sources: results.pluck('to'),
                 total: results.length
             });
         }
