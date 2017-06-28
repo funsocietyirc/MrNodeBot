@@ -45,11 +45,11 @@ module.exports = (results, app) => {
 
     // Print real URL
     if (results.realUrl && results.url !== results.realUrl && results.realUrl.length < 160) append(`${icons.anchor}  ${c.navy(results.realUrl)}`);
-    else if (results.realUrl && results.url !== results.realUrl) append(`${icons.anchor} ${c.red('URL Redirected')}`);
+    else if (results.realUrl && results.url !== results.realUrl) append(`${icons.anchor}  ${c.red('URL Redirected')}`);
 
     // We have a Short URL
     if (!_.isEmpty(results.shortUrl) && !_.isEmpty(results.shortUrl) && results.url.length > config.features.urls.titleMin)
-        append(`${icons.anchor} ${c.navy(results.shortUrl)}`);
+        append(`${icons.anchor}  ${c.navy(results.shortUrl)}`);
 
     // We have a YouTube video response
     if (!_.isEmpty(results.youTube)) {
