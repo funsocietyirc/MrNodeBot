@@ -51,7 +51,7 @@ module.exports = app => {
             .each((v, k) => timeouts.delete(k));
     });
 
-    const popularity = (from, to, text, message) => {
+    const popularity = async (from, to, text, message) => {
         // Ignored channel
         if (_.includes(ignoredChannels, to)) return;
 
@@ -77,41 +77,46 @@ module.exports = app => {
         if (timeouts.has(from)) {
             let tmpTimeout = timeouts.get(from);
             if (_.includes(tmpTimeout, result[1])) {
+                // TODO: Get the last vote and allow it to be changed
                 app.say(to, `Your ${result[2]} vote for ${result[1]} has been rate limited (${delayInMins} min total per candidate)`);
                 return;
             }
         } else timeouts.set(from, []);
 
-        // Create the record
-        Models.Upvote.create({
-            candidate: result[1],
-            voter: from,
-            channel: to,
-            result: result[2] === '+' ? 1 : -1,
-            text: !_.isUndefined(result[3]) ? result[3] : null,
-            host: message.host,
-            user: message.user
-        })
-            .then(record => {
-                let tmpTimeout = timeouts.get(from);
+        try {
+            // Create the record
+            const record = await Models.Upvote.create({
+                candidate: result[1],
+                voter: from,
+                channel: to,
+                result: result[2] === '+' ? 1 : -1,
+                text: !_.isUndefined(result[3]) ? result[3] : null,
+                host: message.host,
+                user: message.user
+            });
 
-                if (!_.includes(tmpTimeout, result[1])) {
-                    tmpTimeout.push(result[1]);
-                    timeouts.set(from, tmpTimeout);
-                }
+            const tmpTimeout = timeouts.get(from);
 
-                // Set timeout to clear the gate
-                setTimeout(() => {
-                    let tmpTimeout = timeouts.get(from);
-                    _.pull(tmpTimeout, result[1]);
-                    timeouts.set(from, tmpTimeout);
-                }, delayInMs);
+            if (!_.includes(tmpTimeout, result[1])) {
+                tmpTimeout.push(result[1]);
+                timeouts.set(from, tmpTimeout);
+            }
 
-                app.notice(from, `You have just given ${result[1]} a ${result[2]} vote on ${to}`)
-            })
-            .catch(err => logger.error(`Error in Popularity Listener`, {
-                err: err.stack || 'No Stack available'
-            }));
+            // Set timeout to clear the gate
+            setTimeout(() => {
+                let newTimeout = timeouts.get(from);
+                _.pull(newTimeout, result[1]);
+                timeouts.set(from, newTimeout);
+            }, delayInMs);
+
+            app.notice(to, `${from} have just given ${result[1]} a ${result[2]} vote on ${to}`);
+
+        } catch(err) {
+            logger.error(`Error in Popularity Listener`, {
+                message: err.message || '',
+                err: err.stack || ''
+            });
+        }
     };
 
     // Register with actions
