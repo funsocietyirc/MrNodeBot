@@ -83,6 +83,7 @@ module.exports = app => {
             }
             try {
                 await voiceUsers(channel, threshold, app);
+                app.say(to, `I have just voiced all users who meet the threshold of ${threshold} messages (per mont), ${from}`);
             }
             catch(err) {
                 logger.error('Something went wrong in the voice-regulars command', {
