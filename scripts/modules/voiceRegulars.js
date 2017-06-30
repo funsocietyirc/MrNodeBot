@@ -1,7 +1,7 @@
 'use strict';
 const scriptInfo = {
-    name: 'voiceRegularsOnJoin',
-    desc: 'Voice regulars on join',
+    name: 'voiceRegulars',
+    desc: 'Voice regulars',
     createdBy: 'IronY'
 };
 const _ = require('lodash');
@@ -69,6 +69,31 @@ module.exports = app => {
             }
         },
         name: 'voice-regulars'
+    });
+
+    // Manually voice regulars
+    app.Commands.set('voice-regulars', {
+        desc: '[channel?] voice regulars in the channel',
+        access: app.Config.accessLevels.channelOpIdentified,
+        call: async (to, from, text, message) => {
+            const channel = text.split(' ')[0] || to;
+            if(!app._ircClient.isOpInChannel(channel, app.nick)) {
+                app.say(from, `I am not a op in ${to}, ${from}`);
+                return;
+            }
+            try {
+                await voiceUsers(channel, threshold, app, {
+                   nicks: [nick]
+                });
+            }
+            catch(err) {
+                logger.error('Something went wrong in the voice-regulars command', {
+                    message: err.message || '',
+                    stack: err.stack || '',
+                });
+                app.say(to, `Something went wrong trying to voice the regulars, ${from}`);
+            }
+        }
     });
 
     return scriptInfo;
