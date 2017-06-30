@@ -4,20 +4,39 @@ version: v1.7.1
 ignore:
   'npm:qs:20170213':
     - x-ray > x-ray-crawler > superagent > qs:
-        reason: None given
-        expires: '2017-06-22T21:00:06.050Z'
+        reason: None available
+        expires: '2017-07-30T22:27:04.602Z'
   'npm:shelljs:20140723':
     - shelljs:
-        reason: None given
-        expires: '2017-06-22T21:00:06.050Z'
+        reason: None available
+        expires: '2017-07-30T22:27:04.602Z'
+  'npm:brace-expansion:20170302':
+    - node-pre-gyp > tar > fstream > rimraf > glob > minimatch > brace-expansion:
+        reason: None available
+        expires: '2017-07-30T22:27:04.600Z'
+    - node-pre-gyp > tar-pack > tar > fstream > rimraf > glob > minimatch > brace-expansion:
+        reason: None available
+        expires: '2017-07-30T22:27:04.600Z'
+    - fstream-ignore > fstream > rimraf > glob > minimatch > brace-expansion:
+        reason: None available
+        expires: '2017-07-30T22:27:04.601Z'
+    - node-pre-gyp > tar-pack > fstream-ignore > fstream > rimraf > glob > minimatch > brace-expansion:
+        reason: None available
+        expires: '2017-07-30T22:27:04.601Z'
+    - fstream-ignore > minimatch > brace-expansion:
+        reason: None available
+        expires: '2017-07-30T22:27:04.602Z'
+    - node-pre-gyp > tar-pack > fstream-ignore > minimatch > brace-expansion:
+        reason: None available
+        expires: '2017-07-30T22:27:04.602Z'
 # patches apply the minimum changes required to fix a vulnerability
 patch:
   'npm:ms:20170412':
     - x-ray > debug > ms:
-        patched: '2017-05-23T21:00:06.210Z'
+        patched: '2017-06-30T22:26:06.281Z'
     - x-ray > x-ray-crawler > ms:
-        patched: '2017-05-23T21:00:06.210Z'
+        patched: '2017-06-30T22:26:06.281Z'
     - socket.io > socket.io-adapter > debug > ms:
-        patched: '2017-05-23T21:00:06.210Z'
+        patched: '2017-06-30T22:26:06.281Z'
     - socket.io > socket.io-client > debug > ms:
         patched: '2017-05-23T21:00:06.210Z'

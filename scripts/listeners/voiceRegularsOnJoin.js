@@ -31,25 +31,42 @@ module.exports = app => {
 
     let cronTime = new scheduler.RecurrenceRule();
     cronTime.minute = autoVoiceTimeInMins;
-    scheduler.schedule('inviteRegularsInFsociety', cronTime, () =>
-        _.forEach(app.channels, channel => {
+
+    scheduler.schedule('voiceRegulars', cronTime, () =>
+        _.forEach(app.channels, async (channel) => {
             // we are not an op in said channel, or channel is in ignore list
             if (_.includes(autoVoiceChannelIgnore, channel) || !app._ircClient.isOpInChannel(channel, app.nick)) return;
-            voiceUsers(channel, threshold, app)
-                .then(result => logger.info(`Running Voice Regulars in ${channel}`))
-                .catch(err => logger.error(`Error in Voice Regulars: ${err.message}`));
+
+            try {
+                const result = await voiceUsers(channel, threshold, app);
+                logger.info(`Running Voice Regulars in ${channel}`);
+            }
+            catch(err) {
+                logger.error('Error in Voice Regulars', {
+                    message: err.message || '',
+                    stack: err.stack || '',
+                });
+            }
         })
     );
 
     // Voice Users on join if they meet a certain threshold
     app.OnJoin.set('voice-regulars', {
-        call: (channel, nick, message) => {
+        call: async (channel, nick, message) => {
             // we are not an op in said channel, or channel is in ignore list
             if (nick === app.nick || _.includes(autoVoiceChannelIgnore, channel) || !app._ircClient.isOpInChannel(channel, app.nick)) return;
-            voiceUsers(channel, threshold, app, {
-                nicks: [nick]
-            })
-                .catch(err => logger.error(`fsoceity-voicer: ${err.message}`));
+
+            try {
+                await voiceUsers(channel, threshold, app, {
+                    nicks: [nick]
+                });
+            }
+            catch(err) {
+                logger.error('Something went wrong in the voice-regulars on-join', {
+                    message: err.message || '',
+                    stack: err.stack || '',
+                });
+            }
         },
         name: 'voice-regulars'
     });
