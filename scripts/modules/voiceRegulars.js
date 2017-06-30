@@ -82,9 +82,7 @@ module.exports = app => {
                 return;
             }
             try {
-                await voiceUsers(channel, threshold, app, {
-                   nicks: [nick]
-                });
+                await voiceUsers(channel, threshold, app);
             }
             catch(err) {
                 logger.error('Something went wrong in the voice-regulars command', {
