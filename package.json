@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "node ./index.js",
-    "test": "snyk test && ./node_modules/mocha/bin/mocha test/**/*.js --reporter spec",
+    "snyke-test": "snyk test",
+    "test": "node_modules/mocha/bin/mocha test/**/*.js --reporter spec",
     "test-watch": "./node_modules/mocha/bin/mocha test/**/*.js --reporter spec -w",
     "generate-docs": "node_modules/.bin/jsdoc -c jsdoc.json",
     "snyk-protect": "snyk protect",
@@ -74,7 +75,7 @@
     "shelljs": "^0.7.8",
     "snyk": "^1.36.2",
     "socket.io": "^2.0.3",
-    "sqlite3": "github:funsocietyirc/node-sqlite3",
+    "sqlite3": "^3.1.8",
     "twit": "^2.2.9",
     "underscore": "^1.8.3",
     "urijs": "^1.18.10",

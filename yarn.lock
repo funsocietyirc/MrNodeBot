@@ -2626,11 +2626,11 @@ monotonic-timestamp@0.0.8:
   version "0.0.8"
   resolved "https://registry.yarnpkg.com/monotonic-timestamp/-/monotonic-timestamp-0.0.8.tgz#67987d02a41c15f568b6c0a05885989dd2402ba0"
 
-ms@0.7.1:
+ms@0.7.1, ms@^0.7.0:
   version "0.7.1"
   resolved "https://registry.yarnpkg.com/ms/-/ms-0.7.1.tgz#9cd13c03adbff25b65effde7ce864ee952017098"
 
-ms@0.7.2, ms@^0.7.0:
+ms@0.7.2:
   version "0.7.2"
   resolved "https://registry.yarnpkg.com/ms/-/ms-0.7.2.tgz#ae25cf2512b3885a1d95d7f037868d8431124765"
 
@@ -3813,7 +3813,7 @@ sprintf-js@~1.0.2:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/sprintf-js/-/sprintf-js-1.0.3.tgz#04e6926f662895354f3dd015203633b857297e2c"
 
-sqlite3@3.1.8:
+sqlite3@^3.1.8:
   version "3.1.8"
   resolved "https://registry.yarnpkg.com/sqlite3/-/sqlite3-3.1.8.tgz#4cbcf965d8b901d1b1015cbc7fc415aae157dfaa"
   dependencies:
