@@ -39,7 +39,7 @@ module.exports = app => {
                 .insert('you picked')
                 .appendBold(answerString)
                 .insert('you are the')
-                .insertIcon(answer ? 'upArrow' : 'downArrow')
+                .insertIcon(rand === answer ? 'upArrow' : 'downArrow')
                 .appendBold(outcomeString);
             app.say(to, sb.toString());
         }
