@@ -34,11 +34,11 @@ module.exports = app => {
 
             const sb = new ircTypo.StringBuilder();
             sb
-                .append(`${from}, your coin landed on`)
+                .insert(`${from}, your coin landed on`)
                 .appendBold(randString)
-                .append('you picked')
+                .insert('you picked')
                 .appendBold(answerString)
-                .append('you are the')
+                .insert('you are the')
                 .appendBold(outcomeString);
 
             app.say(to, sb.toString());
