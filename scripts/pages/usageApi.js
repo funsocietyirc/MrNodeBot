@@ -47,28 +47,29 @@ module.exports = app => {
         path: '/api/usage/channels/overtime/:channel/:nick?',
         name: 'api.usage.channels.overtime',
         verb: 'get',
-        handler: (req, res) => {
-            getUsageOverTime(req.params.channel.replace(hashPattern, '#'), req.params.nick)
-                .then(results => {
-                    // No Results available
-                    if (!results) return res.json({
-                        message: 'No results available',
-                        status: 'error',
-                        results: [],
-                    });
-
-                    results.status = 'success';
-                    res.json(results);
-                })
-                .catch(err => {
-                    logger.error('Error fetching usage stats', {
-                        err
-                    });
-                    res.json({
-                        status: 'error',
-                        results: []
-                    });
+        handler: async (req, res) => {
+            try {
+                const results = await getUsageOverTime(req.params.channel.replace(hashPattern, '#'), req.params.nick);
+                // No Results available
+                if (!results) return res.json({
+                    message: 'No results available',
+                    status: 'error',
+                    results: [],
                 });
+
+                results.status = 'success';
+                res.json(results);
+            }
+            catch(err) {
+                logger.error('Error fetching usage stats', {
+                    message: err.message || '',
+                    stack: err.stack || '',
+                });
+                res.json({
+                    status: 'error',
+                    results: []
+                });
+            }
         },
     });
 

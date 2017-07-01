@@ -5,6 +5,7 @@ const scriptInfo = {
     createdBy: 'IronY'
 };
 const random = require('../../lib/randomEngine');
+const ircTypo = require('../lib/_ircTypography');
 
 module.exports = app => {
     // Flip a coin
@@ -12,7 +13,7 @@ module.exports = app => {
         desc: '[heads / tails] Flip a coin',
         access: app.Config.accessLevels.guest,
         call: (to, from, text, message) => {
-            let [selection] = text.split(' ');
+            const [selection] = text.split(' ');
             let answer = false;
             switch (selection) {
                 case 'heads':
@@ -26,12 +27,21 @@ module.exports = app => {
                     break;
             }
 
-            let rand = random.bool();
-            let randString = rand ? 'heads' : 'tails';
-            let answerString = answer ? 'heads' : 'tails';
-            let outcomeString = rand === answer ? 'Winner' : 'Loser';
+            const rand = random.bool();
+            const randString = rand ? 'heads' : 'tails';
+            const answerString = answer ? 'heads' : 'tails';
+            const outcomeString = rand === answer ? 'Winner' : 'Loser';
 
-            app.say(to, `It was ${randString} you picked ${answerString}, you are the ${outcomeString}`);
+            const sb = new ircTypo.StringBuilder();
+            sb
+                .append(`${from}, your coin landed on`)
+                .appendBold(randString)
+                .append('you picked')
+                .appendBold(answerString)
+                .append('you are the')
+                .appendBold(outcomeString);
+
+            app.say(to, sb.toString());
         }
     });
 

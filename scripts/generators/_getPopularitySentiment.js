@@ -24,8 +24,8 @@ module.exports = async (voter, candidate, channel) => {
         // No results
         if (!result) return result;
 
-        let score = result.get('result');
-        let votes = result.get('votes');
+        const score = result.get('result');
+        const votes = result.get('votes');
 
         // Numerically rank sentiment
         let sentiment = 0;
