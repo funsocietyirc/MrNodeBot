@@ -28,8 +28,8 @@ module.exports = app => {
             }
 
             const rand = random.bool();
-            const randString = rand ? 'heads' : 'tails';
-            const answerString = answer ? 'heads' : 'tails';
+            const randString = rand ? 'Heads' : 'Tails';
+            const answerString = answer ? 'Heads' : 'Tails';
             const outcomeString = rand === answer ? 'Winner' : 'Loser';
 
             const sb = new ircTypo.StringBuilder();
@@ -39,8 +39,8 @@ module.exports = app => {
                 .insert('you picked')
                 .appendBold(answerString)
                 .insert('you are the')
+                .insertIcon(answer ? 'uparrow' : 'downarrow')
                 .appendBold(outcomeString);
-
             app.say(to, sb.toString());
         }
     });
