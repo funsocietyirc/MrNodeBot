@@ -19,7 +19,6 @@ module.exports = app => {
     app.WebRoutes.set('api.usage.channels.available', {
         desc: 'Get a list of channels available',
         path: '/api/usage/channels/available/:channel?',
-        name: 'api.usage.channels.available',
         verb: 'get',
         handler: (req, res) => {
             let channel = req.params.channel && _.isString(req.params.channel) ? req.params.channel.replace(hashPattern, '#') : null;
@@ -45,7 +44,6 @@ module.exports = app => {
     app.WebRoutes.set('api.usage.channels.overtime', {
         desc: 'Get Usage Over Time',
         path: '/api/usage/channels/overtime/:channel/:nick?',
-        name: 'api.usage.channels.overtime',
         verb: 'get',
         handler: async (req, res) => {
             try {

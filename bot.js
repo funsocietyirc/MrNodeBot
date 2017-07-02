@@ -387,7 +387,7 @@ class MrNodeBot {
         }
 
         // Load the web routes
-        this.WebRoutes.forEach(route => {
+        this.WebRoutes.forEach((route, name) => {
             // We have a secure route, add it to the proper namespace
             if (_.isBoolean(route.secure) && route.secure) {
                 // Remove any leading /
@@ -395,7 +395,7 @@ class MrNodeBot {
                 route.path = '/secure/' + route.path;
             }
             // Dynamically register the WebRoutes objects with express
-            this.WebServer[route.verb || 'get'](route.path, route.name, route.handler);
+            this.WebServer[route.verb || 'get'](route.path, name, route.handler);
         });
 
     };

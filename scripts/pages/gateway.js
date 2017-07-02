@@ -45,7 +45,6 @@ module.exports = app => {
         },
         desc: 'Gateway',
         path: '/gateway',
-        name: 'landingPage',
         verb: 'post',
         secure: true
     });

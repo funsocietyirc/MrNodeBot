@@ -12,7 +12,6 @@ module.exports = app => {
         handler: (req, res) => res.render('landing', {}),
         desc: 'Landing Page',
         path: '/',
-        name: 'landingPage',
         verb: 'get'
     });
 

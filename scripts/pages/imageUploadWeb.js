@@ -19,14 +19,14 @@ module.exports = app => {
     // Process the upload
     const uploadHandler = (req, res) => {
         // Validation
-        if (!req.files || !req.body.token || !req.files.image.mimetype.startsWith('image/')) {
+        if (!req.files || !req.body.token || !req.files.image || req.files.image.mimetype || !req.files.image.mimetype.startsWith('image/')) {
             res.send('Something went wrong with your request');
             return;
         }
 
-        let file = req.files.image;
-        let token = req.body.token;
-        let nsfw = req.body.nsfw || false;
+        const file = req.files.image;
+        const token = req.body.token;
+        const nsfw = req.body.nsfw || false;
 
         tokenModel
             .where('token', token)
@@ -77,7 +77,6 @@ module.exports = app => {
         handler: uploadForm,
         desc: 'Upload a file',
         path: '/upload',
-        name: 'upload',
         verb: 'get'
     });
 
@@ -86,7 +85,6 @@ module.exports = app => {
         handler: uploadHandler,
         desc: 'Handle File Upload',
         path: '/upload',
-        name: 'upload',
         verb: 'post'
     });
 

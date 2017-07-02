@@ -36,7 +36,6 @@ module.exports = app => {
         handler: getSourcesAvailableHandler,
         desc: 'URL Link API',
         path: '/api/youtubelinks/sources',
-        name: 'api.youtubelinks.sources',
         verb: 'get'
     });
 

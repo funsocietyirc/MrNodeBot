@@ -7,7 +7,7 @@ block content
             div.text-center
                 h1 Image Upload
                 hr
-                form.form(ref="uploadForm", id="uploadForm", action=url("upload"), method="post", encType="multipart/form-data")
+                form.form(ref="uploadForm", id="uploadForm", action=url("uploadHandler"), method="post", encType="multipart/form-data")
                     div.form-group
                         span.control-label(for="image") File
                         input.form-control(type="file", name="image", multiple accept='image/*')

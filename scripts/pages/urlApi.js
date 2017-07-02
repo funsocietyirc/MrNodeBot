@@ -124,7 +124,6 @@ module.exports = app => {
         handler: urlHandler,
         desc: 'URL Link API',
         path: '/api/urls',
-        name: 'api.urls',
         verb: 'get'
     });
 
@@ -133,7 +132,6 @@ module.exports = app => {
         handler: imageSourceHandler,
         desc: 'Get the available sources',
         path: '/api/sources',
-        name: 'api.sources',
         verb: 'get'
     });
 
