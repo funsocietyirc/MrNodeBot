@@ -51,7 +51,6 @@ module.exports = app => {
     app.WebRoutes.set('commands', {
         desc: 'Command Listing',
         path: '/commands',
-        name: 'commands',
         handler: (req, res) => {
             let results = [];
 
@@ -73,7 +72,6 @@ module.exports = app => {
     app.WebRoutes.set('scripts', {
         desc: 'Script Listing',
         path: '/scripts',
-        name: 'scripts',
         handler: (req, res) => {
             // Return sorted result
             let results = _(app.LoadedScripts).map('info').compact().sortBy('name').value();

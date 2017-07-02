@@ -4,6 +4,7 @@ const scriptInfo = {
     desc: 'The Usage Express API',
     createdBy: 'IronY'
 };
+
 const _ = require('lodash');
 const logger = require('../../lib/logger');
 const Models = require('bookshelf-model-loader');

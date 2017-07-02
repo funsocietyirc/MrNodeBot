@@ -148,7 +148,6 @@ module.exports = app => {
         handler: imagesView,
         desc: 'Image Front End',
         path: '/images/:channel?/:user?',
-        name: 'urls'
     });
 
     // Command to clean URLS
