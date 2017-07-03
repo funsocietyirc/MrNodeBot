@@ -21,6 +21,9 @@ module.exports = async (url) => {
         return results.id || '';
     }
     catch (err) {
+        if(err.statusCode && err.statusCode === 400) return;
+
+        // We have a short url, just bail
         logger.error('Something went wrong in the _googleShortUrl generator', {
             message: err.message || '',
             stack: err.stack || '',

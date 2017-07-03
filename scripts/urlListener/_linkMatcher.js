@@ -21,8 +21,9 @@ module.exports = results => new Promise(resolve => {
     // No URI or URL
     if (!results.uri || !url) return resolve(results);
 
-    switch (results.uri.domain()) {
+    switch (url.hostname) {
         case 'youtu.be':
+        case 'www.youtu.be':
             const id = results.uri.segmentCoded(0);
             if(_.isString(id) && !_.isEmpty(id)) {
               return resolve(
@@ -37,9 +38,24 @@ module.exports = results => new Promise(resolve => {
             }
             break;
         case 'youtube.com': // Youtube
+        case 'www.youtube.com':
             switch (results.uri.segmentCoded(0)) {
+                // Play list link
+                case 'playlist':
+                    if (_.isString(url.searchParams.get('list')))
+                        return resolve(
+                            getYoutube(
+                                null,
+                                url.searchParams.get('list'),
+                                url.searchParams.get('index'),
+                                url.searchParams.get('t'),
+                                results
+                            )
+                        );
+                    break;
                 case 'embed':
                 case 'watch':
+                default:
                     // Playlist
                     if (_.isString(url.searchParams.get('list')) && _.isString(url.searchParams.get('v')))
                         return resolve(
@@ -63,22 +79,11 @@ module.exports = results => new Promise(resolve => {
                             )
                         );
                     break;
-                // Play list link
-                case 'playlist':
-                    if (_.isString(url.searchParams.get('list')))
-                        return resolve(
-                            getYoutube(
-                                null,
-                                url.searchParams.get('list'),
-                                url.searchParams.get('index'),
-                                url.searchParams.get('t'),
-                                results
-                            )
-                        );
-                    break;
+
             }
             break;
         case 'imdb.com': // IMDB
+        case 'www.imdb.com':
             // No API key for OMDB Provided
             if(!_.isString(config.apiKeys.omdb) || _.isEmpty(config.apiKeys.omdb)) break;
             let segments = results.uri.segmentCoded();
@@ -88,6 +93,7 @@ module.exports = results => new Promise(resolve => {
             }
             break;
         case 'imgur.com': // Imgur
+        case 'www.imgur.com':
             if (results.uri.subdomain() === 'i') {
                 let segment = results.uri.segmentCoded(0);
                 if (!segment) break;
@@ -110,9 +116,11 @@ module.exports = results => new Promise(resolve => {
             }
             break;
         case 'github.com': // GitHub
+        case 'www.github.com':
             if (results.uri.segment().length >= 2) return resolve(getGitHub(results.uri.segmentCoded(0), results.uri.segmentCoded(1), results)); // 2: User, 3: Repo
             break;
         case 'bitbucket.org': // BitBucket
+        case 'www.butbucket.com':
             if (results.uri.segment().length >= 2) return resolve(getBitBucket(results.uri.segmentCoded(0), results.uri.segmentCoded(1), results)); // 2: User, 3: Repo
             break;
     }
