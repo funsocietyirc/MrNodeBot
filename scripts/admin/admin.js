@@ -27,7 +27,7 @@ i18next.addResources('en', 'admin', {
     noAdmins: 'There are currently no Administrators listed'
 });
 
-// Administrator List manipulationr
+// Administrator List manipulation
 // Commands: admin [list add del help]
 module.exports = app => {
     const admin = (to, from, text, message) => {
