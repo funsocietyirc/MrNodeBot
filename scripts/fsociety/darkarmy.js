@@ -62,6 +62,7 @@ module.exports = app => {
 
     // Send someone a list of the channels
     const darkarmy = (to, from, text, message) => {
+        app.say(to, `I have private messaged you the dark channels, ${from}`);
         app.say(from, `Join me on ${app.Config.features.fsociety.mainChannel} or one of the other Mr. Robot channels: ` + darkChannels.join(' '));
     };
     // A command to get a list of joined dark army channels

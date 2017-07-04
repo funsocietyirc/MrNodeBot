@@ -200,7 +200,7 @@ async@^1.4.0, async@~1.5:
   version "1.5.2"
   resolved "https://registry.yarnpkg.com/async/-/async-1.5.2.tgz#ec6a61ae56480c0c3cb241c95618e20892f9672a"
 
-async@^2.0.1:
+async@^2.5.0:
   version "2.5.0"
   resolved "https://registry.yarnpkg.com/async/-/async-2.5.0.tgz#843190fd6b7357a0b9e1c956edddd5ec8462b54d"
   dependencies:
@@ -547,9 +547,9 @@ cheerio@^0.18.0:
     htmlparser2 "~3.8.1"
     lodash "~2.4.1"
 
-cheerio@^1.0.0-rc.1:
-  version "1.0.0-rc.1"
-  resolved "https://registry.yarnpkg.com/cheerio/-/cheerio-1.0.0-rc.1.tgz#2af37339eab713ef6b72cde98cefa672b87641fe"
+cheerio@^1.0.0-rc.2:
+  version "1.0.0-rc.2"
+  resolved "https://registry.yarnpkg.com/cheerio/-/cheerio-1.0.0-rc.2.tgz#4b9f53a81b27e4d5dac31c0ffd0cfa03cc6830db"
   dependencies:
     css-select "~1.2.0"
     dom-serializer "~0.1.0"
@@ -4258,11 +4258,11 @@ void-elements@^2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/void-elements/-/void-elements-2.0.1.tgz#c066afb582bb1cb4128d60ea92392e94d5e9dbec"
 
-watson-developer-cloud@^2.32.1:
-  version "2.32.1"
-  resolved "https://registry.yarnpkg.com/watson-developer-cloud/-/watson-developer-cloud-2.32.1.tgz#7d27995818f3689ca68d4959b82a8e90e9485941"
+watson-developer-cloud@^2.33.0:
+  version "2.33.0"
+  resolved "https://registry.yarnpkg.com/watson-developer-cloud/-/watson-developer-cloud-2.33.0.tgz#397ea16f9deb7059cba49ca37c0d98db0458df15"
   dependencies:
-    async "^2.0.1"
+    async "^2.5.0"
     buffer-from "^0.1.1"
     cookie "~0.3.1"
     csv-stringify "~1.0.2"

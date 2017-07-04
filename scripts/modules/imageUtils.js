@@ -172,6 +172,7 @@ module.exports = app => {
     });
 
     // Scheduler automatic cleanup
+    // TODO make this configurable ala config.js
     let cronTime = new scheduler.RecurrenceRule();
     cronTime.minute = 45;
     scheduler.schedule('cleanImages', cronTime, () => cleanImages(false));
