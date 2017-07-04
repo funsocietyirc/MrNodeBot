@@ -196,8 +196,9 @@ class MrNodeBot {
                     // Handle Topic changes
                     'topic': (channel, topic, nick, message) => this._handleOnTopic(channel, topic, nick, message),
                     // Catch all to prevent drop on error
-                    'error': message => {
-                    }
+                    'error': message =>  logger.error('Uncaught IRC Client error', {
+                        messaage
+                    })
                 })
                 // Add the listeners to the IRC Client
                     .each((value, key) => this._ircClient.addListener(key, value));
@@ -275,7 +276,7 @@ class MrNodeBot {
                 let fullPath = `${normalizedPath}${path.sep}${file}`;
                 // Attempt to Load the module
                 try {
-                    // Clear the cache if specified
+                    // Clear the cache if specified, ignore files that end with Store.js
                     if (clearCache === true && !_.endsWith(file, 'Store.js')) {
                         MrNodeBot._clearCache(fullPath);
                     }
@@ -626,6 +627,7 @@ class MrNodeBot {
      */
     _handleOnTopic(channel, topic, nick, message) {
         topic = MrNodeBot._normalizeText(topic);
+
         //  Handle Ignore
         if (_.includes(this.Ignore, _.toLower(nick))) return;
 
@@ -734,7 +736,7 @@ class MrNodeBot {
         }
 
         // Invalid Matched Command
-        if(matchedInvalidCommand) {
+        if (matchedInvalidCommand) {
             const actualText = `${cmd} ${output}`.trim();
             this.say(to, t('errors.invalidCommand', {
                 from,
@@ -825,10 +827,10 @@ class MrNodeBot {
         let currentIndex = null;
         let currentTimestamp = null;
 
-        this.AdmCallbacks.forEach((v,i,m) => {
-            if(currentIndex || !_.isString(i) || _.isEmpty(i) || !_.isObject(v)) return;
+        this.AdmCallbacks.forEach((v, i, m) => {
+            if (currentIndex || !_.isString(i) || _.isEmpty(i) || !_.isObject(v)) return;
             const matches = i.match(/([^.]*).(.*)/);
-            if(!matches[0] || !matches[1] || !matches[2]) return;
+            if (!matches[0] || !matches[1] || !matches[2]) return;
 
             if (matches[1] === user) {
                 currentIndex = matches[0];
