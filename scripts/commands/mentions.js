@@ -14,7 +14,6 @@ module.exports = app => {
 
     const mentioned = async (to, from, text, message) => {
         try {
-
             // Grab the results
             const results = await Models.Mentioned.query(qb => qb
                 .where('nick', 'like', from)
@@ -31,7 +30,6 @@ module.exports = app => {
                 return;
             }
 
-
             // Report back status
             app.say(to,`Sending your last ${results.length} mentions via private message, ${from}`);
 
@@ -41,7 +39,6 @@ module.exports = app => {
                 from,
                 `[${key + 1}] - ${Moment(result.timestamp).fromNow()} - By ${result.mention.by} - On ${result.mention.channel}: ${result.mention.text}`
             ));
-
         }
         catch (err) {
             logger.error('Something went wrong in the mentions script', {

@@ -147,7 +147,9 @@ module.exports = (results, app) => {
         if (imgur.description && imgur.description !== null) append(imgur.description);
         if (imgur.topic && imgur.topic !== 'null') append(imgur.topic);
         if (imgur.section && imgur.section !== 'null') append(imgur.section);
-        append(`${imgur.images_count} ${imgur.images_count > 1 ? 'Images' : 'Image'}`);
+
+        append(`${imgur.images_count || 1} ${imgur.images_count > 1 ? 'Images' : 'Image'}`);
+
         append(`${icons.views} ${c.navy(formatNumber(imgur.views))}`)
         (`${icons.happy} ${c.green(formatNumber(imgur.ups))}`)
         (`${icons.sad} ${c.red(formatNumber(imgur.downs))}`)
