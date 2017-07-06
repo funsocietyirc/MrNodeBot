@@ -175,6 +175,7 @@ module.exports = app => {
     // TODO make this configurable ala config.js
     let cronTime = new scheduler.RecurrenceRule();
     cronTime.minute = 45;
+    cronTime.hour = 0;
     scheduler.schedule('cleanImages', cronTime, () => cleanImages(false));
 
     // Return the script info
