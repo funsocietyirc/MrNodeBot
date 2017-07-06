@@ -44,11 +44,12 @@ module.exports = app => {
                 const dateAgo = date ? Moment(date).fromNow() : 'No Date';
 
                 // Send back to IRC
-                subscriptions.forEach(subscription => app.say(subscription.attributes.channel,
-                    `${feed.attributes.name} RSS -> ${item.author} -> ${item.title} -> ${link} -> ${dateAgo}`
-                ));
+                subscriptions.forEach(subscription => {
+                    if (app._ircClient.isInChannel(subscription.attributes.channel, app.nick))
+                        app.say(subscription.attributes.channel, `${feed.attributes.name} RSS -> ${item.author} -> ${item.title} -> ${link} -> ${dateAgo}`)
+                });
             }
-            catch(err) {
+            catch (err) {
                 logger.error('Something went wrong sending a RSS new-item to the channel', {
                     message: err.message || '',
                     stack: err.stack || '',
@@ -183,7 +184,9 @@ module.exports = app => {
             return;
         }
 
-        const [url, name] = text.split(' ');
+        const args = text.split(' ');
+        const url = args.shift();
+        const name = args.join(' ');
 
         if (!url) {
             app.say(to, `A URL is required to add a RSS feed, ${from}`);

@@ -196,7 +196,7 @@ class MrNodeBot {
                     // Handle Topic changes
                     'topic': (channel, topic, nick, message) => this._handleOnTopic(channel, topic, nick, message),
                     // Catch all to prevent drop on error
-                    'error': message =>  logger.error('Uncaught IRC Client error', {
+                    'error': message => logger.error('Uncaught IRC Client error', {
                         messaage
                     })
                 })
@@ -915,59 +915,74 @@ class MrNodeBot {
     };
 
     /**
+     * Logger for action / say/ notice
+     * @param {string} ircMsg Nick / Channel to say it to
+     * @param {string} target
+     * @param {string} translationKey Translation Key
+     */
+    _logInfo(ircMsg, target, translationKey) {
+        const normalizedMessage = c.stripColorsAndStyle(ircMsg);
+        if (normalizedMessage === ircMsg) {
+            logger.info(t(translationKey, {
+                target: target,
+                message: normalizedMessage
+            }));
+        }
+        else {
+            logger.info(t(translationKey, {
+                target: target,
+                message: normalizedMessage
+            }), {
+                original: msg
+            });
+        }
+    };
+
+    /**
+     * IRC message response
+     * @param {string} target
+     * @param {string} message
+     * @param {string} type
+     * @param {string} translationKey
+     * @param {function} processor
+     * @private
+     */
+    _ircResponse(target, message, type,translationKey, processor) {
+        if (!_.isString(message) || _.isEmpty(message.trim())) return;
+        const msg = preprocessText(message, processor);
+        this._logInfo(msg, target, translationKey);
+        this._ircClient[type](target, msg);
+    }
+
+
+    /**
      * Say something over IRC
      * @param {string} target Nick / Channel to say it to
      * @param {string} message What to say
      * @param {function} processor
      */
     say(target, message, processor) {
-        if (!_.isString(message) || _.isEmpty(message.trim())) return;
-        let msg = preprocessText(message, processor);
-        logger.info(t('events.sentMessage', {
-            target: target,
-            message: c.stripColorsAndStyle(msg)
-        }), {
-            original: msg
-        });
-
-        this._ircClient.say(target, msg);
+        this._ircResponse(target, message, 'say', 'events.sentMessage', processor);
     };
 
     /**
      * Perform an Action over IRC
      * @param {string} target Nick / Channel to say it to
      * @param {string} message What to say
+     * @param {function} processor
      */
-    action(target, message) {
-        if (!_.isString(message) || _.isEmpty(message.trim())) return;
-        let msg = preprocessText(message);
-        logger.info(t('events.sentAction', {
-            target: target,
-            message: c.stripColorsAndStyle(msg)
-        }), {
-            original: msg
-        });
-
-        this._ircClient.action(target, msg);
+    action(target, message, processor) {
+        this._ircResponse(target, message, 'action', 'events.sentAction', processor);
     };
 
     /**
      * Perform a Notice over IRC
      * @param {string} target Nick / Channel to say it to
      * @param {string} message What to say
+     * @param {function} processor
      */
-    notice(target, message) {
-        if (!_.isString(message) || _.isEmpty(message.trim())) return;
-        let msg = preprocessText(message);
-
-        logger.info(t('events.sentNotice', {
-            target: target,
-            message: c.stripColorsAndStyle(msg)
-        }), {
-            original: msg
-        });
-
-        this._ircClient.notice(target, msg);
+    notice(target, message, processor) {
+        this._ircResponse(target, message, 'notice', 'events.sentNotice', processor);
     };
 
     /** Reload Bots Configuration Object */
