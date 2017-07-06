@@ -49,12 +49,12 @@ module.exports = app => {
 
                     const output = new typo.StringBuilder({logo: 'rss'});
                     output
-                        .appendBold(feed.attributes.name)
                         .insertIcon('user')
+                        .appendBold(feed.attributes.name)
                         .appendBold(item.author)
                         .appendBold(item.title)
-                        .appendBold(link)
                         .insertIcon('anchor')
+                        .appendBold(link)
                         .appendBold(dateAgo);
 
                     app.say(subscription.attributes.channel, output.toString());
