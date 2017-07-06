@@ -6,13 +6,14 @@ const scriptInfo = {
 };
 
 const _ = require('lodash');
+const Moment = require('moment');
+const Models = require('bookshelf-model-loader');
+const RssFeedEmitter = require('funsociety-irc-rss-feed-emitter');
+
+const typo = require('../lib/_ircTypography');
 const logger = require('../../lib/logger');
 const getShort = require('../lib/_getShortService')();
 const extractUrls = require('../../lib/extractUrls');
-
-const Models = require('bookshelf-model-loader');
-const Moment = require('moment');
-const RssFeedEmitter = require('funsociety-irc-rss-feed-emitter');
 
 module.exports = app => {
     // No Database available
@@ -43,10 +44,20 @@ module.exports = app => {
                 const date = item.date || item.pubDate;
                 const dateAgo = date ? Moment(date).fromNow() : 'No Date';
 
-                // Send back to IRC
                 subscriptions.forEach(subscription => {
-                    if (app._ircClient.isInChannel(subscription.attributes.channel, app.nick))
-                        app.say(subscription.attributes.channel, `${feed.attributes.name} RSS -> ${item.author} -> ${item.title} -> ${link} -> ${dateAgo}`)
+                    if (!app._ircClient.isInChannel(subscription.attributes.channel, app.nick)) return;
+
+                    const output = new typo.StringBuilder({logo: 'rss'});
+                    output
+                        .appendBold(feed.attributes.name)
+                        .insertIcon('user')
+                        .appendBold(item.author)
+                        .appendBold(item.title)
+                        .appendBold(link)
+                        .insertIcon('anchor')
+                        .appendBold(dateAgo);
+
+                    app.say(subscription.attributes.channel, output.toString());
                 });
             }
             catch (err) {
@@ -157,7 +168,9 @@ module.exports = app => {
                 return;
             }
 
-            if (to !== from) app.say(to, `I am messaging you the RSS subscriptions for ${to}, ${from}`);
+            if (to !== from) app.say(to, `I am sending you a list of RSS subscriptions for ${to}, ${from}`);
+            app.say(from, `RSS Subscriptions for ${from} (${subscriptions.length} total)`);
+
             subscriptions.forEach(subscription => {
                 app.say(from, `[${subscription.related('feed').attributes.id}] ${subscription.related('feed').attributes.name} <${subscription.attributes.creator}>`);
             });

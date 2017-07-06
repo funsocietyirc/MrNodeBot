@@ -933,7 +933,7 @@ class MrNodeBot {
                 target: target,
                 message: normalizedMessage
             }), {
-                original: msg
+                original: ircMsg
             });
         }
     };
