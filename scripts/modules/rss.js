@@ -35,12 +35,10 @@ module.exports = app => {
                 const feed = await Models.RssFeed.where('link', url).fetch({
                     withRelated: ['subscriptions']
                 });
-
+                
                 const subscriptions = feed.related('subscriptions');
 
-
-                const link = _.isString(item.link) ? await getShort(item.link) : '';
-
+                const link = _.isString(item.link) ? await getShort(item.link) : 'No Link';
                 const date = item.date || item.pubDate;
                 const dateAgo = date ? Moment(date).fromNow() : 'No Date';
 
