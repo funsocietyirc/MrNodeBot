@@ -13,9 +13,11 @@ const icons = {
     anchor: c.navy.bold('⚓'),
     star: c.yellow('✡'),
     happy: c.green.bold('☺'),
+    person: c.yellow('☺'),
     sad: c.red.bold('☹'),
     time: c.grey.bold('@'),
     tv: c.blue.bold('📺'),
+    clock: c.blue.bold('⏰')
 };
 
 // Misc Logos
@@ -35,6 +37,7 @@ const logos = {
     imgur: c.green.bold('IMGUR'),
     chuckNorris: c.yellow.bold('Chuck Norris'),
     m2m: c.yellow.bold('Apocalypse Clock'),
+    rss: c.blue.bold('RSS'),
 };
 
 // Return Green color number for numbers less then 50
