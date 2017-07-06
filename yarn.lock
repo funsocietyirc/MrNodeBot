@@ -1462,9 +1462,9 @@ function-bind@^1.0.2:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/function-bind/-/function-bind-1.1.0.tgz#16176714c801798e4e8f2cf7f7529467bb4a5771"
 
-funsociety-irc-rss-feed-emitter@^1.0.6:
-  version "1.0.6"
-  resolved "https://registry.yarnpkg.com/funsociety-irc-rss-feed-emitter/-/funsociety-irc-rss-feed-emitter-1.0.6.tgz#ba34ac82382bf6d7c3fce61641103447d0ce461d"
+funsociety-irc-rss-feed-emitter@^1.0.10:
+  version "1.0.10"
+  resolved "https://registry.yarnpkg.com/funsociety-irc-rss-feed-emitter/-/funsociety-irc-rss-feed-emitter-1.0.10.tgz#792b0b02c042d0069a390fbf83da860ccf3a7c54"
   dependencies:
     bluebird "3.0.5"
     feedparser "1.1.4"

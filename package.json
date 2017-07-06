@@ -48,7 +48,7 @@
     "express-winston": "^2.4.0",
     "file-type": "^5.2.0",
     "freeport": "^1.0.5",
-    "funsociety-irc-rss-feed-emitter": "^1.0.6",
+    "funsociety-irc-rss-feed-emitter": "^1.0.10",
     "funsocietyirc-client": "^0.0.18",
     "gitlog": "^2.0.1",
     "i18next": "^8.4.2",
