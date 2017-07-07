@@ -101,7 +101,12 @@ class MrNodeBot {
         this._initIrc();
     };
 
-    /** Log Errors **/
+    /**
+     * Log Errors
+     * @param message
+     * @param err
+     * @private
+     */
     _errorHandler(message, err) {
         logger.error(message, {
             err: err.message || '',
@@ -109,7 +114,10 @@ class MrNodeBot {
         });
     };
 
-    /** Initialize Web Server */
+    /**
+     * Initialize Web Server
+     * @private
+     */
     _initWebServer() {
         logger.info(t('webServer.starting'));
         this.WebServer = require('./web/server')(this);
@@ -123,8 +131,9 @@ class MrNodeBot {
     };
 
     /**
-     Initialize SocketIO
-     **/
+     * Initialize SocketIO
+     * @private
+     */
     _initSocketIO() {
         logger.info(`SocketIO is now bound to the Express instance running on ${this.Config.express.port}`);
 
@@ -144,83 +153,101 @@ class MrNodeBot {
     };
 
     /**
-     * Initialize IRC client
+     * Connect to the IRC server
+     * @returns {Promise}
+     * @private
      */
-    _initIrc() {
-        logger.info(t('irc.initializing'));
-        // Connect the Bot to the irc network
+    async _connectToIrc() {
         return new Promise((resolve, reject) => this._ircClient.connect(20, () => {
-            logger.info(t('irc.connected', {
-                server: this.Config.irc.server,
-                nick: this.nick
-            }));
-            resolve();
-        }))
-        // If there is a password and we are on the same nick we were configured for, identify
-            .then(() => {
-                if (!this.Config.nickserv.password || this.Config.irc.nick !== this._ircClient.nick) return;
-                let first = this.Config.nickserv.host ? `@${this.Config.nickserv.host}` : '';
-                let nickserv = `${this.Config.nickserv.nick}${first}`;
-                this._ircClient.say(nickserv, `identify ${this.Config.nickserv.password}`);
+                logger.info(t('irc.connected', {
+                    server: this.Config.irc.server,
+                    nick: this.nick
+                }));
+                resolve();
             })
-            // Load in the scripts
-            .then(() => this._loadDynamicAssets(false))
-            // Initialize the listeners
-            .then(() => {
-                this._ircWrappers = new IrcWrappers(this);
-                logger.info(t('listeners.init'));
-                _({
-                    // Handle OnAction
-                    'action': (nick, to, text, message) => this._ircWrappers.handleAction(nick, to, text, message),
-                    // Handle On First Line received from IRC Client
-                    'registered': message => this._ircWrappers.handleRegistered(message),
-                    // Handle Channel Messages
-                    'message#': (nick, to, text, message) => this._ircWrappers.handleCommands(nick, to, text, message),
-                    // Handle Private Messages
-                    'pm': (nick, text, message) => this._ircWrappers.handleCommands(nick, nick, text, message),
-                    // Handle Notices, also used to check validation for NickServ requests
-                    'notice': (nick, to, text, message) => {
-                        // Check for auth command, return if we have one
-                        if (_.toLower(nick) === _.toLower(this.Config.nickserv.nick)) this._ircWrappers.handleAuthenticatedCommands(nick, to, text, message);
-                        else this._ircWrappers.handleOnNotice(nick, to, text, message);
-                    },
-                    // Handle CTCP Requests
-                    'ctcp': (nick, to, text, type, message) => this._ircWrappers.handleCtcpCommands(nick, to, text, type, message),
-                    // Handle Nick changes
-                    'nick': (oldnick, newnick, channels, message) => this._ircWrappers.handleNickChanges(oldnick, newnick, channels, message),
-                    // Handle Joins
-                    'join': (channel, nick, message) => this._ircWrappers.handleOnJoin(channel, nick, message),
-                    // Handle On Parts
-                    'part': (channel, nick, reason, message) => this._ircWrappers.handleOnPart(channel, nick, reason, message),
-                    // Handle On Kick
-                    'kick': (channel, nick, by, reason, message) => this._ircWrappers.ircWrappers.handleOnKick(channel, nick, by, reason, message),
-                    // Handle On Quit
-                    'quit': (nick, reason, channels, message) => this._ircWrappers.handleOnQuit(nick, reason, channels, message),
-                    // Handle Topic changes
-                    'topic': (channel, topic, nick, message) => this._ircWrappers.handleOnTopic(channel, topic, nick, message),
-                    // Catch all to prevent drop on error
-                    'error': message => logger.error('Uncaught IRC Client error', {
-                        messaage
-                    })
-                })
-                // Add the listeners to the IRC Client
-                    .each((value, key) => this._ircClient.addListener(key, value));
+        );
+    }
+
+    /**
+     * Initialize IRC
+     * @returns {Promise.<void>}
+     * @private
+     */
+    async _initIrc() {
+        try {
+            await this._connectToIrc();
+        }
+        catch (err) {
+            this._errorHandler(`Something went wrong calling the _connectToIrc method`, err);
+        }
+
+        let first = this.Config.nickserv.host ? `@${this.Config.nickserv.host}` : '';
+        let nickserv = `${this.Config.nickserv.nick}${first}`;
+
+        this._ircClient.say(nickserv, `identify ${this.Config.nickserv.password}`);
+
+        try {
+            await this._loadDynamicAssets(false);
+        }
+        catch (err) {
+            this._errorHandler('Something went wrong calling the _loadDynamicAssets method', err);
+        }
+
+        this._ircWrappers = new IrcWrappers(this);
+
+        logger.info(t('listeners.init'));
+        _({
+            // Handle OnAction
+            'action': (nick, to, text, message) => this._ircWrappers.handleAction(nick, to, text, message),
+            // Handle On First Line received from IRC Client
+            'registered': message => this._ircWrappers.handleRegistered(message),
+            // Handle Channel Messages
+            'message#': (nick, to, text, message) => this._ircWrappers.handleCommands(nick, to, text, message),
+            // Handle Private Messages
+            'pm': (nick, text, message) => this._ircWrappers.handleCommands(nick, nick, text, message),
+            // Handle Notices, also used to check validation for NickServ requests
+            'notice': (nick, to, text, message) => {
+                // Check for auth command, return if we have one
+                if (_.toLower(nick) === _.toLower(this.Config.nickserv.nick)) this._ircWrappers.handleAuthenticatedCommands(nick, to, text, message);
+                else this._ircWrappers.handleOnNotice(nick, to, text, message);
+            },
+            // Handle CTCP Requests
+            'ctcp': (nick, to, text, type, message) => this._ircWrappers.handleCtcpCommands(nick, to, text, type, message),
+            // Handle Nick changes
+            'nick': (oldNick, newNick, channels, message) => this._ircWrappers.handleNickChanges(oldNick, newNick, channels, message),
+            // Handle Joins
+            'join': (channel, nick, message) => this._ircWrappers.handleOnJoin(channel, nick, message),
+            // Handle On Parts
+            'part': (channel, nick, reason, message) => this._ircWrappers.handleOnPart(channel, nick, reason, message),
+            // Handle On Kick
+            'kick': (channel, nick, by, reason, message) => this._ircWrappers.ircWrappers.handleOnKick(channel, nick, by, reason, message),
+            // Handle On Quit
+            'quit': (nick, reason, channels, message) => this._ircWrappers.handleOnQuit(nick, reason, channels, message),
+            // Handle Topic changes
+            'topic': (channel, topic, nick, message) => this._ircWrappers.handleOnTopic(channel, topic, nick, message),
+            // Catch all to prevent drop on error
+            'error': message => logger.error('Uncaught IRC Client error', {
+                message
             })
-            // Run The On Connected events
-            .then(() => this.OnConnected.forEach(x => {
+        }).each((value, key) => this._ircClient.addListener(key, value));
+
+        this.OnConnected.forEach(
+            async (x) => {
                 try {
-                    x.call();
+                    await x.call();
                 } catch (err) {
                     this._errorHandler('Error in onConnected', err);
                 }
-            }))
-            // Run The callback
-            .then(() => {
-                if (this._callback) this._callback(this);
-            });
+            }
+        );
+
+        if (this._callback) this._callback(this);
     };
 
-    /** Initialize Database Subsystem */
+    /**
+     * Initialize Database Subsystem
+     * @private
+     */
     _initDbSubSystem() {
         // We have a Database available
         if (this.Config.knex.enabled) {
@@ -234,10 +261,14 @@ class MrNodeBot {
         logger.error(t('database.missing', {
             feature: 'Database Core'
         }));
+
         this.Database = false;
     };
 
-    /** Initialize User Manager */
+    /**
+     * Initialize User Manager
+     * @private
+     */
     _initUserManager() {
         if (!this.Database) {
             logger.info(t('database.missing', {
@@ -269,44 +300,51 @@ class MrNodeBot {
             dir
         }));
         // Get a normalized path to the script
-        let normalizedPath = path.join(__dirname, dir);
+        const normalizedPath = path.join(__dirname, dir);
 
-        // Require In the scripts
-        // Load all files with .js extension
-        _(fs.readdirSync(normalizedPath))
-            .each(file => {
-                // Attempt to see if the module is already loaded
-                let fullPath = `${normalizedPath}${path.sep}${file}`;
-                // Attempt to Load the module
-                try {
-                    // Clear the cache if specified, ignore files that end with Store.js
-                    if (clearCache === true && !_.endsWith(file, 'Store.js')) {
-                        MrNodeBot._clearCache(fullPath);
-                    }
-                    // If we are not dealing with a partial file _something.js
-                    if (file[0] !== '_' && _.endsWith(file, '.js')) {
-                        logger.info(t('scripts.loaded', {
-                            file
-                        }));
-
-                        let scriptInfo = {
-                            fullPath: fullPath,
-                            info: require(`./${dir}/${file}`)(this)
-                        };
-
-                        // If we have a name field, run it through a start case filter
-                        if (scriptInfo.info.name) scriptInfo.info.name = _.startCase(scriptInfo.info.name);
-                        this.LoadedScripts.push(scriptInfo);
-                    }
-                } catch (err) {
-                    this._errorHandler(t('scripts.error', {
-                        path: fullPath
-                    }), err);
+        /**
+         * require a script
+         * @param {string} file
+         */
+        const requireScript = file => {
+            // Attempt to see if the module is already loaded
+            const fullPath = `${normalizedPath}${path.sep}${file}`;
+            // Attempt to Load the module
+            try {
+                // Clear the cache if specified, ignore files that end with Store.js
+                if (clearCache === true && !_.endsWith(file, 'Store.js')) {
+                    MrNodeBot._clearCache(fullPath);
                 }
-            });
+                // If we are not dealing with a partial file _something.js
+                if (file[0] !== '_' && _.endsWith(file, '.js')) {
+                    logger.info(t('scripts.loaded', {
+                        file
+                    }));
+
+                    const scriptInfo = {
+                        fullPath: fullPath,
+                        info: require(`./${dir}/${file}`)(this)
+                    };
+
+                    // If we have a name field, run it through a start case filter
+                    if (scriptInfo.info.name) scriptInfo.info.name = _.startCase(scriptInfo.info.name);
+                    this.LoadedScripts.push(scriptInfo);
+                }
+            } catch (err) {
+                this._errorHandler(t('scripts.error', {
+                    path: fullPath
+                }), err);
+            }
+        };
+
+        // Load all files with .js extension
+        _(fs.readdirSync(normalizedPath)).each(requireScript);
     };
 
-    /** Initialize Locale Storage subsystem*/
+    /**
+     * Initialize Locale Storage subsystem
+     * @private
+     */
     _initStorageSubSystem() {
         // Load the storage before the Bot connects (Sync)
         storage.initSync();
@@ -338,7 +376,10 @@ class MrNodeBot {
         logger.info(t('storage.initialized'));
     };
 
-    /** Read the configuration and alias any commands specified*/
+    /**
+     * Read the configuration and alias any commands specified
+     * @private
+     */
     _createCommandAliases() {
         // Read in command rebinding
         if (!this.Config.commandBindings || !_.isArray(this.Config.commandBindings)) return;
@@ -490,7 +531,9 @@ class MrNodeBot {
         this._ircResponse(target, message, 'notice', 'events.sentNotice', processor);
     };
 
-    /** Reload Bots Configuration Object */
+    /**
+     * Reload Bots Configuration Object
+     */
     reloadConfiguration() {
         logger.info(t('bootstrap.reloadConfig'));
 
@@ -502,11 +545,18 @@ class MrNodeBot {
 
     // Properties
 
-    /** Bots IRC Nickname */
+    /**
+     * Bots IRC Nickname
+     * @returns {string}
+     */
     get nick() {
         return this._ircClient.nick;
     };
 
+    /**
+     * Bots IRC Nickname
+     * @param {string} newNick
+     */
     set nick(newNick) {
         // If we do not have a provided nick, use the settings default
         newNick = newNick || this.Config.irc.nick;
@@ -519,11 +569,18 @@ class MrNodeBot {
         this._ircClient.originalNick = newNick;
     };
 
-    /** Get a list of joined IRC channels */
+    /**
+     * Get IRC Channels
+     * @returns {array}
+     */
     get channels() {
         return _(this._ircClient.chans).keys().uniq().value();
     };
 
+    /**
+     *
+     * @param {array} value
+     */
     set channels(value) {
         // Given an array
         if (_.isArray(value)) value.forEach(channel => {
