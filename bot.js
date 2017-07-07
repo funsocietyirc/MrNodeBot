@@ -18,6 +18,7 @@ const logger = require('./lib/logger');
 const scheduler = require('./lib/scheduler');
 const preprocessText = require('./lib/preprocessText');
 const t = require('./lib/localize');
+const IrcWrappers = require('./lib/ircWrappers');
 
 // Extend For Un-cache
 require('./lib/uncache')(require);
@@ -96,11 +97,12 @@ class MrNodeBot {
 
         /** Irc Client Instance */
         this._ircClient = require('./lib/ircClient');
+        this._ircWrappers = null;
         this._initIrc();
     };
 
     /** Log Errors **/
-    static _errorHandler(message, err) {
+    _errorHandler(message, err) {
         logger.error(message, {
             err: err.message || '',
             stack: err.stack || ''
@@ -137,7 +139,7 @@ class MrNodeBot {
             // Log Disconnect
             sock.on('disconnect', msg => logger.info(`Socket IO Disconnection`));
             // Log Error
-            sock.on('error', err => MrNodeBot._errorHandler('Socket.IO Error', err));
+            sock.on('error', err => this._errorHandler('Socket.IO Error', err));
         });
     };
 
@@ -165,36 +167,37 @@ class MrNodeBot {
             .then(() => this._loadDynamicAssets(false))
             // Initialize the listeners
             .then(() => {
+                this._ircWrappers = new IrcWrappers(this);
                 logger.info(t('listeners.init'));
                 _({
                     // Handle OnAction
-                    'action': (nick, to, text, message) => this._handleAction(nick, to, text, message),
+                    'action': (nick, to, text, message) => this._ircWrappers.handleAction(nick, to, text, message),
                     // Handle On First Line received from IRC Client
-                    'registered': message => this._handleRegistered(message),
+                    'registered': message => this._ircWrappers.handleRegistered(message),
                     // Handle Channel Messages
-                    'message#': (nick, to, text, message) => this._handleCommands(nick, to, text, message),
+                    'message#': (nick, to, text, message) => this._ircWrappers.handleCommands(nick, to, text, message),
                     // Handle Private Messages
-                    'pm': (nick, text, message) => this._handleCommands(nick, nick, text, message),
+                    'pm': (nick, text, message) => this._ircWrappers.handleCommands(nick, nick, text, message),
                     // Handle Notices, also used to check validation for NickServ requests
                     'notice': (nick, to, text, message) => {
                         // Check for auth command, return if we have one
-                        if (_.toLower(nick) === _.toLower(this.Config.nickserv.nick)) this._handleAuthenticatedCommands(nick, to, text, message);
-                        else this._handleOnNotice(nick, to, text, message);
+                        if (_.toLower(nick) === _.toLower(this.Config.nickserv.nick)) this._ircWrappers.handleAuthenticatedCommands(nick, to, text, message);
+                        else this._ircWrappers.handleOnNotice(nick, to, text, message);
                     },
                     // Handle CTCP Requests
-                    'ctcp': (nick, to, text, type, message) => this._handleCtcpCommands(nick, to, text, type, message),
+                    'ctcp': (nick, to, text, type, message) => this._ircWrappers.handleCtcpCommands(nick, to, text, type, message),
                     // Handle Nick changes
-                    'nick': (oldnick, newnick, channels, message) => this._handleNickChanges(oldnick, newnick, channels, message),
+                    'nick': (oldnick, newnick, channels, message) => this._ircWrappers.handleNickChanges(oldnick, newnick, channels, message),
                     // Handle Joins
-                    'join': (channel, nick, message) => this._handleOnJoin(channel, nick, message),
+                    'join': (channel, nick, message) => this._ircWrappers.handleOnJoin(channel, nick, message),
                     // Handle On Parts
-                    'part': (channel, nick, reason, message) => this._handleOnPart(channel, nick, reason, message),
+                    'part': (channel, nick, reason, message) => this._ircWrappers.handleOnPart(channel, nick, reason, message),
                     // Handle On Kick
-                    'kick': (channel, nick, by, reason, message) => this._handleOnKick(channel, nick, by, reason, message),
+                    'kick': (channel, nick, by, reason, message) => this._ircWrappers.ircWrappers.handleOnKick(channel, nick, by, reason, message),
                     // Handle On Quit
-                    'quit': (nick, reason, channels, message) => this._handleOnQuit(nick, reason, channels, message),
+                    'quit': (nick, reason, channels, message) => this._ircWrappers.handleOnQuit(nick, reason, channels, message),
                     // Handle Topic changes
-                    'topic': (channel, topic, nick, message) => this._handleOnTopic(channel, topic, nick, message),
+                    'topic': (channel, topic, nick, message) => this._ircWrappers.handleOnTopic(channel, topic, nick, message),
                     // Catch all to prevent drop on error
                     'error': message => logger.error('Uncaught IRC Client error', {
                         messaage
@@ -208,7 +211,7 @@ class MrNodeBot {
                 try {
                     x.call();
                 } catch (err) {
-                    MrNodeBot._errorHandler('Error in onConnected', err);
+                    this._errorHandler('Error in onConnected', err);
                 }
             }))
             // Run The callback
@@ -296,7 +299,7 @@ class MrNodeBot {
                         this.LoadedScripts.push(scriptInfo);
                     }
                 } catch (err) {
-                    MrNodeBot._errorHandler(t('scripts.error', {
+                    this._errorHandler(t('scripts.error', {
                         path: fullPath
                     }), err);
                 }
@@ -414,526 +417,6 @@ class MrNodeBot {
             logger.info(t('bootstrap.reloading'));
             this._loadDynamicAssets(true);
         }
-    };
-
-    /**
-     *  Normalize text, replacing non print chars with nothing and fake space chars with a real space
-     * @param {string} text The text to normalize
-     */
-    static _normalizeText(text) {
-        if (_.isUndefined(text) || !_.isString(text)) return text;
-        return c
-            .stripColorsAndStyle(text) // Strip styles and color
-            .replace(helpers.RemoveNonPrintChars, '') // Remove non printable characters
-            .replace(helpers.FakeSpaceChars, '\u0020') // Replace fake spaces with space
-            .trim();
-    };
-
-    /**
-     * IRC Action handler
-     * @param {string} from Nick sending the message
-     * @param {string} to Nick/Channel the message was received on
-     * @param {string} text The message content
-     * @param {object} message IRC information such as user, and host
-     */
-    _handleAction(from, to, text, message) {
-        const normalizedText = MrNodeBot._normalizeText(text);
-        // Do not handle our own actions, or those on the ignore list
-        if (from === this.nick || _.includes(this.Ignore, _.toLower(from))) return;
-        this.OnAction.forEach((value, key) => {
-            try {
-                value.call(from, to, normalizedText, message);
-            } catch (err) {
-                MrNodeBot._errorHandler(t('errors.genericError', {
-                    command: 'onAction'
-                }), err);
-            }
-        });
-    };
-
-    /**
-     * IRC Nick changes handler
-     * @param {string} oldNick Original nickname received
-     * @param {string} newNick The new nick the user has taken
-     * @param {string} channels The IRC channels this was observed on
-     * @param {object} message IRC information such as user, and host
-     */
-    _handleNickChanges(oldNick, newNick, channels, message) {
-        // Return if user is on ignore list
-        if (_.includes(this.Ignore, _.toLower(oldNick)) || _.includes(this.Ignore, _.toLower(newNick))) return;
-
-        // track if the bots nick was changed
-        if (oldNick === this.nick) this.nick = newNick;
-
-        // Run events
-        this.NickChanges.forEach((value, key) => {
-            try {
-                value.call(oldNick, newNick, channels, message);
-            } catch (err) {
-                MrNodeBot._errorHandler(t('errors.genericError', {
-                    command: 'nickChange'
-                }), err);
-            }
-        });
-    };
-
-    /**
-     * IRC Notice handler
-     * @param {string} from Nick sending the message
-     * @param {string} to Nick/Channel the message was received on
-     * @param {string} text The message content
-     * @param {object} message IRC information such as user, and host
-     */
-    _handleOnNotice(from, to, text, message) {
-        // Do not handle our own actions, or those on the ignore list
-        if (from === this.nick || _.includes(this.Ignore, _.toLower(from))) return;
-
-        this.OnNotice.forEach((value, key) => {
-            try {
-                value.call(from, to, text, message);
-            } catch (err) {
-                MrNodeBot._errorHandler(t('errors.genericError', {
-                    command: 'onNotice'
-                }), err);
-            }
-        });
-    };
-
-    /**
-     * IRC On Join Handler
-     * @param {string} channel The Channel observed
-     * @param {string} nick The Nick that joined
-     * @param {object} message IRC information such as user, and host
-     */
-    _handleOnJoin(channel, nick, message) {
-        // Handle Ignore
-        if (_.includes(this.Ignore, _.toLower(nick))) return;
-
-        if (nick === this.nick) logger.info(t('events.channelJoined', {
-            channel
-        }));
-
-        this.OnJoin.forEach((value, key) => {
-            try {
-                value.call(channel, nick, message);
-            } catch (err) {
-                MrNodeBot._errorHandler(t('errors.genericError', {
-                    command: 'onJoin'
-                }), err);
-            }
-        });
-    };
-
-    /**
-     * IRC On Part Handler
-     * @param {string} channel The Channel observed
-     * @param {string} nick The Nick observed
-     * @param {string} reason The part reason
-     * @param {object} message IRC information such as user, and host
-     */
-    _handleOnPart(channel, nick, reason, message) {
-        const normalizedReason = MrNodeBot._normalizeText(reason);
-
-        // Handle Ignore
-        if (_.includes(this.Ignore, _.toLower(nick))) return;
-
-        if (nick === this.nick) logger.info(t('events.channelParted', {
-            channel,
-            normalizedReason
-        }));
-
-        this.OnPart.forEach((value, key) => {
-            try {
-                value.call(channel, nick, normalizedReason, message);
-            } catch (err) {
-                MrNodeBot._errorHandler(t('errors.genericError', {
-                    command: 'onPart'
-                }), err);
-            }
-        });
-    };
-
-    /**
-     * IRC on Kick Handler
-     * @param {string} channel Channel observed
-     * @param {string} nick Nick being kicked
-     * @param {string} by Nick doing kick
-     * @param {string} reason Reason for kick
-     * @param {object} message IRC information such as user, and host
-     */
-    _handleOnKick(channel, nick, by, reason, message) {
-        const normalizedReason = MrNodeBot._normalizeText(reason);
-
-        //  Handle Ignore
-        if (_.includes(this.Ignore, _.toLower(nick))) return;
-
-        if (nick === this.nick) logger.info(t('events.kickLoggingBy', {
-            channel,
-            by,
-            reason
-        }));
-
-        if (by === this.nick) logger.info(t('events.kickLoggingFrom', {
-            nick,
-            channel,
-            normalizedReason
-        }));
-
-        this.OnKick.forEach((value, key) => {
-            try {
-                value.call(channel, nick, by, normalizedReason, message);
-            } catch (err) {
-                MrNodeBot._errorHandler(t('errors.genericError', {
-                    command: 'onKick'
-                }), err);
-            }
-        });
-    };
-
-    /**
-     * IRC on Quit Handler
-     * @param {string} nick Nick being kicked
-     * @param {string} reason Reason for kick
-     * @param {array} channels List of channels observed
-     * @param {object} message IRC information such as user, and host
-     */
-    _handleOnQuit(nick, reason, channels, message) {
-        const normalizedReason = MrNodeBot._normalizeText(reason);
-        //  Handle Ignore
-        if (_.includes(this.Ignore, _.toLower(nick))) return;
-
-        if (nick === this.nick) logger.info(t('events.quitLogging', {
-            channels: _.isObject(channels) ? Object.keys(channels).join(', ') : channels,
-            normalizedReason
-        }));
-
-        this.OnQuit.forEach((value, key) => {
-            try {
-                value.call(nick, normalizedReason, channels, message);
-            } catch (err) {
-                MrNodeBot._errorHandler(t('errors.genericError', {
-                    command: 'onQuit'
-                }), err);
-            }
-        });
-    };
-
-    /**
-     * IRC on Topic Handler
-     * @param {string} channel Channel observed having topic changed
-     * @param {string} topic Topic set
-     * @param {string} nick Nick observed setting the topic
-     * @param {object} message IRC information such as user, and host
-     */
-    _handleOnTopic(channel, topic, nick, message) {
-        const normalizedTopic = MrNodeBot._normalizeText(topic);
-
-        //  Handle Ignore
-        if (_.includes(this.Ignore, _.toLower(nick))) return;
-
-        if (nick === this.nick) logger.info(t('events.topicLogging', {
-            channel,
-            normalizedTopic
-        }));
-
-        this.OnTopic.forEach((value, key) => {
-            try {
-                value.call(channel, normalizedTopic, nick, message);
-            } catch (err) {
-                MrNodeBot._errorHandler(t('errors.genericError', {
-                    command: 'opTopic'
-                }), err);
-            }
-        });
-    };
-
-    /**
-     * IRC on CTCP Handler
-     * @param {string} from Nick sending the CTCP Message
-     * @param {string} to Channel / Nick sent the CTCP Message
-     * @param {string} text Content of more message
-     * @param {string} type The type of CTCP mMessage
-     * @param {object} message IRC information such as user, and host
-     */
-    _handleCtcpCommands(from, to, text, type, message) {
-        const normalizedText = MrNodeBot._normalizeText(text);
-
-        //  Bail on self or ignore
-        if (from === this.nick || _.includes(this.Ignore, _.toLower(from)) || (type === 'privmsg' && normalizedText.startsWith('ACTION'))) return;
-
-        this.OnCtcp.forEach((value, key) => {
-            try {
-                value.call(from, to, normalizedText, type, message);
-            } catch (err) {
-                MrNodeBot._errorHandler(t('errors.genericError', {
-                    command: 'ctcpCommands'
-                }), err);
-            }
-        });
-    };
-
-    /**
-     * IRC on Registered handler
-     * @param {object} message Message returned from server
-     */
-    _handleRegistered(message) {
-        logger.info(t('events.registeredToIrc'));
-
-        this.Registered.forEach((value, key) => {
-            try {
-                value.call(message);
-            } catch (err) {
-                MrNodeBot._errorHandler(t('errors.genericError', {
-                    command: 'handleRegistered'
-                }), err)
-            }
-        });
-    };
-
-    /**
-     * IRC Bot Command Handler
-     * @param {string} from Nick the Command originated from
-     * @param {string} to Nick / Channel the command is to
-     * @param {string} text Content of the message
-     * @param {object} message IRC information such as user, and host
-     */
-    _handleCommands(from, to, text, message) {
-        const normalizedText = MrNodeBot._normalizeText(text);
-
-        // Build the is object to pass along to the command router
-        const is = {
-            ignored: _.includes(this.Ignore, _.toLower(from)),
-            self: from === this._ircClient.nick,
-            privateMsg: to === from
-        };
-
-        // Format the text, extract the command, and remove the trigger / command to send to handler
-        const textArray = normalizedText.split(' ');
-        const cmd = is.privateMsg ? textArray[0] : textArray[1];
-
-        // Remove command trigger
-        textArray.splice(0, is.privateMsg ? 1 : 2);
-
-        // Rejoin the final output
-        const output = textArray.join(' ');
-
-        const nickMatched = normalizedText.startsWith(this._ircClient.nick);
-        const hasCommand = this.Commands.has(cmd);
-        const validMatchedCommand = nickMatched && hasCommand;
-        const matchedInvalidCommand = nickMatched && !hasCommand;
-
-        // Check on trigger for private messages
-        is.triggered = (is.privateMsg && hasCommand) || validMatchedCommand;
-
-        // Process the listeners
-        if (!is.triggered && !is.ignored && !is.self) {
-            this.Listeners.forEach((value, key) => {
-                try {
-                    value.call(to, from, normalizedText, message, is);
-                } catch (err) {
-                    MrNodeBot._errorHandler(t('errors.genericError', {
-                        command: 'onCommand OnListeners'
-                    }), err);
-                }
-            });
-        }
-
-        // Invalid Matched Command
-        if (matchedInvalidCommand) {
-            const actualText = `${cmd} ${output}`.trim();
-            this.say(to, t('errors.invalidCommand', {
-                from,
-                cmd: actualText
-            }));
-            return false;
-        }
-
-        // Nothing to see here
-        if (!is.triggered || is.ignored || is.self || !hasCommand) return false;
-
-        // Grab Command
-        const command = this.Commands.get(cmd);
-
-        // Identifiers
-        const owner = () => from === this.Config.owner.nick && message.host === this.Config.owner.host;
-        const guestCommand = () => command.access === this.Config.accessLevels.guest;
-        const validChannelVoiceUser = () => command.access === this.Config.accessLevels.channelVoice && this._ircClient.isVoiceInChannel(to, from);
-        const channelOpUser = () => command.access === this.Config.accessLevels.channelOp && this._ircClient.isOpOrVoiceInChannel(to, from);
-
-        // Hand the Identifier functions over to is to get passed into the script command
-        Object.assign(is, {
-            owner,
-            guestCommand,
-            validChannelVoiceUser,
-            channelOpUser
-        });
-
-        // Requires
-        const requiresIdentified = () => command.access === this.Config.accessLevels.identified;
-        const requiresAdmin = () => command.access === this.Config.accessLevels.admin;
-        const requiresChannelVoiceIdentified = () => command.access === this.Config.accessLevels.channelVoiceIdentified;
-        const requiresChannelOpIdentified = () => command.access === this.Config.accessLevels.channelOpIdentified;
-
-        // The following administration levels piggy back on services, thus we check the acc status of the account and defer
-        if (requiresIdentified() || requiresAdmin() || requiresChannelVoiceIdentified() || requiresChannelOpIdentified()) {
-            // Append timestamp to prevent unique collisions
-            this.AdmCallbacks.set(`${from}.${Date.now()}`, {cmd, from, to, normalizedText, message, is});
-
-            // Send a check to nickserv to see if the user is registered
-            // Will spawn the notice listener to do the rest of the work
-            const first = this.Config.nickserv.host ? `@${this.Config.nickserv.host}` : '';
-            this.say(`${this.Config.nickserv.nick}${first}`, `acc ${from}`);
-        }
-        // Handle commands with non identified status
-        else if (owner() || guestCommand() || validChannelVoiceUser() || channelOpUser()) {
-            try {
-                // Call Function
-                command.call(to, from, output, message, is);
-
-                // Record Stats
-                this.Stats.set(cmd, this.Stats.has(cmd) ? this.Stats.get(cmd) + 1 : 1);
-
-                // Log
-                logger.info(t('events.commandTriggered', {
-                    from,
-                    to,
-                    cmd,
-                    group: helpers.AccessString(command.access),
-                }));
-
-            } catch (err) {
-                MrNodeBot._errorHandler(t('errors.procCommand', {
-                    command: cmd
-                }), err);
-            }
-        }
-        // Invalid Command
-        else {
-            this.say(to, t('errors.invalidCommand', {
-                from,
-                cmd: cmd.trim()
-            }));
-        }
-    };
-
-    /**
-     * IRC Identified Command Handler
-     * @param {string} nick Nick Command was fired by
-     * @param {string} to Nick / Channel the Command was fired on
-     * @param {string} text Message Content
-     * @param {object} message IRC information such as user, and host
-     * @returns {boolean} command status
-     */
-    _handleAuthenticatedCommands(nick, to, text, message) {
-        const normalizedText = MrNodeBot._normalizeText(text);
-
-        // Parse vars
-        let [user, acc, code] = normalizedText.split(' ');
-
-        // TODO, A little to magic
-        let currentIndex = 0;
-
-        let currentUser;
-        let currentTimestamp;
-
-        // Find an Admin command request matching the name of the response
-        this.AdmCallbacks.forEach((v, i, m) => {
-            // Short circuit
-            if(currentIndex) return;
-
-            // Initial validation gate
-            if (!_.isString(i) || _.isEmpty(i) || !_.isObject(v)) return;
-
-            // Match against the time format used to ensure uniqueness
-            const matches = i.match(/([^.]*).(.*)/);
-
-            // No matches available, malformed, return
-            if (!matches[0] || !matches[1] || !matches[2]) return;
-
-            // If the match belongs to the current user, assign values
-            if(matches[1] === user) [currentIndex, currentUser, currentTimestamp] = matches;
-        });
-
-        // Does not exist in call back, return
-        if (!currentUser || !currentTimestamp || !currentIndex) return false;
-
-        const admCall = this.AdmCallbacks.get(currentIndex);
-        const admCmd = this.Commands.get(admCall.cmd);
-        const admTextArray = admCall.text.split(' ');
-
-        // Check if the user is identified, pass it along in the is object
-        admCall.is.identified = code === this.Config.nickserv.accCode;
-
-        // Clean the output
-        admTextArray.splice(0, admCall.to === admCall.from ? 1 : 2);
-
-        const output = admTextArray.join(' ');
-
-        // This is a identified command and the user is not identified
-        if (!admCall.is.identified) {
-            this.say(admCall.to, t('auth.notIdentified', {
-                cmd: admCall.cmd,
-                from: admCall.from,
-            }));
-
-            // Remove the index
-            this.AdmCallbacks.delete(currentIndex);
-
-            return false;
-        }
-
-        const invalidAdmin = () => this.Config.accessLevels.admin && !_.includes(this.Admins, _.toLower(admCall.from));
-        const invalidChannelOp = () => admCmd.access === this.Config.accessLevels.channelOpIdentified && !this._ircClient.isOpInChannel(admCall.to, admCall.from);
-        const invalidChannelVoice = () => admCmd.access === this.Config.accessLevels.channelVoiceIdentified && !this._ircClient.isOpOrVoiceInChannel(admCall.to, admCall.from);
-
-        // Gate
-        if ( invalidAdmin() || invalidChannelOp() || invalidChannelVoice()) {
-            let group = helpers.AccessString(admCmd.access);
-            this.say(admCall.to, t('auth.notMemberOfGroup', {
-                group
-            }));
-            logger.error(t('auth.notMemberOfGroupLogging', {
-                nick: admCall.from,
-                channel: admCall.to,
-                group: group,
-                type: admCall.cmd
-            }));
-            this.AdmCallbacks.delete(currentIndex);
-            return false;
-        }
-
-        // Mark that this command was triggered by an identified response
-        admCall.is.triggerdByIdent = true;
-
-        // Launch the command
-        try {
-            // Call the command
-            const command = this.Commands.get(admCall.cmd);
-            command.call(admCall.to, admCall.from, output, admCall.message, admCall.is);
-
-            // Record Stats
-            this.Stats.set(admCall.cmd, this.Stats.has(admCall.cmd) ? this.Stats.get(admCall.cmd) + 1 : 1);
-
-            // Log
-            logger.info(t('events.commandTriggered', {
-                from: admCall.from,
-                to: admCall.to,
-                cmd: admCall.cmd,
-                group: helpers.AccessString(command.access),
-            }));
-        } catch (err) {
-            MrNodeBot._errorHandler(t('errors.invalidIdentCommand', {
-                cmd: admCall.cmd,
-                from: admCall.from,
-                to: admCall.to,
-            }), err);
-            this.say(admCall.to, `Something must really have gone wrong with the ${amdCall.cmd}, ${amdCall.from}`);
-        }
-
-        // Remove the callback from the stack
-        this.AdmCallbacks.delete(currentIndex);
-
-        return true;
     };
 
     /**
