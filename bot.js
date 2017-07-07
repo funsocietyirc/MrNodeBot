@@ -226,9 +226,17 @@ class MrNodeBot {
             // Handle Topic changes
             'topic': (channel, topic, nick, message) => this._ircWrappers.handleOnTopic(channel, topic, nick, message),
             // Catch all to prevent drop on error
-            'error': message => logger.error('Uncaught IRC Client error', {
-                message
-            })
+            'error': message =>
+            {
+                if(message.args.length && message.args[0].startsWith('Closing Link:')){
+                    logger.info(message.args[0]);
+                    return;
+                }
+
+                logger.error('Uncaught IRC Client error', {
+                    message
+                })
+            }
         }).each((value, key) => this._ircClient.addListener(key, value));
 
         this.OnConnected.forEach(
