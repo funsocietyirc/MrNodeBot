@@ -404,6 +404,7 @@ class MrNodeBot {
                 }));
                 return;
             }
+
             if (this.Commands.has(commandBinding.alias)) {
                 logger.error(t('aliases.alreadyExists', {
                     alias: commandBinding.command,
