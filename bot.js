@@ -437,12 +437,12 @@ class MrNodeBot {
      * @param {object} message IRC information such as user, and host
      */
     _handleAction(from, to, text, message) {
-        text = MrNodeBot._normalizeText(text);
+        const normalizedText = MrNodeBot._normalizeText(text);
         // Do not handle our own actions, or those on the ignore list
         if (from === this.nick || _.includes(this.Ignore, _.toLower(from))) return;
         this.OnAction.forEach((value, key) => {
             try {
-                value.call(from, to, text, message);
+                value.call(from, to, normalizedText, message);
             } catch (err) {
                 MrNodeBot._errorHandler(t('errors.genericError', {
                     command: 'onAction'
@@ -453,22 +453,22 @@ class MrNodeBot {
 
     /**
      * IRC Nick changes handler
-     * @param {string} oldnick Original nickname received
-     * @param {string} newnick The new nick the user has taken
+     * @param {string} oldNick Original nickname received
+     * @param {string} newNick The new nick the user has taken
      * @param {string} channels The IRC channels this was observed on
      * @param {object} message IRC information such as user, and host
      */
-    _handleNickChanges(oldnick, newnick, channels, message) {
+    _handleNickChanges(oldNick, newNick, channels, message) {
         // Return if user is on ignore list
-        if (_.includes(this.Ignore, _.toLower(oldnick)) || _.includes(this.Ignore, _.toLower(newnick))) return;
+        if (_.includes(this.Ignore, _.toLower(oldNick)) || _.includes(this.Ignore, _.toLower(newNick))) return;
 
         // track if the bots nick was changed
-        if (oldnick === this.nick) this.nick = newnick;
+        if (oldNick === this.nick) this.nick = newNick;
 
         // Run events
         this.NickChanges.forEach((value, key) => {
             try {
-                value.call(oldnick, newnick, channels, message);
+                value.call(oldNick, newNick, channels, message);
             } catch (err) {
                 MrNodeBot._errorHandler(t('errors.genericError', {
                     command: 'nickChange'
@@ -532,19 +532,19 @@ class MrNodeBot {
      * @param {object} message IRC information such as user, and host
      */
     _handleOnPart(channel, nick, reason, message) {
-        reason = MrNodeBot._normalizeText(reason);
+        const normalizedReason = MrNodeBot._normalizeText(reason);
 
         // Handle Ignore
         if (_.includes(this.Ignore, _.toLower(nick))) return;
 
         if (nick === this.nick) logger.info(t('events.channelParted', {
             channel,
-            reason
+            normalizedReason
         }));
 
         this.OnPart.forEach((value, key) => {
             try {
-                value.call(channel, nick, reason, message);
+                value.call(channel, nick, normalizedReason, message);
             } catch (err) {
                 MrNodeBot._errorHandler(t('errors.genericError', {
                     command: 'onPart'
@@ -562,7 +562,7 @@ class MrNodeBot {
      * @param {object} message IRC information such as user, and host
      */
     _handleOnKick(channel, nick, by, reason, message) {
-        reason = MrNodeBot._normalizeText(reason);
+        const normalizedReason = MrNodeBot._normalizeText(reason);
 
         //  Handle Ignore
         if (_.includes(this.Ignore, _.toLower(nick))) return;
@@ -576,12 +576,12 @@ class MrNodeBot {
         if (by === this.nick) logger.info(t('events.kickLoggingFrom', {
             nick,
             channel,
-            reason
+            normalizedReason
         }));
 
         this.OnKick.forEach((value, key) => {
             try {
-                value.call(channel, nick, by, reason, message);
+                value.call(channel, nick, by, normalizedReason, message);
             } catch (err) {
                 MrNodeBot._errorHandler(t('errors.genericError', {
                     command: 'onKick'
@@ -598,18 +598,18 @@ class MrNodeBot {
      * @param {object} message IRC information such as user, and host
      */
     _handleOnQuit(nick, reason, channels, message) {
-        reason = MrNodeBot._normalizeText(reason);
+        const normalizedReason = MrNodeBot._normalizeText(reason);
         //  Handle Ignore
         if (_.includes(this.Ignore, _.toLower(nick))) return;
 
         if (nick === this.nick) logger.info(t('events.quitLogging', {
             channels: _.isObject(channels) ? Object.keys(channels).join(', ') : channels,
-            reason
+            normalizedReason
         }));
 
         this.OnQuit.forEach((value, key) => {
             try {
-                value.call(nick, reason, channels, message);
+                value.call(nick, normalizedReason, channels, message);
             } catch (err) {
                 MrNodeBot._errorHandler(t('errors.genericError', {
                     command: 'onQuit'
@@ -626,19 +626,19 @@ class MrNodeBot {
      * @param {object} message IRC information such as user, and host
      */
     _handleOnTopic(channel, topic, nick, message) {
-        topic = MrNodeBot._normalizeText(topic);
+        const normalizedTopic = MrNodeBot._normalizeText(topic);
 
         //  Handle Ignore
         if (_.includes(this.Ignore, _.toLower(nick))) return;
 
         if (nick === this.nick) logger.info(t('events.topicLogging', {
             channel,
-            topic
+            normalizedTopic
         }));
 
         this.OnTopic.forEach((value, key) => {
             try {
-                value.call(channel, topic, nick, message);
+                value.call(channel, normalizedTopic, nick, message);
             } catch (err) {
                 MrNodeBot._errorHandler(t('errors.genericError', {
                     command: 'opTopic'
@@ -656,14 +656,14 @@ class MrNodeBot {
      * @param {object} message IRC information such as user, and host
      */
     _handleCtcpCommands(from, to, text, type, message) {
-        text = MrNodeBot._normalizeText(text);
+        const normalizedText = MrNodeBot._normalizeText(text);
 
         //  Bail on self or ignore
-        if (from === this.nick || _.includes(this.Ignore, _.toLower(from)) || (type === 'privmsg' && text.startsWith('ACTION'))) return;
+        if (from === this.nick || _.includes(this.Ignore, _.toLower(from)) || (type === 'privmsg' && normalizedText.startsWith('ACTION'))) return;
 
         this.OnCtcp.forEach((value, key) => {
             try {
-                value.call(from, to, text, type, message);
+                value.call(from, to, normalizedText, type, message);
             } catch (err) {
                 MrNodeBot._errorHandler(t('errors.genericError', {
                     command: 'ctcpCommands'
@@ -698,23 +698,26 @@ class MrNodeBot {
      * @param {object} message IRC information such as user, and host
      */
     _handleCommands(from, to, text, message) {
-        // Normalize text
-        text = MrNodeBot._normalizeText(text);
+        const normalizedText = MrNodeBot._normalizeText(text);
 
         // Build the is object to pass along to the command router
-        let is = {
+        const is = {
             ignored: _.includes(this.Ignore, _.toLower(from)),
             self: from === this._ircClient.nick,
             privateMsg: to === from
         };
 
         // Format the text, extract the command, and remove the trigger / command to send to handler
-        let textArray = text.split(' '),
-            cmd = is.privateMsg ? textArray[0] : textArray[1];
-        textArray.splice(0, is.privateMsg ? 1 : 2);
-        let output = textArray.join(' ');
+        const textArray = normalizedText.split(' ');
+        const cmd = is.privateMsg ? textArray[0] : textArray[1];
 
-        const nickMatched = text.startsWith(this._ircClient.nick);
+        // Remove command trigger
+        textArray.splice(0, is.privateMsg ? 1 : 2);
+
+        // Rejoin the final output
+        const output = textArray.join(' ');
+
+        const nickMatched = normalizedText.startsWith(this._ircClient.nick);
         const hasCommand = this.Commands.has(cmd);
         const validMatchedCommand = nickMatched && hasCommand;
         const matchedInvalidCommand = nickMatched && !hasCommand;
@@ -726,7 +729,7 @@ class MrNodeBot {
         if (!is.triggered && !is.ignored && !is.self) {
             this.Listeners.forEach((value, key) => {
                 try {
-                    value.call(to, from, text, message, is);
+                    value.call(to, from, normalizedText, message, is);
                 } catch (err) {
                     MrNodeBot._errorHandler(t('errors.genericError', {
                         command: 'onCommand OnListeners'
@@ -749,24 +752,47 @@ class MrNodeBot {
         if (!is.triggered || is.ignored || is.self || !hasCommand) return false;
 
         // Grab Command
-        let command = this.Commands.get(cmd);
+        const command = this.Commands.get(cmd);
 
-        // The user is the owner, let them through
-        if (
-            // User is the owner, let them through
-        (from === this.Config.owner.nick && message.host === this.Config.owner.host) ||
-        // This is a guest account command, let it happen
-        (command.access === this.Config.accessLevels.guest) ||
-        // This is a channelVoice command and the user is voiced in the channel
-        (command.access === this.Config.accessLevels.channelVoice && this._ircClient.isVoiceInChannel(to, from)) ||
-        // This is a channelOp command and the user is oped in the channel
-        (command.access === this.Config.accessLevels.channelOp && this._ircClient.isOpOrVoiceInChannel(to, from))
-        ) {
+        // Identifiers
+        const owner = () => from === this.Config.owner.nick && message.host === this.Config.owner.host;
+        const guestCommand = () => command.access === this.Config.accessLevels.guest;
+        const validChannelVoiceUser = () => command.access === this.Config.accessLevels.channelVoice && this._ircClient.isVoiceInChannel(to, from);
+        const channelOpUser = () => command.access === this.Config.accessLevels.channelOp && this._ircClient.isOpOrVoiceInChannel(to, from);
+
+        // Hand the Identifier functions over to is to get passed into the script command
+        Object.assign(is, {
+            owner,
+            guestCommand,
+            validChannelVoiceUser,
+            channelOpUser
+        });
+
+        // Requires
+        const requiresIdentified = () => command.access === this.Config.accessLevels.identified;
+        const requiresAdmin = () => command.access === this.Config.accessLevels.admin;
+        const requiresChannelVoiceIdentified = () => command.access === this.Config.accessLevels.channelVoiceIdentified;
+        const requiresChannelOpIdentified = () => command.access === this.Config.accessLevels.channelOpIdentified;
+
+        // The following administration levels piggy back on services, thus we check the acc status of the account and defer
+        if (requiresIdentified() || requiresAdmin() || requiresChannelVoiceIdentified() || requiresChannelOpIdentified()) {
+            // Append timestamp to prevent unique collisions
+            this.AdmCallbacks.set(`${from}.${Date.now()}`, {cmd, from, to, normalizedText, message, is});
+
+            // Send a check to nickserv to see if the user is registered
+            // Will spawn the notice listener to do the rest of the work
+            const first = this.Config.nickserv.host ? `@${this.Config.nickserv.host}` : '';
+            this.say(`${this.Config.nickserv.nick}${first}`, `acc ${from}`);
+        }
+        // Handle commands with non identified status
+        else if (owner() || guestCommand() || validChannelVoiceUser() || channelOpUser()) {
             try {
                 // Call Function
                 command.call(to, from, output, message, is);
+
                 // Record Stats
                 this.Stats.set(cmd, this.Stats.has(cmd) ? this.Stats.get(cmd) + 1 : 1);
+
                 // Log
                 logger.info(t('events.commandTriggered', {
                     from,
@@ -774,39 +800,20 @@ class MrNodeBot {
                     cmd,
                     group: helpers.AccessString(command.access),
                 }));
+
             } catch (err) {
                 MrNodeBot._errorHandler(t('errors.procCommand', {
                     command: cmd
                 }), err);
             }
         }
-        // The following administration levels piggy back on services, thus we check the acc status of the account and defer
-        else if (
-            command.access === this.Config.accessLevels.identified ||
-            command.access === this.Config.accessLevels.admin ||
-            command.access === this.Config.accessLevels.channelVoiceIdentified ||
-            command.access === this.Config.accessLevels.channelOpIdentified
-        ) {
-            // Append timestamp to allow
-            this.AdmCallbacks.set(`${from}.${Date.now()}`, {
-                cmd: cmd,
-                from: from,
-                to: to,
-                text: text,
-                message: message,
-                is: is,
-            });
-
-            // Send a check to nickserv to see if the user is registered
-            // Will spawn the notice listener to do the rest of the work
-            let first = this.Config.nickserv.host ? `@${this.Config.nickserv.host}` : '';
-            this.say(`${this.Config.nickserv.nick}${first}`, `acc ${from}`);
-        }
         // Invalid Command
-        else this.say(to, t('errors.invalidCommand', {
+        else {
+            this.say(to, t('errors.invalidCommand', {
                 from,
                 cmd: cmd.trim()
             }));
+        }
     };
 
     /**
@@ -818,41 +825,49 @@ class MrNodeBot {
      * @returns {boolean} command status
      */
     _handleAuthenticatedCommands(nick, to, text, message) {
-        text = MrNodeBot._normalizeText(text);
+        const normalizedText = MrNodeBot._normalizeText(text);
 
         // Parse vars
-        let [user, acc, code] = text.split(' ');
+        let [user, acc, code] = normalizedText.split(' ');
 
-        let currentUser = null;
-        let currentIndex = null;
-        let currentTimestamp = null;
+        // TODO, A little to magic
+        let currentIndex = 0;
 
+        let currentUser;
+        let currentTimestamp;
+
+        // Find an Admin command request matching the name of the response
         this.AdmCallbacks.forEach((v, i, m) => {
-            if (currentIndex || !_.isString(i) || _.isEmpty(i) || !_.isObject(v)) return;
+            // Short circuit
+            if(currentIndex) return;
+
+            // Initial validation gate
+            if (!_.isString(i) || _.isEmpty(i) || !_.isObject(v)) return;
+
+            // Match against the time format used to ensure uniqueness
             const matches = i.match(/([^.]*).(.*)/);
+
+            // No matches available, malformed, return
             if (!matches[0] || !matches[1] || !matches[2]) return;
 
-            if (matches[1] === user) {
-                currentIndex = matches[0];
-                currentUser = matches[1];
-                currentTimestamp = matches[2];
-            }
+            // If the match belongs to the current user, assign values
+            if(matches[1] === user) [currentIndex, currentUser, currentTimestamp] = matches;
         });
 
         // Does not exist in call back, return
         if (!currentUser || !currentTimestamp || !currentIndex) return false;
 
-
-        let admCall = this.AdmCallbacks.get(currentIndex),
-            admCmd = this.Commands.get(admCall.cmd),
-            admTextArray = admCall.text.split(' ');
+        const admCall = this.AdmCallbacks.get(currentIndex);
+        const admCmd = this.Commands.get(admCall.cmd);
+        const admTextArray = admCall.text.split(' ');
 
         // Check if the user is identified, pass it along in the is object
         admCall.is.identified = code === this.Config.nickserv.accCode;
 
         // Clean the output
         admTextArray.splice(0, admCall.to === admCall.from ? 1 : 2);
-        let output = admTextArray.join(' ');
+
+        const output = admTextArray.join(' ');
 
         // This is a identified command and the user is not identified
         if (!admCall.is.identified) {
@@ -860,19 +875,19 @@ class MrNodeBot {
                 cmd: admCall.cmd,
                 from: admCall.from,
             }));
+
+            // Remove the index
             this.AdmCallbacks.delete(currentIndex);
+
             return false;
         }
 
+        const invalidAdmin = () => this.Config.accessLevels.admin && !_.includes(this.Admins, _.toLower(admCall.from));
+        const invalidChannelOp = () => admCmd.access === this.Config.accessLevels.channelOpIdentified && !this._ircClient.isOpInChannel(admCall.to, admCall.from);
+        const invalidChannelVoice = () => admCmd.access === this.Config.accessLevels.channelVoiceIdentified && !this._ircClient.isOpOrVoiceInChannel(admCall.to, admCall.from);
+
         // Gate
-        if (
-            // This is an admin command, and the user is not on the admin list
-        (admCmd.access === this.Config.accessLevels.admin && !_.includes(this.Admins, _.toLower(admCall.from))) ||
-        // This is a channelOpIdentified command, and the user is not opped in the channel
-        (admCmd.access === this.Config.accessLevels.channelOpIdentified && !this._ircClient.isOpInChannel(admCall.to, admCall.from)) ||
-        // This is a channelVoiceIdentified command, and the user is not voiced or opped in the channel
-        (admCmd.access === this.Config.accessLevels.channelVoiceIdentified && !this._ircClient.isOpOrVoiceInChannel(admCall.to, admCall.from))
-        ) {
+        if ( invalidAdmin() || invalidChannelOp() || invalidChannelVoice()) {
             let group = helpers.AccessString(admCmd.access);
             this.say(admCall.to, t('auth.notMemberOfGroup', {
                 group
@@ -887,13 +902,18 @@ class MrNodeBot {
             return false;
         }
 
+        // Mark that this command was triggered by an identified response
+        admCall.is.triggerdByIdent = true;
+
         // Launch the command
         try {
             // Call the command
-            let command = this.Commands.get(admCall.cmd);
+            const command = this.Commands.get(admCall.cmd);
             command.call(admCall.to, admCall.from, output, admCall.message, admCall.is);
+
             // Record Stats
             this.Stats.set(admCall.cmd, this.Stats.has(admCall.cmd) ? this.Stats.get(admCall.cmd) + 1 : 1);
+
             // Log
             logger.info(t('events.commandTriggered', {
                 from: admCall.from,
@@ -907,10 +927,12 @@ class MrNodeBot {
                 from: admCall.from,
                 to: admCall.to,
             }), err);
+            this.say(admCall.to, `Something must really have gone wrong with the ${amdCall.cmd}, ${amdCall.from}`);
         }
 
         // Remove the callback from the stack
         this.AdmCallbacks.delete(currentIndex);
+
         return true;
     };
 
@@ -920,7 +942,7 @@ class MrNodeBot {
      * @param {string} target
      * @param {string} translationKey Translation Key
      */
-    _logInfo(ircMsg, target, translationKey) {
+    static _logInfo(ircMsg, target, translationKey) {
         const normalizedMessage = c.stripColorsAndStyle(ircMsg);
         if (normalizedMessage === ircMsg) {
             logger.info(t(translationKey, {
@@ -947,10 +969,10 @@ class MrNodeBot {
      * @param {function} processor
      * @private
      */
-    _ircResponse(target, message, type,translationKey, processor) {
+    _ircResponse(target, message, type, translationKey, processor) {
         if (!_.isString(message) || _.isEmpty(message.trim())) return;
         const msg = preprocessText(message, processor);
-        this._logInfo(msg, target, translationKey);
+        MrNodeBot._logInfo(msg, target, translationKey);
         this._ircClient[type](target, msg);
     }
 

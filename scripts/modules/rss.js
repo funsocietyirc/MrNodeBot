@@ -22,51 +22,74 @@ module.exports = app => {
     // Initial RSS Feed Loader
     const feeder = new RssFeedEmitter({userAgent: 'MrNodeBot'});
 
-    Models.RssFeed.fetchAll().then(feeds => feeds.forEach(feed => feeder.add({
-        url: feed.attributes.link,
-        refresh: 2000,
-    })));
+    /**
+     * Handle New RSS Items
+     * @param item
+     * @param url
+     * @returns {Promise.<void>}
+     * @private
+     */
+    const _newItemHandler = async (item, url) => {
+        try {
+            // Grab Subscriptions
+            const feed = await Models.RssFeed.where('link', url).fetch({
+                withRelated: ['subscriptions']
+            });
 
-    // New Item Event Emitter
-    feeder.on('new-item-max', function (item, url) {
-        (async function () {
-            try {
-                // Grab Subscriptions
-                const feed = await Models.RssFeed.where('link', url).fetch({
-                    withRelated: ['subscriptions']
-                });
-                
-                const subscriptions = feed.related('subscriptions');
+            const subscriptions = feed.related('subscriptions');
 
-                const link = _.isString(item.link) ? await getShort(item.link) : 'No Link';
-                const date = item.date || item.pubDate;
-                const dateAgo = date ? Moment(date).fromNow() : 'No Date';
+            const link = _.isString(item.link) ? await getShort(item.link) : 'No Link';
+            const date = item.date || item.pubDate;
+            const dateAgo = date ? Moment(date).fromNow() : 'No Date';
 
-                subscriptions.forEach(subscription => {
-                    if (!app._ircClient.isInChannel(subscription.attributes.channel, app.nick)) return;
+            subscriptions.forEach(subscription => {
+                if (!app._ircClient.isInChannel(subscription.attributes.channel, app.nick)) return;
 
-                    const output = new typo.StringBuilder({logo: 'rss'});
-                    output
-                        .appendBold(feed.attributes.name)
-                        .insertIcon('person')
-                        .append(item.author)
-                        .append(item.title)
-                        .insertIcon('anchor')
-                        .append(link)
-                        .append(dateAgo);
+                const output = new typo.StringBuilder({logo: 'rss'});
+                output
+                    .appendBold(feed.attributes.name)
+                    .insertIcon('person')
+                    .append(item.author)
+                    .append(item.title)
+                    .insertIcon('anchor')
+                    .append(link)
+                    .append(dateAgo);
 
-                    app.say(subscription.attributes.channel, output.toString());
-                });
-            }
-            catch (err) {
-                logger.error('Something went wrong sending a RSS new-item to the channel', {
-                    message: err.message || '',
-                    stack: err.stack || '',
-                });
-            }
-        }());
-    });
+                app.say(subscription.attributes.channel, output.toString());
+            });
+        }
+        catch (err) {
+            logger.error('Something went wrong sending a RSS new-item to the channel', {
+                message: err.message || '',
+                stack: err.stack || '',
+            });
+        }
+    };
 
+    /**
+     * Add Feeds from Database into Feeder
+     * @returns {Promise.<*>}
+     * @private
+     */
+    const _initialLoad = async () => {
+        return await Models.RssFeed.fetchAll().then(feeds => feeds.forEach(feed => feeder.add({
+            url: feed.attributes.link,
+            refresh: 2000,
+        })));
+    };
+
+    // Bind the Feeder
+    feeder.on('new-item-max', _newItemHandler);
+    _initialLoad();
+
+    /**
+     * Unsubscribe a channel from a RSS feed
+     * @param to
+     * @param from
+     * @param text
+     * @param message
+     * @returns {Promise.<void>}
+     */
     const unsubscribe = async (to, from, text, message) => {
         if (_.isEmpty(text)) {
             app.say(to, `I am sorry ${from}, I require a RSS feed ID to unsubscribe to a feed`);
@@ -108,6 +131,14 @@ module.exports = app => {
     });
 
 
+    /**
+     * Subscribe a channel to a RSS feed
+     * @param to
+     * @param from
+     * @param text
+     * @param message
+     * @returns {Promise.<void>}
+     */
     const subscribe = async (to, from, text, message) => {
         if (_.isEmpty(text)) {
             app.say(to, `I am sorry ${from}, I require a RSS feed ID to subscribe to a feed`);
@@ -155,6 +186,14 @@ module.exports = app => {
         call: subscribe
     });
 
+    /**
+     * List available RSS Feeds
+     * @param to
+     * @param from
+     * @param text
+     * @param message
+     * @returns {Promise.<void>}
+     */
     const listSubscriptions = async (to, from, text, message) => {
         try {
             const subscriptions = await Models.RssChannelSubscription.query(qb => qb.where('channel', to)).fetchAll({
@@ -172,7 +211,6 @@ module.exports = app => {
             subscriptions.forEach(subscription => {
                 app.say(from, `[${subscription.related('feed').attributes.id}] ${subscription.related('feed').attributes.name} <${subscription.attributes.creator}>`);
             });
-
         }
         catch (err) {
             logger.error('Something went with in listSubscriptions', {
@@ -188,7 +226,14 @@ module.exports = app => {
         call: listSubscriptions
     });
 
-    // Add A feed to the Database
+    /**
+     * Add a RSS feed link into the system
+     * @param to
+     * @param from
+     * @param text
+     * @param message
+     * @returns {Promise.<void>}
+     */
     const addFeed = async (to, from, text, message) => {
         if (_.isEmpty(text)) {
             app.say(to, `A URL and a Name is required to add a RSS feed, ${from}`);
@@ -254,7 +299,14 @@ module.exports = app => {
         call: addFeed
     });
 
-    // Remove a feed from the database
+    /**
+     * Remove a RSS feed from the system
+     * @param to
+     * @param from
+     * @param text
+     * @param message
+     * @returns {Promise.<void>}
+     */
     const delFeed = async (to, from, text, message) => {
         if (_.isEmpty(text)) {
             app.say(to, `a ID is required to delete a RSS feed, ${from}`);
@@ -309,7 +361,14 @@ module.exports = app => {
         call: delFeed
     });
 
-    // List feeds from the database
+    /**
+     * List RSS Feeds in the system
+     * @param to
+     * @param from
+     * @param text
+     * @param message
+     * @returns {Promise.<void>}
+     */
     const listFeeds = async (to, from, text, message) => {
         try {
             // Fetch Feeds
