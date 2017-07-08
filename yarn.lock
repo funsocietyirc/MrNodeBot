@@ -4369,9 +4369,9 @@ void-elements@^2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/void-elements/-/void-elements-2.0.1.tgz#c066afb582bb1cb4128d60ea92392e94d5e9dbec"
 
-watson-developer-cloud@^2.33.0:
-  version "2.33.0"
-  resolved "https://registry.yarnpkg.com/watson-developer-cloud/-/watson-developer-cloud-2.33.0.tgz#397ea16f9deb7059cba49ca37c0d98db0458df15"
+watson-developer-cloud@^2.34.0:
+  version "2.34.0"
+  resolved "https://registry.yarnpkg.com/watson-developer-cloud/-/watson-developer-cloud-2.34.0.tgz#c598b90f4ae4452445209e54717863cc9fd93923"
   dependencies:
     async "^2.5.0"
     buffer-from "^0.1.1"
