@@ -24,7 +24,6 @@ module.exports = app => {
         _.isEmpty(app.Config.features.idleChat.channels)
     ) return scriptInfo;
 
-    // Clear cache every four hours on the 30 min mark
     scheduler.schedule('checkIdleChat', {
         minute: 0 // First min of every hour
     }, () => isActive());
