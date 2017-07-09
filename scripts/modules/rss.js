@@ -91,6 +91,11 @@ module.exports = app => {
      * @returns {Promise.<void>}
      */
     const unsubscribe = async (to, from, text, message) => {
+        if (to === from) {
+            app.say(to, `I am sorry ${from}, you cannot subscribe to RSS in private messages`);
+            return;
+        }
+
         if (_.isEmpty(text)) {
             app.say(to, `I am sorry ${from}, I require a RSS feed ID to unsubscribe to a feed`);
             return;
