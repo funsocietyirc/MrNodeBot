@@ -5,6 +5,7 @@ const scriptInfo = {
     createdBy: 'IronY'
 };
 const path = require('path');
+const logger = require('../../lib/logger');
 const Models = require('bookshelf-model-loader');
 const randToken = require('rand-token');
 const tokenModel = Models.Token;
@@ -17,59 +18,89 @@ module.exports = app => {
     const uploadForm = (req, res) => res.render('upload');
 
     // Process the upload
-    const uploadHandler = (req, res) => {
+    const uploadHandler = async (req, res) => {
         // Validation
-        if (!req.files || !req.body.token || !req.files.image || req.files.image.mimetype || !req.files.image.mimetype.startsWith('image/')) {
-            res.send('Something went wrong with your request');
+
+        // Invalid Token
+        if (!req.body.token) {
+            res.status(500).send('No token was specified');
             return;
         }
 
+        // Invalid File
+        if (!req.files || !req.files.image) {
+            res.status(500).send('No images were specified');
+            return;
+        }
+
+        // Invalid File MIME type
+        if (!req.files.image.mimetype.startsWith('image/')) {
+            res.status(500).send(`Improper MIME type`);
+            return;
+        }
+
+        // Hold Values
         const file = req.files.image;
         const token = req.body.token;
         const nsfw = req.body.nsfw || false;
 
-        tokenModel
-            .where('token', token)
-            .fetch()
-            .then(tResults => {
-                if (!tResults) {
-                    res.send('Invalid token');
+        try {
+            const tResults = await tokenModel
+                .where('token', token)
+                .fetch();
+
+            if (!tResults) {
+                res.status(500).send('Something went wrong fetching your results');
+                return;
+            }
+
+            // Build the new filename
+            const fileName = `${randToken.generate(6)}${path.extname(file.name)}`;
+
+            // Move the image to the uploads dir
+            file.mv(app.AppRoot + '/web/uploads/' + fileName, async (err) => {
+                // if something went wrong, return
+                if (err) {
+                    res.status(500).send('Something went wrong with the image upload');
                     return;
                 }
 
-                // Move the image to the uploads dir
-                let fileName = `${randToken.generate(6)}${path.extname(file.name)}`;
-                file.mv(app.AppRoot + '/web/uploads/' + fileName, err => {
-                    // if something went wrong, return
-                    if (err) {
-                        res.send('Something went wrong with the image upload');
-                        return;
-                    }
+                // Build URL Path
+                const urlPath = `${app.Config.express.address}/uploads/${fileName}`;
 
-                    // Add the Url to the database
-                    if (Models.Url) {
-                        let urlModel = Models.Url;
-                        let urlPath = `${app.Config.express.address}/uploads/${fileName}`;
-                        urlModel.create({
+                // Add the Url to the database
+                if (Models.Url) {
+                    try {
+                        await Models.Url.create({
                             url: urlPath,
                             to: tResults.get('channel'),
                             from: tResults.get('user')
-                        })
-                            .then(() => {
-                                let msg = `${tResults.get('user')} just uploaded: ${urlPath}`;
-                                if (nsfw) {
-                                    msg = `${msg} (NSFW)`;
-                                }
-                                app.say(tResults.get('channel'), msg);
-                            });
+                        });
                     }
+                    catch (innerErr) {
+                        logger.error('Something went wrong saving a URL model inside imageUploadWeb', {
+                            message: err.message || '',
+                            stack: err.stack || ''
+                        });
+                    }
+                }
 
-                    res.redirect(app.WebServer.namedRoutes.build('urls', {
-                        channel: tResults.get('channel'),
-                        user: tResults.get('user')
-                    }));
-                });
+                // Respond on IRC
+                const msg = `${tResults.get('user')} just uploaded: ${urlPath} ${nsfw ? '(NSFW)' : ''}`.trim();
+                app.say(tResults.get('channel'), msg);
+
+                // Respond on Web
+                res.redirect(app.WebServer.namedRoutes.build('urls', {
+                    channel: tResults.get('channel'),
+                    user: tResults.get('user')
+                }));
+
             });
+        }
+        catch (err) {
+            res.status(500).send('Internal server error');
+        }
+
     };
 
     // Register upload Form
