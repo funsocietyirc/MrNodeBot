@@ -45,6 +45,7 @@ module.exports = app => {
             logger.error('Something went wrong during pull request in the update command', {code, stdOut, stdErr});
             return reject(new Error('Something went wrong with the pull request'));
         }
+
         // Everything went fine
         resolve({stdCode: code, stdOut: stdOut, stdErr: stdErr});
     }));
