@@ -36,7 +36,7 @@ module.exports = app => {
                 // Display them to the console
                 console.dir(result);
 
-                // Format them to avoid circual deps
+                // Format them to avoid circular deps
                 result = _.isString(result) ? result : simpleString(result);
 
                 // Split on new line
@@ -69,9 +69,9 @@ module.exports = app => {
 
                 } else app.say(to, `I have finished evaluating ${text}, ${from}`);
             } catch (err) {
-                console.dir(err);
                 logger.error('Eval command failed:', {
-                    err
+                    message: err.message || '',
+                    stack: err.stack || '',
                 });
             }
         }

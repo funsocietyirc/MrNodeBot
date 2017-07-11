@@ -8,7 +8,6 @@ const path = require('path');
 const logger = require('../../lib/logger');
 const Models = require('bookshelf-model-loader');
 const randToken = require('rand-token');
-const tokenModel = Models.Token;
 
 module.exports = app => {
     // Log nick changes in the alias table
@@ -45,9 +44,7 @@ module.exports = app => {
         const nsfw = req.body.nsfw || false;
 
         try {
-            const tResults = await tokenModel
-                .where('token', token)
-                .fetch();
+            const tResults = await Models.Token.where('token', token).fetch();
 
             if (!tResults) {
                 res.status(500).send('Something went wrong fetching your results');
@@ -61,6 +58,10 @@ module.exports = app => {
             file.mv(app.AppRoot + '/web/uploads/' + fileName, async (err) => {
                 // if something went wrong, return
                 if (err) {
+                    logger.error(`Something went wrong moving an image in the imageUploadWeb script`, {
+                        message: err.message || '',
+                        stack: err.stack || '',
+                    });
                     res.status(500).send('Something went wrong with the image upload');
                     return;
                 }
@@ -74,7 +75,7 @@ module.exports = app => {
                         await Models.Url.create({
                             url: urlPath,
                             to: tResults.get('channel'),
-                            from: tResults.get('user')
+                            from: tResults.get('user'),
                         });
                     }
                     catch (innerErr) {
