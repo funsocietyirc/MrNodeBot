@@ -8,4 +8,4 @@ persist
 data.sqlite
 .tags
 .vscode/
-
+updating.lock

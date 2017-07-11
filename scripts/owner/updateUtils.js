@@ -46,7 +46,7 @@ module.exports = app => {
             return reject(new Error('Something went wrong with the pull request'));
         }
         // Everything went fine
-        resolve({stdCode: code, stdOut: stdOut, stdErr: stdErr})
+        resolve({stdCode: code, stdOut: stdOut, stdErr: stdErr});
     }));
 
     // Update packages
@@ -98,8 +98,40 @@ module.exports = app => {
         app.Bootstrap(false);
     };
 
+    const lockFileName = 'updating.lock';
+
+    // Is Locked
+    const isLocked = async () => fs.lstat(lockFileName, (err, stats) => !!err);
+
+    // Enable a lock
+    const lock = async (from, to) => fs.writeFile(lockFileName, `${from} / ${to} / ${Date.now()}`, err => !!err);
+
+    // Disable a lock
+    const unlock = async () => fs.unlink(lockFileName, err => !!err);
+
     // Update the bot
     const updateCommand = async (to, from, text, message) => {
+        // Log failed attempts removing the lock file
+        const attemptUnlock = () => {
+            const unlockStatus = unlock();
+            if(!unlock) logger.error('Error removing the lock file for updates', {
+                message: err.message || ''
+            });
+        };
+
+        // Does a lock file exists
+        try {
+            const locked = await isLocked();
+            if (locked) {
+                app.say(to, `I am sorry ${from}, updates are currently locked`);
+                return;
+            }
+        }
+        catch (err) {
+            app.say(to, `I am sorry ${from}, something went wrong during your update (lock file access error)`);
+            return;
+        }
+
         // Die if there is no git available
         if (!shell.which('git')) {
             logger.error('Unable to locate git on host to perform update');
@@ -107,17 +139,30 @@ module.exports = app => {
             return;
         }
 
+        // Create A lock
+        const lockStatus = await lock(from, to);
+
+        /// Verify the lock file
+        if (!lock) {
+            logger.error('Something went wrong writing the lock file');
+            app.say(to, `Something went wrong writing the lock file, ${from}`);
+            return;
+        }
+
         // Pull From Git
         let committed;
+
         try {
             committed = await pullFromGit();
         } catch (err) {
+            attemptUnlock();
             app.say(to, err.message);
             return;
         }
 
         // No updates available
         if (_.isString(committed.stdOut) && _.includes(committed.stdOut.toLowerCase(), 'up-to-date')) {
+            attemptUnlock();
             app.action(to, `is still lemony fresh, nothing to be done here`);
             return;
         }
@@ -130,12 +175,14 @@ module.exports = app => {
         try {
             commits = await getGitLog();
         } catch (err) {
+            attemptUnlock();
             app.say(to, err.message);
             return;
         }
 
         // No Commits found
         if (_.isUndefined(commits) || _.isEmpty(commits) || !_.isArray(commits) || _.isEmpty(commits)) {
+            attemptUnlock();
             app.say(to, 'Something went wrong finding the last commit');
             logger.error(`Something went wrong finding the last commit data in updateUtils.js`);
             return;
@@ -149,6 +196,13 @@ module.exports = app => {
         try {
             diffResults = await checkDiff(commit.abbrevHash);
         } catch (err) {
+            attemptUnlock();
+
+            logger.error('Something went wrong diffing results in the updateUtils', {
+                message: err.message || '',
+                stack: err.stack || '',
+            });
+
             app.say(to, err.message);
             halt(to, from, `I am unsure why I am in need of a restart, but I am!`);
             return;
@@ -156,6 +210,7 @@ module.exports = app => {
 
         // No Diff results found
         if (!diffResults || _.isEmpty(diffResults.stdOut)) {
+            attemptUnlock();
             app.action(to, 'was unable to read the commit log');
             return;
         }
@@ -209,6 +264,7 @@ module.exports = app => {
             else if (shell.which('npm'))
                 pkgManager = 'npm';
             else {
+                attemptUnlock();
                 logger.error(`Cannot find package manager during upgrade`);
                 app.say(to, `I am afraid we are missing the package manager, ${from}`);
                 return;
@@ -218,8 +274,9 @@ module.exports = app => {
             app.say(to, `Running ${pkgManager.toUpperCase()}`);
             let pkgResults;
             try {
-               await updatePackages(pkgManager);
+                await updatePackages(pkgManager);
             } catch (err) {
+                attemptUnlock();
                 app.say(to, err.message);
                 return;
             }
@@ -230,15 +287,19 @@ module.exports = app => {
             try {
                 await protect();
             } catch (err) {
+                attemptUnlock();
                 app.say(to, err.message);
                 return;
             }
 
             // Halt
+            attemptUnlock();
             halt(to, from, output.text);
         } else if (shouldCycle) { // Halt the process
+            attemptUnlock();
             halt(to, from, output.text);
         } else {
+            attemptUnlock();
             reload(to, from); // Reload scripts
         }
     };
