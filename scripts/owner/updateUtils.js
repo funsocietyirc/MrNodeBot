@@ -102,34 +102,47 @@ module.exports = app => {
     const lockFileName = 'updating.lock';
 
     // Is Locked
-    const isLocked = async () => fs.lstat(lockFileName, (err, stats) => !!err);
+    const isLocked = () => new Promise(res => fs.lstat(lockFileName, err => res(!err)));
 
     // Enable a lock
-    const lock = async (from, to) => fs.writeFile(lockFileName, `${from} / ${to} / ${Date.now()}`, err => !!err);
+    const lock = (to, from) => new Promise(res => fs.writeFile(lockFileName, `${from} / ${to} / ${Date.now()}`, err => res(!err)));
 
     // Disable a lock
-    const unlock = async () => fs.unlink(lockFileName, err => !!err);
+    const unlock = () => new Promise(res => fs.unlink(lockFileName, err => res(!err)));
+
+    // Forcefully remove the unlock file;
+    const forceUnlockCommand = async (to, from, text, message) => {
+        const lockStatus = await isLocked();
+
+        if(!lockStatus) {
+            app.say(to, `Updates are not currently locked, ${from}`);
+            return;
+        }
+        const unlockStatus = await unlock();
+        app.say(to, !unlockStatus ? `Something went wrong removing the updates lockfile, ${from}` : `I have removed the updates lock file ${from}`);
+    };
+    app.Commands.set('update-force-unlock', {
+        desc: 'Remove the updates lock file',
+        access: app.Config.accessLevels.owner,
+        call: forceUnlockCommand
+    });
+
 
     // Update the bot
     const updateCommand = async (to, from, text, message) => {
         // Log failed attempts removing the lock file
         const attemptUnlock = () => {
             const unlockStatus = unlock();
-            if(!unlock) logger.error('Error removing the lock file for updates', {
+            if(!unlockStatus) logger.error('Error removing the lock file for updates', {
                 message: err.message || ''
             });
         };
 
         // Does a lock file exists
-        try {
-            const locked = await isLocked();
-            if (locked) {
-                app.say(to, `I am sorry ${from}, updates are currently locked`);
-                return;
-            }
-        }
-        catch (err) {
-            app.say(to, `I am sorry ${from}, something went wrong during your update (lock file access error)`);
+        const locked = await isLocked();
+
+        if (locked) {
+            app.say(to, `I am sorry ${from}, updates are currently locked`);
             return;
         }
 
@@ -140,15 +153,15 @@ module.exports = app => {
             return;
         }
 
-        // Create A lock
+        // Check Lock
         const lockStatus = await lock(from, to);
 
         /// Verify the lock file
-        if (!lock) {
-            logger.error('Something went wrong writing the lock file');
-            app.say(to, `Something went wrong writing the lock file, ${from}`);
+        if (!lockStatus) {
+            app.say(to, `Someone else is currently running an update, ${from}`);
             return;
         }
+
 
         // Pull From Git
         let committed;
