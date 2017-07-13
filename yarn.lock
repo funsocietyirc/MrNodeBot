@@ -2221,9 +2221,9 @@ jsbn@~0.1.0:
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/jsbn/-/jsbn-0.1.1.tgz#a5e654c2e5a2deb5f201d96cefbca80c0ef2f513"
 
-jsdoc@^3.5.1:
-  version "3.5.1"
-  resolved "https://registry.yarnpkg.com/jsdoc/-/jsdoc-3.5.1.tgz#bab0f6e8cdd01a5ad336d3736db8921edbd4717d"
+jsdoc@^3.5.2:
+  version "3.5.2"
+  resolved "https://registry.yarnpkg.com/jsdoc/-/jsdoc-3.5.2.tgz#6eaa57f7e071b449408045e761bd8007c6c8c858"
   dependencies:
     babylon "~7.0.0-beta.16"
     bluebird "~3.5.0"
@@ -3715,9 +3715,9 @@ sinon-chai@^2.11.0:
   version "2.11.0"
   resolved "https://registry.yarnpkg.com/sinon-chai/-/sinon-chai-2.11.0.tgz#93d90f989fff67ce45767077ffe575dde1faea6d"
 
-sinon@^2.3.7:
-  version "2.3.7"
-  resolved "https://registry.yarnpkg.com/sinon/-/sinon-2.3.7.tgz#1451614a2eaab05bb4d876c1335cd40132ec5127"
+sinon@^2.3.8:
+  version "2.3.8"
+  resolved "https://registry.yarnpkg.com/sinon/-/sinon-2.3.8.tgz#31de06fed8fba3a671e576dd96d0a5863796f25c"
   dependencies:
     diff "^3.1.0"
     formatio "1.2.0"
