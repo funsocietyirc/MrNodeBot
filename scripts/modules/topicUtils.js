@@ -49,7 +49,7 @@ module.exports = app => {
                     return;
                 }
                 // Report back
-                app.say(to, `The Topic history has been private messaged to you ${from}`);
+                app.say(to, `The Topic history has been private messaged to you, ${from}`);
                 _(results.toJSON())
                     .filter(t => t.topic !== null && t.topic !== '')
                     .each(
@@ -63,7 +63,7 @@ module.exports = app => {
                     message: err.message || '',
                     stack: err.stack || '',
                 });
-                app.say(to, `Something went wrong fetching the topic information ${from}`);
+                app.say(to, `Something went wrong fetching the topic information, ${from}`);
             }
         }
     });
@@ -75,7 +75,7 @@ module.exports = app => {
         call: async (to, from, text, message) => {
             // Bot is unable to change topic
             if (!app._ircClient.canModifyTopic(to)) {
-                app.say(to, `I am unable to change the topic in this channel ${from}`);
+                app.say(to, `I am unable to change the topic in this channel, ${from}`);
                 return;
             }
             // Do Work
@@ -88,7 +88,7 @@ module.exports = app => {
                     return;
                 }
                 // Report back
-                app.say(to, `Attempting to revert the topic as per your request ${from}`);
+                app.say(to, `Attempting to revert the topic as per your request, ${from}`);
                 app._ircClient.send('topic', to, results.pluck('topic')[1]);
             }
                 // Log Error
@@ -97,7 +97,7 @@ module.exports = app => {
                     message: error.message || '',
                     stack: error.stack || '',
                 });
-                app.say(to, `Something went wrong trying to revert the topic ${from}`);
+                app.say(to, `Something went wrong trying to revert the topic, ${from}`);
             }
         }
     });
@@ -114,7 +114,7 @@ module.exports = app => {
             }
             // Bot does not have permission to modify topic
             if (!app._ircClient.canModifyTopic(to)) {
-                app.say(to, `I am unable to change the topic in this channel ${from}`);
+                app.say(to, `I am unable to change the topic in this channel, ${from}`);
                 return;
             }
             // Do Work
@@ -139,7 +139,7 @@ module.exports = app => {
                     message: err.message || '',
                     stack: err.stack || ''
                 });
-                app.say(to, `Something went wrong trying to append the topic ${from}`);
+                app.say(to, `Something went wrong trying to append the topic, ${from}`);
             }
         }
     });
@@ -151,7 +151,7 @@ module.exports = app => {
         call: async (to, from, text, message) => {
             // Bot is does not have permissions to modify topic
             if (!app._ircClient.canModifyTopic(to)) {
-                app.say(to, `I am unable to change the topic in this channel ${from}`);
+                app.say(to, `I am unable to change the topic in this channel, ${from}`);
                 return;
             }
 
@@ -160,14 +160,14 @@ module.exports = app => {
                 const results = await getTopics(to, 1);
                 // No Results
                 if (_.isEmpty(results)) {
-                    app.say(to, 'There is not topics available for this channel');
+                    app.say(to, 'There are no topics available for this channel');
                     return;
                 }
                 // Get First Topic
                 const topic = results.pluck('topic')[0];
                 // No topic
                 if (!topic) {
-                    app.say(to, 'That is all she wrote folks');
+                    app.say(to, 'That is all she wrote, folks');
                     return;
                 }
                 // Break into segments
@@ -177,7 +177,7 @@ module.exports = app => {
                 else {
                     const index = topicSegments.indexOf(text);
                     if (index === -1) {
-                        app.say(to, `I am not sure you are reading that correctly ${from}`);
+                        app.say(to, `I am not sure you are reading that correctly, ${from}`);
                         return;
                     }
                     topicSegments.splice(index, 1);
@@ -191,7 +191,7 @@ module.exports = app => {
                     message: error.message || '',
                     stack: error.stack || ''
                 });
-                app.say(to, `Something went wrong subtracting the topic segment ${from}`);
+                app.say(to, `Something went wrong subtracting the topic segment, ${from}`);
             }
         }
     });
@@ -206,7 +206,7 @@ module.exports = app => {
                 const results = await getTopics(to, 1);
                 // No results
                 if (_.isEmpty(results)) {
-                    app.say(to, 'There is not topics available for this channel');
+                    app.say(to, 'There are no topics available for this channel');
                     return;
                 }
                 // Get the first topic
@@ -220,11 +220,11 @@ module.exports = app => {
                 const topicSegments = topic.split(divider);
                 // No Segments
                 if (_.isEmpty(topicSegments)) {
-                    app.say(to, `There is no segments available for the topic in ${to}`);
+                    app.say(to, `There are no segments available for the topic in ${to}`);
                     return;
                 }
                 // Report back
-                app.say(to, `I have oh so personally delivered that information via private message ${from}`);
+                app.say(to, `I have oh so personally delivered that information via private message, ${from}`);
                 app.say(from, `Here are the topic segments for ${to}`);
                 topicSegments.forEach((r, x) => app.say(from, `[${x + 1}] ${r}`));
             }
@@ -234,7 +234,7 @@ module.exports = app => {
                     message: err.message || '',
                     stack: err.stack || ''
                 });
-                app.say(to, `Something went wrong fetching the topic segments ${from}`);
+                app.say(to, `Something went wrong fetching the topic segments, ${from}`);
             }
         }
     });
