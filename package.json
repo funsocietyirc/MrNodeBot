@@ -34,7 +34,7 @@
     "app-root-path": "^2.0.1",
     "basic-auth": "^1.1.0",
     "body-parser": "^1.17.2",
-    "bookshelf": "^0.10.3",
+    "bookshelf": "^0.10.4",
     "bookshelf-model-loader": "^0.9.6",
     "bookshelf-modelbase": "^2.10.4",
     "bot": "0.0.3",

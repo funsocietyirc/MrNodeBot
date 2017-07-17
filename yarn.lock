@@ -363,9 +363,9 @@ bookshelf-modelbase@^2.10.4:
     lodash.difference "^4.4.0"
     xtend "^4.0.1"
 
-bookshelf@^0.10.3:
-  version "0.10.3"
-  resolved "https://registry.yarnpkg.com/bookshelf/-/bookshelf-0.10.3.tgz#72558204e83815f8e5bba6fd808702563e72b3e4"
+bookshelf@^0.10.4:
+  version "0.10.4"
+  resolved "https://registry.yarnpkg.com/bookshelf/-/bookshelf-0.10.4.tgz#fe06984456740417aba13d0d76c7b065d1f1774d"
   dependencies:
     babel-runtime "^6.6.1"
     bluebird "^3.4.3"
