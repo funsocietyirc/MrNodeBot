@@ -145,6 +145,11 @@ The Url shortner service, found in *scripts/libs/_getShortService* will provide 
 -   **channelVoice** - the Command can be run by the owner, the the ops, and the voices in the channel it is originated from
 -   **channelVoiceIdentified** - the Command can be run by identified voices, ops in the channel originated from, or owner and admins
 
+## Magic Functions
+If a script exports the following functions, they will be run at the respective run level
+- **onLoad** Runs on initial load, and reload
+- **unUnload** Runs during reload prior to the destruction of the require / loadedScripts cache
+
 ## Knex Migrations
 This project is powered by knexjs and takes advantage of its migration system. In order to use migrations ```npm install -g knex``` and use the **knex** command, e.g. ```knex migrate:make add_users_table ```. More instructions can be found [here](http://knexjs.org/#Installation-migrations). The bot will check for and install new migrations on startup.
 

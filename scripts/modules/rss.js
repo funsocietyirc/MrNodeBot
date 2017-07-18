@@ -67,22 +67,6 @@ module.exports = app => {
     };
 
     /**
-     * Add Feeds from Database into Feeder
-     * @returns {Promise.<*>}
-     * @private
-     */
-    const _initialLoad = async () => {
-        return await Models.RssFeed.fetchAll().then(feeds => feeds.forEach(feed => feeder.add({
-            url: feed.attributes.link,
-            refresh: 2000,
-        })));
-    };
-
-    // Bind the Feeder
-    feeder.on('new-item-max', _newItemHandler);
-    _initialLoad();
-
-    /**
      * Unsubscribe a channel from a RSS feed
      * @param to
      * @param from
@@ -409,5 +393,32 @@ module.exports = app => {
         call: listFeeds
     });
 
-    return scriptInfo;
+
+    /**
+     * Add Feeds from Database into Feeder
+     * @returns {Promise.<*>}
+     * @private
+     */
+    const onLoad = async () => {
+        // Bind the Feeder
+        feeder.on('new-item-max', _newItemHandler);
+        // Subscribe to feeds
+        return await Models.RssFeed.fetchAll().then(feeds => feeds.forEach(feed => feeder.add({
+            url: feed.attributes.link,
+            refresh: 2000,
+        })));
+    };
+
+    /**
+     * Destroy feeder on unload
+     * @return {Promise.<void>}
+     */
+    const onUnload = async () => {
+        feeder.destroy();
+    };
+
+    return Object.assign({}, scriptInfo, {
+        onLoad,
+        onUnload
+    });
 };

@@ -337,6 +337,12 @@ class MrNodeBot {
                     // If we have a name field, run it through a start case filter
                     if (scriptInfo.info.name) scriptInfo.info.name = _.startCase(scriptInfo.info.name);
                     this.LoadedScripts.push(scriptInfo);
+
+                    // If we have a on command, call it
+                    if (_.isFunction(scriptInfo.info.onLoad)) {
+                        logger.info(`Running onLoad command for ${scriptInfo.info.name || file}`);
+                        scriptInfo.info.onLoad.call();
+                    }
                 }
             } catch (err) {
                 this._errorHandler(t('scripts.error', {
@@ -425,8 +431,16 @@ class MrNodeBot {
         if (clearCache) {
             // Clear all existing jobs
             scheduler.clear();
+
+            // Unload the scripts
+            this.LoadedScripts.filter(x => _.isFunction(x.info.onUnload)).forEach(x => {
+                logger.info(`Running onUnload for ${x.info.name || x.fullPath}`);
+                x.info.onUnload.call();
+            });
+
             // Clear Dynamic Collections
             dynCollections.each(v => this[v].clear());
+
             // Clear Loaded Scripts
             this.LoadedScripts = [];
         }
@@ -434,7 +448,7 @@ class MrNodeBot {
         // Load in the Scripts
         if (!this.Config.bot.disableScripts) {
             this._scriptDirectories.forEach(script => {
-                this._loadScriptsFromDir(script, true);
+                this._loadScriptsFromDir(script, clearCache);
             });
             // Assign command aliases
             this._createCommandAliases();
