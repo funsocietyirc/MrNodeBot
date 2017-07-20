@@ -19,12 +19,19 @@ module.exports = app => {
     if (!Models.Logging) return scriptInfo;
 
     const total = async (to, from, text, message) => {
+        const channel = text.split(' ')[0] || to;
+
         try {
             const result = await Models.Logging
-                .where('to', '=', to)
+                .where('to', '=', channel)
                 .count();
 
-            app.say(to, `Total Messages from ${to}: ${accounting.formatNumber(result, {
+            if(result === 0) {
+                app.say(to, `I have no results for ${channel}, ${from}`);
+                return;
+            }
+
+            app.say(to, `Total Messages from ${channel}: ${accounting.formatNumber(result, {
                 precision: 0
             })}`);
         }
@@ -161,7 +168,7 @@ module.exports = app => {
 
     // Total Messages command
     app.Commands.set('total', {
-        desc: 'Get total amount of recorded messages for the current channel',
+        desc: '[channel?] Get total amount of recorded messages for a channel',
         access: app.Config.accessLevels.identified,
         call: total
     });
