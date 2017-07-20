@@ -8,8 +8,9 @@ const scriptInfo = {
 const _ = require('lodash');
 const Moment = require('moment');
 const Models = require('bookshelf-model-loader');
-const logger = require('../../lib/logger');
+const accounting = require('accounting-js');
 
+const logger = require('../../lib/logger');
 
 // Database Specific Commands
 // Commands: last-mentioned, random-line
@@ -23,7 +24,7 @@ module.exports = app => {
                 .where('to', '=', to)
                 .count();
 
-            app.say(to, `Total Messages from ${to}: ${result}`)
+            app.say(to, `Total Messages from ${to}: ${accounting.formatNumber(result)}`)
         }
         catch(err) {
             logger.error('Something went wrong in the total Command', {
