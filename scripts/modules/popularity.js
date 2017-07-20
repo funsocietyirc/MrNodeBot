@@ -14,8 +14,7 @@ const getCanPopRank = require('../generators/_getCandidatePopularityRanking');
 
 module.exports = app => {
     // Database not available
-    if (!Models.Upvote)
-        return scriptInfo;
+    if (!Models.Upvote) return scriptInfo;
 
     // Find out how a voter feels about a candidate (in optional context to a channel)
     app.Commands.set('popularity-feels', {
@@ -53,7 +52,8 @@ module.exports = app => {
 
             } catch (err) {
                 logger.error('Error in popularityFeels command', {
-                    err
+                    message: err.message || '',
+                    stack: err.stack || '',
                 });
                 app.say(to, `An Error has occurred with your popularity-feels command`);
             }
@@ -83,10 +83,10 @@ module.exports = app => {
                 app.say(from, `Mean Score: ${result.meanScore} Total Score: ${typo.colorSignedNumber(result.totalScore)} Total Votes: ${result.totalVotes}`);
             } catch (err) {
                 logger.error('Error in popularityRaking command', {
-                    err
+                    message: err.message || '',
+                    stack: err.stack || '',
                 });
                 app.say(to, `An Error has occurred with your popularity-ranking command`);
-
             }
         }
     });
@@ -121,9 +121,9 @@ module.exports = app => {
 
                 app.say(from, `Mean Score: ${result.meanScore} Total Score: ${typo.colorSignedNumber(result.totalScore)} Total Votes: ${result.totalVotes}`);
             } catch (err) {
-
                 logger.error('Error in popularity-contest', {
-                    err
+                    message: err.message || '',
+                    stack: err.stack || ''
                 });
 
                 app.say(to, `An Error has occurred with your popularity-contest command`);
@@ -159,7 +159,8 @@ module.exports = app => {
                         : typo.icons.sad}`);
             } catch (err) {
                 logger.error('Error in popularity command', {
-                    err
+                    message: err.message || '',
+                    stack: err.stack || '',
                 });
 
                 app.say(to, `An Error has occurred with your popularity command`);
