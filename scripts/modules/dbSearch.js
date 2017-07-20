@@ -24,7 +24,9 @@ module.exports = app => {
                 .where('to', '=', to)
                 .count();
 
-            app.say(to, `Total Messages from ${to}: ${accounting.formatNumber(result)}`)
+            app.say(to, `Total Messages from ${to}: ${accounting.formatNumber(result, {
+                precision: 0
+            })}`);
         }
         catch(err) {
             logger.error('Something went wrong in the total Command', {
