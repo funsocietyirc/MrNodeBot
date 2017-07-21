@@ -1,17 +1,17 @@
 'use strict';
 const _ = require('lodash');
-const Express = require('express');
+const jwt = require('jsonwebtoken');
+const rotate = require('winston-daily-rotate-file');
+const helmet = require('helmet');
+const logger = require('../lib/logger');
 const Router = require('named-routes');
 const favicon = require('serve-favicon');
-const fileUpload = require('express-fileupload');
-const bodyParser = require('body-parser');
+const Express = require('express');
 const winston = require('winston');
-const expressWinston = require('express-winston');
-const rotate = require('winston-daily-rotate-file');
 const RateLimit = require('express-rate-limit');
-const jwt = require('jsonwebtoken');
-const logger = require('../lib/logger');
-
+const bodyParser = require('body-parser');
+const fileUpload = require('express-fileupload');
+const expressWinston = require('express-winston');
 
 //   Web Server component:
 //   Features: named-routes, favicon, file upload, jade template engine, body parser, json parser, rate limiting, simple auth
@@ -32,6 +32,9 @@ module.exports = app => {
 
     // Create Express Server
     const webServer = Express();
+
+    // Initialize Helmet
+    webServer.use(helmet());
 
     // Hold on to HTTP Server
     const server = require('http').createServer(webServer);
