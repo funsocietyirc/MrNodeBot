@@ -29,6 +29,10 @@ ignore:
     - node-pre-gyp > tar-pack > fstream-ignore > minimatch > brace-expansion:
         reason: None available
         expires: '2017-07-30T22:27:04.602Z'
+  'npm:tunnel-agent:20170305':
+    - i18next-sync-fs-backend > codecov > request > tunnel-agent:
+        reason: None given
+        expires: '2017-08-21T20:10:40.871Z'
 # patches apply the minimum changes required to fix a vulnerability
 patch:
   'npm:ms:20170412':
