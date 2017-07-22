@@ -8,14 +8,14 @@ const _ = require('lodash');
 const Models = require('bookshelf-model-loader');
 const logger = require('../../lib/logger');
 // Special Thanks to [mbm] for this wonderful regex
-const pattern = /\B@((?!\w*\.\w)[\w\[\]|\-`\\{}\^]{1,16}(?!\w))/gi;
 
+const pattern = /\B@((?!\w*\.\w)[\w\[\]|\-`\\{}\^]{1,16}(?!\w))/gi;
 
 module.exports = app => {
     // Assure the database and logging table exists
     if (!Models.Mention || !Models.Mentioned) return scriptInfo;
     // Parse for mentions
-    const mentions = (to, from, text, message) => {
+    const mentions = async (to, from, text, message) => {
         // Private message or empty string, bail
         if (to === from || !_.trim(text)) return;
 
@@ -38,31 +38,38 @@ module.exports = app => {
         // No results after filtering, bail
         if (_.isEmpty(results)) return;
 
-        Models.Mention.create({
-            text: text,
-            by: from,
-            channel: to,
-            user: message.user,
-            host: message.host,
-        })
-            .then(mention => {
-                let mentionStack = [];
-                _.forEach(results, nick => mentionStack.push(Models.Mentioned.create({
-                    nick: nick,
-                    mention_id: mention.id,
-                })));
-                return Promise.all(mentionStack);
-            })
-            .then(() => logger.info(`Mention recorded on ${to} by ${from} mentioning ${results.join(', ')}`))
-            .catch(err => logger.error('Error recording mention', {
-                err
-            }));
+        try {
+            const mention = await Models.Mention.create({
+                text: text,
+                by: from,
+                channel: to,
+                user: message.user,
+                host: message.host,
+            });
+
+            let mentionStack = [];
+
+            _.forEach(results, nick => mentionStack.push(Models.Mentioned.create({
+                nick: nick,
+                mention_id: mention.id,
+            })));
+
+            return Promise.all(mentionStack);
+        }
+        catch(err) {
+            logger.error('Error recording mention', {
+                message: err.message || '',
+                stack: err.stack || '',
+            });
+        }
     };
+
     // Listen to messages
     app.Listeners.set('mentions', {
         desc: 'Mentions',
         call: mentions
     });
+
     // Listen to Actions
     app.OnAction.set('mentions', {
         call: (from, to, text, message) => mentions(to, from, text, message),
