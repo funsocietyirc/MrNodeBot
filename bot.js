@@ -220,7 +220,7 @@ class MrNodeBot {
             // Handle On Parts
             'part': (channel, nick, reason, message) => this._ircWrappers.handleOnPart(channel, nick, reason, message),
             // Handle On Kick
-            'kick': (channel, nick, by, reason, message) => this._ircWrappers.ircWrappers.handleOnKick(channel, nick, by, reason, message),
+            'kick': (channel, nick, by, reason, message) => this._ircWrappers.handleOnKick(channel, nick, by, reason, message),
             // Handle On Quit
             'quit': (nick, reason, channels, message) => this._ircWrappers.handleOnQuit(nick, reason, channels, message),
             // Handle Topic changes
