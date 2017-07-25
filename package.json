@@ -44,7 +44,7 @@
     "currency-symbol-map": "^4.0.1",
     "express": "^4.15.3",
     "express-fileupload": "^0.1.4",
-    "express-rate-limit": "^2.8.0",
+    "express-rate-limit": "^2.8.1",
     "express-winston": "^2.4.0",
     "file-type": "^5.2.0",
     "freeport": "^1.0.5",
