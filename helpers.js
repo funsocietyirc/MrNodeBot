@@ -10,6 +10,13 @@ const c = require('irc-colors');
 const _ = require('lodash');
 
 /**
+ * Check to see if a function is async or not
+ * @param func
+ * @return {boolean}
+ */
+const isAsync = module.exports.isAsync = (func) => func.toString().toLowerCase().startsWith('async');
+
+/**
  * AccessString - Get A String representation of a Access Level
  * @param {String} str Number value of the access string
  * @returns {String} A String representation of the access value

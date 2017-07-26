@@ -202,9 +202,13 @@ module.exports = app => {
             }
 
             // Hold on to the location results
-            let locResults = null;
+            let locResults;
+
             try {
-                let locResults = await getLocationData(whoisResults.host);
+                if (helpers.ValidHostExpression.test(whoisResults.host)) {
+                    locResults = await getLocationData(whoisResults.host);
+
+                }
             } catch (err) {
                 // Ignore Error
             }
@@ -232,10 +236,13 @@ module.exports = app => {
 
             // Hold on to the location results
             let locResults;
+
             try {
-                locResults = await getLocationData(whoisResults.host);
-            }
-            catch (err) {
+                if (helpers.ValidHostExpression.test(whoisResults.host)) {
+                    locResults = await getLocationData(whoisResults.host);
+
+                }
+            } catch (err) {
                 // Ignore Error
             }
             finally {
