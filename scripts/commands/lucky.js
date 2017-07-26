@@ -46,6 +46,9 @@ module.exports = app => {
             else {
                 app.action(to, `shoots ${from} in the foot`);
             }
+
+            // Reset
+            round.set(from, revolverRounds);
         }
     };
 
