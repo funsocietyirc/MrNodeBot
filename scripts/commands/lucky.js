@@ -14,8 +14,7 @@ module.exports = app => {
 
     const lucky = async (to, from, text, message) => {
         // Initialize Player
-        if(!round.has(from)) round.set(from, 6);
-
+        if(!round.has(from)) round.set(from, revolverRounds);
 
         // Get chambers remaining
         const remaining = round.get(from);
@@ -26,7 +25,7 @@ module.exports = app => {
         const newRemaining = remaining - 1;
 
         // Set or Reset
-        round.set(from, newRemaining === 0 ? 6 : newRemaining);
+        round.set(from, newRemaining === 0 ? revolverRounds : newRemaining);
 
         // Wait
         await new Promise(resolve => setTimeout(resolve, 3000));
@@ -48,7 +47,6 @@ module.exports = app => {
                 app.action(to, `shoots ${from} in the foot`);
             }
         }
-
     };
 
     const onLoad = () => round = new Map();
