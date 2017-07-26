@@ -62,7 +62,8 @@ module.exports = app => {
     // OP Someone
     const op = (to, from, text, message) => {
         const textArray = text.split(' ');
-        if (!textArray.length < 2) {
+
+        if (textArray.length < 2) {
             app.say(from, 'I need some more information...');
             return;
         }
