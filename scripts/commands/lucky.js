@@ -32,7 +32,7 @@ module.exports = app => {
         await new Promise(resolve => setTimeout(resolve, 3000));
 
         // Simulate putting the bullet in a random chamber, spinning the chamber, and seeing if it pops
-        const loadedChamber = random.integer(1, remaining) === random.integer(1, remaining);
+        const loadedChamber = random.integer(1, remaining) === 1;
 
         // Chamber was not loaded
         if(!loadedChamber) {
