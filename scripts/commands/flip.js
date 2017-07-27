@@ -14,7 +14,8 @@ module.exports = app => {
         access: app.Config.accessLevels.guest,
         call: (to, from, text, message) => {
             const [selection] = text.split(' ');
-            let answer = false;
+
+            let answer;
             switch (selection) {
                 case 'heads':
                     answer = true;
@@ -28,20 +29,32 @@ module.exports = app => {
             }
 
             const rand = random.bool();
-            const randString = rand ? 'Heads' : 'Tails';
-            const answerString = answer ? 'Heads' : 'Tails';
             const isWinner = rand === answer;
-            const outcomeString = isWinner ? 'Winner' : 'Loser';
 
             const sb = new ircTypo.StringBuilder();
+
             sb
-                .insert(`${from}, your coin landed on`)
-                .appendBold(randString)
+                .insert(
+                    `${from}, your coin landed on`
+                )
+                .appendBold(
+                    rand ? 'Heads' : 'Tails'
+                )
                 .insert('you picked')
-                .appendBold(answerString)
+                .appendBold(
+                    answer ? 'Heads' : 'Tails'
+                )
                 .insert('you are the')
-                .insertIcon(isWinner ? 'upArrow' : 'downArrow')
-                .appendBold(outcomeString);
+                .appendBold(
+                    isWinner ? 'Winner' : 'Loser'
+                )
+                .insertIcon(
+                    isWinner ? 'upArrow' : 'downArrow'
+                )
+                .appendBold(
+                    outcomeString
+                );
+
             app.say(to, sb.toString());
         }
     });
