@@ -1,7 +1,7 @@
 'use strict';
 const _ = require('lodash');
 const logger = require('../../lib/logger');
-const Models = require('bookshelf-model-loader');
+const Models = require('funsociety-bookshelf-model-loader');
 const Moment = require('moment');
 
 const getUsageOverTime = async (channel, nick) => {

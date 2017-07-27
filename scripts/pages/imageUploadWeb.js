@@ -6,7 +6,7 @@ const scriptInfo = {
 };
 const path = require('path');
 const logger = require('../../lib/logger');
-const Models = require('bookshelf-model-loader');
+const Models = require('funsociety-bookshelf-model-loader');
 const randToken = require('rand-token');
 
 module.exports = app => {

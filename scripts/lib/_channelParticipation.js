@@ -8,7 +8,7 @@
 //   { nick: 'Zhenn', total: 1259 }
 // ]
 const _ = require('lodash');
-const Models = require('bookshelf-model-loader');
+const Models = require('funsociety-bookshelf-model-loader');
 const moment = require('moment');
 const logger = require('../../lib/logger');
 

@@ -7,7 +7,7 @@ const scriptInfo = {
 const _ = require('lodash');
 const c = require('irc-colors');
 const xray = require('x-ray')();
-const Models = require('bookshelf-model-loader');
+const Models = require('funsociety-bookshelf-model-loader');
 const excuse = require('../generators/_simpleExcuse');
 const logger = require('../../lib/logger');
 

@@ -1,7 +1,7 @@
 'use strict';
 const _ = require('lodash');
 const logger = require('../../lib/logger');
-const Models = require('bookshelf-model-loader');
+const Models = require('funsociety-bookshelf-model-loader');
 
 module.exports = async (voter, candidate, channel) => {
     if (!Models.Upvote) throw new Error('Database not available');

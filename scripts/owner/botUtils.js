@@ -7,7 +7,7 @@ const scriptInfo = {
 const _ = require('lodash');
 const gen = require('../generators/_showerThoughts');
 const typo = require('../lib/_ircTypography');
-const Models = require('bookshelf-model-loader');
+const Models = require('funsociety-bookshelf-model-loader');
 const logger = require('../../lib/logger');
 
 module.exports = app => {

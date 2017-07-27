@@ -1,6 +1,6 @@
 'use strict';
 const _ = require('lodash');
-const Models = require('bookshelf-model-loader');
+const Models = require('funsociety-bookshelf-model-loader');
 
 module.exports = async (channel) => {
     // Database does not exist

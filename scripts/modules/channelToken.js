@@ -5,7 +5,7 @@ const scriptInfo = {
     createdBy: 'IronY'
 };
 const moment = require('moment');
-const Models = require('bookshelf-model-loader');
+const Models = require('funsociety-bookshelf-model-loader');
 const logger = require('../../lib/logger');
 const randToken = require('rand-token');
 const scheduler = require('../../lib/scheduler');

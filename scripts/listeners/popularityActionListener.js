@@ -5,7 +5,7 @@ const scriptInfo = {
     createdBy: 'IronY'
 };
 const _ = require('lodash');
-const Models = require('bookshelf-model-loader');
+const Models = require('funsociety-bookshelf-model-loader');
 const logger = require('../../lib/logger');
 const scheduler = require('../../lib/scheduler');
 

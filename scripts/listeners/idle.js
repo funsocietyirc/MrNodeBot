@@ -10,7 +10,7 @@ const randomWebLine = require('../generators/_randomWebline');
 
 const moment = require('moment');
 const logger = require('../../lib/logger');
-const Models = require('bookshelf-model-loader');
+const Models = require('funsociety-bookshelf-model-loader');
 const scheduler = require('../../lib/scheduler');
 
 // New and Improved

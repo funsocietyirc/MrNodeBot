@@ -4,7 +4,7 @@ const scriptInfo = {
     desc: 'Get information from the nick change table',
     createdBy: 'IronY'
 };
-const Models = require('bookshelf-model-loader');
+const Models = require('funsociety-bookshelf-model-loader');
 
 module.exports = app => {
     // Log nick changes in the alias table

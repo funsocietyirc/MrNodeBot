@@ -1,5 +1,5 @@
 'use strict';
-const Models = require('bookshelf-model-loader');
+const Models = require('funsociety-bookshelf-model-loader');
 
 const Mentioned = Models.Base.extend({
     tableName: 'mentioned',

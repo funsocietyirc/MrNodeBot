@@ -48,15 +48,11 @@ knex.migrate
 
 // Export bookshelf
 const bookShelf = require('bookshelf')(knex);
-require('bookshelf-model-loader').init(bookShelf, {
+require('funsociety-bookshelf-model-loader').init(bookShelf, {
     plugins: ['virtuals', 'visibility', 'registry', 'pagination'], // Optional - Bookshelf plugins to load. Defaults to loading the 'virtuals', 'visibility' & 'registry' plugins
     excludes: [], // Optional - files to ignore
     path: __dirname + '/models', // Required
     modelOptions: {},
 });
-
-// Extend Bookshelf Models
-// https://github.com/bsiddiqui/bookshelf-modelbase
-require('bookshelf-modelbase')(bookShelf);
 
 module.exports = bookShelf;

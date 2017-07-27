@@ -7,7 +7,7 @@ const scriptInfo = {
 
 const _ = require('lodash');
 const Moment = require('moment');
-const Models = require('bookshelf-model-loader');
+const Models = require('funsociety-bookshelf-model-loader');
 const RssFeedEmitter = require('funsociety-irc-rss-feed-emitter');
 
 const typo = require('../lib/_ircTypography');

@@ -1,5 +1,5 @@
 'use strict';
-const Models = require('bookshelf-model-loader');
+const Models = require('funsociety-bookshelf-model-loader');
 
 const RssFeed = Models.Base.extend({
     tableName: 'rssFeeds',

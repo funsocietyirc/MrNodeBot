@@ -6,7 +6,7 @@ const scriptInfo = {
     createdBy: 'IronY'
 };
 
-const Models = require('bookshelf-model-loader');
+const Models = require('funsociety-bookshelf-model-loader');
 const logger = require('../../lib/logger');
 
 module.exports = app => {

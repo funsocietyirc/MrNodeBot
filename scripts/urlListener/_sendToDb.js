@@ -1,6 +1,6 @@
 'use strict';
 const _ = require('lodash');
-const Models = require('bookshelf-model-loader');
+const Models = require('funsociety-bookshelf-model-loader');
 const logger = require('../../lib/logger');
 const config = require('../../config');
 // Ignore URL logging for specific channels

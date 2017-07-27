@@ -5,7 +5,11 @@ const scriptInfo = {
     createdBy: 'IronY'
 };
 
-const random = require('../../lib/randomEngine.js');
+const Models = require('funsociety-bookshelf-model-loader');
+
+
+const random = require('../../lib/randomEngine');
+const logger = require('../../lib/logger');
 
 const revolverRounds = 6;
 
@@ -14,12 +18,12 @@ module.exports = app => {
 
     const lucky = async (to, from, text, message) => {
         // Initialize Player
-        if(!round.has(from)) round.set(from, revolverRounds);
+        if (!round.has(from)) round.set(from, revolverRounds);
 
         // Get chambers remaining
         const remaining = round.get(from);
 
-        app.action(to, `points a six chamber revolver with one round loaded at ${from}, and spins (${remaining} slots remaining)`);
+        app.action(to, `points a ${revolverRounds} chamber revolver with one round loaded at ${from}, and spins (${remaining} slots remaining)`);
 
         // Calculate new remaining
         const newRemaining = remaining - 1;
@@ -34,12 +38,12 @@ module.exports = app => {
         const loadedChamber = random.integer(1, remaining) === 1;
 
         // Chamber was not loaded
-        if(!loadedChamber) {
+        if (!loadedChamber) {
             app.say(to, `*click* - Looks like you get to live another day ${from}`);
         }
         else {
             // Check if bot is op in channel
-            if(app._ircClient.isOpInChannel(to)) {
+            if (app._ircClient.isOpInChannel(to)) {
                 app._ircClient.send('kick', to, from, `*BANG* *BANG* ${app._ircClient.nick} shot me down, *BANG* BANG*`);
             }
             // Bot is not op in channel
@@ -50,6 +54,30 @@ module.exports = app => {
             // Reset
             round.set(from, revolverRounds);
         }
+
+        // Async Save
+        Models.RouletteStats
+            .findOrCreate({
+                from
+            }, {
+                fired: 0,
+                hit: 0,
+            })
+            .then(result => {
+                result.set('fired', result.get('fired') + 1);
+                if (loadedChamber) {
+                    result.set('hit', result.get('hit') + 1);
+                }
+                // Save
+                return result.save();
+            })
+            .catch(err => {
+                logger.error('Something went wrong saving a Roulette Stat', {
+                    message: err.message || '',
+                    stack: err.stack || '',
+                });
+            });
+
     };
 
     const onLoad = () => round = new Map();

@@ -67,7 +67,6 @@ I am currently in the processes of providing jsdoc style docblocks for documenta
 -   Query Builder / Migrations [Knex.js](http://bookshelfjs.org/)
 -   ORM [Bookshelf.js](http://bookshelfjs.org/)
     -   Central Model Repository [bookshelf-model-loader](https://github.com/imjoshholloway/bookshelf-model-loader)
-    -   Common Model Methods [bookshelf-modelbase](https://github.com/bsiddiqui/bookshelf-modelbase)
 -   Web Server [Express.js](http://expressjs.com/en/4x/api.html)
     -   Request Body Parsing [body-parser](https://github.com/expressjs/body-parser)
     -   Wrapper for File Uploads [express-fileupload](https://github.com/pajtai/express-fileupload)

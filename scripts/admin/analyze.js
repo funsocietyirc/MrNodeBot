@@ -6,7 +6,7 @@ const scriptInfo = {
 };
 const _ = require('lodash');
 const c = require('irc-colors');
-const Models = require('bookshelf-model-loader');
+const Models = require('funsociety-bookshelf-model-loader');
 const Moment = require('moment');
 const getLocationData = require('../generators/_ipLocationData');
 

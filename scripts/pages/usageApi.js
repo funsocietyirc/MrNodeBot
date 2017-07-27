@@ -7,7 +7,7 @@ const scriptInfo = {
 
 const _ = require('lodash');
 const logger = require('../../lib/logger');
-const Models = require('bookshelf-model-loader');
+const Models = require('funsociety-bookshelf-model-loader');
 const getUsageOverTime = require('../generators/_getUsageOverTime');
 const getUsageChansAvail = require('../generators/_getUsageChannelsAvailable');
 const hashPattern = new RegExp('%23', 'g');

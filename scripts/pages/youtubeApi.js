@@ -5,7 +5,7 @@ const scriptInfo = {
     desc: 'The YouTube link API',
     createdBy: 'IronY'
 };
-const Models = require('bookshelf-model-loader');
+const Models = require('funsociety-bookshelf-model-loader');
 const _ = require('lodash');
 
 module.exports = app => {

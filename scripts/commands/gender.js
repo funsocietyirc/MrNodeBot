@@ -6,7 +6,7 @@ const scriptInfo = {
 };
 // Original concept credited to http://www.hackerfactor.com/GenderGuesser.php
 const _ = require('lodash');
-const Models = require('bookshelf-model-loader');
+const Models = require('funsociety-bookshelf-model-loader');
 const sampleSize = 1000;
 const logger = require('../../lib/logger');
 
