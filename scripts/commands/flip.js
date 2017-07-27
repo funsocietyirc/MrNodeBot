@@ -45,14 +45,11 @@ module.exports = app => {
                     answer ? 'Heads' : 'Tails'
                 )
                 .insert('you are the')
-                .appendBold(
-                    isWinner ? 'Winner' : 'Loser'
-                )
                 .insertIcon(
                     isWinner ? 'upArrow' : 'downArrow'
                 )
                 .appendBold(
-                    outcomeString
+                    isWinner ? 'Winner' : 'Loser'
                 );
 
             app.say(to, sb.toString());
