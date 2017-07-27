@@ -30,7 +30,8 @@ module.exports = app => {
             const rand = random.bool();
             const randString = rand ? 'Heads' : 'Tails';
             const answerString = answer ? 'Heads' : 'Tails';
-            const outcomeString = rand === answer ? 'Winner' : 'Loser';
+            const isWinner = rand === answer;
+            const outcomeString = isWinner ? 'Winner' : 'Loser';
 
             const sb = new ircTypo.StringBuilder();
             sb
@@ -39,7 +40,7 @@ module.exports = app => {
                 .insert('you picked')
                 .appendBold(answerString)
                 .insert('you are the')
-                .insertIcon(rand === answer ? 'upArrow' : 'downArrow')
+                .insertIcon(isWinner ? 'upArrow' : 'downArrow')
                 .appendBold(outcomeString);
             app.say(to, sb.toString());
         }

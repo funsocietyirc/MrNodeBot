@@ -158,9 +158,9 @@ const optionalFourthArray = [
     'Flag'
 ];
 
-module.exports = size => new Promise(resolve => {
+module.exports = async (size) => {
     size = _.isSafeInteger(size) && size > 0 ? size : 1;
     let output = [];
     _.times(size, output.push(`${_.sample(firstArray)} ${_.sample(secondArray)} ${_.sample(thirdArray)} ${_.random(1, true) > 0.8 ? _.sample(optionalFourthArray) : ''}`));
-    resolve(output);
-});
+    return output;
+};
