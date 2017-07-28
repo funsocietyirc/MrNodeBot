@@ -55,28 +55,30 @@ module.exports = app => {
             round.set(from, revolverRounds);
         }
 
-        // Async Save
-        Models.RouletteStats
-            .findOrCreate({
-                from
-            }, {
-                fired: 0,
-                hit: 0,
-            })
-            .then(result => {
-                result.set('fired', result.get('fired') + 1);
-                if (loadedChamber) {
-                    result.set('hit', result.get('hit') + 1);
-                }
-                // Save
-                return result.save();
-            })
-            .catch(err => {
-                logger.error('Something went wrong saving a Roulette Stat', {
-                    message: err.message || '',
-                    stack: err.stack || '',
+        if(Models.RouletteStats) {
+            // Async Save
+            Models.RouletteStats
+                .findOrCreate({
+                    from
+                }, {
+                    fired: 0,
+                    hit: 0,
+                })
+                .then(result => {
+                    result.set('fired', result.get('fired') + 1);
+                    if (loadedChamber) {
+                        result.set('hit', result.get('hit') + 1);
+                    }
+                    // Save
+                    result.save();
+                })
+                .catch(err => {
+                    logger.error('Something went wrong saving a Roulette Stat', {
+                        message: err.message || '',
+                        stack: err.stack || '',
+                    });
                 });
-            });
+        }
 
     };
 

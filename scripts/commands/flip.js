@@ -4,8 +4,11 @@ const scriptInfo = {
     desc: 'Simulate a coin toss, Random Engine test script',
     createdBy: 'IronY'
 };
+
+const logger = require('../../lib/logger');
 const random = require('../../lib/randomEngine');
 const ircTypo = require('../lib/_ircTypography');
+const Models = require('funsociety-bookshelf-model-loader');
 
 module.exports = app => {
     // Flip a coin
@@ -53,6 +56,30 @@ module.exports = app => {
                 );
 
             app.say(to, sb.toString());
+
+            if(Models.FlipStats) {
+                // Async Save
+                Models.FlipStats
+                    .findOrCreate({
+                        from
+                    }, {
+                        wins: 0,
+                        losses: 0,
+                    })
+                    .then(result => {
+                        const prop = isWinner ? 'wins' : 'losses';
+                        result.set(prop, result.get(prop) + 1);
+
+                             // Save
+                        result.save();
+                    })
+                    .catch(err => {
+                        logger.error('Something went wrong saving a Flip Stat', {
+                            message: err.message || '',
+                            stack: err.stack || '',
+                        });
+                    });
+            }
         }
     });
 
