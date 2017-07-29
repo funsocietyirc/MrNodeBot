@@ -29,63 +29,69 @@ module.exports = app => {
     // Set base currency in money.js
     fx.base = baseCur;
 
-    scheduler.schedule('updateCurRates', updateScheduleTime, () =>
-        // Get the initial conversion rates
-        request(fixerApi, {
-            json: true,
-            method: 'get',
-            qs: {
-                base: baseCur
-            }
-        })
-        // Set the rate sin money.js
-            .then(data => {
-                // No rates available
-                if (!_.isObject(data.rates) || _.isEmpty(data.rates)) {
-                    logger.error(`Something went wrong fetching exchange rates`, {
-                        data
-                    });
-                    return;
+    scheduler.schedule('updateCurRates', updateScheduleTime, async () => {
+        try {
+            // Get the initial conversion rates
+            const data = await request(fixerApi, {
+                json: true,
+                method: 'get',
+                qs: {
+                    base: baseCur
                 }
-                // Received Rates
-                logger.info('Updating exchange rates');
-                // Adjust rates in money
-                fx.rates = data.rates
-            })
-            .then(() =>
-                // Get the BTC Rate
-                request(btcApi, {
-                    json: true,
-                    method: 'get'
-                })
-                // Set the BTC Rate
-                    .then(data => {
-                        // No Data available
-                        if (!_.isArray(data) || _.isEmpty(data)) {
-                            logger.error('Error fetching BitCoin data for exchange seeding', {
-                                data
-                            });
-                            return;
-                        }
-                        // Find the base currency in the btc info
-                        let btc = _.find(data, o => o.code === baseCur);
-                        if (!btc || !btc.code || isNaN(btc.rate) || btc.rate === 0) {
-                            logger.error('Error fetching BitCoin data, data returned is not formatted correctly', {
-                                data
-                            });
-                            return;
-                        }
-                        // Set the BTC rate based on inverse exchange
-                        fx.rates.BTC = 1 / btc.rate;
-                    }))
-            // Problem with request chains
-            .catch(err => logger.error('Something went wrong getting currency rates', {
-                err
-            }))
-    );
+            });
+
+            // No rates available
+            if (!_.isObject(data.rates) || _.isEmpty(data.rates)) {
+                logger.error(`Something went wrong fetching exchange rates`, {
+                    data
+                });
+                return;
+            }
+
+            // Received Rates
+            logger.info('Updating exchange rates');
+
+            // Adjust rates in money
+            fx.rates = data.rates;
+
+            // Get the BTC Rate
+            const btcData = await request(btcApi, {
+                json: true,
+                method: 'get'
+            });
+
+            // No Data available
+            if (!_.isArray(btcData) || _.isEmpty(btcData)) {
+                logger.error('Error fetching BitCoin data for exchange seeding', {
+                    btcData
+                });
+                return;
+            }
+
+            // Find the base currency in the btc info
+            const btc = _.find(btcData, o => o.code === baseCur);
+
+            if (!btc || !btc.code || isNaN(btc.rate) || btc.rate === 0) {
+                logger.error('Error fetching BitCoin data, data returned is not formatted correctly', {
+                    btcData
+                });
+                return;
+
+            }
+            // Set the BTC rate based on inverse exchange
+            fx.rates.BTC = 1 / btc.rate;
+        }
+        catch (err) {
+            logger.error('Something went wrong getting currency rates', {
+                message: err.message || '',
+                stack: err.stack || '',
+            });
+        }
+    });
 
     // initial run
     if (_.isFunction(scheduler.jobs.updateCurRates.job)) scheduler.jobs.updateCurRates.job();
+
     // The function does not exist, log error
     else logger.error(`Something went wrong with the currency exchange rate job, no function exists`);
 
@@ -98,17 +104,17 @@ module.exports = app => {
         }
         // No text available
         if (_.isEmpty(text)) {
-            app.say(to, `I need some more information ${from}`);
+            app.say(to, `I need some more information, ${from}`);
             return;
         }
         // Extract variables
         let [amount, cFrom, cTo] = text.split(' ');
 
         // Normalize amount through accounting
-        amount = accounting.unformat(amount);
+        const normalizedAmount = accounting.unformat(amount);
 
         // Verify amount is numeric
-        if (!amount) {
+        if (!normalizedAmount) {
             app.say(to, `Invalid amount or 0 amount given ${from}, I cannot do anything with that`);
             return;
         }
@@ -118,31 +124,34 @@ module.exports = app => {
             app.say(to, `I need a currency to convert from`);
             return;
         }
+
         // Normalize
-        cFrom = cFrom.toUpperCase();
-        cTo = (cTo || baseCur).toUpperCase();
+        const normalizedFrom = cFrom.toUpperCase();
+        const normalizedTo = (cTo || baseCur).toUpperCase();
+
         // Attempt conversion
         try {
             // If no cTo is provided, assume default base
-            let result = fx.convert(amount, {
-                from: cFrom,
-                to: cTo
+            const result = fx.convert(normalizedAmount, {
+                from: normalizedFrom,
+                to: normalizedTo
             });
 
             // Format result and amount thought accounting.js
-            result = accounting.formatMoney(result, {
-                symbol: getSymbol(cTo) || ''
+            const finalResult = accounting.formatMoney(result, {
+                symbol: getSymbol(normalizedTo) || ''
             });
-            amount = accounting.formatMoney(amount, {
-                symbol: getSymbol(cFrom) || ''
+
+            const formattedAmount = accounting.formatMoney(normalizedAmount, {
+                symbol: getSymbol(normalizedFrom) || ''
             });
 
             // Report back to IRC
-            app.say(to, `At the current exchange rate ${amount} ${cFrom} is ${result} ${cTo}, ${from}`);
+            app.say(to, `At the current exchange rate ${formattedAmount} ${normalizedFrom} is ${finalResult} ${normalizedTo}, ${from}`);
         }
             // Problem with money.js conversion
         catch (err) {
-            app.say(to, `I am unable to convert ${cFrom} to ${cTo} ${from}`);
+            app.say(to, `I am unable to convert ${normalizedFrom} to ${normalizedTo} ${from}`);
         }
     };
 

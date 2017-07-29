@@ -5,37 +5,51 @@ const scriptInfo = {
     createdBy: 'IronY'
 };
 const Models = require('funsociety-bookshelf-model-loader');
+const logger = require('../../lib/logger');
 
 module.exports = app => {
     // Log nick changes in the alias table
     if (!Models.Alias) return;
 
-    // List known nicks for a given alias
-    app.Commands.set('aka', {
-        desc: '[alias] get known aliases',
-        access: app.Config.accessLevels.identified,
-        call: (to, from, text, message) => {
-            if (!text) {
-                app.say(to, `No one is no one is no one...`);
-                return;
-            }
-            Models.Alias
+    const aka = async (to, from, test, message) => {
+        if (!text) {
+            app.say(to, `No one is no one is no one...`);
+            return;
+        }
+
+        try {
+            const results = await Models.Alias
                 .query(qb => {
                     qb
                         .distinct('newnick')
                         .where('oldnick', 'like', text)
                         .select('newnick');
                 })
-                .fetchAll()
-                .then(results => {
-                    if (!results.length) {
-                        app.say(to, 'I have no data on that alias...');
-                        return;
-                    }
-                    let nicks = results.pluck('newnick').join(' | ');
-                    app.say(to, `${text} is also known as: ${nicks}`);
-                });
+                .fetchAll();
+
+            if (!results.length) {
+                app.say(to, 'I have no data on that alias...');
+                return;
+            }
+
+            const nicks = results.pluck('newnick').join(' | ');
+            app.say(to, `${text} is also known as: ${nicks}`);
         }
+        catch (err) {
+            logger.error('Something went wrong in the aka command file', {
+                message: err.message || '',
+                stack: err.stack || '',
+            });
+
+            app.say(to, `Something went wrong fetching your aka data, ${from}`);
+        }
+    };
+
+    // List known nicks for a given alias
+    app.Commands.set('aka', {
+        desc: '[alias] get known aliases',
+        access: app.Config.accessLevels.identified,
+        call: aka
     });
 
     // Return the script info

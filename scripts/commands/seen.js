@@ -29,7 +29,7 @@ module.exports = app => {
     const seen =  async (to, from, text, message, iteration = 0, descending = true) => {
         // Gate
         if (!_.isString(text) || _.isEmpty(text)) {
-            app.say(to, `I need someone to look for, ${from}`);
+            app.say(to, `I need someone to look for ${from}`);
             return;
         }
 

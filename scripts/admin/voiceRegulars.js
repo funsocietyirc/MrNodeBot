@@ -14,10 +14,10 @@ module.exports = app => {
     // Get threshold
     const threshold = (_.isUndefined(app.Config.features.voiceRegulars) || !_.isSafeInteger(app.Config.features.voiceRegulars) || app.Config.features.voiceRegulars < 1) ? app.Config.features.voiceRegulars.threshold : 250;
 
-    const voiceRegulars = (to, from, text, message) => {
-        let txtArray = text.split(' ');
-        let channel = null;
-        let thresh = null;
+    const voiceRegulars = async (to, from, text, message) => {
+        const txtArray = text.split(' ');
+        let channel;
+        let thresh;
 
         switch (txtArray.length) {
             case 1:
@@ -29,13 +29,16 @@ module.exports = app => {
                 thresh = txtArray[1] % 1 === 0 ? txtArray[1] : threshold;
                 break;
         }
-
-        gen(channel, thresh, app)
-            .then(result => app.say(from, result))
-            .catch(err => app.say(from, `Error ${err.message}`));
+        try {
+            const result = await gen(channel, thresh, app);
+            app.say(from, result);
+        }
+        catch (err) {
+            app.say(from, `Error ${err.message}`);
+        }
     };
 
-    // Terminate the bot and the proc watcher that keeps it up
+    // Terminate the bot and the process watcher that keeps it up
     app.Commands.set('voice-regulars', {
         desc: '[Channel?] [Threshold?] Voice the regulars in a channel',
         access: app.Config.accessLevels.admin,

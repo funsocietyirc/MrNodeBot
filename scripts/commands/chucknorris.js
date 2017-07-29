@@ -6,13 +6,25 @@ const scriptInfo = {
     createdBy: 'IronY'
 };
 
-const typo = require('../lib/_ircTypography');
 const gen = require('../generators/_getChuckNorris');
+const typo = require('../lib/_ircTypography');
+const logger = require('../../lib/logger');
 
 module.exports = app => {
-    const chuck = (to, from, text, message) => gen()
-        .then(value => app.say(to, `${typo.logos.chuckNorris}: ${value}`))
-        .catch(e => app.say(to, `${typo.logos.chuckNorris}: ${e.message || 'Something went wrong...'}`));
+    const chuck = async (to, from, text, message) => {
+        try {
+            const value = await gen();
+            app.say(to, `${typo.logos.chuckNorris}: ${value}`);
+        }
+        catch (err) {
+            logger.error('Something went wrong in the chucknorris command file', {
+                message: err.message || '',
+                stack: err.stack || '',
+            });
+
+            app.say(to, `I am sorry ${from}, Chuck Norris caused a epic error`);
+        }
+    };
 
     app.Commands.set('chuck', {
         desc: scriptInfo.desc,

@@ -71,7 +71,7 @@ module.exports = app => {
     app.Commands.set('spawn', {
         desc: '[nick] Will conjure someone magically',
         access: app.Config.accessLevels.owner,
-        call: (to, from, text, message) => {
+        call: async (to, from, text, message) => {
 
             // Parse arguments
             let [nick,
