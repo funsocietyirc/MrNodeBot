@@ -225,6 +225,13 @@ class MrNodeBot {
             'quit': (nick, reason, channels, message) => this._ircWrappers.handleOnQuit(nick, reason, channels, message),
             // Handle Topic changes
             'topic': (channel, topic, nick, message) => this._ircWrappers.handleOnTopic(channel, topic, nick, message),
+            // Catch Network Errors
+            'netError': exception => {
+                logger.error(`Something went wrong in the IRC Client network connection`, exception);
+            },
+            'abort': retryCount => {
+                logger.error(`Lost Connection to server, retrying (attempt ${retryCount})`);
+            },
             // Catch all to prevent drop on error
             'error': message =>
             {
@@ -235,7 +242,7 @@ class MrNodeBot {
 
                 logger.error('Uncaught IRC Client error', {
                     message
-                })
+                });
             }
         }).each((value, key) => this._ircClient.addListener(key, value));
 
@@ -249,7 +256,7 @@ class MrNodeBot {
             }
         );
 
-        if (this._callback) this._callback(this);
+        if (_.isFunction(this._callback)) this._callback(this);
     };
 
     /**

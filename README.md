@@ -32,7 +32,7 @@ The bot currently depends on NickServ services supporting the ACC command for ce
 -   Edit the configuration file
 -   Configure a database
     -   By default, the bot will use SQLite 3, ```npm install sqlite3```
-    -   If using MySQL, ```npm install mysql```
+    -   If using MySQL, ```npm install mysql2``` (Knex supports both the node-mysql and node-mysql2 flavours, with the second being faster and more secure)
         -   Create a Schema and be sure to give it a utf8mb4_unicode_ci character set (CREATE DATABASE db_name CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci)
         -   Modify the config.js accordingly
         -   Once properly configured and run for the first time, the Bot will provision the database schema using migrations
