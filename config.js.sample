@@ -254,6 +254,7 @@ module.exports = {
         urls: {
             loggingIgnore: [],
             announceIgnore: [],
+            unverifiedIgnore: [],
             titleMin: 35,
             cacheCleanup: {
                 minute: 0

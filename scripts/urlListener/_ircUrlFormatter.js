@@ -16,6 +16,9 @@ const icons = ircTypography.icons;
 module.exports = (results, app) => {
     // Site is not live
     if (results.unreachable) {
+        // Do not post unverified links
+        if (_.isArray(app.Config.features.urls.unverifiedIgnore) && app.Config.features.urls.unverifiedIgnore.includes(results.from)) return;
+
         app.say(results.to, `${c[results.cached ? 'green' : 'red']('*')} ${results.from} ${icons.sideArrow} ${c.blue(results.url)} ${icons.sideArrow} ${c.red.bold('Unverifiable Link')} Code: ${results.statusCode || 'None'}`);
         return;
     }
