@@ -244,6 +244,7 @@ module.exports = {
             totalDbResults: 50,
             triggerStart: 's',
             delimiter: '/',
+            ignoredChannels: [],
         },
         popularity: {
             delayInMins: 30,

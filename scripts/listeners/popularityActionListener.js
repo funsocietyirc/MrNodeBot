@@ -109,7 +109,8 @@ module.exports = app => {
                 timeouts.set(from, newTimeout);
             }, delayInMs);
 
-            app.notice(to, `${from} has just given ${result[1]} a ${result[2]} vote on ${to}`);
+            app.say(result[1], `${from} has just given you a ${result[2]} vote on ${to}`);
+            app.say(from, `You have just given a ${result[2]} vote to ${result[1]} on ${to}`);
 
         } catch(err) {
             logger.error(`Error in Popularity Listener`, {

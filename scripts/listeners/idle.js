@@ -59,10 +59,10 @@ module.exports = app => {
                         // Send to the message
                         try {
                             const line = await randomWebLine();
-                            app.notice(channel, line);
+                            app.say(channel, line);
                         }
                         catch (err) {
-                            app.notice(channel, 'is not feeling very well');
+                            app.action(channel, 'is not feeling very well');
                         }
                     })
             );

@@ -10,7 +10,7 @@ const c = require('irc-colors');
 
 module.exports = app => {
     // Assure the database and logging table exists
-    if (!app.Database && !Models.Logging)
+    if (!Models.Logging)
         return scriptInfo;
 
     // Logging Model
@@ -44,6 +44,12 @@ module.exports = app => {
      performs SED style corrections
      **/
     const correct = async (to, from, text, message) => {
+        // Bail out if we are in a ignored
+        if (
+            _.isArray(app.Config.features.sed.ignoredChannels) &&
+            app.Config.features.sed.ignoredChannels.includes(to)
+        ) return;
+
         // Trim Inital Input
         text = _.trim(text);
 
