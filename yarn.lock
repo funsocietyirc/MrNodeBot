@@ -239,9 +239,9 @@ babel-runtime@^6.11.6, babel-runtime@^6.6.1:
     core-js "^2.4.0"
     regenerator-runtime "^0.10.0"
 
-babylon@~7.0.0-beta.16:
-  version "7.0.0-beta.18"
-  resolved "https://registry.yarnpkg.com/babylon/-/babylon-7.0.0-beta.18.tgz#5c23ee3fdb66358aabf3789779319c5b78a233c7"
+babylon@~7.0.0-beta.19:
+  version "7.0.0-beta.19"
+  resolved "https://registry.yarnpkg.com/babylon/-/babylon-7.0.0-beta.19.tgz#e928c7e807e970e0536b078ab3e0c48f9e052503"
 
 backo2@1.0.2:
   version "1.0.2"
@@ -478,9 +478,9 @@ chai-moment@^0.1.0:
   dependencies:
     moment "^2.10.6"
 
-chai@^4.1.0:
-  version "4.1.0"
-  resolved "https://registry.yarnpkg.com/chai/-/chai-4.1.0.tgz#331a0391b55c3af8740ae9c3b7458bc1c3805e6d"
+chai@^4.1.1:
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/chai/-/chai-4.1.1.tgz#66e21279e6f3c6415ff8231878227900e2171b39"
   dependencies:
     assertion-error "^1.0.1"
     check-error "^1.0.1"
@@ -2278,11 +2278,11 @@ jsbn@~0.1.0:
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/jsbn/-/jsbn-0.1.1.tgz#a5e654c2e5a2deb5f201d96cefbca80c0ef2f513"
 
-jsdoc@^3.5.3:
-  version "3.5.3"
-  resolved "https://registry.yarnpkg.com/jsdoc/-/jsdoc-3.5.3.tgz#c8bb6a452548e3c778d4eff38f66ac20df2cac87"
+jsdoc@^3.5.4:
+  version "3.5.4"
+  resolved "https://registry.yarnpkg.com/jsdoc/-/jsdoc-3.5.4.tgz#ceeef7c4bac4335cb10ff41e3a0f58939a534428"
   dependencies:
-    babylon "~7.0.0-beta.16"
+    babylon "~7.0.0-beta.19"
     bluebird "~3.5.0"
     catharsis "~0.8.9"
     escape-string-regexp "~1.0.5"
@@ -2361,9 +2361,9 @@ jsonpointer@^4.0.0:
   version "4.0.1"
   resolved "https://registry.yarnpkg.com/jsonpointer/-/jsonpointer-4.0.1.tgz#4fd92cb34e0e9db3c89c8622ecf51f9b978c6cb9"
 
-jsonwebtoken@^7.4.1:
-  version "7.4.1"
-  resolved "https://registry.yarnpkg.com/jsonwebtoken/-/jsonwebtoken-7.4.1.tgz#7ca324f5215f8be039cd35a6c45bb8cb74a448fb"
+jsonwebtoken@^7.4.2:
+  version "7.4.2"
+  resolved "https://registry.yarnpkg.com/jsonwebtoken/-/jsonwebtoken-7.4.2.tgz#571b903c07e875c0fc59203d1ac78667d80e09cd"
   dependencies:
     joi "^6.10.1"
     jws "^3.1.4"
@@ -2804,9 +2804,9 @@ mute-stream@0.0.6:
   version "0.0.6"
   resolved "https://registry.yarnpkg.com/mute-stream/-/mute-stream-0.0.6.tgz#48962b19e169fd1dfc240b3f1e7317627bbc47db"
 
-mysql2@^1.3.6:
-  version "1.3.6"
-  resolved "https://registry.yarnpkg.com/mysql2/-/mysql2-1.3.6.tgz#d5c14917de0b15801a6c1883599bcf6fb27c1a1e"
+mysql2@^1.4.0:
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/mysql2/-/mysql2-1.4.0.tgz#688a4b8638eb705d4d3fd015721f7af447b73967"
   dependencies:
     cardinal "1.0.0"
     denque "^1.1.1"
@@ -2835,13 +2835,9 @@ named-routes@2.0.6:
     path-to-regexp "^1.2.1"
     xregexp "^3.1.0"
 
-nan@^2.0.8, nan@^2.3.3, nan@^2.3.5:
+nan@^2.0.8, nan@^2.3.3, nan@^2.3.5, nan@~2.6.2:
   version "2.6.2"
   resolved "https://registry.yarnpkg.com/nan/-/nan-2.6.2.tgz#e4ff34e6c95fdfb5aecc08de6596f43605a7db45"
-
-nan@~2.4.0:
-  version "2.4.0"
-  resolved "https://registry.yarnpkg.com/nan/-/nan-2.4.0.tgz#fb3c59d45fe4effe215f0b890f8adf6eb32d2232"
 
 native-promise-only@^0.8.1:
   version "0.8.1"
@@ -2892,7 +2888,7 @@ node-persist@^2.1.0:
     mkdirp "~0.5.1"
     q "~1.1.1"
 
-node-pre-gyp@~0.6.31:
+node-pre-gyp@~0.6.36:
   version "0.6.36"
   resolved "https://registry.yarnpkg.com/node-pre-gyp/-/node-pre-gyp-0.6.36.tgz#db604112cb74e0d477554e9b505b17abddfab786"
   dependencies:
@@ -4091,12 +4087,12 @@ sprintf-js@~1.0.2:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/sprintf-js/-/sprintf-js-1.0.3.tgz#04e6926f662895354f3dd015203633b857297e2c"
 
-sqlite3@^3.1.8:
-  version "3.1.8"
-  resolved "https://registry.yarnpkg.com/sqlite3/-/sqlite3-3.1.8.tgz#4cbcf965d8b901d1b1015cbc7fc415aae157dfaa"
+sqlite3@^3.1.9:
+  version "3.1.9"
+  resolved "https://registry.yarnpkg.com/sqlite3/-/sqlite3-3.1.9.tgz#b2e7fbaa348380318d3834323918c3c351b8bf18"
   dependencies:
-    nan "~2.4.0"
-    node-pre-gyp "~0.6.31"
+    nan "~2.6.2"
+    node-pre-gyp "~0.6.36"
 
 sqlstring@^2.2.0:
   version "2.2.0"
