@@ -4,17 +4,17 @@
     "connected": "Connected to {{- server}} as {{- nick}}"
   },
   "listeners": {
-    "init": "Initializing Listeners..."
+    "init": "Initializing listeners..."
   },
   "database": {
-    "initializing": "Initializing Database Sub-System...",
-    "initialized": "Database Sub-System initialized",
-    "missing": "No Database Sub-System found, {{feature}} limited/disabled"
+    "initializing": "Initializing the database sub-system...",
+    "initialized": "Database sub-system initialized",
+    "missing": "No database sub-system found, {{feature}} limited/disabled"
   },
   "scripts": {
-    "initializing": "Initializing Scripts from {{- dir}}",
-    "loaded": "Loaded Script: {{- file}}",
-    "error": "Error Loading Script from {{- path}}"
+    "initializing": "Initializing scripts from {{- dir}}",
+    "loaded": "Loaded script: {{- file}}",
+    "error": "Error loading script from {{- path}}"
   },
   "storage": {
     "initialized": "Storage Initialized",
@@ -23,13 +23,13 @@
   },
   "aliases": {
     "improperStructure": "Improper structure in config.js for commandBindings",
-    "doesNotExist": "The Alias {{alias}} for the command {{command}} does not exist",
-    "alreadyExists": "The Alias {{alias}} for the command {{command}} already exists"
+    "doesNotExist": "The alias {{alias}} for the command {{command}} does not exist",
+    "alreadyExists": "The alias {{alias}} for the command {{command}} already exists"
   },
   "bootstrap": {
     "rebooting": "Rebooting...",
     "reloading": "Reloading...",
-    "reloadConfig": "Reloading Configuration Object..."
+    "reloadConfig": "Reloading configuration data..."
   },
   "events": {
     "channelJoined": "Joined channel {{- channel}}",
@@ -37,7 +37,7 @@
     "kickLoggingBy": "Kicked from {{channel}} by {{- by}}: {{- reason}}",
     "kickLoggingFrom": "Kicked {{- nick}} from {{- channel}}: {{- reason}}",
     "quitLogging": "Quit server and left {{- channels}} because {{- reason}}",
-    "topicLogging": "Changed Topic from {{- channel}} to {{topic}}",
+    "topicLogging": "Changed topic from {{- channel}} to {{topic}}",
     "registeredToIrc": "Registered to IRC server",
     "sentMessage": "Message: {{- target}} {{- message}}",
     "sentAction": "Action: {{- target}} {{- message}}",
@@ -46,7 +46,7 @@
     "commandTriggered": "{{- from}} on {{- to}} has triggered the {{cmd}} command from the {{group}} group"
   },
   "auth": {
-    "notMemberOfGroup": "You are not a member of the group {{group}}. Access Denied",
+    "notMemberOfGroup": "You are not a member of the group {{group}}. Access denied",
     "notMemberOfGroupLogging": "{{- nick}} on {{- channel}} tried to use the {{group}} command {{type}}",
     "notIdentified": "You must be identified with NickServ to use the {{- cmd }} command {{- from}}"
   },
@@ -55,10 +55,10 @@
     "started": "Web Server started on {{port}}"
   },
   "errors": {
-    "procCommand": "Error processing Command: {{command}}",
+    "procCommand": "Error processing command: {{command}}",
     "genericError": "Error in: {{command}}",
     "moreInformation": "I need some more information, {{- nick}}",
-    "invalidCommand": "I am sorry, {{- from}}, I am unable to do that. Let me clarify, {{- cmd}} is an invalid Command",
-    "invalidIdentCommand": "Error with Identified Command {{- cmd}} from {{- from}} to {{- to}}"
+    "invalidCommand": "I am sorry, {{- from}}, I am unable to do that. Let me clarify, {{- cmd}} is an invalid command",
+    "invalidIdentCommand": "Error with identified command {{- cmd}} from {{- from}} to {{- to}}"
   }
 }
