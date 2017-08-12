@@ -24,31 +24,24 @@ module.exports = async (channel) => {
     )
         .fetchAll();
 
-    const finalResults = [];
-    _.each(results.toJSON(), x => {
-        finalResults.push({
-            candidate: x.candidate,
-            score: parseInt(x.score),
-            votes: parseInt(x.votes),
-        });
-    });
-
-
-    console.dir(finalResults);
-
     // No results, return empty object
     if (!results.length) return {};
 
     // Hold the scores
-    const scores = _.map(finalResults, 'score');
+    const scores = results.pluck('score');
 
-    console.dir(scores);
-
-    return {
-        meanScore: parseFloat(_.mean(scores).toFixed(2)),
+    const output = {
+        meanScore: _.mean(scores).toFixed(2),
         totalScore: parseInt(_.sum(scores)),
         totalVotes: _.sum(results.pluck('votes')),
-        rankings: finalResults
+        rankings: _.map(results.toJSON(), x => ({
+            candidate: x.candidate,
+            score: parseInt(x.score),
+            votes: x.votes
+        })),
     };
 
+    console.dir(output);
+
+    return output;
 };
