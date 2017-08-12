@@ -20,8 +20,7 @@ const preprocessText = require('./lib/preprocessText');
 const t = require('./lib/localize');
 const IrcWrappers = require('./lib/ircWrappers');
 
-// Extend For Un-cache
-require('./lib/uncache')(require);
+const clearModule = require('clear-module');
 
 /** Dynamically created collections */
 const dynCollections = _([
@@ -301,7 +300,7 @@ class MrNodeBot {
      * @param {string} fullPath Path to cached file
      */
     static _clearCache(fullPath) {
-        require.uncache(require.resolve(fullPath));
+        clearModule(require.resolve(fullPath));
     };
 
     /**
