@@ -27,18 +27,20 @@ module.exports = async (channel) => {
     // No results, return empty object
     if (!results.length) return {};
 
-    // Hold the scores
-    const scores = results.pluck('score');
+    const _results = _(results.toJSON());
+
+
+    const scores = _results.map(x => parseInt(x.score)).value();
 
     const output = {
         meanScore: _.mean(scores).toFixed(2),
-        totalScore: parseInt(_.sum(scores)),
+        totalScore: _.sum(scores),
         totalVotes: _.sum(results.pluck('votes')),
-        rankings: _.map(results.toJSON(), x => ({
+        rankings: _results.map(x => ({
             candidate: x.candidate,
             score: parseInt(x.score),
             votes: x.votes
-        })),
+        })).value(),
     };
 
     console.dir(output);
