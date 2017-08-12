@@ -28,18 +28,11 @@ module.exports = async (channel) => {
     if (!results.length) return {};
 
     // Hold the scores
-    const scores = results.pluck('score');
-
-    console.dir({
-        meanScore: _.mean(scores).toFixed(2),
-        totalScore: _.sum(scores),
-        totalVotes: _.sum(results.pluck('votes')),
-        rankings: results.toJSON()
-    });
+    const scores = results.pluck('score').map(parseInt);
 
     return {
-        meanScore: _.mean(scores).toFixed(2),
-        totalScore: _.sum(scores),
+        meanScore: parseFloat(_.mean(scores).toFixed(2)),
+        totalScore: parseInt(_.sum(scores)),
         totalVotes: _.sum(results.pluck('votes')),
         rankings: results.toJSON()
     };
