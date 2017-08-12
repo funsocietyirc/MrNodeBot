@@ -24,6 +24,15 @@ module.exports = async (channel) => {
     )
         .fetchAll();
 
+    const finalResults = [];
+    _.each(results.toJSON(), x => {
+        finalResults.push({
+            candidate: x.candidate,
+            score: intVal(x.score),
+            votes: intVal(x.votes),
+        });
+    });
+
     // No results, return empty object
     if (!results.length) return {};
 
@@ -34,7 +43,7 @@ module.exports = async (channel) => {
         meanScore: parseFloat(_.mean(scores).toFixed(2)),
         totalScore: parseInt(_.sum(scores)),
         totalVotes: _.sum(results.pluck('votes')),
-        rankings: results.toJSON()
+        rankings: finalResults
     };
 
 };
