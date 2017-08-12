@@ -32,7 +32,7 @@ module.exports = async (channel) => {
 
     const scores = _results.map(x => parseInt(x.score)).value();
 
-    const output = {
+    return {
         meanScore: _.mean(scores).toFixed(2),
         totalScore: _.sum(scores),
         totalVotes: _.sum(results.pluck('votes')),
@@ -43,7 +43,4 @@ module.exports = async (channel) => {
         })).value(),
     };
 
-    console.dir(output);
-
-    return output;
 };
