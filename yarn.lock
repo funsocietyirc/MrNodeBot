@@ -840,9 +840,9 @@ csv-stringify@~1.0.2:
   dependencies:
     lodash.get "^4.0.0"
 
-currency-symbol-map@^4.0.1:
-  version "4.0.1"
-  resolved "https://registry.yarnpkg.com/currency-symbol-map/-/currency-symbol-map-4.0.1.tgz#2fe8bf8033db6c0e0719f7eccbedf4b085f4627a"
+currency-symbol-map@^4.0.2:
+  version "4.0.2"
+  resolved "https://registry.yarnpkg.com/currency-symbol-map/-/currency-symbol-map-4.0.2.tgz#884be96168da41bfb0fcbbb6e37dc3c2349a2c65"
 
 cycle@1.0.x:
   version "1.0.3"
@@ -2856,9 +2856,9 @@ mute-stream@0.0.6:
   version "0.0.6"
   resolved "https://registry.yarnpkg.com/mute-stream/-/mute-stream-0.0.6.tgz#48962b19e169fd1dfc240b3f1e7317627bbc47db"
 
-mysql2@^1.4.1:
-  version "1.4.1"
-  resolved "https://registry.yarnpkg.com/mysql2/-/mysql2-1.4.1.tgz#53267ea0a43df850aee4e0bc993e7563c37ff552"
+mysql2@^1.4.2:
+  version "1.4.2"
+  resolved "https://registry.yarnpkg.com/mysql2/-/mysql2-1.4.2.tgz#b5e04009fd6d63f00755253df88540a2532640b2"
   dependencies:
     cardinal "1.0.0"
     denque "^1.1.1"
