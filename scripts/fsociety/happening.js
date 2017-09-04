@@ -12,7 +12,7 @@ const scheduler = require("../../lib/scheduler.js");
 require('moment-countdown');
 
 module.exports = app => {
-    const showTime = new Date(2017, 10, 4, 22, 0, 0, 0);
+    const showTime = new Date(2017, 9, 11, 22, 0, 0, 0);
 
     // Season 3 Countdown
     const getCountdown = () => moment(showTime).countdown();
