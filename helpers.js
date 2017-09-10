@@ -6,8 +6,17 @@
  */
 
 const moment = require('moment');
+const accounting = require('accounting-js');
 const c = require('irc-colors');
 const _ = require('lodash');
+
+/**
+ * Format a number (using separators)
+ * @param input
+ */
+const formatNumber = module.exports.formatNumber = input => accounting.formatNumber(input, {
+    precision: 0
+});
 
 /**
  * Check to see if a function is async or not

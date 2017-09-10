@@ -7,73 +7,66 @@ const xray = require('x-ray')();
 const helpers = require('../../helpers');
 const logger = require('../../lib/logger');
 
-const getDocuments = async(results, userAgent, maxLength) => {
-    try {
-        const preResponse = await rp({
-            uri: results.url,
-            resolveWithFullResponse: true,
-            method: 'HEAD',
-            headers: {
-                // Fake user agent so we get HTML responses
-                'User-Agent': userAgent
-            }
-        });
+// Check head for valid file size
+const validDocument = async (url, userAgent) => rp({
+    uri: url,
+    resolveWithFullResponse: true,
+    method: 'HEAD',
+    headers: {
+        // Fake user agent so we get HTML responses
+        'User-Agent': userAgent
+    }
+});
 
-        // File is too large, bail
-        if (preResponse.headers['content-length'] > maxLength) {
-            Object.assign(results, {
-                headers: preResponse.headers,
-                realUrl: preResponse.request.uri.href,
-                statusCode: (_.isUndefined(preResponse) || _.isUndefined(preResponse.statusCode)) ? 'No Status' : preResponse.statusCode,
-                title: `${preResponse.headers['content-type']}, over ${maxLength} bytes (${preResponse.headers['content-length']})`
+// Fetch the Document
+const getDocument = async (url, userAgent) => rp({
+    uri: url,
+    resolveWithFullResponse: true,
+    headers: {
+        // Fake user agent so we get HTML responses
+        'User-Agent': userAgent
+    }
+});
+
+const getDocuments = async (results, userAgent, maxLength) => {
+    try {
+        const documentCheck = await validDocument(results.url, userAgent);
+
+        if (documentCheck.headers['content-length'] > maxLength || !documentCheck.headers.hasOwnProperty('content-type') || !_.includes(documentCheck.headers['content-type'], 'text/html')) {
+            return Object.assign({}, results, {
+                headers: documentCheck.headers,
+                realUrl: documentCheck.request.uri.href,
+                statusCode: (_.isUndefined(documentCheck) || _.isUndefined(documentCheck.statusCode)) ? 'No Status' : documentCheck.statusCode,
+                title: `${documentCheck.headers['content-type'].toUpperCase()} Document, ${helpers.formatNumber(documentCheck.headers['content-length'])} bytes`,
+                overLength: true,
             });
-            return results;
         }
 
         // Get the document
-        const response = await rp({
-            uri: results.url,
-            resolveWithFullResponse: true,
-            headers: {
-                // Fake user agent so we get HTML responses
-                'User-Agent': userAgent
-            }
-        });
-
-        const contentType = response.headers['content-type'];
+        const response = await getDocument(results.url, userAgent);
 
         // Append to the results Object
-        Object.assign(results, {
+        const finalResults = Object.assign({}, results, {
             headers: response.headers,
             realUrl: response.request.uri.href,
             statusCode: (_.isUndefined(response) || _.isUndefined(response.statusCode)) ? 'No Status' : response.statusCode
         });
 
-        // No Content type available, return
-        if (!contentType) return results;
-
-        // We have valid HTML, return a XRay scrape
-        if (_.includes(contentType, 'text/html')) {
-            return new Promise((resolve,reject) => {
-                xray(response.body, 'title')((err, title) => {
-                    if (err || !title) {
-                        // Something actually went wrong
-                        if (err) logger.warn('Error in XRAY URL Chain', {
-                            err
-                        });
-                        resolve(results);
-                        return;
-                    }
-                    // Set the Page Title
-                    results.title = helpers.StripNewLine(_.trim(title));
-                    resolve(results);
-                });
+        return new Promise((resolve, reject) => {
+            xray(response.body, 'title')((err, title) => {
+                if (err || !title) {
+                    // Something actually went wrong
+                    if (err) logger.warn('Error in XRAY URL Chain', {
+                        err
+                    });
+                    return resolve(finalResults);
+                }
+                // Set the Page Title
+                finalResults.title = helpers.StripNewLine(_.trim(title));
+                resolve(finalResults);
             });
-        }
+        });
 
-        // We do not have valid HTML
-        results.title = `${contentType.toUpperCase()} Document`;
-        return results;
     }
     catch (err) {
         logger.warn('Error in URL Get Document function', {
@@ -81,12 +74,10 @@ const getDocuments = async(results, userAgent, maxLength) => {
             stack: err.stack || '',
         });
 
-        // Set status code
-        results.statusCode = (_.isUndefined(err) || _.isUndefined(err.response) || _.isUndefined(err.response.statusCode)) ? 'No Status' : err.response.statusCode;
-
-        // Set the unreachable flag
-        results.unreachable = true;
-        return results;
+        return Object.assign({}, results, {
+            statusCode: (_.isUndefined(err) || _.isUndefined(err.response) || _.isUndefined(err.response.statusCode)) ? 'No Status' : err.response.statusCode,
+            unreachable: true,
+        });
     }
 };
 
