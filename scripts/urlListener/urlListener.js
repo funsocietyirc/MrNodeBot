@@ -46,6 +46,9 @@ module.exports = app => {
     // Fetch the ignore list
     const userIgnore = app.Config.features.urls.userIgnore || [];
 
+    const maxLength = app.Config.features.urls.maxLength || 10485760;
+    const userAgent = app.Config.features.urls.userAgent || 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36';
+
     // Send Response to IRC
     const sendToIrc = results => {
         if (!_.includes(announceIgnore, results.to)) {
@@ -64,7 +67,7 @@ module.exports = app => {
 
         chain(url, to, from, text, message, is) // Begin Chain
             .then(results => results.cached ? results : // If we Have a cached object, continue in chain
-                getDocument(results) // Make a request, verify the site exists, and grab metadata
+                getDocument(results, userAgent, maxLength) // Make a request, verify the site exists, and grab metadata
                     .then(safeCheck)
                     .then(results => results.unreachable ? results : // If the site is not up, continue the chain
                         getShorten(results) // Otherwise grab the google SHORT Url

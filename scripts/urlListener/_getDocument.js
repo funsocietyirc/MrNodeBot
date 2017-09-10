@@ -7,10 +7,28 @@ const xray = require('x-ray')();
 const helpers = require('../../helpers');
 const logger = require('../../lib/logger');
 
-const userAgent = 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36';
-
-const getDocuments = async(results) => {
+const getDocuments = async(results, userAgent, maxLength) => {
     try {
+        const preResponse = await rp({
+            uri: results.url,
+            resolveWithFullResponse: true,
+            method: 'HEAD',
+            headers: {
+                // Fake user agent so we get HTML responses
+                'User-Agent': userAgent
+            }
+        });
+
+        // File is too large, bail
+        if (preResponse.headers['content-length'] > maxLength) {
+            Object.assign(results, {
+                headers: preResponse.headers,
+                realUrl: preResponse.request.uri.href,
+                statusCode: (_.isUndefined(preResponse) || _.isUndefined(preResponse.statusCode)) ? 'No Status' : preResponse.statusCode,
+                title: `${preResponse.headers['content-type']}, over ${maxLength} bytes (${preResponse.headers['content-length']})`
+            });
+            return results;
+        }
 
         // Get the document
         const response = await rp({
