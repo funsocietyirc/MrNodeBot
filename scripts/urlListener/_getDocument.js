@@ -52,6 +52,9 @@ const getDocuments = async (results, userAgent, maxLength) => {
             statusCode: (_.isUndefined(response) || _.isUndefined(response.statusCode)) ? 'No Status' : response.statusCode
         });
 
+        // No Response body
+        if (!response.body || !_.isString(response.body) || _.isEmpty(response.body.trim())) return finalResults;
+
         return new Promise((resolve, reject) => {
             xray(response.body, 'title')((err, title) => {
                 if (err || !title) {
