@@ -18,7 +18,7 @@ module.exports = app => {
     if (!_.isArray(app.Config.features.countdowns)) return scriptInfo;
 
     // Hold channel message call backs
-    const channelMessages = new Map();
+    const channelAnnouncements = [];
 
     // Format Countdown
     const getCountdown = (when) => moment(when).countdown();
@@ -47,7 +47,13 @@ module.exports = app => {
             if (countdown.why.hasOwnProperty('irc') && _.isObject(countdown.why.irc)) _.each(countdown.why.irc, (v, k) => {
 
                 // Assign Countdown message
-                channelMessages.set(k, getCountdownMessage);
+                channelAnnouncements.push({
+                    who: countdown.who,
+                    when: countdown.when,
+                    what: countdown.what,
+                    where: countdown.where,
+                    channel: k,
+                });
 
                 // Bind announcements
                 if (_.isArray(v.announcements)) for (const announcement of v.announcements) {
@@ -65,11 +71,18 @@ module.exports = app => {
 
     // Handle the IRC Command
     const happening = (to, from, text, message) => {
-        if (!channelMessages.has(to)) {
+        const announcements = _.filter(channelAnnouncements, x => x.channel === to);
+
+        if (!announcements || _.isEmpty(announcements)) {
             app.say(to, `There are currently no countdowns available for ${to}, ${from}`);
             return;
         }
-        app.say(to, channelMessages.get(to)());
+
+        let output = '';
+        _.each(announcements, announcement => {
+            output = output + `${announcement.who} ${_.sample(announcement.what)} ${getCountdown(announcement.when)} on ${announcement.where}. `;
+        });
+        app.say(to, output.trim());
     };
 
     // IRC Command
@@ -82,5 +95,6 @@ module.exports = app => {
     // Return the script info
     return Object.assign({}, scriptInfo, {
         onLoad: processCountdowns(app.Config.features.countdowns),
+        onUnload: () => channelAnnouncements.splice(0, channelAnnouncements.length)
     });
 };
