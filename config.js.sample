@@ -296,5 +296,50 @@ module.exports = {
             }
         },
         weather: {},
+        countdowns: [
+            {
+                who: 'Mr Robot Season 3',
+                when: new Date(2017, 9, 11, 22, 0, 0, 0), // MomentJS
+                what: [
+                    'is happening in',
+                    'is coming to a screen near you in',
+                    'is hacking all the things in',
+                    'will be brought to you in',
+                    'drops in',
+                    'is hacking your democracy in',
+                ],
+                where: 'USA Network',
+                why: {
+                    irc: {
+                        '#mrrobot': {
+                            announcements: [
+                                {
+                                    year: null,
+                                    month: null,
+                                    date: null,
+                                    dayOfWeek: null,
+                                    hour: 0,
+                                    minute: 0,
+                                    second: 0,
+                                },
+                            ],
+                        },
+                        '#fsociety': {
+                            announcements: [
+                                {
+                                    year: null,
+                                    month: null,
+                                    date: null,
+                                    dayOfWeek: null,
+                                    hour: 0,
+                                    minute: 0,
+                                    second: 0,
+                                },
+                            ],
+                        },
+                    },
+                },
+            }
+        ]
     },
 };
