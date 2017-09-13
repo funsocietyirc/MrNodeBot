@@ -56,7 +56,7 @@ module.exports = app => {
         channel = channel || to;
 
         try {
-            const results = await getResults(to, from, 150);
+            const results = await getResults(from, to, 500);
             // No Results available
             if (!results.length) {
                 app.say(to, 'I do not have have any data on this channel');
