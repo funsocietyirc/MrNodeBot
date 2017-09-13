@@ -18,7 +18,8 @@ module.exports = app => {
     // Make sure we have everything we need
     if (!Models.Logging || // Database
         _.isUndefined(app.Config.apiKeys.watson.alchemy) || // configuration object
-        !_.isString(app.Config.apiKeys.watson.alchemy.apikey) || _.isEmpty(app.Config.apiKeys.watson.alchemy.apikey) // configuration key
+        !_.isString(app.Config.apiKeys.watson.alchemy.username) || _.isEmpty(app.Config.apiKeys.watson.alchemy.username) ||
+        !_.isString(app.Config.apiKeys.watson.alchemy.password) || _.isEmpty(app.Config.apiKeys.watson.alchemy.password) // configuration key
     ) return scriptInfo;
 
     // Space helper

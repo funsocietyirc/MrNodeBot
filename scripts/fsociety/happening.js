@@ -5,13 +5,12 @@ const scriptInfo = {
     createdBy: 'IronY'
 };
 const _ = require('lodash');
+const logger = require('../../lib/logger');
 const moment = require('moment');
 const scheduler = require("../../lib/scheduler.js");
 
 // Extend moment with countdown
 require('moment-countdown');
-
-const getCountdown = (when) => moment(when).countdown();
 
 module.exports = app => {
     // No Configuration available, bail
@@ -22,6 +21,11 @@ module.exports = app => {
 
     // Format Countdown
     const getCountdown = (when) => moment(when).countdown();
+
+    // Build announcement message
+    const getCountdownMessage = (countdown) => `${countdown.who} ${_.sample(countdown.what)} ${getCountdown(countdown.when).toString()} on ${countdown.where}. `;
+
+    const isBefore = (countdown) => moment(countdown.when).isBefore(moment.now());
 
     // Process countdown objects
     const processCountdowns = (countdowns) => {
@@ -40,8 +44,11 @@ module.exports = app => {
                 !_.isObject(countdown.why)
             ) continue;
 
-            // Build announcement message
-            const getCountdownMessage = () => `${countdown.who} ${_.sample(countdown.what)} ${getCountdown(countdown.when).toString()} on ${countdown.where}`;
+            // The countdown has already happened
+            if (isBefore(countdown)) {
+                logger.error(`The ${countdown.who} countdown for ${countdown.when} has already occurred and was not loaded`);
+                continue;
+            }
 
             // Irc block present
             if (countdown.why.hasOwnProperty('irc') && _.isObject(countdown.why.irc)) _.each(countdown.why.irc, (v, k) => {
@@ -59,9 +66,9 @@ module.exports = app => {
                 if (_.isArray(v.announcements)) for (const announcement of v.announcements) {
                     scheduler.schedule(countdown.who + k, new scheduler.RecurrenceRule(announcement.year, announcement.month, announcement.date, announcement.dayOfWeek, announcement.hour, announcement.minute, announcement.second), () => {
                         // Not in channel
-                        if (!app._ircClient.isInChannel(k)) return;
+                        if (!app._ircClient.isInChannel(k) || isBefore(announcement)) return;
                         // Announce
-                        app.say(k, getCountdownMessage());
+                        app.say(k, getCountdownMessage(countdown).trim());
                     });
                 }
 
@@ -79,9 +86,8 @@ module.exports = app => {
         }
 
         let output = '';
-        _.each(announcements, announcement => {
-            output = output + `${announcement.who} ${_.sample(announcement.what)} ${getCountdown(announcement.when)} on ${announcement.where}. `;
-        });
+        _(announcements).filter(x => isBefore).each(announcement => output = output + getCountdownMessage(announcement));
+
         app.say(to, output.trim());
     };
 
