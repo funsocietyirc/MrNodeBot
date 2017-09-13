@@ -72,7 +72,7 @@ module.exports = app => {
             }
 
             nlu.analyze({
-                targets: data,
+                text: data.join(' '),
             }, (err, response) => {
                 console.dir(err);
                 console.dir(response);
