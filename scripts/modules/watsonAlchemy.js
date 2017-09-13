@@ -10,7 +10,8 @@ const logger = require('../../lib/logger');
 const Models = require('funsociety-bookshelf-model-loader');
 const helpers = require('../../helpers');
 const accounting = require('accounting-js');
-const AlchemyLanguageV1 = require('watson-developer-cloud/alchemy-language/v1');
+// const AlchemyLanguageV1 = require('watson-developer-cloud/alchemy-language/v1');
+const NaturalLanguageUnderstandingV1 = require('watson-developer-cloud/natural-language-understanding/v1.js');
 
 module.exports = app => {
 
@@ -23,12 +24,18 @@ module.exports = app => {
     // Space helper
     const space = ` ${typo.icons.sideArrow} `;
 
-    // Watson Alchemy Client
-    const aL = new AlchemyLanguageV1({
-        headers: {
-            'X-Watson-Learning-Opt-Out': true
-        },
-        api_key: app.Config.apiKeys.watson.alchemy.apikey
+    // // Watson Alchemy Client
+    // const aL = new AlchemyLanguageV1({
+    //     headers: {
+    //         'X-Watson-Learning-Opt-Out': true
+    //     },
+    //     api_key: app.Config.apiKeys.watson.alchemy.apikey
+    // });
+
+    const nlu = new NaturalLanguageUnderstandingV1({
+        username: app.Config.apiKeys.watson.alchemy.username,
+        password: app.Config.apiKeys.watson.alchemy.password,
+        version_date: NaturalLanguageUnderstandingV1.VERSION_DATE_2017_02_27
     });
 
     // Results Promise
@@ -49,6 +56,7 @@ module.exports = app => {
         channel = channel || to;
 
         try {
+            const results = await getResults(to, from, 150);
             // No Results available
             if (!results.length) {
                 app.say(to, 'I do not have have any data on this channel');
@@ -62,41 +70,48 @@ module.exports = app => {
                 return;
             }
 
-            // Run the Alchemy combined command
-            aL.combined({
-                text: data.join(' '),
-                //showSourceText: 1, // Show Source Text for debugging
-                extract: 'taxonomy,concept,doc-sentiment,doc-emotion'
+            nlu.analyze({
+                targets: data,
             }, (err, response) => {
-                // Issue with Alchemy Response
-                if (err || !response || response.status !== 'OK') {
-                    app.say(to, 'Something went wrong completing your combined command');
-                    logger.error('Sentiment Error', {
-                        message: err.message || '',
-                        stack: err.stack || '',
-                    });
-                    return;
-                }
-
-                // Prepare the concepts
-                let concepts = _.map(response.concepts, 'text').join(', ');
-
-                // Prepare the taxonomy
-                let taxonomy = [];
-                _(response.taxonomy).map('label').map(value => _.filter(value.split('/')), n => true).uniq().each(value => _.each(value, item => taxonomy.push(item)));
-
-                taxonomy = _.uniq(taxonomy).join(', ');
-
-                // Prepare the output
-                let output = `${channel} is interested in concepts like: ${concepts}`;
-                output = output + space + `Most of the time ${channel} is ${response.docSentiment.type}`;
-                output = output + space + `They are also interested in: ${taxonomy}`;
-                output = output + space + `The emotional state of ${channel} is: `;
-                _.each(response.docEmotions, (value, key) => output = output + ` ${_.capitalize(key)}: ${accounting.toFixed(value * 100, 0)}%`);
-
-                // Report back to IRC
-                app.say(to, output);
+                console.dir(err);
+                console.dir(response);
             });
+
+            // Run the Alchemy combined command
+            // aL.combined({
+            //     text: data.join(' '),
+            //     //showSourceText: 1, // Show Source Text for debugging
+            //     extract: 'taxonomy,concept,doc-sentiment,doc-emotion'
+            // }, (err, response) => {
+            //     // Issue with Alchemy Response
+            //     if (err || !response || response.status !== 'OK') {
+            //         app.say(to, 'Something went wrong completing your combined command');
+            //         logger.error('Sentiment Error', {
+            //             message: err.message || '',
+            //             stack: err.stack || '',
+            //         });
+            //         return;
+            //     }
+            //
+            //     // Prepare the concepts
+            //     let concepts = _.map(response.concepts, 'text').join(', ');
+            //
+            //     // Prepare the taxonomy
+            //     let taxonomy = [];
+            //     _(response.taxonomy).map('label').map(value => _.filter(value.split('/')), n => true).uniq().each(value => _.each(value, item => taxonomy.push(item)));
+            //
+            //     taxonomy = _.uniq(taxonomy).join(', ');
+            //
+            //     // Prepare the output
+            //     let output = `${channel} is interested in concepts like: ${concepts}`;
+            //     output = output + space + `Most of the time ${channel} is ${response.docSentiment.type}`;
+            //     output = output + space + `They are also interested in: ${taxonomy}`;
+            //     output = output + space + `The emotional state of ${channel} is: `;
+            //     _.each(response.docEmotions, (value, key) => output = output + ` ${_.capitalize(key)}: ${accounting.toFixed(value * 100, 0)}%`);
+            //
+            //     // Report back to IRC
+            //     app.say(to, output);
+            // });
 
         }
         catch (err) {
@@ -134,43 +149,43 @@ module.exports = app => {
                 return;
             }
 
-            // Send To Alchemy
-            aL.combined({
-                text: data.join('. '),
-                //showSourceText: 1, // Show Source Text for debugging
-                extract: 'taxonomy,concept,doc-sentiment,doc-emotion'
-            }, (err, response) => {
-                if (err || !response || response.status !== 'OK') {
-                    app.say(to, 'Something went wrong completing your combined command');
-                    logger.error('Sentiment Error', {
-                        message: err.message || '',
-                        stack: err.stack || '',
-                    });
-                    return;
-                }
-
-                // Prepare the concepts
-                let concepts = _.map(response.concepts, 'text').join(', ');
-
-                // Prepare the taxonomy
-                const taxonomy = [];
-                _(response.taxonomy).map('label').map(value => _.filter(value.split('/')), n => true).uniq().each(value => _.each(value, item => taxonomy.push(item)));
-
-                // Filter the taxonomy down to unique, join into string
-                const taxonomyResults = _.uniq(taxonomy).join(', ');
-
-                // Prepare the output
-                let output = `${nick} is interested in concepts like: ${concepts}`;
-                output = output + space + `Most of the time ${nick} is ${response.docSentiment.type}`;
-                output = output + space + `They are also interested in: ${taxonomyResults}`;
-                output = output + space + `Their emotional state is: `;
-
-                // Iterate and append results
-                _.each(response.docEmotions, (value, key) => output = output + ` ${_.capitalize(key)}: ${accounting.toFixed(value * 100, 0)}%`);
-
-                // Report back to IRC
-                app.say(to, output);
-            });
+            // // Send To Alchemy
+            // aL.combined({
+            //     text: data.join('. '),
+            //     //showSourceText: 1, // Show Source Text for debugging
+            //     extract: 'taxonomy,concept,doc-sentiment,doc-emotion'
+            // }, (err, response) => {
+            //     if (err || !response || response.status !== 'OK') {
+            //         app.say(to, 'Something went wrong completing your combined command');
+            //         logger.error('Sentiment Error', {
+            //             message: err.message || '',
+            //             stack: err.stack || '',
+            //         });
+            //         return;
+            //     }
+            //
+            //     // Prepare the concepts
+            //     let concepts = _.map(response.concepts, 'text').join(', ');
+            //
+            //     // Prepare the taxonomy
+            //     const taxonomy = [];
+            //     _(response.taxonomy).map('label').map(value => _.filter(value.split('/')), n => true).uniq().each(value => _.each(value, item => taxonomy.push(item)));
+            //
+            //     // Filter the taxonomy down to unique, join into string
+            //     const taxonomyResults = _.uniq(taxonomy).join(', ');
+            //
+            //     // Prepare the output
+            //     let output = `${nick} is interested in concepts like: ${concepts}`;
+            //     output = output + space + `Most of the time ${nick} is ${response.docSentiment.type}`;
+            //     output = output + space + `They are also interested in: ${taxonomyResults}`;
+            //     output = output + space + `Their emotional state is: `;
+            //
+            //     // Iterate and append results
+            //     _.each(response.docEmotions, (value, key) => output = output + ` ${_.capitalize(key)}: ${accounting.toFixed(value * 100, 0)}%`);
+            //
+            //     // Report back to IRC
+            //     app.say(to, output);
+            // });
 
         }
         catch (err) {
