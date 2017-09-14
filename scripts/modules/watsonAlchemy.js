@@ -72,7 +72,7 @@ module.exports = app => {
             }
 
             nlu.analyze({
-                text: data.join(' '),
+                text: data.join('.'),
                 features: {
                     'entities': {
                         'emotion': true,
