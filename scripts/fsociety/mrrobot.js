@@ -81,7 +81,7 @@ module.exports = app => {
             try {
                 const result = await quoteModel.query(qb => qb.select(['quote']).where('quote', 'like', text).limit(1)).fetch();
             } catch (err) {
-                // Problem communicaiting with the Database
+                // Problem communicating with the Database
                 logger.error(`Error getting result from DB in MrRobotQuote`, {
                     message: err.message || '',
                     stack: err.stack || ''

@@ -59,16 +59,19 @@ const getDocuments = async (results, userAgent, maxLength) => {
             xray(response.body, 'title')((err, title) => {
                 if (err || !title) {
                     // Something actually went wrong
-                    if (err) logger.warn('Error in XRAY URL Chain', {
-                        err
-                    });
+                    if (err) return reject(err);
+
                     return resolve(finalResults);
                 }
                 // Set the Page Title
                 finalResults.title = helpers.StripNewLine(_.trim(title));
                 resolve(finalResults);
             });
-        });
+        })
+            .catch(err => {
+                finalResults.title = 'Invalid HTML document';
+                return finalResults;
+            });
 
     }
     catch (err) {

@@ -90,7 +90,7 @@ module.exports = app => {
         // Perform the database query
         let results = await Models.Logging.query(qb => {
             qb.select(['id', 'to', 'from', 'text'])
-            // Where the same channel the message is recieved from
+            // Where the same channel the message is received from
                 .where('to', to)
                 // Where the text is not another correction line
                 .andWhere('text', 'not like', `${triggerStart}/%`)
