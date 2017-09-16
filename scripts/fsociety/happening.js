@@ -25,9 +25,88 @@ module.exports = app => {
     // Build announcement message
     const getCountdownMessage = (countdown) => `${countdown.who} ${_.sample(countdown.what)} ${getCountdown(countdown.when).toString()} on ${countdown.where}. `;
 
+    // Check if countdown has already happened
     const isBefore = (countdown) => moment(countdown.when).isBefore(moment.now());
 
-    // Process countdown objects
+    /**
+     * Extract Twitter Configuration
+     * @param {Object} countdown
+     */
+    const extractTwitter = (countdown) => {
+        // Gate
+        if (!_.isArray(countdown.why.twitter.announcements)) return;
+
+        // Bind Announcements
+        for (const announcement of countdown.why.twitter.announcements) {
+            scheduler.schedule(
+                countdown.who + 'twitter',
+                new scheduler.RecurrenceRule(
+                    announcement.year,
+                    announcement.month,
+                    announcement.date,
+                    announcement.dayOfWeek,
+                    announcement.hour,
+                    announcement.minute,
+                    announcement.second
+                ), () => {
+                    app._twitterClient.post('statuses/update', {
+                        status: getCountdownMessage(countdown)
+                    }, (err, tweet, response) => {
+                        if (err) {
+                            logger.error(`Error posting ${countdown.who} to Twitter via countdown script`, {
+                                err
+                            });
+                            return;
+                        }
+                        logger.info(`Posting countdown announcement for ${countdown.who} to twitter`);
+                    });
+                });
+        }
+    };
+
+
+    /**
+     * Extract IRC Configuration
+     * @param {Object} countdown
+     */
+    const extractIRC = (countdown) => {
+        _.each(countdown.why.irc, (v, k) => {
+
+            // Assign Countdown message
+            channelAnnouncements.push({
+                who: countdown.who,
+                when: countdown.when,
+                what: countdown.what,
+                where: countdown.where,
+                channel: k,
+            });
+
+            // Gate
+            if (!_.isArray(v.announcements)) return;
+
+            _.each(v.announcements, (announcement) => {
+                // Bind announcements
+                scheduler.schedule(
+                    countdown.who + k,
+                    new scheduler.RecurrenceRule(
+                        announcement.year,
+                        announcement.month,
+                        announcement.date,
+                        announcement.dayOfWeek,
+                        announcement.hour,
+                        announcement.minute,
+                        announcement.second
+                    ), () => {
+                        // Not in channel
+                        if (!app._ircClient.isInChannel(k) || isBefore(announcement)) return;
+                        // Announce
+                        app.say(k, getCountdownMessage(countdown).trim());
+                    });
+            });
+        });
+    };
+
+// Process countdown objects
     const processCountdowns = (countdowns) => {
         if (!_.isArray(countdowns)) return;
 
@@ -49,30 +128,11 @@ module.exports = app => {
                 logger.error(`The ${countdown.who} countdown for ${countdown.when} has already occurred and was not loaded`);
                 continue;
             }
+            // Twitter block present / Twitter client exists
+            if (app._twitterClient && countdown.why.hasOwnProperty('twitter') && _.isObject(countdown.why.twitter)) extractTwitter(countdown);
 
             // Irc block present
-            if (countdown.why.hasOwnProperty('irc') && _.isObject(countdown.why.irc)) _.each(countdown.why.irc, (v, k) => {
-
-                // Assign Countdown message
-                channelAnnouncements.push({
-                    who: countdown.who,
-                    when: countdown.when,
-                    what: countdown.what,
-                    where: countdown.where,
-                    channel: k,
-                });
-
-                // Bind announcements
-                if (_.isArray(v.announcements)) for (const announcement of v.announcements) {
-                    scheduler.schedule(countdown.who + k, new scheduler.RecurrenceRule(announcement.year, announcement.month, announcement.date, announcement.dayOfWeek, announcement.hour, announcement.minute, announcement.second), () => {
-                        // Not in channel
-                        if (!app._ircClient.isInChannel(k) || isBefore(announcement)) return;
-                        // Announce
-                        app.say(k, getCountdownMessage(countdown).trim());
-                    });
-                }
-
-            });
+            if (countdown.why.hasOwnProperty('irc') && _.isObject(countdown.why.irc)) extractIRC(countdown);
         }
     };
 

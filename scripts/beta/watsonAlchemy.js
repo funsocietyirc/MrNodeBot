@@ -72,18 +72,22 @@ module.exports = app => {
             }
 
             nlu.analyze({
-                text: data.join('.'),
+                text: data.join(' '),
                 features: {
                     'entities': {
                         'emotion': true,
                         'sentiment': true,
                         'concepts': true,
+                        'limit': 5,
                     },
                     'keywords': {
                         'sentiment': true,
                         'emotion': true,
-                        'limit': 3
+                        'limit': 5
                     },
+                    'concepts': {
+                        'limit': 5
+                    }
                 }
             }, (err, response) => {
                 console.dir(err);
