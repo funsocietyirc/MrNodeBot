@@ -239,7 +239,7 @@ babel-runtime@^6.11.6, babel-runtime@^6.6.1:
     core-js "^2.4.0"
     regenerator-runtime "^0.10.0"
 
-babylon@~7.0.0-beta.19:
+babylon@7.0.0-beta.19:
   version "7.0.0-beta.19"
   resolved "https://registry.yarnpkg.com/babylon/-/babylon-7.0.0-beta.19.tgz#e928c7e807e970e0536b078ab3e0c48f9e052503"
 
@@ -312,18 +312,18 @@ bluebird@^3.1.5, bluebird@^3.4.3, bluebird@^3.4.6, bluebird@^3.5.0, bluebird@~3.
   resolved "https://registry.yarnpkg.com/bluebird/-/bluebird-3.5.0.tgz#791420d7f551eea2897453a8a77653f96606d67c"
 
 body-parser@^1.17.2:
-  version "1.18.0"
-  resolved "https://registry.yarnpkg.com/body-parser/-/body-parser-1.18.0.tgz#d3b224d467fa2ce8d43589c0245043267c093634"
+  version "1.18.1"
+  resolved "https://registry.yarnpkg.com/body-parser/-/body-parser-1.18.1.tgz#9c1629370bcfd42917f30641a2dcbe2ec50d4c26"
   dependencies:
     bytes "3.0.0"
-    content-type "~1.0.2"
+    content-type "~1.0.4"
     debug "2.6.8"
     depd "~1.1.1"
     http-errors "~1.6.2"
-    iconv-lite "0.4.18"
+    iconv-lite "0.4.19"
     on-finished "~2.3.0"
-    qs "6.5.0"
-    raw-body "2.3.1"
+    qs "6.5.1"
+    raw-body "2.3.2"
     type-is "~1.6.15"
 
 bookshelf-modelbase@^2.10.4:
@@ -763,6 +763,10 @@ content-security-policy-builder@1.1.0:
 content-type@^1.0.1, content-type@~1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/content-type/-/content-type-1.0.2.tgz#b7d113aee7a8dd27bd21133c4dc2529df1721eed"
+
+content-type@~1.0.4:
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/content-type/-/content-type-1.0.4.tgz#e138cc75e040c727b1966fe5e5f8c9aee256fe3b"
 
 cookie-signature@1.0.6:
   version "1.0.6"
@@ -1963,7 +1967,11 @@ i18next@^9.0.0:
   version "9.0.0"
   resolved "https://registry.yarnpkg.com/i18next/-/i18next-9.0.0.tgz#a89ab0481b5b6b3964f55b12f03de9063d8f4500"
 
-iconv-lite@0.4.18, iconv-lite@^0.4.18:
+iconv-lite@0.4.19:
+  version "0.4.19"
+  resolved "https://registry.yarnpkg.com/iconv-lite/-/iconv-lite-0.4.19.tgz#f7468f60135f5e5dad3399c0a81be9a1603a082b"
+
+iconv-lite@^0.4.18:
   version "0.4.18"
   resolved "https://registry.yarnpkg.com/iconv-lite/-/iconv-lite-0.4.18.tgz#23d8656b16aae6742ac29732ea8f0336a4789cf2"
 
@@ -2374,10 +2382,10 @@ jsbn@~0.1.0:
   resolved "https://registry.yarnpkg.com/jsbn/-/jsbn-0.1.1.tgz#a5e654c2e5a2deb5f201d96cefbca80c0ef2f513"
 
 jsdoc@^3.5.4:
-  version "3.5.4"
-  resolved "https://registry.yarnpkg.com/jsdoc/-/jsdoc-3.5.4.tgz#ceeef7c4bac4335cb10ff41e3a0f58939a534428"
+  version "3.5.5"
+  resolved "https://registry.yarnpkg.com/jsdoc/-/jsdoc-3.5.5.tgz#484521b126e81904d632ff83ec9aaa096708fa4d"
   dependencies:
-    babylon "~7.0.0-beta.19"
+    babylon "7.0.0-beta.19"
     bluebird "~3.5.0"
     catharsis "~0.8.9"
     escape-string-regexp "~1.0.5"
@@ -3455,6 +3463,10 @@ qs@6.5.0:
   version "6.5.0"
   resolved "https://registry.yarnpkg.com/qs/-/qs-6.5.0.tgz#8d04954d364def3efc55b5a0793e1e2c8b1e6e49"
 
+qs@6.5.1:
+  version "6.5.1"
+  resolved "https://registry.yarnpkg.com/qs/-/qs-6.5.1.tgz#349cdf6eef89ec45c12d7d5eb3fc0c870343a6d8"
+
 qs@~6.2.0:
   version "6.2.3"
   resolved "https://registry.yarnpkg.com/qs/-/qs-6.2.3.tgz#1cfcb25c10a9b2b483053ff39f5dfc9233908cfe"
@@ -3490,13 +3502,13 @@ range-parser@~1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/range-parser/-/range-parser-1.2.0.tgz#f49be6b487894ddc40dcc94a322f611092e00d5e"
 
-raw-body@2.3.1:
-  version "2.3.1"
-  resolved "https://registry.yarnpkg.com/raw-body/-/raw-body-2.3.1.tgz#30f95e2a67a14e2e4413d8d51fdd92c877e8f2ed"
+raw-body@2.3.2:
+  version "2.3.2"
+  resolved "https://registry.yarnpkg.com/raw-body/-/raw-body-2.3.2.tgz#bcd60c77d3eb93cde0050295c3f379389bc88f89"
   dependencies:
     bytes "3.0.0"
     http-errors "1.6.2"
-    iconv-lite "0.4.18"
+    iconv-lite "0.4.19"
     unpipe "1.0.0"
 
 rc@^1.0.1, rc@^1.1.6, rc@^1.1.7:
@@ -4226,8 +4238,8 @@ sprintf-js@~1.0.2:
   resolved "https://registry.yarnpkg.com/sprintf-js/-/sprintf-js-1.0.3.tgz#04e6926f662895354f3dd015203633b857297e2c"
 
 sqlite3@^3.1.9:
-  version "3.1.10"
-  resolved "https://registry.yarnpkg.com/sqlite3/-/sqlite3-3.1.10.tgz#b1f10dfc5d487b079fda2f34fbf60cbaf6d92ad3"
+  version "3.1.11"
+  resolved "https://registry.yarnpkg.com/sqlite3/-/sqlite3-3.1.11.tgz#84421b181b3e9f4939b7a3d712263d7946cfc96d"
   dependencies:
     nan "~2.7.0"
     node-pre-gyp "~0.6.37"
@@ -4774,8 +4786,10 @@ window-size@^0.2.0:
   resolved "https://registry.yarnpkg.com/window-size/-/window-size-0.2.0.tgz#b4315bb4214a3d7058ebeee892e13fa24d98b075"
 
 winston-daily-rotate-file@^1.4.6:
-  version "1.4.6"
-  resolved "https://registry.yarnpkg.com/winston-daily-rotate-file/-/winston-daily-rotate-file-1.4.6.tgz#f204b6ada19a5386fdf52fe997d8e10e43ff7788"
+  version "1.7.0"
+  resolved "https://registry.yarnpkg.com/winston-daily-rotate-file/-/winston-daily-rotate-file-1.7.0.tgz#6082c70e0cb9e07c9c2c2add1740ce9bb2905eac"
+  dependencies:
+    mkdirp "0.5.1"
 
 winston-logio-mirror@^0.3.0:
   version "0.3.0"

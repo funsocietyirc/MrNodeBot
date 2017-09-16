@@ -28,6 +28,21 @@ module.exports = app => {
     // Check if countdown has already happened
     const isBefore = (countdown) => moment(countdown.when).isBefore(moment.now());
 
+    // Load an announcement into a schedule
+    const scheduleLoader = (key, announcement, countdown, callback) => {
+        scheduler.schedule(
+            key,
+            new scheduler.RecurrenceRule(
+                announcement.year,
+                announcement.month,
+                announcement.date,
+                announcement.dayOfWeek,
+                announcement.hour,
+                announcement.minute,
+                announcement.second
+            ), callback);
+    };
+
     /**
      * Extract Twitter Configuration
      * @param {Object} countdown
@@ -37,21 +52,10 @@ module.exports = app => {
         if (!_.isArray(countdown.why.twitter.announcements)) return;
 
         // Bind Announcements
-        for (const announcement of countdown.why.twitter.announcements) {
-            scheduler.schedule(
-                countdown.who + 'twitter',
-                new scheduler.RecurrenceRule(
-                    announcement.year,
-                    announcement.month,
-                    announcement.date,
-                    announcement.dayOfWeek,
-                    announcement.hour,
-                    announcement.minute,
-                    announcement.second
-                ), () => {
-                    app._twitterClient.post('statuses/update', {
-                        status: getCountdownMessage(countdown)
-                    }, (err, tweet, response) => {
+        for (const announcement of countdown.why.twitter.announcements)
+            scheduleLoader(countdown.who + 'twitter', announcement, countdown, () =>
+                app._twitterClient.post('statuses/update', {status: getCountdownMessage(countdown)},
+                    (err, tweet, response) => {
                         if (err) {
                             logger.error(`Error posting ${countdown.who} to Twitter via countdown script`, {
                                 err
@@ -59,9 +63,8 @@ module.exports = app => {
                             return;
                         }
                         logger.info(`Posting countdown announcement for ${countdown.who} to twitter`);
-                    });
-                });
-        }
+                    })
+            );
     };
 
 
@@ -84,29 +87,21 @@ module.exports = app => {
             // Gate
             if (!_.isArray(v.announcements)) return;
 
-            _.each(v.announcements, (announcement) => {
-                // Bind announcements
-                scheduler.schedule(
-                    countdown.who + k,
-                    new scheduler.RecurrenceRule(
-                        announcement.year,
-                        announcement.month,
-                        announcement.date,
-                        announcement.dayOfWeek,
-                        announcement.hour,
-                        announcement.minute,
-                        announcement.second
-                    ), () => {
-                        // Not in channel
-                        if (!app._ircClient.isInChannel(k) || isBefore(announcement)) return;
-                        // Announce
-                        app.say(k, getCountdownMessage(countdown).trim());
-                    });
-            });
+            _.each(v.announcements, (announcement) =>
+                scheduleLoader(countdown.who + k, announcement, countdown, () => {
+                    // Not in channel
+                    if (!app._ircClient.isInChannel(k) || isBefore(announcement)) return;
+                    // Announce
+                    app.say(k, getCountdownMessage(countdown).trim());
+                })
+            );
         });
     };
 
-// Process countdown objects
+    /**
+     * Process Configuration Object
+     * @param {Object[]} countdowns
+     */
     const processCountdowns = (countdowns) => {
         if (!_.isArray(countdowns)) return;
 
@@ -128,6 +123,7 @@ module.exports = app => {
                 logger.error(`The ${countdown.who} countdown for ${countdown.when} has already occurred and was not loaded`);
                 continue;
             }
+
             // Twitter block present / Twitter client exists
             if (app._twitterClient && countdown.why.hasOwnProperty('twitter') && _.isObject(countdown.why.twitter)) extractTwitter(countdown);
 
@@ -146,19 +142,21 @@ module.exports = app => {
         }
 
         let output = '';
-        _(announcements).filter(x => isBefore).each(announcement => output = output + getCountdownMessage(announcement));
+        _(announcements)
+            .filter(x => isBefore)
+            .each(announcement => output = getCountdownMessage(announcement) + output);
 
         app.say(to, output.trim());
     };
 
-    // IRC Command
+    // Register IRC Command
     app.Commands.set('happening', {
         desc: 'Mr. Robot Season 3 countdown',
         access: app.Config.accessLevels.identified,
         call: happening
     });
 
-    // Return the script info
+    // Expose Script Info
     return Object.assign({}, scriptInfo, {
         onLoad: processCountdowns(app.Config.features.countdowns),
         onUnload: () => channelAnnouncements.splice(0, channelAnnouncements.length)
