@@ -48,13 +48,16 @@ module.exports = app => {
      * @param {Object} countdown
      */
     const extractTwitter = (countdown) => {
+        const hashTags = _.isArray(countdown.why.twitter.hashtags) ? countdown.why.twitter.hashtags : [];
+
         // Gate
         if (!_.isArray(countdown.why.twitter.announcements)) return;
 
         // Bind Announcements
         for (const announcement of countdown.why.twitter.announcements)
-            scheduleLoader(countdown.who + 'twitter', announcement, countdown, () =>
-                app._twitterClient.post('statuses/update', {status: getCountdownMessage(countdown)},
+            scheduleLoader(countdown.who + 'twitter', announcement, countdown, () => {
+                logger.info(`Scheduled Twitter countdown message for ${countdown.who}`);
+                app._twitterClient.post('statuses/update', {status: `${getCountdownMessage(countdown)} ${hashTags.join(' ')}`.trim()},
                     (err, tweet, response) => {
                         if (err) {
                             logger.error(`Error posting ${countdown.who} to Twitter via countdown script`, {
@@ -63,8 +66,8 @@ module.exports = app => {
                             return;
                         }
                         logger.info(`Posting countdown announcement for ${countdown.who} to twitter`);
-                    })
-            );
+                    });
+            });
     };
 
 
@@ -87,14 +90,15 @@ module.exports = app => {
             // Gate
             if (!_.isArray(v.announcements)) return;
 
-            _.each(v.announcements, (announcement) =>
+            _.each(v.announcements, (announcement) => {
+                logger.info(`Scheduled countdown message for ${countdown.who} on ${k}`);
                 scheduleLoader(countdown.who + k, announcement, countdown, () => {
                     // Not in channel
                     if (!app._ircClient.isInChannel(k) || isBefore(announcement)) return;
                     // Announce
                     app.say(k, getCountdownMessage(countdown).trim());
-                })
-            );
+                });
+            });
         });
     };
 
@@ -104,6 +108,8 @@ module.exports = app => {
      */
     const processCountdowns = (countdowns) => {
         if (!_.isArray(countdowns)) return;
+
+        logger.info('Initializing Countdowns');
 
         // Iterate over countdowns
         for (const countdown of countdowns) {
@@ -123,6 +129,8 @@ module.exports = app => {
                 logger.error(`The ${countdown.who} countdown for ${countdown.when} has already occurred and was not loaded`);
                 continue;
             }
+
+            logger.info(`Loading Countdown: ${countdown.who}`);
 
             // Twitter block present / Twitter client exists
             if (app._twitterClient && countdown.why.hasOwnProperty('twitter') && _.isObject(countdown.why.twitter)) extractTwitter(countdown);
