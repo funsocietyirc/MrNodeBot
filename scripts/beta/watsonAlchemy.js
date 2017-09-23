@@ -5,13 +5,17 @@ const scriptInfo = {
     createdBy: 'IronY'
 };
 const _ = require('lodash');
+const rp = require('request-promise-native');
 const typo = require('../lib/_ircTypography');
 const logger = require('../../lib/logger');
 const Models = require('funsociety-bookshelf-model-loader');
 const helpers = require('../../helpers');
 const accounting = require('accounting-js');
+const moment = require('moment');
+
 // const AlchemyLanguageV1 = require('watson-developer-cloud/alchemy-language/v1');
 const NaturalLanguageUnderstandingV1 = require('watson-developer-cloud/natural-language-understanding/v1.js');
+const PersonalityInsightsV3 = require('watson-developer-cloud/personality-insights/v3');
 
 module.exports = app => {
 
@@ -39,6 +43,12 @@ module.exports = app => {
         version_date: NaturalLanguageUnderstandingV1.VERSION_DATE_2017_02_27
     });
 
+    const plu = new PersonalityInsightsV3({
+        username: app.Config.apiKeys.watson.personality.username,
+        password:  app.Config.apiKeys.watson.personality.password,
+        version_date: '2016-10-19'
+    });
+
     // Results Promise
     const getResults = (nick, channel, limit) =>
         Models.Logging.query(qb => qb
@@ -51,6 +61,61 @@ module.exports = app => {
             .limit(limit || 500)
         )
             .fetchAll();
+
+    const personality = async (to, from, text, message) => {
+        const [input] = text.split(' ');
+       const user  = input || from;
+        try {
+            const results = await Models.Logging.query(qb => qb
+                .select(['id', 'text', 'timestamp'])
+                .distinct('text')
+                .where('from', 'like', user)
+                .andWhere('text', 'not like', 's/%')
+                .orderBy('timestamp', 'desc')
+                .limit(1000)
+            )
+                .fetchAll();
+
+            if(!results.length) {
+                app.say(to, `I have no personality data for ${user}, ${from}`);
+                return;
+            }
+
+            const output = {
+                headers: { Accept: 'application/json' },
+                contentItems: [],
+            };
+
+            results.forEach(result => {
+                output.contentItems.push({
+                    content: result.attributes.text,
+                    contenttype: 'text/plain',
+                    created: result.attributes.timestamp,
+                    id: result.attributes.id,
+                    language: 'en'
+                });
+            });
+
+            console.dir(JSON.stringify(output));
+
+
+        } catch (err) {
+                app.say(to, `Something went wrong with the personality stuffs, ${from}`);
+                logger.error('Error In personality function of watsonAlchemy', {
+                    message: err.message || '',
+                    stack: err.stack || '',
+                });
+        }
+
+    };
+
+    // Register Command
+    app.Commands.set('personality', {
+        desc: '[Nick?] Get personality insights for use',
+        access: app.Config.accessLevels.admin,
+        call: personality
+    });
+
 
     const whatsUp = async (to, from, text, message) => {
         let [channel] = text.split('. ');
