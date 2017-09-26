@@ -44,3 +44,10 @@ patch:
         patched: '2017-06-30T22:26:06.281Z'
     - socket.io > socket.io-client > debug > ms:
         patched: '2017-05-23T21:00:06.210Z'
+  'npm:debug:20170905':
+    - x-ray > debug:
+        patched: '2017-09-26T23:25:12.104Z'
+    - helmet > connect > debug:
+        patched: '2017-09-26T23:25:12.104Z'
+    - helmet > connect > finalhandler > debug:
+        patched: '2017-09-26T23:25:12.104Z'
