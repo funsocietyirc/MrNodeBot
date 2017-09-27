@@ -61,7 +61,7 @@ module.exports = app => {
                 .findOrCreate({
                     from
                 }, {
-                    fired: 0,
+                    fired: 1,
                     hit: 0,
                 })
                 .then(result => {

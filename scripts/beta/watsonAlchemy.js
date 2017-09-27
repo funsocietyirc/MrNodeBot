@@ -136,24 +136,26 @@ module.exports = app => {
                 return;
             }
 
+            const nluConfig = {
+                'entities': {
+                    'emotion': true,
+                    'sentiment': true,
+                    'concepts': true,
+                    'limit': 5,
+                },
+                'keywords': {
+                    'sentiment': true,
+                    'emotion': true,
+                    'limit': 5
+                },
+                'concepts': {
+                    'limit': 5
+                }
+            };
+
             nlu.analyze({
                 text: data.join(' '),
-                features: {
-                    'entities': {
-                        'emotion': true,
-                        'sentiment': true,
-                        'concepts': true,
-                        'limit': 5,
-                    },
-                    'keywords': {
-                        'sentiment': true,
-                        'emotion': true,
-                        'limit': 5
-                    },
-                    'concepts': {
-                        'limit': 5
-                    }
-                }
+                features: nluConfig,
             }, (err, response) => {
                 console.dir(err);
                 console.dir(response);
