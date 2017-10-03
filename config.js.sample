@@ -261,6 +261,9 @@ module.exports = {
             titleMin: 35,
             cacheCleanup: {
                 minute: 0
+            },
+            chainingLimit: {
+                '#mrnodebot3': 2,
             }
         },
         fsociety: {

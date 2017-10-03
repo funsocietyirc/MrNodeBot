@@ -87,11 +87,18 @@ module.exports = app => {
 
     // Handler
     const listener = (to, from, text, message, is) => {
-        // Check to see if the user is ignored from url listening, good for bots that repete
+        // Check to see if the user is ignored from url listening, good for bots that repeat
         if (_.includes(userIgnore, from)) return;
 
+        // Set chaining limit
+        const limit = (
+            _.isObject(app.Config.features.urls.chainingLimit) &&
+            to in app.Config.features.urls.chainingLimit &&
+            _.isNumber(app.Config.features.urls.chainingLimit[to])
+        ) ? app.Config.features.urls.chainingLimit[to] : 0;
+
         // Url Processing chain
-        _(extractUrls(text))
+        _(extractUrls(text, limit))
             .uniq() // Assure No Duplicated URLS on the same line return multiple results
             .filter(url => url.match(/^(www|http[s]?)/im)) // Filter out undesired protocols
             .map(url => url.startsWith('http') ? url : `http://${url}`) // Does not start with a protocol, prepend http://
