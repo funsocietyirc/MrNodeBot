@@ -253,17 +253,33 @@ module.exports = {
             ignoredChannels: [],
         },
         urls: {
+            // Given User Agent
             userAgent: 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36',
+            // Maximum Content Length
             maxLength: 10485760,
+            // IRC channels to ignore logging from
             loggingIgnore: [],
+            // IRC channels to ignore announcements from
             announceIgnore: [],
+            // IRC channels to ignore unverified announces from
             unverifiedIgnore: [],
-            titleMin: 35,
+            // Default title announce max characters,
+            defaultTitleAnnounceMax: 255,
+            // Scheduler object for cache clean up
             cacheCleanup: {
                 minute: 0
             },
+            // Amount of URLS per line, 0 or nothing for no limit
             chainingLimit: {
                 '#mrnodebot3': 2,
+            },
+            // Amount of times to announce to channel, 0 or nothing for no limit
+            repostLimit: {
+                '#mrnodebot3': 2,
+            },
+            // Amount of characters to limit title to, 0 or nothing for no limit
+            titleMaxLimit: {
+                '#mrnodebot3': 255,
             }
         },
         fsociety: {

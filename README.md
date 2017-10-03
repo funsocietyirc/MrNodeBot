@@ -28,7 +28,7 @@ The bot currently depends on NickServ services supporting the ACC command for ce
 
 ## Install Steps
 -   Install Node Modules ```npm install```
--   Create a configuration file from a template ```cp config.js.sample config.js```
+-   Create a configuration file from a template ```cp config.sample.js config.js```
 -   Edit the configuration file
 -   Configure a database
     -   By default, the bot will use SQLite 3, ```npm install sqlite3```

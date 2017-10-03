@@ -175,13 +175,32 @@ module.exports = (results, app) => {
         }
     }
     // We have title
-    else if (results.title && results.title !== '') append(results.title);
+    else if (results.title && results.title !== '') {
+        // Format title and adjust length
+        append(
+            _.truncate(results.title, {
+                length: (
+                    _.isObject(app.Config.features.urls.titleMaxLimit) &&
+                    results.to in app.Config.features.urls.titleMaxLimit &&
+                    Number.isInteger(app.Config.features.urls.titleMaxLimit[results.to]) &&
+                    app.Config.features.urls.titleMaxLimit[results.to] !== 0
+                ) ?
+                    app.Config.features.urls.titleMaxLimit[results.to] :
+                    (
+                        _.isNumber(app.Config.features.urls.defaultTitleAnnounceMax) ?
+                            app.Config.features.urls.defaultTitleAnnounceMax :
+                            255
+                    )
+            })
+        );
+    }
     // We have nothing but the malicious data
     else if (results.threats.length) append(`posted a malicious Link`);
     // Finished
     let finalOutput = output ? `${c[results.cached ? 'green' : 'red']('*')} ${results.from} ${icons.sideArrow} ` + output : '';
 
     if (_.isEmpty(finalOutput)) return;
+
 
     // Report back to IRC
     app.say(results.to, finalOutput);
