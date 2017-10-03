@@ -73,7 +73,20 @@ module.exports = app => {
                         getShorten(results) // Otherwise grab the google SHORT Url
                             .then(matcher) // Then send it to the regex matcher
                     ))
-            .then(sendToIrc) // Send Results to IRC
+            .then(results => {
+                // Check to see if there is a re-post limit
+                if (
+                    _.isObject(app.Config.features.urls.repostLimit) &&
+                    to in app.Config.features.urls.repostLimit &&
+                    Number.isInteger(app.Config.features.urls.repostLimit[to]) &&
+                    results.history.length >= app.Config.features.urls.repostLimit[to]
+                ) {
+                    return results;
+                }
+
+                // There is not a re-post limit
+                return sendToIrc(results);
+            }) // Send Results to IRC
             .then(results => results.unreachable ? results : // If the site is unreachable, carry on in chain
                 sendToDb(results) // Otherwise Log To Database
                     .then(results => sendToSocket(app, results)) // Then broadcast to socketio

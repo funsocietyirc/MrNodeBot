@@ -33,6 +33,7 @@ const getDocuments = async (results, userAgent, maxLength) => {
         const documentCheck = await validDocument(results.url, userAgent);
 
         if (documentCheck.headers['content-length'] > maxLength || !documentCheck.headers.hasOwnProperty('content-type') || !_.includes(documentCheck.headers['content-type'], 'text/html')) {
+            // TODO create a 'quite' mode on content-type discrepancies and content-length thresholds
             return Object.assign({}, results, {
                 headers: documentCheck.headers,
                 realUrl: documentCheck.request.uri.href,
