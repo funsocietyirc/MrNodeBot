@@ -103,6 +103,11 @@ module.exports = app => {
         // Check to see if the user is ignored from url listening, good for bots that repeat
         if (_.includes(userIgnore, from)) return;
 
+        if (to === from) {
+            app.say(from, `You cannot paste me URLS ${from}, if you register with NickServ you can use the url command how ever.`);
+            return;
+        }
+
         // Set chaining limit
         const limit = (
             _.isObject(app.Config.features.urls.chainingLimit) &&
