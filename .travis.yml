@@ -9,7 +9,7 @@ env:
 before_install:
   - sudo apt-get -y install libicu-dev
   - npm install -g npm
-  - cp config.js.sample config.js
+  - cp config.sample.js config.js
 script:
   - "npm test"
 notifications:

@@ -11,7 +11,7 @@ module.exports = app => {
     // Log nick changes in the alias table
     if (!Models.Alias) return;
 
-    const aka = async (to, from, test, message) => {
+    const aka = async (to, from, text, message) => {
         if (!text) {
             app.say(to, `No one is no one is no one...`);
             return;
