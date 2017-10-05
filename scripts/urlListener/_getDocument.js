@@ -14,7 +14,8 @@ const validDocument = async (url, userAgent) => rp({
     method: 'HEAD',
     headers: {
         // Fake user agent so we get HTML responses
-        'User-Agent': userAgent
+        'User-Agent': userAgent,
+        'Accept-Language': 'en',
     }
 });
 
@@ -24,7 +25,8 @@ const getDocument = async (url, userAgent) => rp({
     resolveWithFullResponse: true,
     headers: {
         // Fake user agent so we get HTML responses
-        'User-Agent': userAgent
+        'User-Agent': userAgent,
+        'Accept-Language': 'en',
     }
 });
 
