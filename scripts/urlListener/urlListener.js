@@ -79,7 +79,8 @@ module.exports = app => {
                     _.isObject(app.Config.features.urls.repostLimit) &&
                     to in app.Config.features.urls.repostLimit &&
                     Number.isInteger(app.Config.features.urls.repostLimit[to]) &&
-                    results.history.length >= app.Config.features.urls.repostLimit[to]
+                    results.history.length >= app.Config.features.urls.repostLimit[to] &&
+                    results.history.filter(x => x.to === to).length > 0
                 ) {
                     return results;
                 }
