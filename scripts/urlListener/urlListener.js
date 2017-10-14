@@ -119,6 +119,7 @@ module.exports = app => {
         // Url Processing chain
         _(extractUrls(text, limit))
             .uniq() // Assure No Duplicated URLS on the same line return multiple results
+            .map(url => url.toLowerCase()) // Normalize case
             .filter(url => url.match(/^(www|http[s]?)/im)) // Filter out undesired protocols
             .map(url => url.startsWith('http') ? url : `http://${url}`) // Does not start with a protocol, prepend http://
             .each(url => processUrl(url, to, from, text, message, is));
