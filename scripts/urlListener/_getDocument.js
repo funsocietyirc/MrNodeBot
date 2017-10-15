@@ -31,23 +31,23 @@ const getDocument = async (url, userAgent) => rp({
 });
 
 const getDocuments = async (results, userAgent, maxLength) => {
-    // const documentCheck = await validDocument(results.url, userAgent);
-    //
-    // // TODO Sometimes head requests do not work
-    // if (
-    //     documentCheck.headers['content-length'] > maxLength ||
-    //     !documentCheck.headers.hasOwnProperty('content-type') ||
-    //     !_.includes(documentCheck.headers['content-type'], 'text/html')
-    // ) {
-    //     // TODO create a 'quite' mode on content-type discrepancies and content-length thresholds
-    //     return Object.assign({}, results, {
-    //         headers: documentCheck.headers,
-    //         realUrl: documentCheck.request.uri.href,
-    //         statusCode: (_.isUndefined(documentCheck) || _.isUndefined(documentCheck.statusCode)) ? 'No Status' : documentCheck.statusCode,
-    //         title: `${documentCheck.headers['content-type'].toUpperCase()} Document, ${helpers.formatNumber(documentCheck.headers['content-length'] || 0)} bytes`,
-    //         overLength: true,
-    //     });
-    // }
+    const documentCheck = await validDocument(results.url, userAgent);
+
+    // TODO Sometimes head requests do not work
+    if (
+        documentCheck.headers['content-length'] > maxLength ||
+        !documentCheck.headers.hasOwnProperty('content-type') ||
+        !_.includes(documentCheck.headers['content-type'], 'text/html')
+    ) {
+        // TODO create a 'quite' mode on content-type discrepancies and content-length thresholds
+        return Object.assign({}, results, {
+            headers: documentCheck.headers,
+            realUrl: documentCheck.request.uri.href,
+            statusCode: (_.isUndefined(documentCheck) || _.isUndefined(documentCheck.statusCode)) ? 'No Status' : documentCheck.statusCode,
+            title: `${documentCheck.headers['content-type'].toUpperCase()} Document, ${helpers.formatNumber(documentCheck.headers['content-length'] || 0)} bytes`,
+            overLength: true,
+        });
+    }
 
     try {
         // Get the document
