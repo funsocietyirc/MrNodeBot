@@ -5,11 +5,11 @@ ignore:
   'npm:qs:20170213':
     - x-ray > x-ray-crawler > superagent > qs:
         reason: None available
-        expires: '2017-07-30T22:27:04.602Z'
+        expires: '2017-12-10T06:21:14.298Z'
   'npm:shelljs:20140723':
     - shelljs:
         reason: None available
-        expires: '2017-07-30T22:27:04.602Z'
+        expires: '2017-12-10T06:21:14.298Z'
   'npm:brace-expansion:20170302':
     - node-pre-gyp > tar > fstream > rimraf > glob > minimatch > brace-expansion:
         reason: None available
@@ -33,6 +33,24 @@ ignore:
     - i18next-sync-fs-backend > codecov > request > tunnel-agent:
         reason: None given
         expires: '2017-08-21T20:10:40.871Z'
+      funsociety-irc-rss-feed-emitter > request > tunnel-agent:
+        reason: None given
+        expires: '2017-12-10T06:21:14.298Z'
+  'npm:mime:20170907':
+    - x-ray > x-ray-crawler > superagent > mime:
+        reason: None given
+        expires: '2017-12-10T06:21:14.298Z'
+  'npm:superagent:20170807':
+    - x-ray > x-ray-crawler > superagent:
+        reason: None given
+        expires: '2017-12-10T06:21:14.298Z'
+  'npm:ws:20171108':
+    - socket.io > engine.io > ws:
+        reason: None given
+        expires: '2017-12-10T06:21:14.298Z'
+    - socket.io > socket.io-client > engine.io-client > ws:
+        reason: None given
+        expires: '2017-12-10T06:21:14.298Z'
 # patches apply the minimum changes required to fix a vulnerability
 patch:
   'npm:ms:20170412':
