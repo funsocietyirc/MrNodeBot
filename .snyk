@@ -32,8 +32,8 @@ ignore:
   'npm:tunnel-agent:20170305':
     - i18next-sync-fs-backend > codecov > request > tunnel-agent:
         reason: None given
-        expires: '2017-08-21T20:10:40.871Z'
-      funsociety-irc-rss-feed-emitter > request > tunnel-agent:
+        expires: '2017-12-19T07:46:19.934Z'
+    - funsociety-irc-rss-feed-emitter > request > tunnel-agent:
         reason: None given
         expires: '2017-12-10T06:21:14.298Z'
   'npm:mime:20170907':
@@ -56,15 +56,19 @@ patch:
   'npm:ms:20170412':
     - x-ray > debug > ms:
         patched: '2017-06-30T22:26:06.281Z'
+      x-ray > x-ray-crawler > ms:
+        patched: '2017-11-19T07:45:36.397Z'
     - x-ray > x-ray-crawler > ms:
         patched: '2017-06-30T22:26:06.281Z'
+      x-ray > debug > ms:
+        patched: '2017-11-19T07:45:36.397Z'
     - socket.io > socket.io-adapter > debug > ms:
         patched: '2017-06-30T22:26:06.281Z'
     - socket.io > socket.io-client > debug > ms:
         patched: '2017-05-23T21:00:06.210Z'
   'npm:debug:20170905':
     - x-ray > debug:
-        patched: '2017-09-26T23:25:12.104Z'
+        patched: '2017-11-19T07:45:36.397Z'
     - helmet > connect > debug:
         patched: '2017-09-26T23:25:12.104Z'
     - helmet > connect > finalhandler > debug:
