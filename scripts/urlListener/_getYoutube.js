@@ -1,11 +1,9 @@
-'use strict';
-
 const _ = require('lodash');
 const gen = require('../generators/_youTubeVideoData');
 const apiKey = require('../../config').apiKeys.google;
 const logger = require('../../lib/logger');
 
-const getYoutube = async(key, list, index, seekTime, results) => {
+const getYoutube = async (key, list, index, seekTime, results) => {
     // No Key provided, return the results
     if (
         (!_.isString(key) || _.isEmpty(key)) &&
@@ -13,7 +11,7 @@ const getYoutube = async(key, list, index, seekTime, results) => {
     ) return results;
 
     // Normalize Helper
-    const numberOrZero = number => !isNaN(number) ? number : 0;
+    const numberOrZero = number => (!isNaN(number) ? number : 0);
 
     try {
         const result = await gen(apiKey, key, list);
@@ -34,7 +32,7 @@ const getYoutube = async(key, list, index, seekTime, results) => {
             const videoResults = result.videoResults[0];
 
             results.youTube.video = {
-                key: key,
+                key,
                 videoTitle: videoResults.snippet.title || '',
                 viewCount: numberOrZero(videoResults.statistics.viewCount),
                 likeCount: numberOrZero(videoResults.statistics.likeCount),
@@ -42,7 +40,7 @@ const getYoutube = async(key, list, index, seekTime, results) => {
                 commentCount: numberOrZero(videoResults.statistics.commentCount),
                 channelTitle: videoResults.snippet.channelTitle || '',
                 restrictions: _.isObject(videoResults.contentDetails.regionRestriction),
-                embeddable: _.isObject(videoResults.status) && videoResults.status.embeddable
+                embeddable: _.isObject(videoResults.status) && videoResults.status.embeddable,
             };
         }
 
@@ -60,13 +58,12 @@ const getYoutube = async(key, list, index, seekTime, results) => {
 
         // Return results
         return results;
-    }
-    catch (err) {
+    } catch (err) {
         logger.warn('Error in YouTube link function', {
             message: err.message || '',
             stack: err.stack,
         });
-       return results;
+        return results;
     }
 };
 

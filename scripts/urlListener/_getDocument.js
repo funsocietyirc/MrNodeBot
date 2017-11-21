@@ -1,5 +1,3 @@
-'use strict';
-
 const _ = require('lodash');
 const rp = require('request-promise-native');
 const xray = require('x-ray')();
@@ -16,7 +14,7 @@ const validDocument = async (url, userAgent) => rp({
         // Fake user agent so we get HTML responses
         'User-Agent': userAgent,
         'Accept-Language': 'en',
-    }
+    },
 });
 
 // Fetch the Document
@@ -27,7 +25,7 @@ const getDocument = async (url, userAgent) => rp({
         // Fake user agent so we get HTML responses
         'User-Agent': userAgent,
         'Accept-Language': 'en',
-    }
+    },
 });
 
 const getDocuments = async (results, userAgent, maxLength) => {
@@ -57,7 +55,7 @@ const getDocuments = async (results, userAgent, maxLength) => {
         const finalResults = Object.assign({}, results, {
             headers: response.headers,
             realUrl: response.request.uri.href,
-            statusCode: (_.isUndefined(response) || _.isUndefined(response.statusCode)) ? 'No Status' : response.statusCode
+            statusCode: (_.isUndefined(response) || _.isUndefined(response.statusCode)) ? 'No Status' : response.statusCode,
         });
 
         // No Response body
@@ -76,13 +74,11 @@ const getDocuments = async (results, userAgent, maxLength) => {
                 resolve(finalResults);
             });
         })
-            .catch(err => {
+            .catch((err) => {
                 finalResults.title = 'Invalid HTML document';
                 return finalResults;
             });
-
-    }
-    catch (err) {
+    } catch (err) {
         logger.warn('Error in URL Get Document function', {
             message: err.message || '',
             stack: err.stack || '',

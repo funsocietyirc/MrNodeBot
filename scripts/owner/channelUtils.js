@@ -1,14 +1,12 @@
-'use strict';
 const scriptInfo = {
     name: 'Channels',
     desc: 'Channel Utilities',
-    createdBy: 'IronY'
+    createdBy: 'IronY',
 };
 
 const _ = require('lodash');
 
-module.exports = app => {
-
+module.exports = (app) => {
     // Part Channel
     const part = (to, from, text, message) => {
         if (_.isEmpty(text)) {
@@ -31,7 +29,7 @@ module.exports = app => {
     app.Commands.set('part', {
         desc: 'part [channel] Part a channel',
         access: app.Config.accessLevels.owner,
-        call: part
+        call: part,
     });
 
     // Join Channel
@@ -56,7 +54,7 @@ module.exports = app => {
     app.Commands.set('join', {
         desc: 'join [channel] Join a channel',
         access: app.Config.accessLevels.owner,
-        call: join
+        call: join,
     });
 
     // OP Someone
@@ -74,14 +72,14 @@ module.exports = app => {
             return;
         }
         app._ircClient.send('mode', channel, '+o', nick);
-        app.say(from, 'I have given all the power to ' + nick + ' on ' + channel);
+        app.say(from, `I have given all the power to ${nick} on ${channel}`);
     };
 
     // Terminate the bot and the processes watcher that keeps it up
     app.Commands.set('op', {
         desc: 'op [channel] [nick] : Give someone all the powers..',
         access: app.Config.accessLevels.owner,
-        call: op
+        call: op,
     });
 
     // Return the script info

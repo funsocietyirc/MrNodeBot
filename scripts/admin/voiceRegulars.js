@@ -1,13 +1,12 @@
-'use strict';
 const scriptInfo = {
     name: 'Voice Regulars',
     desc: 'Voice users by participation',
-    createdBy: 'IronY'
+    createdBy: 'IronY',
 };
 const _ = require('lodash');
 const gen = require('../lib/_voiceUsersInChannel');
 
-module.exports = app => {
+module.exports = (app) => {
     // No Database
     if (!app.Database) return scriptInfo;
 
@@ -20,20 +19,19 @@ module.exports = app => {
         let thresh;
 
         switch (txtArray.length) {
-            case 1:
-                channel = _.isEmpty(txtArray[0]) ? to : txtArray[0];
-                thresh = threshold;
-                break;
-            case 2:
-                channel = txtArray[0];
-                thresh = txtArray[1] % 1 === 0 ? txtArray[1] : threshold;
-                break;
+        case 1:
+            channel = _.isEmpty(txtArray[0]) ? to : txtArray[0];
+            thresh = threshold;
+            break;
+        case 2:
+            channel = txtArray[0];
+            thresh = txtArray[1] % 1 === 0 ? txtArray[1] : threshold;
+            break;
         }
         try {
             const result = await gen(channel, thresh, app);
             app.say(from, result);
-        }
-        catch (err) {
+        } catch (err) {
             app.say(from, `Error ${err.message}`);
         }
     };
@@ -42,7 +40,7 @@ module.exports = app => {
     app.Commands.set('voice-regulars', {
         desc: '[Channel?] [Threshold?] Voice the regulars in a channel',
         access: app.Config.accessLevels.admin,
-        call: voiceRegulars
+        call: voiceRegulars,
     });
 
     // Return the script info

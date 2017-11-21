@@ -1,18 +1,17 @@
-'use strict';
 const scriptInfo = {
     name: 'Happening',
     desc: 'Channel countdowns',
-    createdBy: 'IronY'
+    createdBy: 'IronY',
 };
 const _ = require('lodash');
 const logger = require('../../lib/logger');
 const moment = require('moment');
-const scheduler = require("../../lib/scheduler.js");
+const scheduler = require('../../lib/scheduler.js');
 
 // Extend moment with countdown
 require('moment-countdown');
 
-module.exports = app => {
+module.exports = (app) => {
     // No Configuration available, bail
     if (!_.isArray(app.Config.features.countdowns)) return scriptInfo;
 
@@ -20,13 +19,13 @@ module.exports = app => {
     const channelAnnouncements = [];
 
     // Format Countdown
-    const getCountdown = (when) => moment(when).countdown();
+    const getCountdown = when => moment(when).countdown();
 
     // Build announcement message
-    const getCountdownMessage = (countdown) => `${countdown.who} ${_.sample(countdown.what)} ${getCountdown(countdown.when).toString()} on ${countdown.where}. `;
+    const getCountdownMessage = countdown => `${countdown.who} ${_.sample(countdown.what)} ${getCountdown(countdown.when).toString()} on ${countdown.where}. `;
 
     // Check if countdown has already happened
-    const isBefore = (countdown) => moment(countdown.when).isBefore(moment.now());
+    const isBefore = countdown => moment(countdown.when).isBefore(moment.now());
 
     // Load an announcement into a schedule
     const scheduleLoader = (key, announcement, countdown, callback) => {
@@ -39,8 +38,9 @@ module.exports = app => {
                 announcement.dayOfWeek,
                 announcement.hour,
                 announcement.minute,
-                announcement.second
-            ), callback);
+                announcement.second,
+            ), callback,
+        );
     };
 
     /**
@@ -54,20 +54,23 @@ module.exports = app => {
         if (!_.isArray(countdown.why.twitter.announcements)) return;
 
         // Bind Announcements
-        for (const announcement of countdown.why.twitter.announcements)
-            scheduleLoader(countdown.who + 'twitter', announcement, countdown, () => {
+        for (const announcement of countdown.why.twitter.announcements) {
+            scheduleLoader(`${countdown.who}twitter`, announcement, countdown, () => {
                 logger.info(`Scheduled Twitter countdown message for ${countdown.who}`);
-                app._twitterClient.post('statuses/update', {status: `${getCountdownMessage(countdown)} ${hashTags.join(' ')}`.trim()},
+                app._twitterClient.post(
+                    'statuses/update', { status: `${getCountdownMessage(countdown)} ${hashTags.join(' ')}`.trim() },
                     (err, tweet, response) => {
                         if (err) {
                             logger.error(`Error posting ${countdown.who} to Twitter via countdown script`, {
-                                err
+                                err,
                             });
                             return;
                         }
                         logger.info(`Posting countdown announcement for ${countdown.who} to twitter`);
-                    });
+                    },
+                );
             });
+        }
     };
 
 
@@ -77,7 +80,6 @@ module.exports = app => {
      */
     const extractIRC = (countdown) => {
         _.each(countdown.why.irc, (v, k) => {
-
             // Assign Countdown message
             channelAnnouncements.push({
                 who: countdown.who,
@@ -113,7 +115,6 @@ module.exports = app => {
 
         // Iterate over countdowns
         for (const countdown of countdowns) {
-
             // Invalid object, bail
             if (
                 !_.isObject(countdown) ||
@@ -161,12 +162,12 @@ module.exports = app => {
     app.Commands.set('happening', {
         desc: 'Mr. Robot Season 3 countdown',
         access: app.Config.accessLevels.identified,
-        call: happening
+        call: happening,
     });
 
     // Expose Script Info
     return Object.assign({}, scriptInfo, {
         onLoad: processCountdowns(app.Config.features.countdowns),
-        onUnload: () => channelAnnouncements.splice(0, channelAnnouncements.length)
+        onUnload: () => channelAnnouncements.splice(0, channelAnnouncements.length),
     });
 };

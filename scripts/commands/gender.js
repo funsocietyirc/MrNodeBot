@@ -1,8 +1,7 @@
-'use strict';
 const scriptInfo = {
     name: 'Guess Sex',
     desc: 'Guess the sex of a user based on their chat history',
-    createdBy: 'IronY'
+    createdBy: 'IronY',
 };
 
 // Original concept credited to http://www.hackerfactor.com/GenderGuesser.php
@@ -15,7 +14,7 @@ const Models = require('funsociety-bookshelf-model-loader');
 
 const sampleSize = 1000;
 
-module.exports = app => {
+module.exports = (app) => {
     if (!Models.Logging) return scriptInfo;
 
     const getResults = async (nick) => {
@@ -25,8 +24,7 @@ module.exports = app => {
                     .select(['text'])
                     .where('from', 'like', nick)
                     .orderBy('id', 'desc')
-                    .limit(sampleSize)
-            )
+                    .limit(sampleSize))
             .fetchAll();
 
         return getSexGuess(results.pluck('text').join(' '));
@@ -52,8 +50,7 @@ module.exports = app => {
                 `${t.sex} ${t.weak ? ` ${type.icons.sideArrow} (EU?)` : ''}`;
 
             app.say(to, buffer);
-        }
-        catch (err) {
+        } catch (err) {
             logger.error('Guess Sex Error', {
                 message: err.message || '',
                 stack: err.stack || '',
@@ -66,7 +63,7 @@ module.exports = app => {
     app.Commands.set('gender', {
         call: displaySexGuess,
         desc: '[Nick?] Guess the sex of the user',
-        access: app.Config.accessLevels.admin
+        access: app.Config.accessLevels.admin,
     });
 
     return scriptInfo;

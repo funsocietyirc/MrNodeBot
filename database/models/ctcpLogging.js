@@ -1,12 +1,11 @@
-'use strict';
 const Models = require('funsociety-bookshelf-model-loader');
 
 const CtcpLogging = Models.Base.extend({
     tableName: 'ctcpLogging',
     hasTimestamps: ['timestamp'],
-    soft: false
+    soft: false,
 });
 
 module.exports = {
-    CtcpLogging: Models.Bookshelf.model('ctcpLogging', CtcpLogging)
+    CtcpLogging: Models.Bookshelf.model('ctcpLogging', CtcpLogging),
 };

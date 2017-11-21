@@ -1,9 +1,8 @@
-'use strict';
 const scriptInfo = {
     name: 'dbSearch',
     desc: 'Provides some interaction with the message logging model, such has total messages, random line' +
     'and last mentioned',
-    createdBy: 'IronY'
+    createdBy: 'IronY',
 };
 const _ = require('lodash');
 const Moment = require('moment');
@@ -14,7 +13,7 @@ const logger = require('../../lib/logger');
 
 // Database Specific Commands
 // Commands: last-mentioned, random-line
-module.exports = app => {
+module.exports = (app) => {
     // Only enabled if there is a database available
     if (!Models.Logging) return scriptInfo;
 
@@ -26,16 +25,15 @@ module.exports = app => {
                 .where('to', '=', channel)
                 .count();
 
-            if(result === 0) {
+            if (result === 0) {
                 app.say(to, `I have no results for ${channel}, ${from}`);
                 return;
             }
 
             app.say(to, `Total Messages from ${channel}: ${accounting.formatNumber(result, {
-                precision: 0
+                precision: 0,
             })}`);
-        }
-        catch(err) {
+        } catch (err) {
             logger.error('Something went wrong in the total Command', {
                 message: err.message || '',
                 stack: err.stack || '',
@@ -48,18 +46,16 @@ module.exports = app => {
         try {
             const result = await Models
                 .Logging
-                .query(qb => {
+                .query((qb) => {
                     qb.select('from', 'text').where('to', to).orderByRaw('rand()').limit(1);
                     if (text) qb.andWhere('text', 'like', text);
                 })
                 .fetch();
 
             app.say(to, !result ?
-                `Nothing like that has ever been said in here... yet!` :
-                `${result.get('from')} : ${result.get('text')}`
-            );
-        }
-        catch (err) {
+                'Nothing like that has ever been said in here... yet!' :
+                `${result.get('from')} : ${result.get('text')}`);
+        } catch (err) {
             logger.error('Something went wrong in the randomLine Command', {
                 message: err.message || '',
                 stack: err.stack || '',
@@ -76,7 +72,7 @@ module.exports = app => {
         terms = _.without(terms.split('|'), '');
         nicks = !_.isUndefined(nicks) ? _.without(nicks.split('|'), '') : [];
         if (!terms.length) {
-            app.say(to, `You have not presented any search terms`);
+            app.say(to, 'You have not presented any search terms');
             return;
         }
 
@@ -85,8 +81,7 @@ module.exports = app => {
                 .query(qb => qb
                     .where('to', 'like', channel).andWhere(clause => terms.forEach(term => clause.andWhere('text', 'like', `%${term}%`)))
                     .andWhere(clause => nicks.forEach(nick => clause.andWhere('from', 'like', nick)))
-                    .orderBy('timestamp', 'desc')
-                )
+                    .orderBy('timestamp', 'desc'))
                 .fetchAll();
 
             if (!results.length) {
@@ -99,17 +94,16 @@ module.exports = app => {
 
             let delay = 0;
 
-            results.forEach(result => {
-                delay = delay + 1;
+            results.forEach((result) => {
+                delay += 1;
                 setTimeout(
                     () => app.say(from, `${result.attributes.from} ${Moment(result.attributes.timestamp).fromNow()} - ${result.attributes.text}`),
                     delay * 2000,
                     result,
-                    from
+                    from,
                 );
             });
-        }
-        catch (err) {
+        } catch (err) {
             logger.error('Error in searchTerms', {
                 message: err.message || '',
                 stack: err.stack || '',
@@ -122,7 +116,7 @@ module.exports = app => {
     app.Commands.set('search-terms', {
         desc: '[terms] [channel?] - Search Buffer by terms',
         access: app.Config.accessLevels.admin,
-        call: searchTerms
+        call: searchTerms,
     });
 
     const lastSaid = async (to, from, text, message) => {
@@ -137,8 +131,7 @@ module.exports = app => {
                     .where('to', 'like', to)
                     .andWhere('text', 'like', text)
                     .orderBy('id', 'desc')
-                    .limit(1)
-                )
+                    .limit(1))
                 .fetch();
 
             if (!result) {
@@ -146,8 +139,8 @@ module.exports = app => {
                 return;
             }
 
-            let resFrom = result.get('from');
-            let resTo = result.get('to');
+            const resFrom = result.get('from');
+            const resTo = result.get('to');
 
             if (resTo === resFrom) {
                 // The request is from the originator of the private message
@@ -155,9 +148,7 @@ module.exports = app => {
                 // Request is from someone other than who sent the message
                 else app.say(from, `You said "${result.get('text')}" ${Moment(result.get('timestamp')).fromNow()} in a private message`);
             } else app.say(to, `${resFrom} said "${result.get('text')}" on ${Moment(result.get('timestamp')).fromNow()} in this channel`);
-
-        }
-        catch (err) {
+        } catch (err) {
             logger.error('Something went wrong in the lastSaid Command', {
                 message: err.message || '',
                 stack: err.stack || '',
@@ -170,21 +161,21 @@ module.exports = app => {
     app.Commands.set('total', {
         desc: '[channel?] Get total amount of recorded messages for a channel',
         access: app.Config.accessLevels.identified,
-        call: total
+        call: total,
     });
 
     // random-line command
     app.Commands.set('random-line', {
         desc: '[Search Text?] Get a random line from the channel, accepts argument as search string',
         access: app.Config.accessLevels.identified,
-        call: randomLine
+        call: randomLine,
     });
 
     // last-mentioned command
     app.Commands.set('last-said', {
         desc: '[phrase] Get the last time a phrase was said',
         access: app.Config.accessLevels.identified,
-        call: lastSaid
+        call: lastSaid,
     });
 
     // Return the script info

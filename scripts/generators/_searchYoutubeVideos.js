@@ -1,13 +1,13 @@
-'use strict';
-
 const endPoint = 'https://www.googleapis.com/youtube/v3/search';
 const rp = require('request-promise-native');
 const logger = require('../../lib/logger');
 
 module.exports = async (apiKey, title) => {
-    if (!apiKey || !title) return {
-        items: []
-    };
+    if (!apiKey || !title) {
+        return {
+            items: [],
+        };
+    }
 
     try {
         // Fetch Results
@@ -20,20 +20,19 @@ module.exports = async (apiKey, title) => {
                 maxResults: 10,
                 key: apiKey,
             },
-            json: true
+            json: true,
         });
         return (!results || !results.items) ? {
-            items: []
+            items: [],
         } : {
             items: results.items.map(item => Object.assign({}, item.snippet, {
-                videoId: item.id.videoId
-            }))
+                videoId: item.id.videoId,
+            })),
         };
-
     } catch (err) {
         logger.log('Error in the youTube search generator');
         return {
-            items: []
+            items: [],
         };
     }
 };
@@ -211,4 +210,4 @@ module.exports = async (apiKey, title) => {
   ]
  }
 
- **/
+ * */

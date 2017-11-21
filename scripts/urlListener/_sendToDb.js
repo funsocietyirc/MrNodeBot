@@ -1,4 +1,3 @@
-'use strict';
 const _ = require('lodash');
 const Models = require('funsociety-bookshelf-model-loader');
 const logger = require('../../lib/logger');
@@ -8,22 +7,22 @@ const urlLoggerIgnore = config.features.urls.loggingIgnore || [];
 
 module.exports = async (results) => {
     // Ignore
-    let ignored = urlLoggerIgnore.some(hash => _.includes(hash, _.toLower(results.to)));
+    const ignored = urlLoggerIgnore.some(hash => _.includes(hash, _.toLower(results.to)));
 
     // Gate
     if (!Models.Url || ignored) return results;
 
-    let data = {
+    const data = {
         url: results.url,
         to: results.to,
         from: results.from,
-        title: results.title
+        title: results.title,
     };
 
     // If we have a google URL key
     if (!_.isUndefined(config.apiKeys.google) && _.isString(config.apiKeys.google) && !_.isEmpty(config.apiKeys.google))
     // And the threat array is not empty, record the link is malicious
-        data.threat = !_.isEmpty(results.threats);
+    { data.threat = !_.isEmpty(results.threats); }
 
     try {
         // Crate the record
@@ -36,7 +35,7 @@ module.exports = async (results) => {
         results.delivered.push({
             protocol: 'urlDatabase',
             recordId: results.id,
-            on: Date.now()
+            on: Date.now(),
         });
 
         // Log Youtube Video
@@ -61,16 +60,15 @@ module.exports = async (results) => {
                 protocol: 'youTubeDatabase',
                 recordId: youTubeRecord.id,
                 on: Date.now(),
-                id: record.id
+                id: record.id,
             });
         }
 
         return results;
-    }
-    catch (err) {
+    } catch (err) {
         logger.error('Error In the URL Listener logging function', {
             message: err.message || '',
-            stack: err.stack || ''
+            stack: err.stack || '',
         });
         return results;
     }

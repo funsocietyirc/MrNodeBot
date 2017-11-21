@@ -1,8 +1,7 @@
-'use strict';
 const scriptInfo = {
     name: 'Channel Token',
     desc: 'Give a IRC user a unique token that identifies them to a channel',
-    createdBy: 'IronY'
+    createdBy: 'IronY',
 };
 const moment = require('moment');
 const Models = require('funsociety-bookshelf-model-loader');
@@ -10,7 +9,7 @@ const logger = require('../../lib/logger');
 const randToken = require('rand-token');
 const scheduler = require('../../lib/scheduler');
 
-module.exports = app => {
+module.exports = (app) => {
     // Log nick changes in the alias table
     if (!Models.Token) return;
 
@@ -20,9 +19,9 @@ module.exports = app => {
     // Go through the users tokens and remove them if they are over a week old
     const cleanTokens = scheduler.schedule('cleanTokens', {
         hour: 0,
-        minute: 0
+        minute: 0,
     }, async () => {
-        let now = moment();
+        const now = moment();
 
         try {
             const results = await tokenModel.fetchAll();
@@ -32,8 +31,7 @@ module.exports = app => {
                 const deleted = await result.destroy();
                 logger.info(`User Token for ${result.attributes.user} on ${result.attributes.channel} has been removed`);
             });
-        }
-        catch (err) {
+        } catch (err) {
             logger.error('Error In removing a user token', {
                 message: err.message || '',
                 stack: err.stack || '',
@@ -45,7 +43,7 @@ module.exports = app => {
     const getNickByTokenApi = async (req, res) => {
         const error = {
             status: 'error',
-            result: null
+            result: null,
         };
 
         const token = req.body.token;
@@ -58,18 +56,16 @@ module.exports = app => {
                 .query(qb =>
                     qb
                         .where('token', token)
-                        .select(['user', 'channel', 'timestamp'])
-                )
+                        .select(['user', 'channel', 'timestamp']))
                 .fetch();
 
             if (!result) return res.json(error);
 
             res.json({
                 status: 'success',
-                result: result
+                result,
             });
-        }
-        catch (err) {
+        } catch (err) {
             logger.error('Something went wrong in getNickByTokenApi', {
                 message: err.message || '',
                 stack: err.stack || '',
@@ -83,7 +79,7 @@ module.exports = app => {
         handler: getNickByTokenApi,
         desc: 'Handle File Upload',
         path: '/api/getNickByToken',
-        verb: 'post'
+        verb: 'post',
     });
 
     // Register a user to a token
@@ -101,8 +97,7 @@ module.exports = app => {
                 .query(qb =>
                     qb
                         .where('user', from)
-                        .where('channel', to)
-                )
+                        .where('channel', to))
                 .fetch();
 
             // If no previous tokens exist
@@ -110,7 +105,7 @@ module.exports = app => {
                 await tokenModel.create({
                     user: from,
                     channel: to,
-                    token: token
+                    token,
                 });
                 app.say(to, `Your token has been safely private messaged to you ${from}`);
                 app.say(from, `Your new token for ${to} is ${token}, it will expire in 7 days`);
@@ -123,16 +118,15 @@ module.exports = app => {
                         channel: to,
                     })
                     .save({
-                        token: token,
+                        token,
                         timestamp: Models.Bookshelf.knex.fn.now(),
                     }, {
-                        patch: true
+                        patch: true,
                     });
 
-                app.say(from, `Your new token for ${to} is ${token}`)
+                app.say(from, `Your new token for ${to} is ${token}`);
             }
-        }
-        catch (err) {
+        } catch (err) {
             logger.error('Something went wrong generating a web token', {
                 message: err.message || '',
                 stack: err.stack || '',
@@ -145,7 +139,7 @@ module.exports = app => {
     app.Commands.set('token', {
         desc: 'Get a unique token for uploading images to file',
         access: app.Config.accessLevels.identified,
-        call: registerToken
+        call: registerToken,
     });
 
     return scriptInfo;

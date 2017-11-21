@@ -1,27 +1,27 @@
-'use strict';
 const scriptInfo = {
     name: 'tell',
     desc: 'Have the Bot give a channel or user a message',
-    createdBy: 'IronY'
+    createdBy: 'IronY',
 };
 const _ = require('lodash');
 const t = require('../../lib/localize');
 // Localizations
 const i18next = require('../../lib/i18next');
+
 i18next.addResources('en', 'tell', {
     help: 'tell [nick] [message] : Reach out and touch somebody',
-    reportBack: 'I have told {{- nick} {{- body}}}'
+    reportBack: 'I have told {{- nick} {{- body}}}',
 });
 
-module.exports = app => {
+module.exports = (app) => {
     const tell = (to, from, text, message) => {
-        let textArray = text.split(' ');
-        let [nick] = textArray;
-        let body = _.without(textArray, nick).join(' ');
+        const textArray = text.split(' ');
+        const [nick] = textArray;
+        const body = _.without(textArray, nick).join(' ');
 
         if (!nick || !body) {
             app.say(to, t('errors.information', {
-                nick: to
+                nick: to,
             }));
             return;
         }
@@ -29,16 +29,18 @@ module.exports = app => {
         app.say(nick, body);
 
         // Report back
-        if (nick !== to) app.say(t('tell:reportBack', {
-            nick,
-            body
-        }));
+        if (nick !== to) {
+            app.say(t('tell:reportBack', {
+                nick,
+                body,
+            }));
+        }
     };
     // Terminate the bot and the proc watcher that keeps it up
     app.Commands.set('tell', {
         desc: t('tell:help'),
         access: app.Config.accessLevels.admin,
-        call: tell
+        call: tell,
     });
 
     // Return the script info

@@ -1,8 +1,7 @@
-'use strict';
 const scriptInfo = {
     name: 'rss',
     desc: 'RSS Feed System (Database Related)',
-    createdBy: 'IronY'
+    createdBy: 'IronY',
 };
 
 const _ = require('lodash');
@@ -15,12 +14,12 @@ const logger = require('../../lib/logger');
 const getShort = require('../lib/_getShortService')();
 const extractUrls = require('../../lib/extractUrls');
 
-module.exports = app => {
+module.exports = (app) => {
     // No Database available
     if (!Models.RssFeed || !Models.RssChannelSubscription) return scriptInfo;
 
     // Initial RSS Feed Loader
-    const feeder = new RssFeedEmitter({userAgent: 'MrNodeBot'});
+    const feeder = new RssFeedEmitter({ userAgent: 'MrNodeBot' });
 
     /**
      * Handle New RSS Items
@@ -33,7 +32,7 @@ module.exports = app => {
         try {
             // Grab Subscriptions
             const feed = await Models.RssFeed.where('link', url).fetch({
-                withRelated: ['subscriptions']
+                withRelated: ['subscriptions'],
             });
 
             const subscriptions = feed.related('subscriptions');
@@ -42,10 +41,10 @@ module.exports = app => {
             const date = item.date || item.pubDate;
             const dateAgo = date ? Moment(date).fromNow() : 'No Date';
 
-            subscriptions.forEach(subscription => {
+            subscriptions.forEach((subscription) => {
                 if (!app._ircClient.isInChannel(subscription.attributes.channel, app.nick)) return;
 
-                const output = new typo.StringBuilder({logo: 'rss'});
+                const output = new typo.StringBuilder({ logo: 'rss' });
                 output
                     .appendBold(feed.attributes.name)
                     .insertIcon('person')
@@ -57,8 +56,7 @@ module.exports = app => {
 
                 app.say(subscription.attributes.channel, output.toString());
             });
-        }
-        catch (err) {
+        } catch (err) {
             logger.error('Something went wrong sending a RSS new-item to the channel', {
                 message: err.message || '',
                 stack: err.stack || '',
@@ -104,8 +102,7 @@ module.exports = app => {
 
             await feedSubscription.destroy();
             app.say(to, `I have removed the subscription from ${to}, to ${oldFeedSubscription.name} (${oldFeedSubscription.link}). All is well ${from}`);
-        }
-        catch (err) {
+        } catch (err) {
             logger.error('Something went wrong in the unsubscribe function inside the RssFeed', {
                 message: err.message || '',
                 stack: err.stack || '',
@@ -116,7 +113,7 @@ module.exports = app => {
     app.Commands.set('rss-unsubscribe', {
         desc: '[id] Unsubscribe to a RSS feed via a ID provided in list-rss-feeds',
         access: app.Config.accessLevels.channelOpIdentified,
-        call: unsubscribe
+        call: unsubscribe,
     });
 
 
@@ -159,14 +156,13 @@ module.exports = app => {
             }
 
             await Models.RssChannelSubscription.create({
-                'feed_id': id,
-                'channel': to,
-                'creator': from,
+                feed_id: id,
+                channel: to,
+                creator: from,
             });
 
             app.say(to, `A Subscription has been added for ${feed.attributes.name} to ${to}, ${from}`);
-        }
-        catch (err) {
+        } catch (err) {
             logger.error('Something went wrong in the subscribe function inside the RssFeed', {
                 message: err.message || '',
                 stack: err.stack || '',
@@ -177,7 +173,7 @@ module.exports = app => {
     app.Commands.set('rss-subscribe', {
         desc: '[id] Subscribe to a RSS feed via a ID provided in list-rss-feeds',
         access: app.Config.accessLevels.channelOpIdentified,
-        call: subscribe
+        call: subscribe,
     });
 
     /**
@@ -191,7 +187,7 @@ module.exports = app => {
     const listSubscriptions = async (to, from, text, message) => {
         try {
             const subscriptions = await Models.RssChannelSubscription.query(qb => qb.where('channel', to)).fetchAll({
-                withRelated: ['feed']
+                withRelated: ['feed'],
             });
 
             if (!subscriptions.length) {
@@ -202,11 +198,10 @@ module.exports = app => {
             if (to !== from) app.say(to, `I am sending you a list of RSS subscriptions for ${to}, ${from}`);
             app.say(from, `RSS Subscriptions for ${from} (${subscriptions.length} total)`);
 
-            subscriptions.forEach(subscription => {
+            subscriptions.forEach((subscription) => {
                 app.say(from, `[${subscription.related('feed').attributes.id}] ${subscription.related('feed').attributes.name} <${subscription.attributes.creator}>`);
             });
-        }
-        catch (err) {
+        } catch (err) {
             logger.error('Something went with in listSubscriptions', {
                 message: err.message || '',
                 stack: err.stack || '',
@@ -217,7 +212,7 @@ module.exports = app => {
     app.Commands.set('list-rss-subscriptions', {
         desc: 'List the RSS feeds the channel is currently subscribed to',
         access: app.Config.accessLevels.channelOpIdentified,
-        call: listSubscriptions
+        call: listSubscriptions,
     });
 
     /**
@@ -260,8 +255,8 @@ module.exports = app => {
 
             const record = await Models.RssFeed.create({
                 creator: from,
-                name: name,
-                link: finalUrl
+                name,
+                link: finalUrl,
             });
 
             // Add To Feeder
@@ -271,8 +266,7 @@ module.exports = app => {
             });
 
             app.say(to, `The RSS feed with the name [${name}] and the link ${url} has been created with the ID ${record.id}`);
-        }
-        catch (err) {
+        } catch (err) {
             // Duplicate Entry
             if (err.code === 'ER_DUP_ENTRY') {
                 app.say(to, `I am sorry ${from}, a RSS feed with that link already exists`);
@@ -290,7 +284,7 @@ module.exports = app => {
     app.Commands.set('add-rss-feed', {
         desc: '[url] [name] Add a RSS feed url',
         access: app.Config.accessLevels.admin,
-        call: addFeed
+        call: addFeed,
     });
 
     /**
@@ -317,7 +311,7 @@ module.exports = app => {
         try {
             // Grab The Feed
             const feed = await Models.RssFeed.query(qb => qb.where('id', numericID)).fetch({
-                withRelated: ['subscriptions']
+                withRelated: ['subscriptions'],
             });
 
             if (!feed) {
@@ -338,8 +332,7 @@ module.exports = app => {
             await feed.destroy();
 
             app.say(to, `The feed ${previousAttributes.name} with the ID ${numericID} has been deleted, ${from}`);
-        }
-        catch (err) {
+        } catch (err) {
             logger.error('Error deleting a RSS feed', {
                 message: err.message || '',
                 stack: err.stack || '',
@@ -347,12 +340,11 @@ module.exports = app => {
 
             app.say(to, `I am sorry, there was a problem deleting the RSS feed, ${from}`);
         }
-
     };
     app.Commands.set('del-rss-feed', {
         desc: '[url] Delete a RSS feed url',
         access: app.Config.accessLevels.admin,
-        call: delFeed
+        call: delFeed,
     });
 
     /**
@@ -378,8 +370,7 @@ module.exports = app => {
             if (to !== from) app.say(to, `The RSS feeds have been messaged to your, ${from}`);
 
             feeds.forEach(feed => app.say(from, `[${feed.attributes.id}] ${feed.attributes.name} - ${feed.attributes.link} ${feed.attributes.description || ''}`));
-        }
-        catch (err) {
+        } catch (err) {
             logger.error('Something went wrong in the RSS feed module', {
                 message: err.message || '',
                 stack: err.stack || '',
@@ -390,7 +381,7 @@ module.exports = app => {
     app.Commands.set('list-rss-feeds', {
         desc: 'List RSS feeds',
         access: app.Config.accessLevels.channelOpIdentified,
-        call: listFeeds
+        call: listFeeds,
     });
 
 
@@ -419,6 +410,6 @@ module.exports = app => {
 
     return Object.assign({}, scriptInfo, {
         onLoad,
-        onUnload
+        onUnload,
     });
 };

@@ -1,8 +1,7 @@
-'use strict';
 const scriptInfo = {
     name: 'argSociety',
     desc: 'Misc functionality for ##mrRobotARG on freenode',
-    createdBy: 'IronY'
+    createdBy: 'IronY',
 };
 const _ = require('lodash');
 const rp = require('request-promise-native');
@@ -10,7 +9,7 @@ const scheduler = require('../../lib/scheduler');
 const logger = require('../../lib/logger');
 const type = require('../lib/_ircTypography');
 
-module.exports = app => {
+module.exports = (app) => {
     const argChannel = '##mrRobotARG';
     const argReddit = 'argsociety';
     const redditStream = 'new';
@@ -22,10 +21,10 @@ module.exports = app => {
     // Load The posts
     const loadPosts = () => rp({
         headers: {
-            'user-agent': 'MrNodeBot'
+            'user-agent': 'MrNodeBot',
         },
         uri: `https://www.reddit.com/r/${argReddit}/${redditStream}/.json`,
-        json: true
+        json: true,
     })
         .then(results => new Promise((resolve, reject) => {
             // We have No Data
@@ -35,11 +34,11 @@ module.exports = app => {
             }
 
             // Get the first post
-            let posts = _.map(results.data.children, post => new Object({
+            const posts = _.map(results.data.children, post => new Object({
                 title: post.data.title,
                 url: post.data.url,
                 author: post.data.author,
-                created: post.data.created
+                created: post.data.created,
             }));
 
             // We do not have a last post, keep this one
@@ -47,25 +46,25 @@ module.exports = app => {
                 lastPosts = posts;
                 resolve({
                     updated: false,
-                    posts: []
+                    posts: [],
                 });
                 return;
             }
 
             // See if it was updated
             if (!_.isEqual(posts, lastPosts) && !_.isEmpty(lastPosts)) {
-                let diff = _.differenceWith(posts, lastPosts, _.isEqual);
+                const diff = _.differenceWith(posts, lastPosts, _.isEqual);
                 lastPosts = posts;
                 resolve({
                     updated: true,
-                    posts: diff
+                    posts: diff,
                 });
             }
 
             // No changes
             resolve({
                 updated: false,
-                posts: []
+                posts: [],
             });
         }));
 
@@ -80,17 +79,18 @@ module.exports = app => {
     const update = scheduler.schedule(`${argReddit}${argChannel}`, cronTime, () => {
         logger.info(`Running Reddit for ${argChannel}`);
         loadPosts()
-            .then(results => {
+            .then((results) => {
                 // No updates
                 // We are not in the arg society channel and results object exists
                 if (!results || !app._ircClient.isInChannel(argChannel)) return;
 
                 // Iterate each update, and send it back at a specified delay
-                _.forEach(results.posts, (post, x) => setTimeout(() => {
+                _.forEach(results.posts, (post, x) => setTimeout(
+                    () => {
                         if (!app.say) return; // Make sure the say command is available
                         app.say(argChannel, `${type.logos.reddit} ${type.icons.sideArrow} ${post.author} ${type.icons.sideArrow} ${post.title} ${type.icons.sideArrow} ${post.url}`);
                     },
-                    x * (delayInSeconds * 1000)
+                    x * (delayInSeconds * 1000),
                 ));
             })
             .catch(err => logger.error(`${argReddit} reddit error`, err));

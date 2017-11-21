@@ -1,8 +1,7 @@
-'use strict';
 const scriptInfo = {
     name: 'Bot Utilities',
     desc: 'Bot administrative commands',
-    createdBy: 'IronY'
+    createdBy: 'IronY',
 };
 const _ = require('lodash');
 const gen = require('../generators/_showerThoughts');
@@ -10,21 +9,20 @@ const typo = require('../lib/_ircTypography');
 const Models = require('funsociety-bookshelf-model-loader');
 const logger = require('../../lib/logger');
 
-module.exports = app => {
+module.exports = (app) => {
     // Change the bots nick
     app.Commands.set('rename', {
         desc: '[nick] Rename the Bot',
         access: app.Config.accessLevels.owner,
         call: (to, from, text, message) => {
-            let oldNick = app.nick;
+            const oldNick = app.nick;
             if (app.nick === text || _.isEmpty(text)) {
                 app.say(to, `I am already ${app.nick}, what else would you like me to go by ${from}`);
                 return;
             }
             app.nick = text;
             app.say(from, `I was once ${oldNick} but now I am ${app.nick}... The times, they are changing.`);
-
-        }
+        },
     });
 
     // Set the 'Drunk' add-on
@@ -38,16 +36,16 @@ module.exports = app => {
                 : true;
 
             app.say(to, app.Config.drunk
-                ? `I am suddenly feeling very tipsy`
-                : 'Well that was interesting...')
-        }
+                ? 'I am suddenly feeling very tipsy'
+                : 'Well that was interesting...');
+        },
     });
 
     // Get a list of channels the bot is on
     app.Commands.set('channels', {
         desc: 'Get a list of the current joined channels',
         access: app.Config.accessLevels.owner,
-        call: (to, from, text, message) => app.say(from, `I am currently on the following channels: ${app.channels.join(', ')}`)
+        call: (to, from, text, message) => app.say(from, `I am currently on the following channels: ${app.channels.join(', ')}`),
     });
 
     // Get a configuration item and send it back
@@ -59,20 +57,19 @@ module.exports = app => {
                 app.say(to, `You need to provide me with a key ${from}`);
                 return;
             }
-            let [key] = text.split(' ');
+            const [key] = text.split(' ');
             if (!_.has(app.Config, key)) {
                 app.say(to, `I do not have the config setting: ${key}, ${from}`);
                 return;
             }
-            app.say(to, `The config value you requested [${key}] is ` + JSON.stringify(_.get(app.Config, key, '')));
-        }
+            app.say(to, `The config value you requested [${key}] is ${JSON.stringify(_.get(app.Config, key, ''))}`);
+        },
     });
 
     app.Commands.set('spawn', {
         desc: '[nick] Will conjure someone magically',
         access: app.Config.accessLevels.owner,
         call: async (to, from, text, message) => {
-
             // Parse arguments
             let [nick,
                 amount] = text.split(' ');
@@ -83,7 +80,7 @@ module.exports = app => {
                 : 1;
 
             // Clone and modify initial config
-            let config = _.cloneDeep(app.Config.irc);
+            const config = _.cloneDeep(app.Config.irc);
 
             // Set Nick
             config.nick = (!_.isString(nick) || _.isEmpty(nick))
@@ -99,7 +96,7 @@ module.exports = app => {
             config.channels = [];
 
             // Action to channel
-            app.action(to, `focuses real hard`);
+            app.action(to, 'focuses real hard');
 
             // Check if nick is already in channel
             const originalNickIsActive = app._ircClient.isInChannel(to, nick);
@@ -111,27 +108,23 @@ module.exports = app => {
             instance.connect(() => {
                 // Add to ignore list
                 const wasIgnored = _.includes(app.Ignore, _.toLower(config.nick));
-                if (!wasIgnored)
-                    app.Ignore.push(instance.nick);
+                if (!wasIgnored) { app.Ignore.push(instance.nick); }
 
                 // app.say(to, `I can feel ${config.nick} kicking ${from}!`);
                 instance.join(to, () => gen(amount).then(results => Models.Logging.query(qb => qb.select('text').where('from', 'like', nick).orderByRaw('rand()').limit(amount)).fetchAll().then(logs => new Promise((res, rej) => {
                     // Hold All The Promises
-                    let promises = [];
+                    const promises = [];
                     let key = 0;
 
                     // The person we are spawning is in the channel
-                    if (originalNickIsActive)
-                        promises.push(new Promise(r => setTimeout(() => r(instance.say(to, `Well hello ${config.originalNick}, seems there are two of us`)), ++key * 2500)));
+                    if (originalNickIsActive) { promises.push(new Promise(r => setTimeout(() => r(instance.say(to, `Well hello ${config.originalNick}, seems there are two of us`)), ++key * 2500))); }
 
                     // Join delay delay
                     promises.push(new Promise(r => setTimeout(r, ++key * 5000)));
 
                     // We have no results
-                    if (!logs.length)
-                        _.each(results, result => promises.push(new Promise(r => setTimeout(() => r(instance.say(to, result)), ++key * 2500)))); // We have results
-                    else
-                        _.each(logs.toJSON(), log => promises.push(new Promise(r => setTimeout(() => r(instance.say(to, log.text)), ++key * 2500))));
+                    if (!logs.length) { _.each(results, result => promises.push(new Promise(r => setTimeout(() => r(instance.say(to, result)), ++key * 2500)))); } // We have results
+                    else { _.each(logs.toJSON(), log => promises.push(new Promise(r => setTimeout(() => r(instance.say(to, log.text)), ++key * 2500)))); }
 
                     // Part delay
                     promises.push(new Promise(r => setTimeout(r, ++key * 5000)));
@@ -141,21 +134,18 @@ module.exports = app => {
                 })).then(() =>
                     // Leave the channel
                     instance.part(to, 'I was only but a dream', () => {
-                            // Disconnect
-                            instance.disconnect('Vici Vidi Vici');
-                            // Remove temp name from ignore list
-                            if (!wasIgnored)
-                                _.remove(app.Ignore, instance.nick);
-                        }
-                    ))
+                        // Disconnect
+                        instance.disconnect('Vici Vidi Vici');
+                        // Remove temp name from ignore list
+                        if (!wasIgnored) { _.remove(app.Ignore, instance.nick); }
+                    }))
                 // We have an error
-                    .catch(err => {
-                        logger.error('Something went wrong in the botUtils spawn command', {err});
+                    .catch((err) => {
+                        logger.error('Something went wrong in the botUtils spawn command', { err });
                         app.say('Something did not go quite right...');
                     })));
-
             });
-        }
+        },
     });
 
     // set
@@ -170,7 +160,7 @@ module.exports = app => {
             }
 
             // Get Key Value pair
-            let matches = text.match(/(\S+)\s(.*)/im);
+            const matches = text.match(/(\S+)\s(.*)/im);
 
             if (!matches || !matches[1] || !matches[2]) {
                 app.say(to, `I need a key and a value ${from}`);
@@ -178,12 +168,12 @@ module.exports = app => {
             }
 
             // Config Key
-            let key = matches[1];
+            const key = matches[1];
             // Config Value in JSON
-            let value = matches[2].replace(/'/g, '"');
+            const value = matches[2].replace(/'/g, '"');
             // Does the key already exist in the config store
-            let exists = _.has(app.Config, key);
-            let defaultValue = _.get(app.Config, key);
+            const exists = _.has(app.Config, key);
+            const defaultValue = _.get(app.Config, key);
 
             // Attempt to parse JSON
             let json;
@@ -221,7 +211,7 @@ module.exports = app => {
                 ? 'updating'
                 : 'inserting').insert(`config.${key} to`).append(value);
             app.say(to, output.text);
-        }
+        },
     });
 
     // Return the script info

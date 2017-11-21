@@ -1,9 +1,7 @@
-'use strict';
-
 const scriptInfo = {
     name: 'Sentiment Line',
     desc: 'Get a random sentiment',
-    createdBy: 'IronY'
+    createdBy: 'IronY',
 };
 
 const _ = require('lodash');
@@ -19,18 +17,16 @@ module.exports = async (app) => {
     const randomSentiment = async (to, from, text, message) => {
         try {
             // Grab results
-            const result = await Models.Upvote.query(
-                qb => qb
-                    .select('candidate', 'voter','text','result','channel','timestamp')
-                    .where('channel', to)
-                    .whereNotNull('text')
-                    .orderByRaw('rand()')
-                    .limit(1)
-            ).fetch();
+            const result = await Models.Upvote.query(qb => qb
+                .select('candidate', 'voter', 'text', 'result', 'channel', 'timestamp')
+                .where('channel', to)
+                .whereNotNull('text')
+                .orderByRaw('rand()')
+                .limit(1)).fetch();
 
             // No results
-            if(!result) {
-                app.say(to,`It seems there is no sentiments for ${to}, ${from}`);
+            if (!result) {
+                app.say(to, `It seems there is no sentiments for ${to}, ${from}`);
                 return;
             }
 
@@ -39,11 +35,10 @@ module.exports = async (app) => {
 
             // Report back
             app.say(to, `${result.get('voter')} ${disposition} ${result.get('candidate')} ${result.get('text')} [${Moment(result.get('timestamp')).fromNow()}]`);
-        }
-        catch (err) {
+        } catch (err) {
             logger.error('Something went wrong in randomSentiment', {
                 message: err.message || '',
-                stack: err.stack || ''
+                stack: err.stack || '',
             });
             app.say(to, `Something went wrong finding a random sentiment, ${from}`);
         }
@@ -53,7 +48,7 @@ module.exports = async (app) => {
     app.Commands.set('random-sentiment', {
         desc: 'Get a random sentiment',
         access: app.Config.accessLevels.identified,
-        call: randomSentiment
+        call: randomSentiment,
     });
 
     return scriptInfo;

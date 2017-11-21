@@ -1,8 +1,7 @@
-'use strict';
 const scriptInfo = {
     name: 'Urban Dictionary',
     desc: 'Look up a term with the urban dictionary',
-    createdBy: 'IronY'
+    createdBy: 'IronY',
 };
 const _ = require('lodash');
 const util = require('util');
@@ -10,20 +9,19 @@ const dict = require('../generators/_getUrbanDictionaryDefinition');
 const short = require('../lib/_getShortService')();
 const logger = require('../../lib/logger.js');
 
-module.exports = app => {
+module.exports = (app) => {
     const urban = async (to, from, text, message) => {
         try {
             const results = await dict(text);
 
             const definition = _.truncate(results.definition, {
-                length: 300
+                length: 300,
             });
 
             const shortUrl = await short(results.url);
 
             app.say(to, `${results.term}: ${definition} - ${shortUrl}`);
-        }
-        catch (err) {
+        } catch (err) {
             logger.error('Something went wrong in the urbanDictionary.js file', {
                 message: err.message || '',
                 stack: err.stack || '',

@@ -1,10 +1,11 @@
-'use strict';
 const URI = require('urijs');
 
 module.exports = (url, to, from, text, message, is) => new Promise((resolve, reject) => {
-    if (!url || !to || !from || !text || !message) return reject({
-        message: 'You are missing a required argument'
-    });
+    if (!url || !to || !from || !text || !message) {
+        return reject({
+            message: 'You are missing a required argument',
+        });
+    }
     resolve({
         url,
         to,
@@ -16,6 +17,6 @@ module.exports = (url, to, from, text, message, is) => new Promise((resolve, rej
         secure: url.startsWith('https://'),
         history: [],
         threats: [],
-        uri: new URI(url)
+        uri: new URI(url),
     });
 });

@@ -1,7 +1,5 @@
-'use strict';
-
 exports.up = function (knex, Promise) {
-    return knex.schema.createTable('youTubeLink', function (table) {
+    return knex.schema.createTable('youTubeLink', (table) => {
         table.collate('utf8mb4_unicode_ci');
         table.increments('id').primary();
         table.string('to').collate('utf8mb4_unicode_ci');

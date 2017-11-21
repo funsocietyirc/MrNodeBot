@@ -1,8 +1,7 @@
-'use strict';
 const scriptInfo = {
     name: 'mrrobot',
     desc: 'Watch for quotes from the MrRobot bot, log them, clean them, and allow for announcement of them',
-    createdBy: 'IronY'
+    createdBy: 'IronY',
 };
 const _ = require('lodash');
 const Models = require('funsociety-bookshelf-model-loader');
@@ -10,10 +9,9 @@ const logger = require('../../lib/logger');
 const scheduler = require('../../lib/scheduler');
 const ircTypography = require('../lib/_ircTypography');
 
-module.exports = app => {
+module.exports = (app) => {
     // Do not load module if we have no database
-    if (!Models.MrRobotQuotes)
-        return scriptInfo;
+    if (!Models.MrRobotQuotes) { return scriptInfo; }
 
     const quoteModel = Models.MrRobotQuotes;
 
@@ -24,13 +22,13 @@ module.exports = app => {
         'I\'m now ignoring you for 5 minutes.',
         'I don\'t recognize you. You can message me either of these two commands:',
         'invalid commands within the last',
-        'Quote #'
+        'Quote #',
     ];
 
     const cleanQuotes = async (to, from, text, message) => {
         try {
             // Get Results from database
-            const results = await quoteModel.query(qb => {
+            const results = await quoteModel.query((qb) => {
                 qb.where('quote', 'like', '%(1 more message)%').select(['id', 'quote']);
             }).fetchAll();
 
@@ -47,12 +45,11 @@ module.exports = app => {
                 logger.info(`Cleaned up MrRobot show quotes, merged quote ${result.get('id')} and ${secondLine.get('id')}`);
                 secondLine.destroy();
             }
-
         } catch (err) {
             // Handle exception
             logger.error('Something went wrong in the cleanQuotes function inside mrrobot.js', {
                 message: err.message || '',
-                stack: err.stack || ''
+                stack: err.stack || '',
             });
         }
     };
@@ -66,7 +63,7 @@ module.exports = app => {
     app.Commands.set('mrrobot-clean', {
         desc: 'Clean multi-line quotes',
         access: app.Config.accessLevels.owner,
-        call: cleanQuotes
+        call: cleanQuotes,
     });
 
     // Listen and Log
@@ -74,36 +71,33 @@ module.exports = app => {
         desc: 'Log quotes from #MrRobot',
         call: async (to, from, text, message) => {
             // False result
-            if (!text || to !== '#MrRobot' || from !== 'MrRobot' || _.includes(includeExceptions, text) || text.split(' ').length < 3)
-                return;
+            if (!text || to !== '#MrRobot' || from !== 'MrRobot' || _.includes(includeExceptions, text) || text.split(' ').length < 3) { return; }
 
             // Check if the quote already exists
             try {
                 const result = await quoteModel.query(qb => qb.select(['quote']).where('quote', 'like', text).limit(1)).fetch();
             } catch (err) {
                 // Problem communicating with the Database
-                logger.error(`Error getting result from DB in MrRobotQuote`, {
+                logger.error('Error getting result from DB in MrRobotQuote', {
                     message: err.message || '',
-                    stack: err.stack || ''
+                    stack: err.stack || '',
                 });
                 return;
             }
 
             // Record already exists
-            if (result)
-                return;
+            if (result) { return; }
 
             // Attempt to save the new quote
             try {
-                const record = await quoteModel.insert({quote: text});
+                const record = await quoteModel.insert({ quote: text });
                 // Log the quote was added
                 logger.info(`Added New MrRobot show quote: ${text}`);
             } catch (err) {
                 // Something went wrong saving the new quote
-                logger.error('Error saving result from DB in MrRobotQuote', {err});
-
+                logger.error('Error saving result from DB in MrRobotQuote', { err });
             }
-        }
+        },
     });
 
     // Get Quote
@@ -112,13 +106,13 @@ module.exports = app => {
         access: app.Config.accessLevels.identified,
         call: async (to, from, text, message) => {
             // Decide if this is a channel or a private message
-            let chan = _.first(text) === '#'
+            const chan = _.first(text) === '#'
                 ? _.first(text.split(' '))
                 : false;
 
             try {
                 // Fetch Result
-                const result = await quoteModel.query(qb => {
+                const result = await quoteModel.query((qb) => {
                     qb.select('quote').orderByRaw('rand()').limit(1);
                     if (text && !chan) {
                         qb.andWhere('quote', 'like', text);
@@ -127,17 +121,16 @@ module.exports = app => {
 
                 // Report back
                 app.say(chan || to, !result
-                    ? `I have not yet encountered anything like that.`
-                    : `${ircTypography.logos.mrrobot} ${result.get('quote')}`)
-
+                    ? 'I have not yet encountered anything like that.'
+                    : `${ircTypography.logos.mrrobot} ${result.get('quote')}`);
             } catch (err) {
                 logger.error('Something went wrong with the mrrobot command inside mrorbot.js', {
                     message: err.message || '',
-                    stack: err.stack || ''
+                    stack: err.stack || '',
                 });
                 app.say(chan || to, `Something went wrong fetching your quote ${from}`);
             }
-        }
+        },
     });
 
     return scriptInfo;

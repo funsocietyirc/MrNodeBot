@@ -1,4 +1,3 @@
-'use strict';
 const endPointSingle = 'https://www.googleapis.com/youtube/v3/videos';
 const endPointList = 'https://www.googleapis.com/youtube/v3/playlists';
 
@@ -6,9 +5,9 @@ const rp = require('request-promise-native');
 
 // Playlist Only
 const playlist = (apiKey, list) => {
-    let base = {
+    const base = {
         fields: 'items(id,snippet(channelId,title,channelTitle),contentDetails)',
-        part: 'snippet,contentDetails'
+        part: 'snippet,contentDetails',
     };
 
     return rp({
@@ -17,66 +16,54 @@ const playlist = (apiKey, list) => {
             key: apiKey,
             id: list,
         }),
-        json: true
+        json: true,
     });
-
 };
 
 // Track only
 const video = (apiKey, key) => {
-    let base = {
+    const base = {
         fields: 'items(id,snippet(channelId,title,categoryId),statistics,contentDetails,status)',
-        part: 'snippet,statistics,contentDetails,status'
+        part: 'snippet,statistics,contentDetails,status',
     };
 
     return rp({
         uri: endPointSingle,
         qs: Object.assign(base, {
             key: apiKey,
-            id: key
+            id: key,
         }),
-        json: true
+        json: true,
     });
 };
 
 module.exports = (apiKey, key, list) => {
     // Playlist Only
-    if (list !== null && key === null) return new Promise((res, rej) => {
-        return playlist(apiKey, list)
-            .then(playlistResults => {
-                return res({
-                    playlistResults: playlistResults.items,
-                });
-            })
-            .catch(rej);
-    });
+    if (list !== null && key === null) {
+        return new Promise((res, rej) => playlist(apiKey, list)
+            .then(playlistResults => res({
+                playlistResults: playlistResults.items,
+            }))
+            .catch(rej));
+    }
 
     // Video Only
-    if (list === null && key !== null) return new Promise((res, rej) => {
-        return video(apiKey, key)
-            .then(videoResults => {
-                return res({
-                    videoResults: videoResults.items,
-                });
-            })
-            .catch(rej)
-    });
+    if (list === null && key !== null) {
+        return new Promise((res, rej) => video(apiKey, key)
+            .then(videoResults => res({
+                videoResults: videoResults.items,
+            }))
+            .catch(rej));
+    }
 
 
     // Playlist and Video
-    return new Promise((res, rej) => {
-        return playlist(apiKey, list)
-            .then(playlistResults => {
-                return video(apiKey, key).then(videoResults => {
-                    return res({
-                        playlistResults: playlistResults.items,
-                        videoResults: videoResults.items,
-                    });
-                });
-            })
-            .catch(rej);
-    });
-
+    return new Promise((res, rej) => playlist(apiKey, list)
+        .then(playlistResults => video(apiKey, key).then(videoResults => res({
+            playlistResults: playlistResults.items,
+            videoResults: videoResults.items,
+        })))
+        .catch(rej));
 };
 
 /**
@@ -138,7 +125,7 @@ module.exports = (apiKey, key, list) => {
  ]
 }
 
- **/
+ * */
 
 
 /**
@@ -213,4 +200,4 @@ module.exports = (apiKey, key, list) => {
 }
 
  *
- **/
+ * */

@@ -1,9 +1,7 @@
-'use strict';
-
 const scriptInfo = {
     name: 'Topic Utilities',
-    desc: 'Utilites to view and manipulate the channel topic',
-    createdBy: 'IronY'
+    desc: 'Utilities to view and manipulate the channel topic',
+    createdBy: 'IronY',
 };
 
 const _ = require('lodash');
@@ -15,15 +13,15 @@ const logger = require('../../lib/logger');
 const divider = ' | ';
 const lastXtopics = 20;
 
-module.exports = app => {
+module.exports = (app) => {
     // Bailout if we do not have database
     if (!app.Database || !Models.Topics) return;
 
     // Helper function to get a the a promise on the channels topics
-    const getTopics = (channel, limit) => Models.Topics.query(qb => {
+    const getTopics = (channel, limit) => Models.Topics.query((qb) => {
         qb.where('channel', channel).orderBy('timestamp', 'desc');
         if (limit) qb.limit(limit);
-        qb.select(['topic'])
+        qb.select(['topic']);
     }).fetchAll();
 
     // Get the last X topics
@@ -40,8 +38,7 @@ module.exports = app => {
                     .where('channel', 'like', channel)
                     .orderBy('timestamp', 'desc')
                     .limit(lastXtopics)
-                    .select(['topic', 'nick', 'timestamp'])
-                )
+                    .select(['topic', 'nick', 'timestamp']))
                     .fetchAll();
                 // No Results available
                 if (_.isEmpty(results)) {
@@ -52,12 +49,10 @@ module.exports = app => {
                 app.say(to, `The Topic history has been private messaged to you, ${from}`);
                 _(results.toJSON())
                     .filter(t => t.topic !== null && t.topic !== '')
-                    .each(
-                        (result, index) =>
-                            app.say(from, `[${index + 1}]: ${result.topic} | ${result.nick} ${Moment(result.timestamp).fromNow()}`)
-                    );
+                    .each((result, index) =>
+                        app.say(from, `[${index + 1}]: ${result.topic} | ${result.nick} ${Moment(result.timestamp).fromNow()}`));
             }
-                // Log Error
+            // Log Error
             catch (err) {
                 logger.error('Error in the topics command', {
                     message: err.message || '',
@@ -65,7 +60,7 @@ module.exports = app => {
                 });
                 app.say(to, `Something went wrong fetching the topic information, ${from}`);
             }
-        }
+        },
     });
 
     // Revert to the last known topic
@@ -91,7 +86,7 @@ module.exports = app => {
                 app.say(to, `Attempting to revert the topic as per your request, ${from}`);
                 app._ircClient.send('topic', to, results.pluck('topic')[1]);
             }
-                // Log Error
+            // Log Error
             catch (err) {
                 logger.error('Error in the revertTopic command', {
                     message: error.message || '',
@@ -99,7 +94,7 @@ module.exports = app => {
                 });
                 app.say(to, `Something went wrong trying to revert the topic, ${from}`);
             }
-        }
+        },
     });
 
     // Append a topic segment
@@ -133,15 +128,15 @@ module.exports = app => {
 
                 app._ircClient.send('topic', to, `${topicString}${dividerstring}${text}`);
             }
-                // Log error
+            // Log error
             catch (err) {
                 logger.error('Error in the appendTopic command', {
                     message: err.message || '',
-                    stack: err.stack || ''
+                    stack: err.stack || '',
                 });
                 app.say(to, `Something went wrong trying to append the topic, ${from}`);
             }
-        }
+        },
     });
 
     // Subtract a topic segment
@@ -185,15 +180,15 @@ module.exports = app => {
                 // Report back
                 app._ircClient.send('topic', to, topicSegments.join(divider));
             }
-                // Log Error
+            // Log Error
             catch (err) {
                 logger.error('Error in the subtractTopic command', {
                     message: error.message || '',
-                    stack: error.stack || ''
+                    stack: error.stack || '',
                 });
                 app.say(to, `Something went wrong subtracting the topic segment, ${from}`);
             }
-        }
+        },
     });
 
     // Get a list of topic segments
@@ -228,15 +223,15 @@ module.exports = app => {
                 app.say(from, `Here are the topic segments for ${to}`);
                 topicSegments.forEach((r, x) => app.say(from, `[${x + 1}] ${r}`));
             }
-                // Log Error
+            // Log Error
             catch (err) {
                 logger.error('Error in the topicSegments command', {
                     message: err.message || '',
-                    stack: err.stack || ''
+                    stack: err.stack || '',
                 });
                 app.say(to, `Something went wrong fetching the topic segments, ${from}`);
             }
-        }
+        },
     });
 
     // Return the script info

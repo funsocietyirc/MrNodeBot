@@ -1,4 +1,3 @@
-'use strict';
 const _ = require('lodash');
 const logger = require('../../lib/logger');
 const Models = require('funsociety-bookshelf-model-loader');
@@ -9,7 +8,7 @@ module.exports = async (voter, candidate, channel) => {
 
     try {
         // Grab The result
-        const result = await Models.Upvote.query(qb => {
+        const result = await Models.Upvote.query((qb) => {
             qb
                 .select(['candidate'])
                 .sum('result as result')
@@ -33,28 +32,25 @@ module.exports = async (voter, candidate, channel) => {
         if (score > 0) {
             sentiment = 1;
             adjective = 'good';
-        }
-        else if (score < 0) {
+        } else if (score < 0) {
             sentiment = -1;
             adjective = 'bad';
         }
 
         return {
-            candidate: candidate,
-            voter: voter,
-            score: score,
-            votes: votes,
-            sentiment: sentiment,
-            adjective: adjective,
+            candidate,
+            voter,
+            score,
+            votes,
+            sentiment,
+            adjective,
             channel: channel || false,
         };
-    }
-    catch (err) {
+    } catch (err) {
         logger.error('Something went wrong in _getPopularitySentiment', {
             message: err.message || '',
             stack: err.stack || '',
         });
         throw new Error('Something went wrong geting the sentiment');
     }
-
 };

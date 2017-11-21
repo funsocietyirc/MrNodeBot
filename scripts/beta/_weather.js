@@ -1,4 +1,3 @@
-'use strict';
 /**
  * @module weather
  * @author Dave Richer
@@ -6,7 +5,7 @@
 const scriptInfo = {
     name: 'weather',
     desc: 'Get Weather data',
-    createdBy: 'IronY'
+    createdBy: 'IronY',
 };
 const _ = require('lodash');
 require('lodash-addons');
@@ -15,6 +14,7 @@ const logger = require('../../lib/logger');
 // Localizations
 const t = require('../../lib/localize');
 const i18next = require('../../lib/i18next');
+
 i18next.addResources('en', 'weather', {});
 const apiEndpoint = 'https://api.worldweatheronline.com/free/v2/weather.ashx';
 const numOfDaysDefault = 1;
@@ -24,7 +24,7 @@ const numOfDaysDefault = 1;
  * @param {Object} app A MrNodeBot object
  * @returns {Object} scirpt information
  */
-module.exports = app => {
+module.exports = (app) => {
     // Check we have API Key
     if (!_.has(app.Config, 'apiKeys.worldWeatherOnline.key') || _.isEmpty(app.Config.apiKeys.worldWeatherOnline)) return scriptInfo;
 
@@ -40,14 +40,14 @@ module.exports = app => {
         return rp(apiEndpoint, {
             qs: {
                 q: location,
-                'num_of_data': numOfDaysDefault,
+                num_of_data: numOfDaysDefault,
                 format: 'json',
-                key: app.Config.apiKeys.worldWeatherOnline.key
-            }
+                key: app.Config.apiKeys.worldWeatherOnline.key,
+            },
         })
-            .catch(err => {
-                logger.warn(`Error fetching Weather info`, {
-                    err
+            .catch((err) => {
+                logger.warn('Error fetching Weather info', {
+                    err,
                 });
                 rej(new Error('There was an Error fetching the weather information'));
             });

@@ -1,19 +1,17 @@
-'use strict';
 const scriptInfo = {
     name: 'lucky',
     desc: 'Russian Roulette-ish',
-    createdBy: 'IronY'
+    createdBy: 'IronY',
 };
 
 const Models = require('funsociety-bookshelf-model-loader');
-
 
 const random = require('../../lib/randomEngine');
 const logger = require('../../lib/logger');
 
 const revolverRounds = 6;
 
-module.exports = app => {
+module.exports = (app) => {
     let round;
 
     const lucky = async (to, from, text, message) => {
@@ -40,8 +38,7 @@ module.exports = app => {
         // Chamber was not loaded
         if (!loadedChamber) {
             app.say(to, `*click* - Looks like you get to live another day ${from}`);
-        }
-        else {
+        } else {
             // Check if bot is op in channel
             if (app._ircClient.isOpInChannel(to)) {
                 app._ircClient.send('kick', to, from, `*BANG* *BANG* ${app._ircClient.nick} shot me down, *BANG* BANG*`);
@@ -55,16 +52,16 @@ module.exports = app => {
             round.set(from, revolverRounds);
         }
 
-        if(Models.RouletteStats) {
+        if (Models.RouletteStats) {
             // Async Save
             Models.RouletteStats
                 .findOrCreate({
-                    from
+                    from,
                 }, {
                     fired: 1,
                     hit: 0,
                 })
-                .then(result => {
+                .then((result) => {
                     result.set('fired', result.get('fired') + 1);
                     if (loadedChamber) {
                         result.set('hit', result.get('hit') + 1);
@@ -72,14 +69,13 @@ module.exports = app => {
                     // Save
                     result.save();
                 })
-                .catch(err => {
+                .catch((err) => {
                     logger.error('Something went wrong saving a Roulette Stat', {
                         message: err.message || '',
                         stack: err.stack || '',
                     });
                 });
         }
-
     };
 
     const onLoad = () => round = new Map();
@@ -90,12 +86,12 @@ module.exports = app => {
     app.Commands.set('lucky', {
         desc: 'Are you feeling lucky punk',
         access: app.Config.accessLevels.guest,
-        call: lucky
+        call: lucky,
     });
 
     // Return the script info
     return Object.assign({}, scriptInfo, {
         onLoad,
-        onUnload
+        onUnload,
     });
 };

@@ -1,5 +1,3 @@
-'use strict';
-
 /**
  * @module bot
  * @author IronY
@@ -13,7 +11,6 @@ const path = require('path');
 const storage = require('node-persist');
 
 // Project libs
-const helpers = require('./helpers');
 const logger = require('./lib/logger');
 const scheduler = require('./lib/scheduler');
 const preprocessText = require('./lib/preprocessText');
@@ -53,7 +50,8 @@ class MrNodeBot {
         this._callback = _.isFunction(callback) ? callback : false;
 
         /** Configuration Object */
-        this.Config = require(configPath || './config');
+        const currentConfigPath = configPath || './config';
+        this.Config = require(currentConfigPath);
         // Fail-safe to prevent against auto-connect
         this.Config.irc.autoConnect = false;
 
@@ -67,7 +65,9 @@ class MrNodeBot {
         this._ircClient = require('./lib/ircClient');
 
         // Dynamically create Collections
-        dynCollections.each(v => this[v] = new Map());
+        dynCollections.each((v) => {
+            this[v] = new Map();
+        });
 
         /** Ignore List */
         this.Ignore = [];
@@ -98,7 +98,7 @@ class MrNodeBot {
         this._ircClient = require('./lib/ircClient');
         this._ircWrappers = null;
         this._initIrc();
-    };
+    }
 
     /**
      * Log Errors
@@ -109,9 +109,9 @@ class MrNodeBot {
     _errorHandler(message, err) {
         logger.error(message, {
             err: err.message || '',
-            stack: err.stack || ''
+            stack: err.stack || '',
         });
-    };
+    }
 
     /**
      * Initialize Web Server
@@ -122,12 +122,12 @@ class MrNodeBot {
         this.WebServer = require('./web/server')(this);
 
         logger.info(t('webServer.started', {
-            port: this.Config.express.port
+            port: this.Config.express.port,
         }));
 
         // Initialize the SocketIO service
         this._initSocketIO();
-    };
+    }
 
     /**
      * Initialize SocketIO
@@ -137,19 +137,19 @@ class MrNodeBot {
         logger.info(`SocketIO is now bound to the Express instance running on ${this.Config.express.port}`);
 
         // Socket IO Master connection event
-        this.WebServer.socketIO.on('connection', sock => {
+        this.WebServer.socketIO.on('connection', (sock) => {
             // Logging is turned off, bail
             if (!_.isObject(this.Config.socketIO) || !this.Config.socketIO.logging) return;
             // Log Connection
-            logger.info(`Socket IO Connection Established`);
+            logger.info('Socket IO Connection Established');
             // Log Message
             sock.on('message', msg => logger.info(`Socket IO Message: ${msg}`));
             // Log Disconnect
-            sock.on('disconnect', msg => logger.info(`Socket IO Disconnection`));
+            sock.on('disconnect', msg => logger.info('Socket IO Disconnection'));
             // Log Error
             sock.on('error', err => this._errorHandler('Socket.IO Error', err));
         });
-    };
+    }
 
     /**
      * Connect to the IRC server
@@ -158,13 +158,12 @@ class MrNodeBot {
      */
     async _connectToIrc() {
         return new Promise((resolve, reject) => this._ircClient.connect(20, () => {
-                logger.info(t('irc.connected', {
-                    server: this.Config.irc.server,
-                    nick: this.nick
-                }));
-                resolve();
-            })
-        );
+            logger.info(t('irc.connected', {
+                server: this.Config.irc.server,
+                nick: this.nick,
+            }));
+            resolve();
+        }));
     }
 
     /**
@@ -175,20 +174,18 @@ class MrNodeBot {
     async _initIrc() {
         try {
             await this._connectToIrc();
-        }
-        catch (err) {
-            this._errorHandler(`Something went wrong calling the _connectToIrc method`, err);
+        } catch (err) {
+            this._errorHandler('Something went wrong calling the _connectToIrc method', err);
         }
 
-        let first = this.Config.nickserv.host ? `@${this.Config.nickserv.host}` : '';
-        let nickserv = `${this.Config.nickserv.nick}${first}`;
+        const first = this.Config.nickserv.host ? `@${this.Config.nickserv.host}` : '';
+        const nickserv = `${this.Config.nickserv.nick}${first}`;
 
         this._ircClient.say(nickserv, `identify ${this.Config.nickserv.password}`);
 
         try {
             await this._loadDynamicAssets(false);
-        }
-        catch (err) {
+        } catch (err) {
             this._errorHandler('Something went wrong calling the _loadDynamicAssets method', err);
         }
 
@@ -197,66 +194,63 @@ class MrNodeBot {
         logger.info(t('listeners.init'));
         _({
             // Handle OnAction
-            'action': (nick, to, text, message) => this._ircWrappers.handleAction(nick, to, text, message),
+            action: (nick, to, text, message) => this._ircWrappers.handleAction(nick, to, text, message),
             // Handle On First Line received from IRC Client
-            'registered': message => this._ircWrappers.handleRegistered(message),
+            registered: message => this._ircWrappers.handleRegistered(message),
             // Handle Channel Messages
             'message#': (nick, to, text, message) => this._ircWrappers.handleCommands(nick, to, text, message),
             // Handle Private Messages
-            'pm': (nick, text, message) => this._ircWrappers.handleCommands(nick, nick, text, message),
+            pm: (nick, text, message) => this._ircWrappers.handleCommands(nick, nick, text, message),
             // Handle Notices, also used to check validation for NickServ requests
-            'notice': (nick, to, text, message) => {
+            notice: (nick, to, text, message) => {
                 // Check for auth command, return if we have one
                 if (_.toLower(nick) === _.toLower(this.Config.nickserv.nick)) this._ircWrappers.handleAuthenticatedCommands(nick, to, text, message);
                 else this._ircWrappers.handleOnNotice(nick, to, text, message);
             },
             // Handle CTCP Requests
-            'ctcp': (nick, to, text, type, message) => this._ircWrappers.handleCtcpCommands(nick, to, text, type, message),
+            ctcp: (nick, to, text, type, message) => this._ircWrappers.handleCtcpCommands(nick, to, text, type, message),
             // Handle Nick changes
-            'nick': (oldNick, newNick, channels, message) => this._ircWrappers.handleNickChanges(oldNick, newNick, channels, message),
+            nick: (oldNick, newNick, channels, message) => this._ircWrappers.handleNickChanges(oldNick, newNick, channels, message),
             // Handle Joins
-            'join': (channel, nick, message) => this._ircWrappers.handleOnJoin(channel, nick, message),
+            join: (channel, nick, message) => this._ircWrappers.handleOnJoin(channel, nick, message),
             // Handle On Parts
-            'part': (channel, nick, reason, message) => this._ircWrappers.handleOnPart(channel, nick, reason, message),
+            part: (channel, nick, reason, message) => this._ircWrappers.handleOnPart(channel, nick, reason, message),
             // Handle On Kick
-            'kick': (channel, nick, by, reason, message) => this._ircWrappers.handleOnKick(channel, nick, by, reason, message),
+            kick: (channel, nick, by, reason, message) => this._ircWrappers.handleOnKick(channel, nick, by, reason, message),
             // Handle On Quit
-            'quit': (nick, reason, channels, message) => this._ircWrappers.handleOnQuit(nick, reason, channels, message),
+            quit: (nick, reason, channels, message) => this._ircWrappers.handleOnQuit(nick, reason, channels, message),
             // Handle Topic changes
-            'topic': (channel, topic, nick, message) => this._ircWrappers.handleOnTopic(channel, topic, nick, message),
+            topic: (channel, topic, nick, message) => this._ircWrappers.handleOnTopic(channel, topic, nick, message),
             // Catch Network Errors
-            'netError': exception => {
-                logger.error(`Something went wrong in the IRC Client network connection`, exception);
+            netError: (exception) => {
+                logger.error('Something went wrong in the IRC Client network connection', exception);
             },
-            'abort': retryCount => {
+            abort: (retryCount) => {
                 logger.error(`Lost Connection to server, retrying (attempt ${retryCount})`);
             },
             // Catch all to prevent drop on error
-            'error': message =>
-            {
-                if(message.args.length && message.args[0].startsWith('Closing Link:')){
+            error: (message) => {
+                if (message.args.length && message.args[0].startsWith('Closing Link:')) {
                     logger.info(message.args[0]);
                     return;
                 }
 
                 logger.error('Uncaught IRC Client error', {
-                    message
+                    message,
                 });
-            }
+            },
         }).each((value, key) => this._ircClient.addListener(key, value));
 
-        this.OnConnected.forEach(
-            async (x) => {
-                try {
-                    await x.call();
-                } catch (err) {
-                    this._errorHandler('Error in onConnected', err);
-                }
+        this.OnConnected.forEach(async (x) => {
+            try {
+                await x.call();
+            } catch (err) {
+                this._errorHandler('Error in onConnected', err);
             }
-        );
+        });
 
         if (_.isFunction(this._callback)) this._callback(this);
-    };
+    }
 
     /**
      * Initialize Database Subsystem
@@ -273,11 +267,11 @@ class MrNodeBot {
 
         // We have no Database available
         logger.error(t('database.missing', {
-            feature: 'Database Core'
+            feature: 'Database Core',
         }));
 
         this.Database = false;
-    };
+    }
 
     /**
      * Initialize User Manager
@@ -286,14 +280,14 @@ class MrNodeBot {
     _initUserManager() {
         if (!this.Database) {
             logger.info(t('database.missing', {
-                feature: 'User Manager'
+                feature: 'User Manager',
             }));
             return;
         }
 
-        let UserManager = require('./lib/userManager');
+        const UserManager = require('./lib/userManager');
         this._userManager = new UserManager();
-    };
+    }
 
     /**
      * Clear file from Node cache
@@ -301,7 +295,7 @@ class MrNodeBot {
      */
     static _clearCache(fullPath) {
         clearModule(require.resolve(fullPath));
-    };
+    }
 
     /**
      * Extension Loader
@@ -311,7 +305,7 @@ class MrNodeBot {
      */
     _loadScriptsFromDir(dir, clearCache) {
         logger.info(t('scripts.initializing', {
-            dir
+            dir,
         }));
         // Get a normalized path to the script
         const normalizedPath = path.join(__dirname, dir);
@@ -320,7 +314,7 @@ class MrNodeBot {
          * require a script
          * @param {string} file
          */
-        const requireScript = file => {
+        const requireScript = (file) => {
             // Attempt to see if the module is already loaded
             const fullPath = `${normalizedPath}${path.sep}${file}`;
             // Attempt to Load the module
@@ -332,12 +326,12 @@ class MrNodeBot {
                 // If we are not dealing with a partial file _something.js
                 if (file[0] !== '_' && _.endsWith(file, '.js')) {
                     logger.info(t('scripts.loaded', {
-                        file
+                        file,
                     }));
 
                     const scriptInfo = {
-                        fullPath: fullPath,
-                        info: require(`./${dir}/${file}`)(this)
+                        fullPath,
+                        info: require(`./${dir}/${file}`)(this),
                     };
 
                     // If we have a name field, run it through a start case filter
@@ -352,14 +346,14 @@ class MrNodeBot {
                 }
             } catch (err) {
                 this._errorHandler(t('scripts.error', {
-                    path: fullPath
+                    path: fullPath,
                 }), err);
             }
         };
 
         // Load all files with .js extension
         _(fs.readdirSync(normalizedPath)).each(requireScript);
-    };
+    }
 
     /**
      * Initialize Locale Storage subsystem
@@ -377,7 +371,7 @@ class MrNodeBot {
             }
             this.Ignore = value || this.Ignore;
             logger.info(t('storage.ignored', {
-                total: this.Ignore.length
+                total: this.Ignore.length,
             }));
         });
 
@@ -390,11 +384,11 @@ class MrNodeBot {
                 storage.setItemSync('admins', this.Admins);
             }
             logger.info(t('storage.admins', {
-                total: this.Admins.length
+                total: this.Admins.length,
             }));
         });
         logger.info(t('storage.initialized'));
-    };
+    }
 
     /**
      * Read the configuration and alias any commands specified
@@ -404,7 +398,7 @@ class MrNodeBot {
         // Read in command rebinding
         if (!this.Config.commandBindings || !_.isArray(this.Config.commandBindings)) return;
 
-        this.Config.commandBindings.forEach(commandBinding => {
+        this.Config.commandBindings.forEach((commandBinding) => {
             if (!commandBinding.alias || !commandBinding.command) {
                 logger.error(t('aliases.improperStructure'));
                 return;
@@ -412,7 +406,7 @@ class MrNodeBot {
             if (!this.Commands.has(commandBinding.command)) {
                 logger.error(t('aliases.doesNotExist', {
                     alias: commandBinding.command,
-                    command: commandBinding.alias
+                    command: commandBinding.alias,
                 }));
                 return;
             }
@@ -420,13 +414,13 @@ class MrNodeBot {
             if (this.Commands.has(commandBinding.alias)) {
                 logger.error(t('aliases.alreadyExists', {
                     alias: commandBinding.command,
-                    command: commandBinding.alias
+                    command: commandBinding.alias,
                 }));
                 return;
             }
             this.Commands.set(commandBinding.alias, this.Commands.get(commandBinding.command));
         });
-    };
+    }
 
     /**
      * Reload all dynamic assets
@@ -439,7 +433,7 @@ class MrNodeBot {
             scheduler.clear();
 
             // Unload the scripts
-            this.LoadedScripts.filter(x => _.isFunction(x.info.onUnload)).forEach(x => {
+            this.LoadedScripts.filter(x => _.isFunction(x.info.onUnload)).forEach((x) => {
                 logger.info(`Running onUnload for ${x.info.name || x.fullPath}`);
                 x.info.onUnload.call();
             });
@@ -453,7 +447,7 @@ class MrNodeBot {
 
         // Load in the Scripts
         if (!this.Config.bot.disableScripts) {
-            this._scriptDirectories.forEach(script => {
+            this._scriptDirectories.forEach((script) => {
                 this._loadScriptsFromDir(script, clearCache);
             });
             // Assign command aliases
@@ -466,13 +460,12 @@ class MrNodeBot {
             if (_.isBoolean(route.secure) && route.secure) {
                 // Remove any leading /
                 if (_.startsWith(route.path, '/')) route.path = route.path.substring(1);
-                route.path = '/secure/' + route.path;
+                route.path = `/secure/${route.path}`;
             }
             // Dynamically register the WebRoutes objects with express
             this.WebServer[route.verb || 'get'](route.path, name, route.handler);
         });
-
-    };
+    }
 
     /**
      *  Bootstrap the Bot, by either killing the process or reloading dynamic assets
@@ -487,7 +480,7 @@ class MrNodeBot {
             logger.info(t('bootstrap.reloading'));
             this._loadDynamicAssets(true);
         }
-    };
+    }
 
     /**
      * Logger for action / say/ notice
@@ -499,19 +492,18 @@ class MrNodeBot {
         const normalizedMessage = c.stripColorsAndStyle(ircMsg);
         if (normalizedMessage === ircMsg) {
             logger.info(t(translationKey, {
-                target: target,
-                message: normalizedMessage
+                target,
+                message: normalizedMessage,
             }));
-        }
-        else {
+        } else {
             logger.info(t(translationKey, {
-                target: target,
-                message: normalizedMessage
+                target,
+                message: normalizedMessage,
             }), {
-                original: ircMsg
+                original: ircMsg,
             });
         }
-    };
+    }
 
     /**
      * IRC message response
@@ -538,7 +530,7 @@ class MrNodeBot {
      */
     say(target, message, processor) {
         this._ircResponse(target, message, 'say', 'events.sentMessage', processor);
-    };
+    }
 
     /**
      * Perform an Action over IRC
@@ -548,7 +540,7 @@ class MrNodeBot {
      */
     action(target, message, processor) {
         this._ircResponse(target, message, 'action', 'events.sentAction', processor);
-    };
+    }
 
     /**
      * Perform a Notice over IRC
@@ -558,7 +550,7 @@ class MrNodeBot {
      */
     notice(target, message, processor) {
         this._ircResponse(target, message, 'notice', 'events.sentNotice', processor);
-    };
+    }
 
     /**
      * Reload Bots Configuration Object
@@ -570,7 +562,7 @@ class MrNodeBot {
         this.Config = require('./config.js');
         // Assure AutoConnect flag is not reset
         this.Config.irc.autoConnect = false;
-    };
+    }
 
     // Properties
 
@@ -580,7 +572,7 @@ class MrNodeBot {
      */
     get nick() {
         return this._ircClient.nick;
-    };
+    }
 
     /**
      * Bots IRC Nickname
@@ -591,12 +583,12 @@ class MrNodeBot {
         newNick = newNick || this.Config.irc.nick;
         logger.info(t('events.nickChanged', {
             oldNick: this.nick,
-            newNick
+            newNick,
         }));
         this._ircClient.send('nick', newNick);
         this._ircClient.nick = newNick;
         this._ircClient.originalNick = newNick;
-    };
+    }
 
     /**
      * Get IRC Channels
@@ -604,7 +596,7 @@ class MrNodeBot {
      */
     get channels() {
         return _(this._ircClient.chans).keys().uniq().value();
-    };
+    }
 
     /**
      *
@@ -612,21 +604,22 @@ class MrNodeBot {
      */
     set channels(value) {
         // Given an array
-        if (_.isArray(value)) value.forEach(channel => {
-            if (!this._ircClient.isInChannel(channel)) {
-                this._ircClient.join(channel);
-            }
-        });
-        // Given a string
-        else if (_.isString(value)) {
-            value.split(' ').forEach(channel => {
+        if (_.isArray(value)) {
+            value.forEach((channel) => {
                 if (!this._ircClient.isInChannel(channel)) {
                     this._ircClient.join(channel);
                 }
             });
         }
-    };
-
+        // Given a string
+        else if (_.isString(value)) {
+            value.split(' ').forEach((channel) => {
+                if (!this._ircClient.isInChannel(channel)) {
+                    this._ircClient.join(channel);
+                }
+            });
+        }
+    }
 }
 
 /** Expose the Bot */

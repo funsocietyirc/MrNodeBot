@@ -1,8 +1,7 @@
-'use strict';
 const scriptInfo = {
     name: 'analyze',
     desc: 'Get a summary of information from a online IRC user',
-    createdBy: 'IronY'
+    createdBy: 'IronY',
 };
 const _ = require('lodash');
 const c = require('irc-colors');
@@ -13,7 +12,7 @@ const getLocationData = require('../generators/_ipLocationData');
 const errorMessage = 'Something went wrong fetching your results';
 const locationErrorMessage = 'Something went wrong fetching your location results';
 
-module.exports = app => {
+module.exports = (app) => {
     // No Database Data available...
     if (!app.Database && !Models.Logging) return;
 
@@ -22,9 +21,9 @@ module.exports = app => {
 
     // Render the Data object
     const renderData = (nick, subCommand, dbResults, whoisResults, locResults) => {
-        let db = _(dbResults);
+        const db = _(dbResults);
 
-        let result = {
+        const result = {
             currentNick: nick,
             nicks: db.map('from').uniq(),
             pastChannels: db.map('to').uniq(),
@@ -33,7 +32,7 @@ module.exports = app => {
             firstResult: db.first(),
             lastResult: db.last(),
             totalLines: db.size().toString(),
-            subCommand: subCommand
+            subCommand,
         };
 
         if (whoisResults) {
@@ -57,7 +56,7 @@ module.exports = app => {
                 postal: locResults.zip_code || '',
                 timeZone: locResults.time_zone || '',
                 lat: locResults.latitude || '',
-                long: locResults.longitude || ''
+                long: locResults.longitude || '',
             });
         }
         return result;
@@ -66,24 +65,24 @@ module.exports = app => {
     // Report back to IRC
     const reportToIrc = async (to, data) => {
         const sayHelper = (header, content) => {
-            let paddedResult = _.padEnd(`${header}${header ? ':' : ' '}`, pad, ' ');
+            const paddedResult = _.padEnd(`${header}${header ? ':' : ' '}`, pad, ' ');
             app.say(to, `${titleLine(paddedResult)} ${content}`);
         };
 
-        let firstDateActive = _.isUndefined(data.firstResult.timestamp) ? null : Moment(data.firstResult.timestamp);
-        let lastDateActive = _.isUndefined(data.lastResult.timestamp) ? null : Moment(data.lastResult.timestamp);
+        const firstDateActive = _.isUndefined(data.firstResult.timestamp) ? null : Moment(data.firstResult.timestamp);
+        const lastDateActive = _.isUndefined(data.lastResult.timestamp) ? null : Moment(data.lastResult.timestamp);
 
         let pad = 19;
-        let realName = data.realName ? `(${c.white.bgblack(data.realName)})` : '';
-        let primaryNick = data.primaryNick ? `${c.white.bgblack.bold('ACC: ')}${c.green.bgblack(data.primaryNick)}` : c.red.bgblack('-Unident/Offline-');
-        let city = data.city ? `City(${data.city}) ` : '';
-        let regionName = data.regionName ? `Region(${data.regionName}) ` : '';
-        let countryName = data.countryName ? `Country(${data.countryName}) ` : '';
-        let postal = data.postal ? `Postal(${data.postal}) ` : '';
-        let timeZone = data.timeZone ? `Time Zone(${data.timeZone}) ` : '';
-        let lat = data.lat ? `Lat(${data.lat}) ` : '';
-        let long = data.long ? `Long(${data.long}) ` : '';
-        let paddedResult = _.padStart(`Searching VIA ${data.subCommand}`, pad * 4, ' ');
+        const realName = data.realName ? `(${c.white.bgblack(data.realName)})` : '';
+        const primaryNick = data.primaryNick ? `${c.white.bgblack.bold('ACC: ')}${c.green.bgblack(data.primaryNick)}` : c.red.bgblack('-Unident/Offline-');
+        const city = data.city ? `City(${data.city}) ` : '';
+        const regionName = data.regionName ? `Region(${data.regionName}) ` : '';
+        const countryName = data.countryName ? `Country(${data.countryName}) ` : '';
+        const postal = data.postal ? `Postal(${data.postal}) ` : '';
+        const timeZone = data.timeZone ? `Time Zone(${data.timeZone}) ` : '';
+        const lat = data.lat ? `Lat(${data.lat}) ` : '';
+        const long = data.long ? `Long(${data.long}) ` : '';
+        const paddedResult = _.padStart(`Searching VIA ${data.subCommand}`, pad * 4, ' ');
         app.say(to, `${c.underline.red.bgblack(paddedResult)}`);
         app.say(to, `${primaryNick} ${c.white.bgblack.bold('Current:')} ${c.white.bgblack(data.currentNick)}!${c.red.bgblack(data.currentIdent)}@${c.blue.bgblack.bold(data.currentHost)} ${realName}`);
 
@@ -92,7 +91,7 @@ module.exports = app => {
         if (!_.isEmpty(data.currentChannels)) sayHelper('Current Channels', data.currentChannels.join(' | '));
         sayHelper('Hosts', data.hosts.join(' | '));
         sayHelper('Idents', data.idents.join(' | '));
-        if (data.currentServer) sayHelper('Server', `${data.currentServer} ` + (data.secureServer ? '(SSL)' : '(Plain Text)'));
+        if (data.currentServer) sayHelper('Server', `${data.currentServer} ${data.secureServer ? '(SSL)' : '(Plain Text)'}`);
 
         if (firstDateActive) {
             sayHelper('First Active', `as ${data.firstResult.from} on ${firstDateActive.format('h:mma MMM Do')} (${firstDateActive.fromNow()}) On: ${data.firstResult.to}`);
@@ -115,8 +114,8 @@ module.exports = app => {
     // Handle info verbiage
     const convertSubInfo = (val) => {
         switch (val) {
-            case 'ident':
-                return 'user';
+        case 'ident':
+            return 'user';
         }
         return val;
     };
@@ -124,23 +123,22 @@ module.exports = app => {
     // Handle query verbiage
     const convertSubFrom = (val) => {
         switch (val) {
-            case 'nick':
-                return 'from'
+        case 'nick':
+            return 'from';
         }
         return val;
     };
 
     // Build the initial query
-    const queryBuilder = (field, value) => Models.Logging.query(qb => {
+    const queryBuilder = (field, value) => Models.Logging.query((qb) => {
         qb.select(['id', 'timestamp', 'ident', 'from', 'to', 'host', 'text']);
         qb.where(field, 'like', value);
     }).fetchAll();
 
     const init = async (to, nick, subCommand, argument, processor) => {
-
         // Verify Info object
         if (!nick) {
-            app.say(to, `A Nick is required`);
+            app.say(to, 'A Nick is required');
             return;
         }
 
@@ -171,8 +169,7 @@ module.exports = app => {
                 results = await Models.Logging.query(qb => qb
                     .where('from', 'like', whoisResults.user)
                     .orderBy('timestamp', 'desc')
-                    .limit(1)
-                )
+                    .limit(1))
                     .fetch();
             } catch (err) {
                 app.say(to, errorMessage);
@@ -196,7 +193,7 @@ module.exports = app => {
                 return;
             }
 
-            if(!dbResults.length) {
+            if (!dbResults.length) {
                 app.say(to, `No results are available on ${nick}`);
                 return;
             }
@@ -207,27 +204,23 @@ module.exports = app => {
             try {
                 if (helpers.ValidHostExpression.test(whoisResults.host)) {
                     locResults = await getLocationData(whoisResults.host);
-
                 }
             } catch (err) {
                 // Ignore Error
-            }
-            finally {
+            } finally {
                 processor(to, renderData(nick, subCommand, dbResults.toJSON(), whoisResults, locResults));
             }
-
         } else {
             // Hold on to the dbResults
             let dbResults;
             try {
                 dbResults = await queryBuilder(convertSubFrom(subCommand), whoisResults[convertSubInfo(subCommand)]);
-            }
-            catch (err) {
+            } catch (err) {
                 app.say(to, errorMessage);
                 return;
             }
 
-            if(!dbResults.length) {
+            if (!dbResults.length) {
                 app.say(to, `No results are available on ${nick}`);
                 return;
             }
@@ -240,27 +233,24 @@ module.exports = app => {
             try {
                 if (helpers.ValidHostExpression.test(whoisResults.host)) {
                     locResults = await getLocationData(whoisResults.host);
-
                 }
             } catch (err) {
                 // Ignore Error
-            }
-            finally {
+            } finally {
                 processor(to, renderData(nick, subCommand, dbResults.toJSON(), whoisResults, locResults));
             }
-
         }
     };
 
     /**
      Trigger command for advanced active tracking
-     **/
+     * */
     const analyze = async (to, from, text, message) => {
         // Parse Text
-        let txtArray = text.split(' ');
-        let nick = txtArray.shift();
-        let subCommand = txtArray.shift();
-        let argument = txtArray.shift();
+        const txtArray = text.split(' ');
+        const nick = txtArray.shift();
+        const subCommand = txtArray.shift();
+        const argument = txtArray.shift();
 
         if (nick === app.nick) {
             app.say(from, 'I have never really been good at self analysis');
@@ -284,7 +274,7 @@ module.exports = app => {
     app.Commands.set('analyze', {
         desc: '[Nick] [Sub Command] - Advanced Analytics tool',
         access: app.Config.accessLevels.admin,
-        call: analyze
+        call: analyze,
     });
 
     // Return the script info

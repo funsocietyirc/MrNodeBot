@@ -1,23 +1,21 @@
-'use strict';
 const scriptInfo = {
     name: 'popularityUtils',
     desc: 'Popularity Utilities',
-    createdBy: 'IronY'
+    createdBy: 'IronY',
 };
 const _ = require('lodash');
 const logger = require('../../lib/logger');
 const Models = require('funsociety-bookshelf-model-loader');
 
-module.exports = app => {
+module.exports = (app) => {
     // Database not available
-    if (!Models.Upvote)
-        return scriptInfo;
+    if (!Models.Upvote) { return scriptInfo; }
 
     // Purge all results for a specified channel
     const popularityClear = async (to, from, channel, message) => {
         // No Channel Given
         if (!channel) {
-            app.say(to, `Please provide me a channel to clear`);
+            app.say(to, 'Please provide me a channel to clear');
             return;
         }
 
@@ -28,26 +26,26 @@ module.exports = app => {
         } catch (err) {
             logger.error('Error in popularityClear command', {
                 message: err.message || '',
-                stack: err.stack || ''
+                stack: err.stack || '',
             });
-            app.say(to, `An Error has occurred with your popularity-clear command`);
+            app.say(to, 'An Error has occurred with your popularity-clear command');
         }
     };
     // Bind purge command
     app.Commands.set('popularity-clear', {
         desc: '[channel] - Remove popularity information for specified channel',
         access: app.Config.accessLevels.owner,
-        call: popularityClear
+        call: popularityClear,
     });
 
     // Purge results for a nick - channel match
     const popularityPurge = async (to, from, text, message) => {
         // Seperate Input
-        let [nick, channel] = text.split(' ');
+        const [nick, channel] = text.split(' ');
 
         // Validate Input
         if (!nick || !channel) {
-            app.say(to, `Please provide me with both a Nick and Channel`);
+            app.say(to, 'Please provide me with both a Nick and Channel');
             return;
         }
 
@@ -58,9 +56,9 @@ module.exports = app => {
         } catch (err) {
             logger.error('Error in popularityPurge command', {
                 message: err.message || '',
-                stack: err.stack || ''
+                stack: err.stack || '',
             });
-            app.say(to, `An Error has occurred with your popularity-clear command`);
+            app.say(to, 'An Error has occurred with your popularity-clear command');
         }
     };
 
@@ -68,7 +66,7 @@ module.exports = app => {
     app.Commands.set('popularity-purge', {
         desc: '[nick] [channel] - Remove a users popularity information for specified channel',
         access: app.Config.accessLevels.owner,
-        call: popularityPurge
+        call: popularityPurge,
     });
 
     // Return the script info

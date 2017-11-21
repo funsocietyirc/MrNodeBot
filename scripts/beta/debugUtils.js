@@ -1,8 +1,7 @@
-'use strict';
 const scriptInfo = {
     name: 'Debug Utils',
     desc: 'Bot Debugging',
-    createdBy: 'IronY'
+    createdBy: 'IronY',
 };
 const _ = require('lodash');
 const c = require('irc-colors');
@@ -13,7 +12,7 @@ require('lodash-addons');
 
 const simpleString = object =>
     util.inspect(object, {
-        depth: null
+        depth: null,
     })
         .replace(/<Buffer[ \w\.]+>/ig, '"buffer"')
         .replace(/\[Function]/ig, 'function(){}')
@@ -23,7 +22,7 @@ const simpleString = object =>
         .replace(/(\w+): ([\w :]+GMT\+[\w \(\)]+),/ig, '$1: new Date("$2"),')
         .replace(/(\S+): ,/ig, '$1: null,');
 
-module.exports = app => {
+module.exports = (app) => {
     // Evaluate
     app.Commands.set('eval', {
         desc: '[valid js] will return value to console',
@@ -40,16 +39,14 @@ module.exports = app => {
                 result = _.isString(result) ? result : simpleString(result);
 
                 // Split on new line
-                let splitResults = result.split('\n') || [];
+                const splitResults = result.split('\n') || [];
 
                 // We are an op in the channel and the user is in the channel
                 if (app._ircClient.isOpInChannel(to) && app._ircClient.isInChannel(to, from)) {
-
                     // Announce
                     app.say(to, splitResults.length ?
                         `I have finished evaluating ${text}, and am messaging you the results ${from}` :
-                        `I have finished evaluating ${text}, ${from}`
-                    );
+                        `I have finished evaluating ${text}, ${from}`);
 
                     // Create function to clear the buffer to prevent flood
                     const produce = () => {
@@ -57,7 +54,7 @@ module.exports = app => {
                         app._ircClient.cSay(
                             from,
                             to,
-                            (splitResults.shift()).replace(/([\[\]{}'`:,])/g, `\x02$1\x02`)
+                            (splitResults.shift()).replace(/([\[\]{}'`:,])/g, '\x02$1\x02'),
                         );
 
                         // If there is any results left, recurse
@@ -66,7 +63,6 @@ module.exports = app => {
 
                     // if there are results, initially call the function
                     if (splitResults.length) produce();
-
                 } else app.say(to, `I have finished evaluating ${text}, ${from}`);
             } catch (err) {
                 logger.error('Eval command failed:', {
@@ -74,7 +70,7 @@ module.exports = app => {
                     stack: err.stack || '',
                 });
             }
-        }
+        },
     });
 
 

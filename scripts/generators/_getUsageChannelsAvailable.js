@@ -1,4 +1,3 @@
-'use strict';
 const _ = require('lodash');
 const logger = require('../../lib/logger');
 const Models = require('funsociety-bookshelf-model-loader');
@@ -14,14 +13,14 @@ module.exports = (app, channel) => new Promise((resolve, reject) => {
 
     return Models.Logging
     // Get Results from the logging database
-        .query(qb => {
+        .query((qb) => {
             qb
                 .select(['to as channel'])
                 .count('to as messages')
                 .groupBy('to')
                 .orderBy('to')
-                .where(clause => {
-                    let prefixes = app._ircClient._getChannelPrefixArray();
+                .where((clause) => {
+                    const prefixes = app._ircClient._getChannelPrefixArray();
                     clause.where('to', 'like', `${prefixes.shift()}%`);
                     _.forEach(prefixes, prefix => clause.orWhere('to', 'like', `${prefix}%`));
                 });
@@ -31,19 +30,19 @@ module.exports = (app, channel) => new Promise((resolve, reject) => {
         .fetchAll()
         .then(results => results.toJSON())
         // Format the database results
-        .then(channels => {
-            let final = {};
-            _.forEach(channels, result => {
+        .then((channels) => {
+            const final = {};
+            _.forEach(channels, (result) => {
                 final[result.channel] = {
-                    messages: result.messages
+                    messages: result.messages,
                 };
             });
             return final;
         })
         // Fetch the topics
-        .then(channelsObject => {
+        .then((channelsObject) => {
             // A stack of promises
-            let steps = [];
+            const steps = [];
 
             // Iterate through each logged channel
             _.forEach(channelsObject, (key, value) => {
@@ -60,45 +59,36 @@ module.exports = (app, channel) => new Promise((resolve, reject) => {
                         .select(['nick', 'topic', 'timestamp'])
                         .where('channel', 'like', value)
                         .orderBy('timestamp', 'desc')
-                        .limit(1)
-                    )
+                        .limit(1))
                     .fetch()
-                    .then(subResult => {
+                    .then((subResult) => {
                         if (subResult && subResult.attributes && subResult.attributes.topic && subResult.attributes.nick && subResult.attributes.timestamp) {
                             channelsObject[value].topic = {
                                 topic: subResult.attributes.topic,
                                 by: subResult.attributes.nick,
-                                on: subResult.attributes.timestamp
-                            }
+                                on: subResult.attributes.timestamp,
+                            };
                         }
                     }));
                 // Add the step to get actions count
-                steps.push(
-                    Models.ActionLogging.query(qb => qb.where('to', 'like', value)).count().then(count => {
-                        channelsObject[value].actions = count || 0;
-                    })
-                );
+                steps.push(Models.ActionLogging.query(qb => qb.where('to', 'like', value)).count().then((count) => {
+                    channelsObject[value].actions = count || 0;
+                }));
                 // Add the step to get kick count
-                steps.push(
-                    Models.KickLogging.query(qb => qb.where('channel', 'like', value)).count().then(count => {
-                        channelsObject[value].kicks = count || 0;
-                    })
-                );
+                steps.push(Models.KickLogging.query(qb => qb.where('channel', 'like', value)).count().then((count) => {
+                    channelsObject[value].kicks = count || 0;
+                }));
                 // Get the popularity rankings
-                steps.push(
-                    getChanPopRank(value).then(ranking => {
-                        if (!_.isEmpty(ranking)) channelsObject[value].popularityRanking = ranking;
-                    })
-                );
+                steps.push(getChanPopRank(value).then((ranking) => {
+                    if (!_.isEmpty(ranking)) channelsObject[value].popularityRanking = ranking;
+                }));
                 // Get channel participation
-                steps.push(
-                    chanParticipation(value, {
-                        threshold: 1,
-                        limit: 10,
-                    }).then(participation => {
-                        channelsObject[value].topMonthlyParticipants = participation;
-                    })
-                );
+                steps.push(chanParticipation(value, {
+                    threshold: 1,
+                    limit: 10,
+                }).then((participation) => {
+                    channelsObject[value].topMonthlyParticipants = participation;
+                }));
 
                 channelsObject[value].currentParticipants = [];
                 channelsObject[value].currentOps = [];
@@ -106,8 +96,8 @@ module.exports = (app, channel) => new Promise((resolve, reject) => {
 
                 // Get current participants and seperate them into participants / voices / op
                 if (channelsObject[value].isWatching) {
-                    let users = app._ircClient.getUsers(value);
-                    _.forEach(users, user => {
+                    const users = app._ircClient.getUsers(value);
+                    _.forEach(users, (user) => {
                         if (app._ircClient.isOpInChannel(value, user)) {
                             channelsObject[value].currentOps.push(user);
                         } else if (app._ircClient.isVoiceInChannel(value, user)) {
@@ -117,13 +107,10 @@ module.exports = (app, channel) => new Promise((resolve, reject) => {
                         }
                     });
                 }
-
             });
 
             // Complete all the steps and return result
-            return Promise.all(steps).then(() => {
-                return channelsObject
-            });
+            return Promise.all(steps).then(() => channelsObject);
         })
         .then(resolve)
         .catch(reject);

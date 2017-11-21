@@ -1,8 +1,7 @@
-'use strict';
 const scriptInfo = {
     name: 'Watson Alchemy',
     desc: 'Test Script for watson analytics',
-    createdBy: 'IronY'
+    createdBy: 'IronY',
 };
 const _ = require('lodash');
 const rp = require('request-promise-native');
@@ -17,8 +16,7 @@ const moment = require('moment');
 const NaturalLanguageUnderstandingV1 = require('watson-developer-cloud/natural-language-understanding/v1.js');
 const PersonalityInsightsV3 = require('watson-developer-cloud/personality-insights/v3');
 
-module.exports = app => {
-
+module.exports = (app) => {
     // Make sure we have everything we need
     if (!Models.Logging || // Database
         _.isUndefined(app.Config.apiKeys.watson.alchemy) || // configuration object
@@ -40,13 +38,13 @@ module.exports = app => {
     const nlu = new NaturalLanguageUnderstandingV1({
         username: app.Config.apiKeys.watson.alchemy.username,
         password: app.Config.apiKeys.watson.alchemy.password,
-        version_date: NaturalLanguageUnderstandingV1.VERSION_DATE_2017_02_27
+        version_date: NaturalLanguageUnderstandingV1.VERSION_DATE_2017_02_27,
     });
 
     const plu = new PersonalityInsightsV3({
         username: app.Config.apiKeys.watson.personality.username,
-        password:  app.Config.apiKeys.watson.personality.password,
-        version_date: '2016-10-19'
+        password: app.Config.apiKeys.watson.personality.password,
+        version_date: '2016-10-19',
     });
 
     // Results Promise
@@ -58,13 +56,12 @@ module.exports = app => {
             .andWhere('to', 'like', channel)
             .andWhere('text', 'not like', 's/%')
             .orderBy('timestamp', 'desc')
-            .limit(limit || 500)
-        )
+            .limit(limit || 500))
             .fetchAll();
 
     const personality = async (to, from, text, message) => {
         const [input] = text.split(' ');
-       const user  = input || from;
+        const user = input || from;
         try {
             const results = await Models.Logging.query(qb => qb
                 .select(['id', 'text', 'timestamp'])
@@ -72,11 +69,10 @@ module.exports = app => {
                 .where('from', 'like', user)
                 .andWhere('text', 'not like', 's/%')
                 .orderBy('timestamp', 'desc')
-                .limit(1000)
-            )
+                .limit(1000))
                 .fetchAll();
 
-            if(!results.length) {
+            if (!results.length) {
                 app.say(to, `I have no personality data for ${user}, ${from}`);
                 return;
             }
@@ -86,34 +82,31 @@ module.exports = app => {
                 contentItems: [],
             };
 
-            results.forEach(result => {
+            results.forEach((result) => {
                 output.contentItems.push({
                     content: result.attributes.text,
                     contenttype: 'text/plain',
                     created: result.attributes.timestamp,
                     id: result.attributes.id,
-                    language: 'en'
+                    language: 'en',
                 });
             });
 
             console.dir(JSON.stringify(output));
-
-
         } catch (err) {
-                app.say(to, `Something went wrong with the personality stuffs, ${from}`);
-                logger.error('Error In personality function of watsonAlchemy', {
-                    message: err.message || '',
-                    stack: err.stack || '',
-                });
+            app.say(to, `Something went wrong with the personality stuffs, ${from}`);
+            logger.error('Error In personality function of watsonAlchemy', {
+                message: err.message || '',
+                stack: err.stack || '',
+            });
         }
-
     };
 
     // Register Command
     app.Commands.set('personality', {
         desc: '[Nick?] Get personality insights for use',
         access: app.Config.accessLevels.admin,
-        call: personality
+        call: personality,
     });
 
 
@@ -130,27 +123,27 @@ module.exports = app => {
             }
 
             // Verify input
-            let data = _(results.pluck('text')).uniq().reverse().value();
+            const data = _(results.pluck('text')).uniq().reverse().value();
             if (!data) {
                 app.say(to, 'Something went wrong completing your combined command');
                 return;
             }
 
             const nluConfig = {
-                'entities': {
-                    'emotion': true,
-                    'sentiment': true,
-                    'concepts': true,
-                    'limit': 5,
+                entities: {
+                    emotion: true,
+                    sentiment: true,
+                    concepts: true,
+                    limit: 5,
                 },
-                'keywords': {
-                    'sentiment': true,
-                    'emotion': true,
-                    'limit': 5
+                keywords: {
+                    sentiment: true,
+                    emotion: true,
+                    limit: 5,
                 },
-                'concepts': {
-                    'limit': 5
-                }
+                concepts: {
+                    limit: 5,
+                },
             };
 
             nlu.analyze({
@@ -196,9 +189,7 @@ module.exports = app => {
             //     // Report back to IRC
             //     app.say(to, output);
             // });
-
-        }
-        catch (err) {
+        } catch (err) {
             logger.error('Error In Whats Up', {
                 message: err.message || '',
                 stack: err.stack || '',
@@ -210,7 +201,7 @@ module.exports = app => {
     app.Commands.set('whatsup', {
         desc: '[Channel?] Get the combined information for a specified channel (defaults to current channel)',
         access: app.Config.accessLevels.admin,
-        call: whatsUp
+        call: whatsUp,
     });
 
     // Get the users overall sentiment
@@ -225,7 +216,7 @@ module.exports = app => {
 
         try {
             const results = await getResults(nick, channel, limit);
-            let data = _(results.pluck('text')).uniq().reverse().value();
+            const data = _(results.pluck('text')).uniq().reverse().value();
 
             // No Data provided
             if (!data) {
@@ -270,21 +261,18 @@ module.exports = app => {
             //     // Report back to IRC
             //     app.say(to, output);
             // });
-
-        }
-        catch (err) {
+        } catch (err) {
             logger.error('Combined Error', {
                 message: err.message || '',
                 stack: err.stack || '',
             });
         }
-
     };
     // Register Command
     app.Commands.set('combined', {
         desc: '[Nick] [Channel] Get the combined information for a specified user',
         access: app.Config.accessLevels.admin,
-        call: combined
+        call: combined,
     });
 
     return scriptInfo;

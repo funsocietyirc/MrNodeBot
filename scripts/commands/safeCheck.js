@@ -1,15 +1,14 @@
-'use strict';
 const scriptInfo = {
     name: 'Safe Check',
     desc: 'Check the safety of a URL',
-    createdBy: 'IronY'
+    createdBy: 'IronY',
 };
 const _ = require('lodash');
 const logger = require('../../lib/logger.js');
 const safe = require('../generators/_getGoogleSafeUrlCheck');
 const extractUrls = require('../../lib/../lib/extractUrls');
 
-module.exports = app => {
+module.exports = (app) => {
     // We require a google API Key for this command
     if (_.isUndefined(app.Config.apiKeys.google) || !_.isString(app.Config.apiKeys.google) || _.isEmpty(app.Config.apiKeys.google)) return scriptInfo;
 
@@ -39,15 +38,13 @@ module.exports = app => {
             }
 
             // Iterate over the results
-            _.each(results, result => {
+            _.each(results, (result) => {
                 // Not enough information to provide a line
                 if (!result.threatType || !result.platformType || !result.threat.url) return;
                 // say it back to irc
                 app.say(to, `Warning ${_.startCase(result.threatType).toLowerCase()} threat detected on ${result.threat.url} for ${_.startCase(result.platformType).toLowerCase()}`);
             });
-
-        }
-        catch (err) {
+        } catch (err) {
             logger.error('Error Completing a safe check request', {
                 message: err.message || '',
                 stack: err.stack || '',
@@ -60,7 +57,7 @@ module.exports = app => {
     app.Commands.set('safe-check', {
         desc: '[urls] Safe Check a URL',
         access: app.Config.accessLevels.admin,
-        call: safeCheck
+        call: safeCheck,
     });
 
     return scriptInfo;

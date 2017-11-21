@@ -1,15 +1,14 @@
-'use strict';
 const scriptInfo = {
     name: 'Image Upload Web Front End',
     desc: 'Provides a PUG form for uploading photos',
-    createdBy: 'IronY'
+    createdBy: 'IronY',
 };
 const path = require('path');
 const logger = require('../../lib/logger');
 const Models = require('funsociety-bookshelf-model-loader');
 const randToken = require('rand-token');
 
-module.exports = app => {
+module.exports = (app) => {
     // Log nick changes in the alias table
     if (!app.Database && !Models.Token) return;
 
@@ -34,7 +33,7 @@ module.exports = app => {
 
         // Invalid File MIME type
         if (!req.files.image.mimetype.startsWith('image/')) {
-            res.status(500).send(`Improper MIME type`);
+            res.status(500).send('Improper MIME type');
             return;
         }
 
@@ -55,10 +54,10 @@ module.exports = app => {
             const fileName = `${randToken.generate(6)}${path.extname(file.name)}`;
 
             // Move the image to the uploads dir
-            file.mv(app.AppRoot + '/web/uploads/' + fileName, async (err) => {
+            file.mv(`${app.AppRoot}/web/uploads/${fileName}`, async (err) => {
                 // if something went wrong, return
                 if (err) {
-                    logger.error(`Something went wrong moving an image in the imageUploadWeb script`, {
+                    logger.error('Something went wrong moving an image in the imageUploadWeb script', {
                         message: err.message || '',
                         stack: err.stack || '',
                     });
@@ -77,11 +76,10 @@ module.exports = app => {
                             to: tResults.get('channel'),
                             from: tResults.get('user'),
                         });
-                    }
-                    catch (innerErr) {
+                    } catch (innerErr) {
                         logger.error('Something went wrong saving a URL model inside imageUploadWeb', {
                             message: err.message || '',
-                            stack: err.stack || ''
+                            stack: err.stack || '',
                         });
                     }
                 }
@@ -93,15 +91,12 @@ module.exports = app => {
                 // Respond on Web
                 res.redirect(app.WebServer.namedRoutes.build('urls', {
                     channel: tResults.get('channel'),
-                    user: tResults.get('user')
+                    user: tResults.get('user'),
                 }));
-
             });
-        }
-        catch (err) {
+        } catch (err) {
             res.status(500).send('Internal server error');
         }
-
     };
 
     // Register upload Form
@@ -109,7 +104,7 @@ module.exports = app => {
         handler: uploadForm,
         desc: 'Upload a file',
         path: '/upload',
-        verb: 'get'
+        verb: 'get',
     });
 
     // Register upload Handler
@@ -117,7 +112,7 @@ module.exports = app => {
         handler: uploadHandler,
         desc: 'Handle File Upload',
         path: '/upload',
-        verb: 'post'
+        verb: 'post',
     });
 
     // Return the script info

@@ -1,8 +1,7 @@
-'use strict';
 const scriptInfo = {
     name: 'Mention Listener',
     desc: 'Keep track of mentions',
-    createdBy: 'IronY'
+    createdBy: 'IronY',
 };
 const _ = require('lodash');
 const Models = require('funsociety-bookshelf-model-loader');
@@ -11,7 +10,7 @@ const logger = require('../../lib/logger');
 
 const pattern = /\B@((?!\w*\.\w)[\w\[\]|\-`\\{}\^]{1,16}(?!\w))/gi;
 
-module.exports = app => {
+module.exports = (app) => {
     // Assure the database and logging table exists
     if (!Models.Mention || !Models.Mentioned) return scriptInfo;
     // Parse for mentions
@@ -40,23 +39,22 @@ module.exports = app => {
 
         try {
             const mention = await Models.Mention.create({
-                text: text,
+                text,
                 by: from,
                 channel: to,
                 user: message.user,
                 host: message.host,
             });
 
-            let mentionStack = [];
+            const mentionStack = [];
 
             _.forEach(results, nick => mentionStack.push(Models.Mentioned.create({
-                nick: nick,
+                nick,
                 mention_id: mention.id,
             })));
 
             return Promise.all(mentionStack);
-        }
-        catch(err) {
+        } catch (err) {
             logger.error('Error recording mention', {
                 message: err.message || '',
                 stack: err.stack || '',
@@ -67,13 +65,13 @@ module.exports = app => {
     // Listen to messages
     app.Listeners.set('mentions', {
         desc: 'Mentions',
-        call: mentions
+        call: mentions,
     });
 
     // Listen to Actions
     app.OnAction.set('mentions', {
         call: (from, to, text, message) => mentions(to, from, text, message),
-        name: 'mentions'
+        name: 'mentions',
     });
 
     // All went OK

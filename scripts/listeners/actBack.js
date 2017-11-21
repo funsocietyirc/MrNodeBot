@@ -1,4 +1,3 @@
-'use strict';
 /**
  * React back to a action
  * @module react back
@@ -8,16 +7,16 @@ const scriptInfo = {
     name: 'Act Back',
     desc: 'Mock back actions',
     createdBy: 'IronY',
-    actions: {}
+    actions: {},
 };
 const _ = require('lodash');
 
-module.exports = app => {
+module.exports = (app) => {
     const actBack = scriptInfo.actions.actBack = (from, to, text, message) => {
         // Gate
         if (!_.isString(text) || _.isEmpty(text)) return;
 
-        const matches = text.match(new RegExp('^(.*)\\s' + app.nick + '(?:\\s(.*))?$', 'i'));
+        const matches = text.match(new RegExp(`^(.*)\\s${app.nick}(?:\\s(.*))?$`, 'i'));
 
         // No matches available, bail
         if (!matches || !matches[0] || !matches[1]) return;
@@ -31,7 +30,7 @@ module.exports = app => {
     // Listen to Actions
     app.OnAction.set('actBack', {
         call: actBack,
-        name: 'actBack'
+        name: 'actBack',
     });
 
     // All went OK

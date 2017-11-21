@@ -1,4 +1,3 @@
-'use strict';
 const rp = require('request-promise-native');
 const logger = require('../../lib/logger');
 
@@ -8,9 +7,9 @@ module.exports = async (user, repo, results) => {
         const data = await rp({
             uri: `https://api.bitbucket.org/2.0/repositories/${user}/${repo}`,
             headers: {
-                'user-agent': 'MrNodeBot'
+                'user-agent': 'MrNodeBot',
             },
-            json: true
+            json: true,
         });
 
         // Check we have a result
@@ -28,16 +27,17 @@ module.exports = async (user, repo, results) => {
                 hasIssues: data.has_issues,
                 desc: data.description,
                 privateRepo: false,
-            }
+            },
         });
-    }
-    catch (err) {
+    } catch (err) {
         // Private Repo
-        if (err.statusCode === 403) return Object.assign(results, {
-            bitBucket: {
-                privateRepo: true
-            }
-        });
+        if (err.statusCode === 403) {
+            return Object.assign(results, {
+                bitBucket: {
+                    privateRepo: true,
+                },
+            });
+        }
 
         // Log Error
         logger.warn('Error in getBitbucket link function', {

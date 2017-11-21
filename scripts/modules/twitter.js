@@ -1,17 +1,17 @@
-'use strict';
 const scriptInfo = {
     name: 'robotTweet',
-    createdBy: 'IronY'
+    createdBy: 'IronY',
 };
 const _ = require('lodash');
 const helpers = require('../../helpers');
 const logger = require('../../lib/logger');
 const ircTypo = require('../lib/_ircTypography');
 const short = require('../lib/_getShortService')();
+
 const tweetStreamUrl = 'https://twitter.com/funsocietyirc/status';
 let currentStream = null;
 
-module.exports = app => {
+module.exports = (app) => {
     if (!app._twitterClient) return scriptInfo;
 
     // Announce to Channels
@@ -21,18 +21,18 @@ module.exports = app => {
         });
 
     // Push to Socket
-    const push = tweet => {
+    const push = (tweet) => {
         if (!app._twitterClient || !app.WebServer.socketIO) return;
 
-        let timestamp = Date.now();
+        const timestamp = Date.now();
 
         app.WebServer.socketIO.emit('tweets', {
             tweet,
-            timestamp
+            timestamp,
         });
     };
 
-    const onTweetData = tweet => {
+    const onTweetData = (tweet) => {
         // We do not have enough data, bail
         if (!tweet.user || !tweet.text) return;
 
@@ -41,18 +41,18 @@ module.exports = app => {
     };
 
     const onTweetError = error => logger.error('Twitter Error', {
-        error
+        error,
     });
 
     // the Main twitter watcher
     const watcher = () => {
         if (!app._twitterClient) return;
 
-        let newStream = app._twitterClient.stream('user', {
-            with: app.Config.features.twitter.followers
+        const newStream = app._twitterClient.stream('user', {
+            with: app.Config.features.twitter.followers,
         });
 
-        newStream.once('connected', function (res) {
+        newStream.once('connected', (res) => {
             if (currentStream) currentStream.stop();
 
             // Fire off the listeners, being sure to clear the previous
@@ -75,19 +75,19 @@ module.exports = app => {
             return;
         }
 
-        let twitConfig = {
-            status: text
+        const twitConfig = {
+            status: text,
         };
 
         app._twitterClient.post('statuses/update', twitConfig, (error, tweet, response) => {
             if (error) {
                 logger.error('Twitter Error', {
-                    error
+                    error,
                 });
                 app.say(to, 'Something is not quite right with your tweet');
                 return;
             }
-            app.say(to, `We've just lit up the Twittersphere, bro!`);
+            app.say(to, 'We\'ve just lit up the Twittersphere, bro!');
         });
     };
 
@@ -96,14 +96,14 @@ module.exports = app => {
     app.OnConnected.set('watcher', {
         call: watcher,
         desc: 'Twitter watcher',
-        name: 'TwitterWatcher'
+        name: 'TwitterWatcher',
     });
 
     // Register Tweet Command
     app.Commands.set('tweet', {
         desc: '[message] - Send a message to the Twittersphere',
         access: app.Config.accessLevels.admin,
-        call: tweetCmd
+        call: tweetCmd,
     });
 
     // Return the script info

@@ -1,0 +1,46 @@
+{
+  "extends": "airbnb-base",
+  "env": {
+    "node": true,
+    "mocha": true,
+    "es6": true
+  },
+  "parserOptions": {
+    "ecmaVersion": 8,
+    "sourceType": "module",
+    "ecmaFeatures": {
+    }
+  },
+  "plugins": [
+    "json",
+    "chai-expect",
+    "mocha"
+  ],
+  "rules": {
+    "no-await-in-loop": 0,
+    "no-restricted-syntax": 0,
+    "no-underscore-dangle": [0],
+    "mocha/no-exclusive-tests": "error",
+    "no-console": 0,
+    "consistent-return": 0,
+    "no-case-declarations": 0,
+    "global-require": 0,
+    "indent": [
+      "error",
+      4
+    ],
+    "func-names": 0,
+    "linebreak-style": [
+      "error",
+      "unix"
+    ],
+    "quotes": [
+      "error",
+      "single"
+    ],
+    "semi": [
+      "error",
+      "always"
+    ]
+  }
+}

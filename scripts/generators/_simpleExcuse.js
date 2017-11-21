@@ -1,9 +1,8 @@
-'use strict';
 const _ = require('lodash');
 
 const firstArray = [
     'Temporary',
-    'Intermittant',
+    'Intermittent',
     'Partial',
     'Redundant',
     'Total',
@@ -55,7 +54,7 @@ const firstArray = [
     'Unvalidated',
     'Non-Static',
     'Unreplicatable',
-    'Non-Serious'
+    'Non-Serious',
 ];
 
 const secondArray = [
@@ -147,7 +146,7 @@ const thirdArray = [
     'Crashdump',
     'Stackdump',
     'Problem',
-    'Lockout'
+    'Lockout',
 ];
 
 const optionalFourthArray = [
@@ -155,12 +154,12 @@ const optionalFourthArray = [
     'Problem',
     'Warning',
     'Signal',
-    'Flag'
+    'Flag',
 ];
 
 module.exports = async (size) => {
     size = _.isSafeInteger(size) && size > 0 ? size : 1;
-    let output = [];
+    const output = [];
     _.times(size, output.push(`${_.sample(firstArray)} ${_.sample(secondArray)} ${_.sample(thirdArray)} ${_.random(1, true) > 0.8 ? _.sample(optionalFourthArray) : ''}`));
     return output;
 };

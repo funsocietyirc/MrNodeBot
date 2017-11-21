@@ -1,7 +1,5 @@
-'use strict';
-
 exports.up = function (knex, Promise) {
-    return knex.schema.createTable('url', function (table) {
+    return knex.schema.createTable('url', (table) => {
         table.collate('utf8mb4_unicode_ci');
         table.increments('id').primary();
         table.string('url').collate('utf8mb4_unicode_ci');

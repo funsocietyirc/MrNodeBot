@@ -1,4 +1,3 @@
-'use strict';
 const _ = require('lodash');
 const logger = require('../../lib/logger');
 const Models = require('funsociety-bookshelf-model-loader');
@@ -10,7 +9,7 @@ module.exports = async (nick, channel) => {
     if (!nick) throw new Error('Channel is a required argument');
 
     try {
-        const results = await Models.Upvote.query(qb => {
+        const results = await Models.Upvote.query((qb) => {
             qb
                 .select(['voter'])
                 .where('candidate', 'like', nick);
@@ -32,10 +31,9 @@ module.exports = async (nick, channel) => {
             meanScore: _.mean(scores).toFixed(2),
             totalScore: _.sum(scores),
             totalVotes: _.sum(results.pluck('votes')),
-            rankings: results.toJSON()
+            rankings: results.toJSON(),
         };
-    }
-    catch (err) {
+    } catch (err) {
         logger.error('Something went wrong in the _getCandidatePopularityRanking file', {
             message: err.message || '',
             stack: err.stack || '',

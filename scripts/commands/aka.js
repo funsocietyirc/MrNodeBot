@@ -1,25 +1,24 @@
-'use strict';
 const scriptInfo = {
     name: 'Also Known As',
     desc: 'Get information from the nick change table',
-    createdBy: 'IronY'
+    createdBy: 'IronY',
 };
 const Models = require('funsociety-bookshelf-model-loader');
 const logger = require('../../lib/logger');
 
-module.exports = app => {
+module.exports = (app) => {
     // Log nick changes in the alias table
     if (!Models.Alias) return;
 
     const aka = async (to, from, text, message) => {
         if (!text) {
-            app.say(to, `No one is no one is no one...`);
+            app.say(to, 'No one is no one is no one...');
             return;
         }
 
         try {
             const results = await Models.Alias
-                .query(qb => {
+                .query((qb) => {
                     qb
                         .distinct('newnick')
                         .where('oldnick', 'like', text)
@@ -34,8 +33,7 @@ module.exports = app => {
 
             const nicks = results.pluck('newnick').join(' | ');
             app.say(to, `${text} is also known as: ${nicks}`);
-        }
-        catch (err) {
+        } catch (err) {
             logger.error('Something went wrong in the aka command file', {
                 message: err.message || '',
                 stack: err.stack || '',
@@ -49,7 +47,7 @@ module.exports = app => {
     app.Commands.set('aka', {
         desc: '[alias] get known aliases',
         access: app.Config.accessLevels.identified,
-        call: aka
+        call: aka,
     });
 
     // Return the script info

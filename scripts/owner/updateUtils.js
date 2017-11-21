@@ -1,8 +1,7 @@
-'use strict';
 const scriptInfo = {
     name: 'Update Utilities',
     desc: 'Provides refresh (reloads scripts), update (pulls from git hub), and halt (terminates bot)',
-    createdBy: 'IronY'
+    createdBy: 'IronY',
 };
 
 const _ = require('lodash');
@@ -17,37 +16,36 @@ const logger = require('../../lib/logger');
 
 // Handle real time upgrades, updates, and restarts
 // Commands: update reload halt
-module.exports = app => {
-
+module.exports = (app) => {
     /* Helpers */
     const execSettings = () => Object.assign({}, {
         async: true,
-        silent: app.Config.bot.debug || false
+        silent: app.Config.bot.debug || false,
     });
 
     // Perform Secure Operation via Snyk
-    const protect = () => new Promise((resolve, reject) => shell.exec(`npm run snyk-protect`, execSettings(), (code, stdOut, stdErr) => {
+    const protect = () => new Promise((resolve, reject) => shell.exec('npm run snyk-protect', execSettings(), (code, stdOut, stdErr) => {
         // Something went wrong running snyk
         if (code !== 0) {
             // Log Error
-            logger.error('Something went wrong securing packages with Snyk', {code, stdOut, stdErr});
-            return reject(new Error(`Something went wrong securing my modules!`));
+            logger.error('Something went wrong securing packages with Snyk', { code, stdOut, stdErr });
+            return reject(new Error('Something went wrong securing my modules!'));
         }
 
         // Everything went fine
-        resolve({stdCode: code, stdOut: stdOut, stdErr: stdErr});
+        resolve({ stdCode: code, stdOut, stdErr });
     }));
 
     // Pull From Source Control
     const pullFromGit = () => new Promise((resolve, reject) => shell.exec('git pull', execSettings(), (code, stdOut, stdErr) => {
         // The Code did not exit properly
         if (code !== 0) {
-            logger.error('Something went wrong during pull request in the update command', {code, stdOut, stdErr});
+            logger.error('Something went wrong during pull request in the update command', { code, stdOut, stdErr });
             return reject(new Error('Something went wrong with the pull request'));
         }
 
         // Everything went fine
-        resolve({stdCode: code, stdOut: stdOut, stdErr: stdErr});
+        resolve({ stdCode: code, stdOut, stdErr });
     }));
 
     // Update packages
@@ -56,18 +54,18 @@ module.exports = app => {
         if (code !== 0) {
             // Log Error
             const errMsg = `Something went wrong running ${pkgManager.toUpperCase()} install`;
-            logger.error(errMsg, {code, stdErr, stdOut});
+            logger.error(errMsg, { code, stdErr, stdOut });
             return reject(new Error(errMsg));
         }
 
         // Everything went well
-        resolve({stdCode: code, stdOut: stdOut, stdErr: stdErr});
+        resolve({ stdCode: code, stdOut, stdErr });
     }));
 
     // Fetch the git log
     const getGitLog = () => new Promise((resolve, reject) => gitlog(app.Config.gitLog, (error, commits) => {
         if (error) {
-            logger.error('Something went wrong during the get git log process in the update command', {error});
+            logger.error('Something went wrong during the get git log process in the update command', { error });
             return reject(new Error('Something went wrong during the get git log process in the update command'));
         }
         resolve(commits);
@@ -77,11 +75,11 @@ module.exports = app => {
     const checkDiff = abbrevHash => new Promise((resolve, reject) => shell.exec(`git diff-tree --no-commit-id --name-only -r ${abbrevHash}`, execSettings(), (code, stdOut, stdErr) => {
         // Something went wrong
         if (code !== 0 || _.isEmpty(stdOut)) {
-            logger.error('Was unable to read the commit ', {code, stdOut, stdErr});
+            logger.error('Was unable to read the commit ', { code, stdOut, stdErr });
             return reject(new Error('I was unable to read the commit log'));
         }
         // Everything went ok
-        resolve({stdCode: code, stdOut: stdOut, stdErr: stdErr});
+        resolve({ stdCode: code, stdOut, stdErr });
     }));
 
     /* Commands */
@@ -114,7 +112,7 @@ module.exports = app => {
     const forceUnlockCommand = async (to, from, text, message) => {
         const lockStatus = await isLocked();
 
-        if(!lockStatus) {
+        if (!lockStatus) {
             app.say(to, `Updates are not currently locked, ${from}`);
             return;
         }
@@ -124,7 +122,7 @@ module.exports = app => {
     app.Commands.set('update-force-unlock', {
         desc: 'Remove the updates lock file',
         access: app.Config.accessLevels.owner,
-        call: forceUnlockCommand
+        call: forceUnlockCommand,
     });
 
 
@@ -133,9 +131,11 @@ module.exports = app => {
         // Log failed attempts removing the lock file
         const attemptUnlock = () => {
             const unlockStatus = unlock();
-            if(!unlockStatus) logger.error('Error removing the lock file for updates', {
-                message: err.message || ''
-            });
+            if (!unlockStatus) {
+                logger.error('Error removing the lock file for updates', {
+                    message: err.message || '',
+                });
+            }
         };
 
         // Does a lock file exists
@@ -156,7 +156,7 @@ module.exports = app => {
         // Check Lock
         const lockStatus = await lock(from, to);
 
-        /// Verify the lock file
+        // / Verify the lock file
         if (!lockStatus) {
             app.say(to, `Someone else is currently running an update, ${from}`);
             return;
@@ -177,12 +177,12 @@ module.exports = app => {
         // No updates available
         if (_.isString(committed.stdOut) && _.includes(committed.stdOut.toLowerCase(), 'up-to-date')) {
             attemptUnlock();
-            app.action(to, `is still lemony fresh, nothing to be done here`);
+            app.action(to, 'is still lemony fresh, nothing to be done here');
             return;
         }
 
         // Give initial feedback
-        app.action(to, `is now forecasting the clouds for new data`);
+        app.action(to, 'is now forecasting the clouds for new data');
 
         // Grab the commits
         let commits;
@@ -198,7 +198,7 @@ module.exports = app => {
         if (_.isUndefined(commits) || _.isEmpty(commits) || !_.isArray(commits) || _.isEmpty(commits)) {
             attemptUnlock();
             app.say(to, 'Something went wrong finding the last commit');
-            logger.error(`Something went wrong finding the last commit data in updateUtils.js`);
+            logger.error('Something went wrong finding the last commit data in updateUtils.js');
             return;
         }
 
@@ -218,7 +218,7 @@ module.exports = app => {
             });
 
             app.say(to, err.message);
-            halt(to, from, `I am unsure why I am in need of a restart, but I am!`);
+            halt(to, from, 'I am unsure why I am in need of a restart, but I am!');
             return;
         }
 
@@ -242,7 +242,7 @@ module.exports = app => {
         const files = _.compact(diffResults.stdOut.split(os.EOL));
 
         // Check updated files
-        for (let file of files) {
+        for (const file of files) {
             // Should we update npm packages
             if (_.startsWith(file, 'package.json') || (_.startsWith(file, 'yarn.lock') && hasYarnLock)) {
                 shouldInstallPackages = true;
@@ -257,15 +257,15 @@ module.exports = app => {
         try {
             url = await short(`${app.Config.project.repository.url}/commit/${commit.abbrevHash}`);
         } catch (err) {
-            logger.error(`Error getting short url in update utils`, {
+            logger.error('Error getting short url in update utils', {
                 message: err.message || '',
-                stack: err.stack || ''
+                stack: err.stack || '',
             });
             url = `${app.Config.project.repository.url}/commit/${commit.abbrevHash}`;
         }
 
         // Build Output
-        let output = new typo.StringBuilder();
+        const output = new typo.StringBuilder();
         output.appendBold('Update').append(commit.subject).append(commit.authorDateRel).append(url);
         app.say(to, output.text);
 
@@ -273,13 +273,9 @@ module.exports = app => {
         if (shouldInstallPackages) {
             // Determine the package manager to use
             let pkgManager;
-            if (shell.which('yarn') && hasYarnLock)
-                pkgManager = 'yarn';
-            else if (shell.which('npm'))
-                pkgManager = 'npm';
-            else {
+            if (shell.which('yarn') && hasYarnLock) { pkgManager = 'yarn'; } else if (shell.which('npm')) { pkgManager = 'npm'; } else {
                 attemptUnlock();
-                logger.error(`Cannot find package manager during upgrade`);
+                logger.error('Cannot find package manager during upgrade');
                 app.say(to, `I am afraid we are missing the package manager, ${from}`);
                 return;
             }
@@ -296,7 +292,7 @@ module.exports = app => {
             }
 
             // Secure via synk
-            app.action(to, `is getting all up in his safe space`);
+            app.action(to, 'is getting all up in his safe space');
             let secureResults;
             try {
                 await protect();
@@ -322,14 +318,14 @@ module.exports = app => {
     app.Commands.set('update', {
         desc: 'Hot swap out the Bot, if hard is specified it will do a hard reboot',
         access: app.Config.accessLevels.owner,
-        call: updateCommand
+        call: updateCommand,
     });
 
     // Terminate the bot
     app.Commands.set('halt', {
         desc: 'Halt and catch fire (Quit bot / watcher proc)',
         access: app.Config.accessLevels.owner,
-        call: (to, from, text, message) => halt(to, from)
+        call: (to, from, text, message) => halt(to, from),
     });
 
     // Reload the configuration object
@@ -339,14 +335,14 @@ module.exports = app => {
         call: (to, from, text, message) => {
             app.reloadConfiguration();
             app.action(to, 'has finished changing his mind');
-        }
+        },
     });
 
     // Live reload the scripts
     app.Commands.set('reload-scripts', {
         desc: 'Live reload the Bot from local storage',
         access: app.Config.accessLevels.owner,
-        call: (to, from, text, message) => reload(to, from)
+        call: (to, from, text, message) => reload(to, from),
     });
 
     // Reload both the scripts and the Config
@@ -356,7 +352,7 @@ module.exports = app => {
         call: (to, from, text, message) => {
             app.reloadConfiguration();
             reload(to, from);
-        }
+        },
     });
 
     // Secure
@@ -366,11 +362,11 @@ module.exports = app => {
         call: async (to, from, text, message) => {
             try {
                 const secureResults = await protect();
-                app.action(to, 'successfully secured modules!')
+                app.action(to, 'successfully secured modules!');
             } catch (err) {
-                app.say(`Something went wrong securing my modules`);
+                app.say('Something went wrong securing my modules');
             }
-        }
+        },
     });
 
     // Pull From git
@@ -381,11 +377,10 @@ module.exports = app => {
             try {
                 const pullResults = await pullFromGit();
                 app.action(to, 'has successfully pulled himself from source!');
-            }
-            catch (err) {
+            } catch (err) {
                 app.say(to, err.message);
             }
-        }
+        },
     });
 
     // Return the script info

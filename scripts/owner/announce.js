@@ -1,13 +1,12 @@
-'use strict';
 const scriptInfo = {
     name: 'Announce',
     desc: 'Announce to all active channels, and to Twitter',
-    createdBy: 'IronY'
+    createdBy: 'IronY',
 };
 const _ = require('lodash');
 const logger = require('../../lib/logger');
 
-module.exports = app => {
+module.exports = (app) => {
     // Send Announcement Over socket
     const socket = (to, from, text, message, timestamp) => {
         // Bail if socket client is not available
@@ -17,7 +16,7 @@ module.exports = app => {
             to,
             from,
             text,
-            timestamp
+            timestamp,
         });
     };
 
@@ -25,7 +24,7 @@ module.exports = app => {
     const irc = (to, from, text, message, timestamp) => {
         // IRC Client does not seem to be available
         if (_.isUndefined(app._ircClient) || !_.isArray(app.channels) || _.isEmpty(app.channels)) return;
-        app.channels.forEach(channel => {
+        app.channels.forEach((channel) => {
             if (channel === to.toLowerCase()) app.say(channel, 'Your announcement has been made successfully.');
             else app.say(channel, text);
         });
@@ -35,11 +34,13 @@ module.exports = app => {
     const twitter = (to, from, text, message, timestamp) => {
         if (!app._twitterClient) return;
         app._twitterClient.post('statuses/update', {
-            status: text
+            status: text,
         }, (err, tweet, response) => {
-            if (err) logger.error('Twitter Error', {
-                err
-            });
+            if (err) {
+                logger.error('Twitter Error', {
+                    err,
+                });
+            }
         });
     };
 
@@ -57,7 +58,7 @@ module.exports = app => {
             const timestamp = Date.now();
             // Push to channels
             _.each([irc, twitter, socket], chan => chan(to, from, text, message, timestamp));
-        }
+        },
     });
 
     return scriptInfo;

@@ -1,11 +1,11 @@
-'use strict';
 const _ = require('lodash');
 const rp = require('request-promise-native');
+
 const endPoint = 'https://wordsapiv1.p.mashape.com/words';
-const config = require("../../config");
+const config = require('../../config');
 
 module.exports = async (word) => {
-    if(!_.isString(config.apiKeys.mashape) || _.isEmpty(config.apiKeys.mashape)) {
+    if (!_.isString(config.apiKeys.mashape) || _.isEmpty(config.apiKeys.mashape)) {
         throw new Error('No Mashape key available');
     }
     try {
@@ -14,7 +14,7 @@ module.exports = async (word) => {
             json: true,
             headers: {
                 'X-Mashape-Key': config.apiKeys.mashape || '',
-            }
+            },
         });
         console.dir(results);
     } catch (err) {

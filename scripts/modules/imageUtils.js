@@ -1,8 +1,7 @@
-'use strict';
 const scriptInfo = {
-    name: 'Image Utilitie Module',
+    name: 'Image Utilities Module',
     desc: 'Tools to remove all images from the url table, rebuild them, and them should they die',
-    createdBy: 'IronY'
+    createdBy: 'IronY',
 };
 const _ = require('lodash');
 const rp = require('request-promise-native');
@@ -15,7 +14,7 @@ const extractUrls = require('../../lib/extractUrls');
 const hashPattern = new RegExp('%23', 'g');
 
 // Display a list of images in the Web Front end
-module.exports = app => {
+module.exports = (app) => {
     // Bailout if we do not have database
     if (!Models.Url) return scriptInfo;
 
@@ -35,30 +34,20 @@ module.exports = app => {
         Models.Logging.query(qb =>
             qb
                 .where(clause =>
-                    whereImages(clause, 'text')
-                )
-                .orderBy('timestamp', 'desc')
-        )
+                    whereImages(clause, 'text'))
+                .orderBy('timestamp', 'desc'))
             .fetchAll()
             .then(logResults =>
                 logResults
                     .forEach(logResult =>
-                        _(
-                            extractUrls(logResult.get('text'))
-                        )
-                            .filter(url =>
-                                (_.isString(url) ? url : '')['match'](/^http[s]?:\/\/.+\.(jpg|gif|jpeg|png)$/i)
-                            )
+                        _(extractUrls(logResult.get('text'))).filter(url => (_.isString(url) ? url : '').match(/^http[s]?:\/\/.+\.(jpg|gif|jpeg|png)$/i))
                             .each(url =>
                                 Models.Url.create({
-                                    url: url,
+                                    url,
                                     to: logResult.get('to'),
                                     from: logResult.get('from'),
-                                    timestamp: logResult.get('timestamp')
-                                })
-                            )
-                    )
-            )
+                                    timestamp: logResult.get('timestamp'),
+                                }))))
             .then(() => {
                 // Clean up when done
                 cleanImages(false);
@@ -69,53 +58,47 @@ module.exports = app => {
     const destroyImages = (to, from, text, message) =>
         Models.Url.query(qb =>
             qb
-                .where(whereImages)
-        )
+                .where(whereImages))
             .destroy()
             .then(results =>
-                app.say(to, 'The images from the URL Database have been successfully purged')
-            );
+                app.say(to, 'The images from the URL Database have been successfully purged'));
 
     // Clean the DB of broken URLS
-    const cleanImages = to => {
-        if (_.isString(to) && !_.isEmpty(to)) app.say(to, `Running Clean Image command`);
+    const cleanImages = (to) => {
+        if (_.isString(to) && !_.isEmpty(to)) app.say(to, 'Running Clean Image command');
         else logger.info('Running Clean Images');
 
-        Models.Url.query(
-            qb => qb.where(whereImages)
-        )
+        Models.Url.query(qb => qb.where(whereImages))
             .fetchAll()
             .then(results =>
                 results
                     .pluck('url').forEach(url =>
-                    rp({
-                        uri: url,
-                        method: 'GET',
-                        encoding: null,
-                    })
-                        .then(urlResult => {
-                            let type = fileType(urlResult);
-
-                            // Get extension
-                            let ext = '';
-                            if (type && type.ext) ext = type.ext;
-
-                            // If Valid image extension bailout
-                            if (ext.match(/^(png|gif|jpg|jpeg)$/i)) return;
-
-                            logger.info(`Removing Non Image link ${url}`);
-                            Models.Url.where('url', url).destroy();
+                        rp({
+                            uri: url,
+                            method: 'GET',
+                            encoding: null,
                         })
-                        .catch(err => {
-                            logger.info(`Removing Dead Image link ${url}`);
-                            Models.Url.where('url', url).destroy();
-                        })
-                )
-            );
+                            .then((urlResult) => {
+                                const type = fileType(urlResult);
+
+                                // Get extension
+                                let ext = '';
+                                if (type && type.ext) ext = type.ext;
+
+                                // If Valid image extension bailout
+                                if (ext.match(/^(png|gif|jpg|jpeg)$/i)) return;
+
+                                logger.info(`Removing Non Image link ${url}`);
+                                Models.Url.where('url', url).destroy();
+                            })
+                            .catch((err) => {
+                                logger.info(`Removing Dead Image link ${url}`);
+                                Models.Url.where('url', url).destroy();
+                            })));
     };
 
     // Web Front End (Pug View)
-    const imagesView = (req, res) => Models.Url.query(qb => {
+    const imagesView = (req, res) => Models.Url.query((qb) => {
         // If there is a channel in the query string
         if (req.params.channel) qb.where('to', req.params.channel.replace(hashPattern, '#'));
         // If there is a from in the query string
@@ -127,19 +110,19 @@ module.exports = app => {
             .limit(req.query.length || 50);
     })
         .fetchAll()
-        .then(results => {
+        .then((results) => {
             // Get Unique list of channels from results
-            let channels = _.uniqBy(results.pluck('to'), c => _.toLower(c));
+            const channels = _.uniqBy(results.pluck('to'), c => _.toLower(c));
             // Get Unique list of users from the results
-            let users = _.uniqBy(results.pluck('from'), u => _.toLower(u));
+            const users = _.uniqBy(results.pluck('from'), u => _.toLower(u));
             // Return Response
             res.render('images', {
                 results: results.toJSON(),
-                channels: channels,
-                users: users,
+                channels,
+                users,
                 currentChannel: req.params.channel || false,
                 currentUser: req.params.user || false,
-                moment: require('moment')
+                moment: require('moment'),
             });
         });
 
@@ -154,26 +137,26 @@ module.exports = app => {
     app.Commands.set('clean-images', {
         desc: 'clean images from the logging database if they are no longer relevant',
         access: app.Config.accessLevels.owner,
-        call: to => cleanImages(to)
+        call: to => cleanImages(to),
     });
 
     // Command to build Images
     app.Commands.set('build-images', {
         desc: '',
         access: app.Config.accessLevels.owner,
-        call: buildImages
+        call: buildImages,
     });
 
     // Command to destroy images
     app.Commands.set('destroy-images', {
         desc: '',
         access: app.Config.accessLevels.owner,
-        call: destroyImages
+        call: destroyImages,
     });
 
     // Scheduler automatic cleanup
     // TODO make this configurable ala config.js
-    let cronTime = new scheduler.RecurrenceRule();
+    const cronTime = new scheduler.RecurrenceRule();
     cronTime.minute = 45;
     cronTime.hour = 0;
     scheduler.schedule('cleanImages', cronTime, () => cleanImages(false));

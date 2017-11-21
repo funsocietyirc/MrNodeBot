@@ -1,16 +1,15 @@
-'use strict';
 // TODO: Make multi-channel and configurable
 const scriptInfo = {
     name: 'greeter',
     desc: 'Send a message to users joining mr robot sub channels based on certain conditions, ' +
     'letting them know and inviting them to #fsociety',
-    createdBy: 'IronY'
+    createdBy: 'IronY',
 };
 const _ = require('lodash');
 const Models = require('funsociety-bookshelf-model-loader');
 const logger = require('../../lib/logger');
 
-module.exports = app => {
+module.exports = (app) => {
     // More readable inline leet speak
     const l33t = text => text
         .replace(/[a]/gi, '4')
@@ -26,37 +25,37 @@ module.exports = app => {
 
     const salutations = _.map([
         'Greetings', 'Hail', 'Welcome', 'Salutations', 'Alhoa',
-        'Howdy', 'Hi', 'Hey', 'Hiya', 'Good Day', 'Yo', 'How are you', 'Salute', 'What\'s up', 'Bonsoir'
+        'Howdy', 'Hi', 'Hey', 'Hiya', 'Good Day', 'Yo', 'How are you', 'Salute', 'What\'s up', 'Bonsoir',
     ], l33t).join('|');
 
     const appends = _.map([
-        'hello friend', 'it\'s happening', 'what are your instructions', 'I saved a chair for you'
+        'hello friend', 'it\'s happening', 'what are your instructions', 'I saved a chair for you',
     ], l33t).join('|');
 
     // Model
     const greetModel = Models.Greeter;
 
     // Check DB to see if they were already greeted
-    const checkChannel = (channel, nick, host, callback) => greetModel.query(qb => qb.where(clause => {
+    const checkChannel = (channel, nick, host, callback) => greetModel.query(qb => qb.where((clause) => {
         clause
             .where('channel', 'like', channel)
-            .where('nick', 'like', nick)
-    }).orWhere(clause => {
+            .where('nick', 'like', nick);
+    }).orWhere((clause) => {
         clause
             .where('channel', 'like', channel)
-            .where('host', 'like', host)
+            .where('host', 'like', host);
     }))
         .fetch()
-        .then(results => {
+        .then((results) => {
             if (results) return;
             // Log that we have greeted for this channel
             greetModel.create({
-                channel: channel,
-                nick: nick,
-                host: host
+                channel,
+                nick,
+                host,
             })
                 .catch(err => logger.error('Error in greeter', {
-                    err
+                    err,
                 }));
 
             if (_.isFunction(callback)) callback();
@@ -66,7 +65,7 @@ module.exports = app => {
 
     // Provide a onJoin handler
     const onJoin = (channel, nick, message) => {
-        let lowerCaseChannel = channel.toLowerCase();
+        const lowerCaseChannel = channel.toLowerCase();
         // Make sure we are not reporting ourselves
         if (
             nick !== app.nick &&
@@ -85,57 +84,57 @@ module.exports = app => {
     };
     app.OnJoin.set('fsociety-greeter', {
         call: onJoin,
-        name: 'fsociety-greetr'
+        name: 'fsociety-greetr',
     });
 
-    //Clear greet cache
+    // Clear greet cache
     const cleanGreetDb = (to, from, text, message) => {
-        let textArray = text.split(' ');
+        const textArray = text.split(' ');
         if (!textArray.length) {
             app.say(to, 'You must specify a channel when clearing the greeter cache');
             return;
         }
-        let [channel] = textArray;
+        const [channel] = textArray;
         greetModel
             .where('channel', 'like', channel)
             .destroy()
             .then(() => app.say(to, `Greet cache has been cleared for ${channel}`))
-            .catch(err => {
+            .catch((err) => {
                 app.say(to, `Something went wrong clearing the greet cache for ${channel}`);
                 logger.error('Error in greet cache clear command', {
-                    err
+                    err,
                 });
             });
     };
     app.Commands.set('greet-clear-channel', {
         desc: 'greet-clear-channel [channel] - Clear the greet cache for  the specified channel',
         access: app.Config.accessLevels.owner,
-        call: cleanGreetDb
+        call: cleanGreetDb,
     });
 
     // Get total greets by channel
     const getTotalGreetedByChannel = (to, from, text, message) => {
-        let textArray = text.split(' ');
+        const textArray = text.split(' ');
         if (!textArray.length) {
             app.say(to, 'You must specify a channel when clearing the greeter cache');
             return;
         }
-        let [channel] = textArray;
+        const [channel] = textArray;
         greetModel
             .where('channel', 'like', channel)
             .count()
             .then(total => app.say(to, `A total of ${total} greets have been sent out for the channel ${channel}`))
-            .catch(err => {
+            .catch((err) => {
                 app.say(to, `Something went wrong fetching the greet total for ${channel}`);
                 logger.error('Error in getting greet total', {
-                    err
+                    err,
                 });
             });
     };
     app.Commands.set('greet-total-channel', {
         desc: 'greet-total-channel [channel] - Get the total amount of greets for the specified channel',
         access: app.Config.accessLevels.owner,
-        call: getTotalGreetedByChannel
+        call: getTotalGreetedByChannel,
     });
 
     // Return the script info

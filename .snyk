@@ -57,18 +57,22 @@ patch:
     - x-ray > debug > ms:
         patched: '2017-06-30T22:26:06.281Z'
       x-ray > x-ray-crawler > ms:
-        patched: '2017-11-19T07:45:36.397Z'
+        patched: '2017-11-21T01:01:26.388Z'
     - x-ray > x-ray-crawler > ms:
         patched: '2017-06-30T22:26:06.281Z'
       x-ray > debug > ms:
-        patched: '2017-11-19T07:45:36.397Z'
+        patched: '2017-11-21T01:01:26.388Z'
     - socket.io > socket.io-adapter > debug > ms:
         patched: '2017-06-30T22:26:06.281Z'
     - socket.io > socket.io-client > debug > ms:
         patched: '2017-05-23T21:00:06.210Z'
+    - x-ray > x-ray-crawler > ms:
+        patched: '2017-11-19T07:45:36.397Z'
+    - x-ray > debug > ms:
+        patched: '2017-11-19T07:45:36.397Z'
   'npm:debug:20170905':
     - x-ray > debug:
-        patched: '2017-11-19T07:45:36.397Z'
+        patched: '2017-11-21T01:01:26.388Z'
     - helmet > connect > debug:
         patched: '2017-09-26T23:25:12.104Z'
     - helmet > connect > finalhandler > debug:

@@ -1,4 +1,3 @@
-'use strict';
 const Models = require('funsociety-bookshelf-model-loader');
 
 const RouletteStats = Models.Base.extend({
@@ -8,5 +7,5 @@ const RouletteStats = Models.Base.extend({
 });
 
 module.exports = {
-    RouletteStats: Models.Bookshelf.model('rouletteStats', RouletteStats)
+    RouletteStats: Models.Bookshelf.model('rouletteStats', RouletteStats),
 };

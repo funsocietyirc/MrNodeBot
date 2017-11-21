@@ -1,9 +1,7 @@
-'use strict';
-
 const tableName = 'rssFeeds';
 
 exports.up = function (knex, Promise) {
-    return knex.schema.createTable(tableName, function (table) {
+    return knex.schema.createTable(tableName, (table) => {
         // Table
         table.collate('utf8mb4_unicode_ci');
 

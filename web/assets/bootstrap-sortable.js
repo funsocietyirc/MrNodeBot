@@ -7,165 +7,188 @@
  * @copyright Ron Valstar <ron@ronvalstar.nl>
  * @namespace tinysort
  */
-!function (a, b) {
-    "use strict";
+!(function (a, b) {
     function c() {
-        return b
+        return b;
     }
 
-    "function" === typeof define && define.amd ? define("tinysort", c) : a.tinysort = b
-}(this, function () {
-    "use strict";
+    typeof define === 'function' && define.amd ? define('tinysort', c) : a.tinysort = b;
+}(this, (function () {
     function a(a, f) {
         function j() {
-            0 === arguments.length ? s({}) : d(arguments, function (a) {
-                s(c(a) ? {selector: a} : a)
-            }), p = D.length
+            arguments.length === 0 ? s({}) : d(arguments, (a) => {
+                s(c(a) ? { selector: a } : a);
+            }), p = D.length;
         }
 
         function s(a) {
-            const b = !!a.selector, c = b && ":" === a.selector[0], d = e(a || {}, r);
+            const b = !!a.selector,
+                c = b && a.selector[0] === ':',
+                d = e(a || {}, r);
             D.push(e({
                 hasSelector: b,
-                hasAttr: !(d.attr === i || "" === d.attr),
+                hasAttr: !(d.attr === i || d.attr === ''),
                 hasData: d.data !== i,
                 hasFilter: c,
-                sortReturnNumber: "asc" === d.order ? 1 : -1
-            }, d))
+                sortReturnNumber: d.order === 'asc' ? 1 : -1,
+            }, d));
         }
 
         function t() {
-            d(a, function (a, b) {
+            d(a, (a, b) => {
                 y ? y !== a.parentNode && (E = !1) : y = a.parentNode;
-                const c = D[0], d = c.hasFilter;
-                let e = c.selector;
-                const f = !e || d && a.matchesSelector(e) || e && a.querySelector(e), g = f ? B : C,
-                    h = {elm: a, pos: b, posn: g.length};
-                A.push(h), g.push(h)
-            }), x = B.slice(0)
+                const c = D[0],
+                    d = c.hasFilter;
+                const e = c.selector;
+                const f = !e || d && a.matchesSelector(e) || e && a.querySelector(e),
+                    g = f ? B : C,
+                    h = { elm: a, pos: b, posn: g.length };
+                A.push(h), g.push(h);
+            }), x = B.slice(0);
         }
 
         function u() {
-            B.sort(v)
+            B.sort(v);
         }
 
         function v(a, e) {
             let f = 0;
-            for (0 !== q && (q = 0); 0 === f && p > q;) {
-                const i = D[q], j = i.ignoreDashes ? n : m;
-                if (d(o, function (a) {
-                        const b = a.prepare;
-                        b && b(i)
-                    }), i.sortFunction) f = i.sortFunction(a, e); else if ("rand" === i.order) f = Math.random() < .5 ? 1 : -1; else {
-                    var k = h, r = b(a, i), s = b(e, i), t = "" === r || r === g, u = "" === s || s === g;
+            for (q !== 0 && (q = 0); f === 0 && p > q;) {
+                const i = D[q],
+                    j = i.ignoreDashes ? n : m;
+                if (d(o, (a) => {
+                    const b = a.prepare;
+                    b && b(i);
+                }), i.sortFunction) f = i.sortFunction(a, e); else if (i.order === 'rand') f = Math.random() < 0.5 ? 1 : -1; else {
+                    var k = h,
+                        r = b(a, i),
+                        s = b(e, i),
+                        t = r === '' || r === g,
+                        u = s === '' || s === g;
                     if (r === s) f = 0; else if (i.emptyEnd && (t || u)) f = t && u ? 0 : t ? 1 : -1; else {
                         if (!i.forceStrings) {
-                            const v = c(r) ? r && r.match(j) : h, w = c(s) ? s && s.match(j) : h;
+                            const v = c(r) ? r && r.match(j) : h,
+                                w = c(s) ? s && s.match(j) : h;
                             if (v && w) {
-                                const x = r.substr(0, r.length - v[0].length), y = s.substr(0, s.length - w[0].length);
-                                x === y && (k = !h, r = l(v[0]), s = l(w[0]))
+                                const x = r.substr(0, r.length - v[0].length),
+                                    y = s.substr(0, s.length - w[0].length);
+                                x === y && (k = !h, r = l(v[0]), s = l(w[0]));
                             }
                         }
-                        f = r === g || s === g ? 0 : s > r ? -1 : r > s ? 1 : 0
+                        f = r === g || s === g ? 0 : s > r ? -1 : r > s ? 1 : 0;
                     }
                 }
-                d(o, function (a) {
+                d(o, (a) => {
                     const b = a.sort;
-                    b && (f = b(i, k, r, s, f))
-                }), f *= i.sortReturnNumber, 0 === f && q++
+                    b && (f = b(i, k, r, s, f));
+                }), f *= i.sortReturnNumber, f === 0 && q++;
             }
-            return 0 === f && (f = a.pos > e.pos ? 1 : -1), f
+            return f === 0 && (f = a.pos > e.pos ? 1 : -1), f;
         }
 
         function w() {
             const a = B.length === A.length;
-            E && a ? F ? B.forEach(function (a, b) {
-                a.elm.style.order = b
-            }) : (B.forEach(function (a) {
-                z.appendChild(a.elm)
-            }), y.appendChild(z)) : (B.forEach(function (a) {
-                const b = a.elm, c = k.createElement("div");
-                a.ghost = c, b.parentNode.insertBefore(c, b)
-            }), B.forEach(function (a, b) {
-                const c = x[b].ghost;
-                c.parentNode.insertBefore(a.elm, c), c.parentNode.removeChild(c)
-            }))
+            E && a ? F ? B.forEach((a, b) => {
+                a.elm.style.order = b;
+            }) : (B.forEach((a) => {
+                z.appendChild(a.elm);
+            }), y.appendChild(z)) : (B.forEach((a) => {
+                const b = a.elm,
+                    c = k.createElement('div');
+                a.ghost = c, b.parentNode.insertBefore(c, b);
+            }), B.forEach((a, b) => {
+                    const c = x[b].ghost;
+                    c.parentNode.insertBefore(a.elm, c), c.parentNode.removeChild(c);
+                }));
         }
 
-        c(a) && (a = k.querySelectorAll(a)), 0 === a.length && console.warn("No elements to sort");
-        var x, y, z = k.createDocumentFragment(), A = [], B = [], C = [], D = [], E = !0,
-            F = a.length && (f === g || f.useFlex !== !1) && -1 !== getComputedStyle(a[0].parentNode, null).display.indexOf("flex");
-        return j.apply(i, Array.prototype.slice.call(arguments, 1)), t(), u(), w(), B.map(function (a) {
-            return a.elm
-        })
+        c(a) && (a = k.querySelectorAll(a)), a.length === 0 && console.warn('No elements to sort');
+        var x,
+            y,
+            z = k.createDocumentFragment(),
+            A = [],
+            B = [],
+            C = [],
+            D = [],
+            E = !0,
+            F = a.length && (f === g || f.useFlex !== !1) && getComputedStyle(a[0].parentNode, null).display.indexOf('flex') !== -1;
+        return j.apply(i, Array.prototype.slice.call(arguments, 1)), t(), u(), w(), B.map(a => a.elm);
     }
 
     function b(a, b) {
-        let d, e = a.elm;
-        return b.selector && (b.hasFilter ? e.matchesSelector(b.selector) || (e = i) : e = e.querySelector(b.selector)), b.hasAttr ? d = e.getAttribute(b.attr) : b.useVal ? d = e.value || e.getAttribute("value") : b.hasData ? d = e.getAttribute("data-" + b.data) : e && (d = e.textContent), c(d) && (b.cases || (d = d.toLowerCase()), d = d.replace(/\s+/g, " ")), d
+        let d,
+            e = a.elm;
+        return b.selector && (b.hasFilter ? e.matchesSelector(b.selector) || (e = i) : e = e.querySelector(b.selector)), b.hasAttr ? d = e.getAttribute(b.attr) : b.useVal ? d = e.value || e.getAttribute('value') : b.hasData ? d = e.getAttribute(`data-${b.data}`) : e && (d = e.textContent), c(d) && (b.cases || (d = d.toLowerCase()), d = d.replace(/\s+/g, ' ')), d;
     }
 
     function c(a) {
-        return "string" === typeof a
+        return typeof a === 'string';
     }
 
     function d(a, b) {
         let c;
         const d = a.length;
         let e = d;
-        for (; e--;) c = d - e - 1, b(a[c], c)
+        for (; e--;) c = d - e - 1, b(a[c], c);
     }
 
     function e(a, b, c) {
-        for (let d in b) (c || a[d] === g) && (a[d] = b[d]);
-        return a
+        for (const d in b) (c || a[d] === g) && (a[d] = b[d]);
+        return a;
     }
 
     function f(a, b, c) {
-        o.push({prepare: a, sort: b, sortBy: c})
+        o.push({ prepare: a, sort: b, sortBy: c });
     }
 
-    var g, h = !1, i = null, j = window, k = j.document, l = parseFloat, m = /(-?\d+\.?\d*)\s*$/g,
-        n = /(\d+\.?\d*)\s*$/g, o = [], p = 0, q = 0, r = {
+    var g,
+        h = !1,
+        i = null,
+        j = window,
+        k = j.document,
+        l = parseFloat,
+        m = /(-?\d+\.?\d*)\s*$/g,
+        n = /(\d+\.?\d*)\s*$/g,
+        o = [],
+        p = 0,
+        q = 0,
+        r = {
             selector: i,
-            order: "asc",
+            order: 'asc',
             attr: i,
             data: i,
             useVal: h,
-            place: "start",
+            place: 'start',
             returns: h,
             cases: h,
             forceStrings: h,
             ignoreDashes: h,
             sortFunction: i,
             useFlex: h,
-            emptyEnd: h
+            emptyEnd: h,
         };
-    return j.Element && function (a) {
+    return j.Element && (function (a) {
         a.matchesSelector = a.matchesSelector || a.mozMatchesSelector || a.msMatchesSelector || a.oMatchesSelector || a.webkitMatchesSelector || function (a) {
-                for (var b = this, c = (b.parentNode || b.document).querySelectorAll(a), d = -1; c[++d] && c[d] !== b;);
-                return !!c[d]
-            }
-    }(Element.prototype), e(f, {loop: d}), e(a, {plugin: f, defaults: r})
-}());
+            for (var b = this, c = (b.parentNode || b.document).querySelectorAll(a), d = -1; c[++d] && c[d] !== b;);
+            return !!c[d];
+        };
+    }(Element.prototype)), e(f, { loop: d }), e(a, { plugin: f, defaults: r });
+}())));
 
 (function ($) {
-
     const $document = $(document);
     let signClass,
         sortEngine;
 
     $.bootstrapSortable = function (applyLast, sign, customSort) {
-
         // Check if moment.js is available
         const momentJsAvailable = (typeof moment !== 'undefined');
 
         // Set class based on sign parameter
-        signClass = !sign ? "arrow" : sign;
+        signClass = !sign ? 'arrow' : sign;
 
         // Set sorting algorithm
-        if (customSort === 'default')
-            customSort = defaultSortEngine;
+        if (customSort === 'default') { customSort = defaultSortEngine; }
         sortEngine = customSort || sortEngine || defaultSortEngine;
 
         // Set attributes needed for sorting
@@ -200,7 +223,7 @@
                     const $this = $(this);
                     $this.addClass('nosort').removeClass('up down');
                     $this.attr('data-sortcolumn', columnIndex);
-                    $this.attr('data-sortkey', columnIndex + '-' + rowIndex);
+                    $this.attr('data-sortkey', `${columnIndex}-${rowIndex}`);
                 });
             });
 
@@ -212,8 +235,7 @@
                 const $this = $(this);
                 if ($this.attr('data-dateformat') !== undefined && momentJsAvailable) {
                     $this.attr('data-value', moment($this.text(), $this.attr('data-dateformat')).format('YYYY/MM/DD/HH/mm/ss'));
-                }
-                else {
+                } else {
                     $this.attr('data-value') === undefined && $this.attr('data-value', $this.text());
                 }
             });
@@ -239,7 +261,8 @@
 
     // Add click event to table header
     $document.on('click', 'table.sortable thead th[data-defaultsort!="disabled"]', function (e) {
-        const $this = $(this), $table = $this.data('sortTable') || $this.closest('table.sortable');
+        const $this = $(this),
+            $table = $this.data('sortTable') || $this.closest('table.sortable');
         $table.trigger('before-sort');
         doSort($this, $table);
         $table.trigger('sorted');
@@ -248,9 +271,9 @@
     // Look up sorting data appropriate for the specified table (jQuery element).
     // This allows multiple tables on one page without collisions.
     function lookupSortContext($table) {
-        let context = $table.data("bootstrap-sortable-context");
+        let context = $table.data('bootstrap-sortable-context');
         if (context === undefined) {
-            context = {bsSort: [], lastSort: undefined};
+            context = { bsSort: [], lastSort: undefined };
             $table.find('thead th[data-defaultsort!="disabled"]').each(function (index) {
                 const $this = $(this);
                 const sortKey = $this.attr('data-sortkey');
@@ -259,7 +282,7 @@
                     context.lastSort = sortKey;
                 }
             });
-            $table.data("bootstrap-sortable-context", context);
+            $table.data('bootstrap-sortable-context', context);
         }
         return context;
     }
@@ -281,11 +304,11 @@
 
             // If there is one more row in header, delve deeper
             if ($table.find('thead tr').length - 1 > rowIndex) {
-                doSort($table.find('[data-sortkey="' + (sortColumn + mainSort) + '-' + (rowIndex + 1) + '"]'), $table);
+                doSort($table.find(`[data-sortkey="${sortColumn + mainSort}-${rowIndex + 1}"]`), $table);
                 return;
             }
             // Otherwise, just adjust the sortColumn
-            sortColumn = sortColumn + mainSort;
+            sortColumn += mainSort;
         }
 
         const localSignClass = $this.attr('data-defaultsign') || signClass;
@@ -302,11 +325,10 @@
                 moz_arrow.parent().html(moz_arrow.html());
             }
             $this.wrapInner('<div class="mozilla"></div>');
-            $this.children().eq(0).append('<span class="sign ' + localSignClass + '"></span>');
-        }
-        else {
+            $this.children().eq(0).append(`<span class="sign ${localSignClass}"></span>`);
+        } else {
             $table.find('span.sign').remove();
-            $this.append('<span class="sign ' + localSignClass + '"></span>');
+            $this.append(`<span class="sign ${localSignClass}"></span>`);
         }
 
         // sort direction
@@ -324,22 +346,24 @@
 
         // sort rows
         const rows = $table.children('tbody').children('tr');
-        sortEngine(rows, {selector: 'td:nth-child(' + (sortColumn + 1) + ')', order: bsSort[sortKey], data: 'value'});
+        sortEngine(rows, { selector: `td:nth-child(${sortColumn + 1})`, order: bsSort[sortKey], data: 'value' });
 
         // add class to sorted column cells
         $table.find('td.sorted, th.sorted').removeClass('sorted');
-        rows.find('td:eq(' + sortColumn + ')').addClass('sorted');
+        rows.find(`td:eq(${sortColumn})`).addClass('sorted');
         $this.addClass('sorted');
     }
 
     // jQuery 1.9 removed this object
     if (!$.browser) {
-        $.browser = {chrome: false, mozilla: false, opera: false, msie: false, safari: false};
+        $.browser = {
+            chrome: false, mozilla: false, opera: false, msie: false, safari: false,
+        };
         const ua = navigator.userAgent;
-        $.each($.browser, function (c) {
-            $.browser[c] = ((new RegExp(c, 'i').test(ua))) ? true : false;
+        $.each($.browser, (c) => {
+            $.browser[c] = !!((new RegExp(c, 'i').test(ua)));
             if ($.browser.mozilla && c === 'mozilla') {
-                $.browser.mozilla = ((new RegExp('firefox', 'i').test(ua))) ? true : false;
+                $.browser.mozilla = !!((new RegExp('firefox', 'i').test(ua)));
             }
             if ($.browser.chrome && c === 'safari') {
                 $.browser.safari = false;
@@ -349,5 +373,4 @@
 
     // Initialise on DOM ready
     $($.bootstrapSortable);
-
 }(jQuery));

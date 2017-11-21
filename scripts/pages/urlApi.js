@@ -1,4 +1,3 @@
-'use strict';
 // Build the Base query.
 // args:
 //   req - express quest
@@ -13,13 +12,14 @@
 const scriptInfo = {
     name: 'urlApi',
     desc: 'The URL Express API',
-    createdBy: 'IronY'
+    createdBy: 'IronY',
 };
 const _ = require('lodash');
 const Models = require('funsociety-bookshelf-model-loader');
+
 const hashPattern = new RegExp('%23', 'g');
 
-module.exports = app => {
+module.exports = (app) => {
     // Bail out if we do not have a database
     if (!Models.Url) return scriptInfo;
 
@@ -43,15 +43,14 @@ module.exports = app => {
             res.json({
                 status: 'success',
                 results: {
-                    channels:  _(results.pluck('to')).uniq().value(),
-                    nicks: _(results.pluck('from')).uniq().value()
-                }
+                    channels: _(results.pluck('to')).uniq().value(),
+                    nicks: _(results.pluck('from')).uniq().value(),
+                },
             });
-        }
-        catch(err){
+        } catch (err) {
             res.json({
                 status: 'error',
-                message: err.message || ''
+                message: err.message || '',
             });
         }
     };
@@ -60,13 +59,13 @@ module.exports = app => {
     const urlHandler = async (req, res) => {
         try {
             const results = await Models.Url
-                .query(qb => {
+                .query((qb) => {
                     let init = false;
-                    let getWhere = () => init ? 'andWhere' : 'where';
+                    const getWhere = () => (init ? 'andWhere' : 'where');
 
                     // Select the appropriate fields
                     qb.select([
-                        'id', 'to', 'from', 'url', 'timestamp', 'title'
+                        'id', 'to', 'from', 'url', 'timestamp', 'title',
                     ]);
 
                     // If there is a channel in the query string
@@ -84,12 +83,12 @@ module.exports = app => {
                     // Search for images only
                     if (req.query.type) {
                         switch (req.query.type) {
-                            case 'image':
-                            case 'images':
-                                qb[getWhere()](whereClause);
-                                init = true;
-                                break;
-                            default:
+                        case 'image':
+                        case 'images':
+                            qb[getWhere()](whereClause);
+                            init = true;
+                            break;
+                        default:
                         }
                     }
 
@@ -98,7 +97,7 @@ module.exports = app => {
                 })
                 .fetchPage({
                     pageSize: req.query.pageSize || 25,
-                    page: req.query.page || 1
+                    page: req.query.page || 1,
                 });
 
             res.json({
@@ -107,14 +106,12 @@ module.exports = app => {
                 page: results.pagination.page,
                 pageSize: results.pagination.pageSize,
                 status: 'success',
-                results: results.toJSON()
+                results: results.toJSON(),
             });
-
-        }
-        catch (err) {
+        } catch (err) {
             res.json({
                 status: 'error',
-                message: err.message || ''
+                message: err.message || '',
             });
         }
     };
@@ -124,7 +121,7 @@ module.exports = app => {
         handler: urlHandler,
         desc: 'URL Link API',
         path: '/api/urls',
-        verb: 'get'
+        verb: 'get',
     });
 
     // Sources Route
@@ -132,7 +129,7 @@ module.exports = app => {
         handler: imageSourceHandler,
         desc: 'Get the available sources',
         path: '/api/sources',
-        verb: 'get'
+        verb: 'get',
     });
 
     // Return the script info

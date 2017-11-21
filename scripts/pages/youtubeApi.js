@@ -1,18 +1,16 @@
-'use strict';
-
 const scriptInfo = {
     name: 'youtubeLinkApi',
     desc: 'The YouTube link API',
-    createdBy: 'IronY'
+    createdBy: 'IronY',
 };
 const Models = require('funsociety-bookshelf-model-loader');
 const _ = require('lodash');
 
-module.exports = app => {
+module.exports = (app) => {
     // Hold on to the Model
     const model = Models.YouTubeLink;
     // No Model available, abort
-    if(!model) return scriptInfo;
+    if (!model) return scriptInfo;
 
     // Get a list of channels available
     const getSourcesAvailableHandler = async (req, res) => {
@@ -21,13 +19,12 @@ module.exports = app => {
             res.json({
                 status: 'success',
                 sources: results.pluck('to'),
-                total: results.length
+                total: results.length,
             });
-        }
-        catch (err) {
+        } catch (err) {
             res.json({
                 status: 'error',
-                message: err.message
+                message: err.message,
             });
         }
     };
@@ -36,7 +33,7 @@ module.exports = app => {
         handler: getSourcesAvailableHandler,
         desc: 'URL Link API',
         path: '/api/youtubelinks/sources',
-        verb: 'get'
+        verb: 'get',
     });
 
 

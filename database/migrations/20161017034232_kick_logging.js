@@ -1,7 +1,5 @@
-'use strict';
-
 exports.up = function (knex, Promise) {
-    return knex.schema.createTable('kickLogging', function (table) {
+    return knex.schema.createTable('kickLogging', (table) => {
         table.collate('utf8mb4_unicode_ci');
         table.increments('id').primary();
         table.string('channel').collate('utf8mb4_unicode_ci');

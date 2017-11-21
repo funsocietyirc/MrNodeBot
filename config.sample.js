@@ -37,21 +37,21 @@ module.exports = {
             // URL Listener feature
             '/scripts/urlListener',
             // Only load in development
-            //'/scripts/beta',
+            // '/scripts/beta',
         ],
         // Model Directories
         models: [
-            'models'
+            'models',
         ],
         // Currently running Environment
-        env: 'devel'
+        env: 'devel',
     },
     // Localization setting
     localization: {
         debug: false,
         lng: 'en',
         defaultNS: 'app',
-        fallbackLng: "en",
+        fallbackLng: 'en',
         initImmediate: false,
         whitelist: ['en'],
         saveMissing: true,
@@ -63,33 +63,33 @@ module.exports = {
     // User Manager configuration
     userManager: {
         salt: 'samplesalt',
-        keyLength: 64
+        keyLength: 64,
     },
     // Socket IO Configuration
     socketIO: {
-      logging: true
+        logging: true,
     },
     // Command aliasinging
     commandBindings: [{
         command: 'update',
-        alias: 'upgrayeddd'
+        alias: 'upgrayeddd',
     }, {
         command: 'reload',
-        alias: 'refresh'
+        alias: 'refresh',
     }, {
         command: 'token',
-        alias: 'upload-token'
+        alias: 'upload-token',
     }],
     // Owner configuration
     owner: {
         nick: 'IronY',
-        host: ''
+        host: '',
     },
     // Irc Client Configuration see https://node-irc.readthedocs.io/en/latest/API.html#client
     irc: {
         nick: 'MrNodeBot',
         server: 'irc.freenode.net',
-        //server: 'irc.dal.net',
+        // server: 'irc.dal.net',
         userName: 'MrNodeBot',
         realName: 'MrNodeBot',
         port: 6665,
@@ -98,7 +98,7 @@ module.exports = {
         showErrors: true,
         autoRejoin: true,
         channels: [
-            '#MrNodeBot'
+            '#MrNodeBot',
         ],
         secure: false,
         selfSigned: false,
@@ -131,23 +131,23 @@ module.exports = {
             client: 'sqlite3',
             database: 'mrnodebot',
             connection: {
-                filename: "./data.sqlite"
-            }
-        }
+                filename: './data.sqlite',
+            },
+        },
     },
     // Log.io Information
     logio: {
         enabled: true,
         nodeName: 'MrNodeBot',
         port: 28777,
-        host: '127.0.0.1'
+        host: '127.0.0.1',
     },
     // Nickserv configuration options
     nickserv: {
         password: '',
         nick: 'NickServ',
         host: '', // services.dal.net for Dalnet, empty for Freenode
-        accCode: '3'
+        accCode: '3',
     },
     // API Keys
     apiKeys: {
@@ -163,22 +163,22 @@ module.exports = {
             consumerKey: '',
             consumerSecret: '',
             tokenKey: '',
-            tokenSecret: ''
+            tokenSecret: '',
         },
         watson: {
-            "alchemy": {
-                "url": "https://gateway-a.watsonplatform.net/calls",
-                "apikey": ""
+            alchemy: {
+                url: 'https://gateway-a.watsonplatform.net/calls',
+                apikey: '',
             },
-            "personality": {
-                "url": "https://gateway.watsonplatform.net/personality-insights/api",
-                "password": "",
-                "userName": ""
-            }
+            personality: {
+                url: 'https://gateway.watsonplatform.net/personality-insights/api',
+                password: '',
+                userName: '',
+            },
         },
         worldWeatherOnline: {
-            key: ''
-        }
+            key: '',
+        },
     },
     // Git Log configuration
     gitLog: {
@@ -188,8 +188,8 @@ module.exports = {
             'subject',
             'authorName',
             'authorDateRel',
-            'abbrevHash'
-        ]
+            'abbrevHash',
+        ],
     },
     // Command access levels
     accessLevels: {
@@ -200,7 +200,7 @@ module.exports = {
         channelOp: 4,
         channelVoice: 5,
         channelOpIdentified: 6,
-        channelVoiceIdentified: 7
+        channelVoiceIdentified: 7,
     },
     // Express Configuration
     express: {
@@ -224,14 +224,14 @@ module.exports = {
             password: '',
         },
         jwt: {
-          secret: 'mrnodebot'
-        }
+            secret: 'mrnodebot',
+        },
 
     },
     // Feature Configuration
     features: {
         watchYoutube: {
-          enabled: true,
+            enabled: true,
         },
         voiceRegulars: {
             // Auto voice anyone who comes into the channel, or at a specified time interval
@@ -267,7 +267,7 @@ module.exports = {
             defaultTitleAnnounceMax: 255,
             // Scheduler object for cache clean up
             cacheCleanup: {
-                minute: 0
+                minute: 0,
             },
             // Amount of URLS per line, 0 or nothing for no limit
             chainingLimit: {
@@ -280,7 +280,7 @@ module.exports = {
             // Amount of characters to limit title to, 0 or nothing for no limit
             titleMaxLimit: {
                 '#mrnodebot3': 255,
-            }
+            },
         },
         fsociety: {
             mainChannel: '#MrNodeBot',
@@ -296,24 +296,24 @@ module.exports = {
         idleChat: {
             enabled: false,
             timeOutInMins: 180,
-            channels: ['#MrNodeBot']
+            channels: ['#MrNodeBot'],
         },
         twitter: {
             enabled: false,
             followers: 'funsocietyirc',
-            channels: ['#MrNodeBot']
+            channels: ['#MrNodeBot'],
         },
         conversational: {
             randomChance: 5000,
             enabled: false,
-            ignoredChans: []
+            ignoredChans: [],
         },
         exchangeRate: {
             base: 'USD',
             updateScheduleTime: {
                 hour: [...Array(24).keys()], // Every hour
-                minute: 0 // On the hour
-            }
+                minute: 0, // On the hour
+            },
         },
         weather: {},
         countdowns: [
@@ -359,7 +359,7 @@ module.exports = {
                         },
                     },
                 },
-            }
-        ]
+            },
+        ],
     },
 };

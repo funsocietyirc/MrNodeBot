@@ -1,4 +1,3 @@
-'use strict';
 const _ = require('lodash');
 const logger = require('../../lib/logger');
 const Models = require('funsociety-bookshelf-model-loader');
@@ -13,12 +12,12 @@ const getUsageOverTime = async (channel, nick) => {
 
     // Grab the Database Results
     const results = await Models.Logging
-        .query(qb => {
+        .query((qb) => {
             qb
                 .select([
                     'to as channel',
                     Models.Bookshelf.knex.raw('DATE_FORMAT(timestamp,"%W %M %d %Y") as timestamp'),
-                    Models.Bookshelf.knex.raw('DATE_FORMAT(timestamp,"%Y-%m-%d %T") as raw')
+                    Models.Bookshelf.knex.raw('DATE_FORMAT(timestamp,"%Y-%m-%d %T") as raw'),
 
                 ])
                 .count('to as messages')
@@ -37,18 +36,15 @@ const getUsageOverTime = async (channel, nick) => {
     const computed = _(results.toJSON());
 
     return {
-        results: computed.map(
-            value => Object.assign({}, {
-                channel: value.channel,
-                messages: value.messages,
-                date: value.timestamp,
-                raw: value.raw
-            })
-        ).value(),
+        results: computed.map(value => Object.assign({}, {
+            channel: value.channel,
+            messages: value.messages,
+            date: value.timestamp,
+            raw: value.raw,
+        })).value(),
         lowest: computed.minBy('messages'),
         highest: computed.maxBy('messages'),
     };
-
 };
 
 module.exports = getUsageOverTime;

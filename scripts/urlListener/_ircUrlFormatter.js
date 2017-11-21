@@ -1,4 +1,3 @@
-'use strict';
 const c = require('irc-colors');
 const _ = require('lodash');
 const config = require('../../config.js');
@@ -22,18 +21,18 @@ module.exports = (results, app) => {
 
     // Output chain helper functions
     let output = '';
-    let space = () => output !== '' ? ' ' + icons.sideArrow + ' ' : ' ';
-    let append = text => {
+    const space = () => (output !== '' ? ` ${icons.sideArrow} ` : ' ');
+    const append = (text) => {
         output = output + space() + text;
         return append;
     };
 
     // This is a re post
     if (results.history.length) {
-        let history = _.first(results.history);
+        const history = _.first(results.history);
         let subOutput = '';
         if (history.from !== results.from) {
-            subOutput = subOutput + history.from;
+            subOutput += history.from;
         }
         if (history.to !== results.to) {
             subOutput = subOutput + (history.from !== results.from ? '/' : '') + history.to;
@@ -48,8 +47,7 @@ module.exports = (results, app) => {
     else if (results.realUrl && results.url !== results.realUrl) append(`${icons.anchor}  ${c.red('URL Redirected')}`);
 
     // We have a Short URL
-    if (!_.isEmpty(results.shortUrl) && !_.isEmpty(results.shortUrl) && results.url.length > config.features.urls.titleMin)
-        append(`${icons.anchor}  ${c.navy(results.shortUrl)}`);
+    if (!_.isEmpty(results.shortUrl) && !_.isEmpty(results.shortUrl) && results.url.length > config.features.urls.titleMin) { append(`${icons.anchor}  ${c.navy(results.shortUrl)}`); }
 
     // We have a YouTube video response
     if (!_.isEmpty(results.youTube)) {
@@ -68,37 +66,30 @@ module.exports = (results, app) => {
 
         // We have video data
         if (!_.isEmpty(results.youTube.video)) {
-            let yr = results.youTube.video;
+            const yr = results.youTube.video;
             if (!_.isEmpty(yr.channelTitle)) append(yr.channelTitle);
-            append(yr.videoTitle)
-            (`${icons.views} ${c.navy(helpers.formatNumber(yr.viewCount))} ${icons.upArrow} ${c.green(helpers.formatNumber(yr.likeCount))} ${icons.downArrow} ${c.red(helpers.formatNumber(yr.dislikeCount))} ${icons.comments} ${c.blue(helpers.formatNumber(yr.commentCount))}`);
+            append(yr.videoTitle)(`${icons.views} ${c.navy(helpers.formatNumber(yr.viewCount))} ${icons.upArrow} ${c.green(helpers.formatNumber(yr.likeCount))} ${icons.downArrow} ${c.red(helpers.formatNumber(yr.dislikeCount))} ${icons.comments} ${c.blue(helpers.formatNumber(yr.commentCount))}`);
 
             // Video is non embeddable
             if (!results.youTube.video.embeddable) append(`${c.red('*')} Non-embeddable`);
             // Video has content restrictions
             if (results.youTube.video.restrictions) append(`${c.red('*')} Content Restrictions`);
-
         }
     }
 
     // We have IMDB data
     else if (!_.isEmpty(results.imdb)) {
-        let imdb = results.imdb;
-        append(logos.imdb)
-        (imdb.title)
-        (imdb.year)
-        (imdb.genre)
-        (_.capitalize(imdb.type));
+        const imdb = results.imdb;
+        append(logos.imdb)(imdb.title)(imdb.year)(imdb.genre)(_.capitalize(imdb.type));
         if (imdb.seasons) append(`${c.bold('Seasons:')} ${imdb.seasons}`);
         if (imdb.rated) append(`${c.bold('Rated:')} ${imdb.rated}`);
         if (imdb.metaScore && imdb.metaScore !== 'N/A') append(`${c.bold('MetaScore:')} ${imdb.metaScore}`);
 
-        append(c[imdb.imdbRating < 5 ? 'red' : 'green'](`Rating: ${imdb.imdbRating}`))
-        (`${icons.views} ${c.navy(imdb.imdbVotes)}`);
+        append(c[imdb.imdbRating < 5 ? 'red' : 'green'](`Rating: ${imdb.imdbRating}`))(`${icons.views} ${c.navy(imdb.imdbVotes)}`);
     }
     // We Have GitHub data
     else if (!_.isUndefined(results.gitHub)) {
-        let gh = results.gitHub;
+        const gh = results.gitHub;
         append(logos.gitHub)(gh.owner)(gh.name);
         if (gh.desc) append(gh.desc);
         if (gh.lastPush) append(`${icons.time} ${c.grey.bold('~')} ${moment(gh.lastPush).fromNow()}`);
@@ -106,31 +97,28 @@ module.exports = (results, app) => {
         if (gh.language) append(gh.language);
         if (gh.stars) append(`${icons.star} ${c.yellow(helpers.formatNumber(gh.stars))}`);
         if (gh.views && gh.views !== gh.stars) append(`${icons.views} ${c.navy(helpers.formatNumber(gh.watchers))}`);
-        if (gh.forks) append(`${c.bold(`Forks:`)} ${helpers.formatNumber(gh.forks)}`);
+        if (gh.forks) append(`${c.bold('Forks:')} ${helpers.formatNumber(gh.forks)}`);
         if (gh.issues) append(`${icons.sad} ${c.red(helpers.formatNumber(gh.issues))}`);
     }
     // We Have BitBucket data
     else if (!_.isUndefined(results.bitBucket)) {
-        let bb = results.bitBucket;
+        const bb = results.bitBucket;
         append(`${logos.bitBucket}`);
         if (!bb.privateRepo) {
-            append(`${bb.ownerDisplayName} ${icons.sideArrow} ${bb.desc ? bb.desc : 'BitBucket Repository'}`)
-            (`${icons.time} ${c.grey.bold('~')} ${ moment(bb.lastPush).fromNow()}`);
+            append(`${bb.ownerDisplayName} ${icons.sideArrow} ${bb.desc ? bb.desc : 'BitBucket Repository'}`)(`${icons.time} ${c.grey.bold('~')} ${moment(bb.lastPush).fromNow()}`);
 
             if (bb.language) append(bb.language);
             if (bb.hasIssues) append(icons.sad);
-        }
-        else {
-            append(`Private Repository, Access Denied`);
+        } else {
+            append('Private Repository, Access Denied');
         }
     }
     // We have Imgur image
     else if (!_.isUndefined(results.imgur) && results.imgur.matchType === 'image') {
-        let imgur = results.imgur;
+        const imgur = results.imgur;
         append(`${logos.imgur} Image`);
         if (imgur.title && imgur.title !== 'null') append(imgur.title);
-        append(_.capitalize(imgur.type))
-        (moment.unix(imgur.datetime).fromNow());
+        append(_.capitalize(imgur.type))(moment.unix(imgur.datetime).fromNow());
         if (imgur.section && imgur.section !== 'null') append(imgur.section);
         if (imgur.description && imgur.description !== 'null') append(imgur.description);
         append(`${imgur.width}x${imgur.height}`);
@@ -140,7 +128,7 @@ module.exports = (results, app) => {
     }
     // We have Imgur Gallery
     else if (!_.isUndefined(results.imgur) && results.imgur.matchType === 'gallery') {
-        let imgur = results.imgur;
+        const imgur = results.imgur;
         append(`${logos.imgur} Gallery`)(imgur.account_url);
         if (imgur.title && imgur.title !== 'null') append(imgur.title);
         append(moment.unix(imgur.datetime).fromNow());
@@ -150,16 +138,12 @@ module.exports = (results, app) => {
 
         append(`${imgur.images_count || 1} ${imgur.images_count > 1 ? 'Images' : 'Image'}`);
 
-        append(`${icons.views} ${c.navy(helpers.formatNumber(imgur.views))}`)
-        (`${icons.happy} ${c.green(helpers.formatNumber(imgur.ups))}`)
-        (`${icons.sad} ${c.red(helpers.formatNumber(imgur.downs))}`)
-        (`${icons.star} ${c.yellow(imgur.score)}`)
-        (`${icons.comments} ${imgur.comment_count}`);
+        append(`${icons.views} ${c.navy(helpers.formatNumber(imgur.views))}`)(`${icons.happy} ${c.green(helpers.formatNumber(imgur.ups))}`)(`${icons.sad} ${c.red(helpers.formatNumber(imgur.downs))}`)(`${icons.star} ${c.yellow(imgur.score)}`)(`${icons.comments} ${imgur.comment_count}`);
         if (imgur.nswf) append(c.red('NSFW'));
     }
     // We have Imgur Album
     else if (!_.isUndefined(results.imgur) && results.imgur.matchType === 'album') {
-        let imgur = results.imgur;
+        const imgur = results.imgur;
         // This is not a public gallery
         if (imgur.privacy !== 'public') {
             append('Private Imgur Album');
@@ -177,27 +161,25 @@ module.exports = (results, app) => {
     // We have title
     else if (results.title && results.title !== '') {
         // Format title and adjust length
-        append(
-            _.truncate(results.title, {
-                length: (
-                    _.isObject(app.Config.features.urls.titleMaxLimit) &&
+        append(_.truncate(results.title, {
+            length: (
+                _.isObject(app.Config.features.urls.titleMaxLimit) &&
                     results.to in app.Config.features.urls.titleMaxLimit &&
                     Number.isInteger(app.Config.features.urls.titleMaxLimit[results.to]) &&
                     app.Config.features.urls.titleMaxLimit[results.to] !== 0
-                ) ?
-                    app.Config.features.urls.titleMaxLimit[results.to] :
-                    (
-                        _.isNumber(app.Config.features.urls.defaultTitleAnnounceMax) ?
-                            app.Config.features.urls.defaultTitleAnnounceMax :
-                            255
-                    )
-            })
-        );
+            ) ?
+                app.Config.features.urls.titleMaxLimit[results.to] :
+                (
+                    _.isNumber(app.Config.features.urls.defaultTitleAnnounceMax) ?
+                        app.Config.features.urls.defaultTitleAnnounceMax :
+                        255
+                ),
+        }));
     }
     // We have nothing but the malicious data
-    else if (results.threats.length) append(`posted a malicious Link`);
+    else if (results.threats.length) append('posted a malicious Link');
     // Finished
-    let finalOutput = output ? `${c[results.cached ? 'green' : 'red']('*')} ${results.from} ${icons.sideArrow} ` + output : '';
+    const finalOutput = output ? `${c[results.cached ? 'green' : 'red']('*')} ${results.from} ${icons.sideArrow} ${output}` : '';
 
     if (_.isEmpty(finalOutput)) return;
 
@@ -206,11 +188,11 @@ module.exports = (results, app) => {
     app.say(results.to, finalOutput);
 
     // Threats detected Report back First
-    if (results.threats.length)
+    if (results.threats.length) {
         _.each(results.threats, threat =>
             app.say(
                 results.to,
-                c.red(`| Warning ${_.startCase(threat.type).toLowerCase()} threat detected on ${results.url} for ${_.startCase(threat.platform).toLowerCase()}`)
-            )
-        )
+                c.red(`| Warning ${_.startCase(threat.type).toLowerCase()} threat detected on ${results.url} for ${_.startCase(threat.platform).toLowerCase()}`),
+            ));
+    }
 };

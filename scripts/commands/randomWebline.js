@@ -1,13 +1,12 @@
-'use strict';
 const scriptInfo = {
     name: 'randomWebLine',
     desc: 'Get a random web line',
-    createdBy: 'IronY'
+    createdBy: 'IronY',
 };
 
 const gen = require('../generators/_randomWebline');
 
-module.exports = app => {
+module.exports = (app) => {
     app.Commands.set('random-webline', {
         desc: 'Get a random web line',
         access: app.Config.accessLevels.identified,
@@ -15,11 +14,10 @@ module.exports = app => {
             try {
                 const line = await gen();
                 app.say(to, `${line}`);
-            }
-            catch (err) {
+            } catch (err) {
                 app.say(to, `Something went wrong fetching your line, ${from}`);
             }
-        }
+        },
     });
 
     // Return the script info

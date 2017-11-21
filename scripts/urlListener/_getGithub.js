@@ -1,4 +1,3 @@
-'use strict';
 const rp = require('request-promise-native');
 const logger = require('../../lib/logger');
 
@@ -9,9 +8,9 @@ module.exports = async (user, repo, results) => {
         const data = await rp({
             uri: `https://api.github.com/repos/${user}/${repo}`,
             headers: {
-                'user-agent': 'MrNodeBot'
+                'user-agent': 'MrNodeBot',
             },
-            json: true
+            json: true,
         });
 
         // No data, bail
@@ -31,10 +30,9 @@ module.exports = async (user, repo, results) => {
                 forks: data.forks_count,
                 issues: data.open_issues_count,
                 fullName: data.full_name,
-            }
+            },
         });
-    }
-    catch (err) {
+    } catch (err) {
         logger.warn('Error in getGitHub link function', {
             message: err.message || '',
             stack: err.stack || '',

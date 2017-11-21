@@ -1,8 +1,7 @@
-'use strict';
 const scriptInfo = {
     name: 'loggingListener',
     desc: 'Log IRC events to the database',
-    createdBy: 'IronY'
+    createdBy: 'IronY',
 };
 const _ = require('lodash');
 const c = require('irc-colors');
@@ -10,7 +9,7 @@ const logger = require('../../lib/logger');
 const Models = require('funsociety-bookshelf-model-loader');
 
 // Log all incoming channel messages to a Sql Database
-module.exports = app => {
+module.exports = (app) => {
     // Assure the database exists
     if (!app.Database) return;
 
@@ -18,35 +17,35 @@ module.exports = app => {
     const msgCmd = (to, from, text, message) => {
         if (!Models.Logging) return;
         Models.Logging.create({
-            from: from,
-            to: to,
+            from,
+            to,
             text: c.stripColorsAndStyle(text),
             ident: message.user,
-            host: message.host
+            host: message.host,
         })
             .catch(logger.error);
     };
     app.Listeners.set('messageLogging', {
         name: 'messageLogging',
-        call: msgCmd
+        call: msgCmd,
     });
 
     // Log Ctcp
     const ctcpCmd = (from, to, text, type, message) => {
         if (!Models.CtcpLogging) return;
         Models.CtcpLogging.create({
-            from: from,
-            to: to,
+            from,
+            to,
             text: c.stripColorsAndStyle(text),
-            type: type,
+            type,
             user: message.user,
-            host: message.host
+            host: message.host,
         })
             .catch(logger.error);
     };
     app.OnCtcp.set('ctcpLogging', {
         name: 'ctcpLogging',
-        call: ctcpCmd
+        call: ctcpCmd,
     });
 
     // Log Channel Parts
@@ -54,102 +53,102 @@ module.exports = app => {
         // We do not have database, or we are talking to ourselves
         if (!Models.ActionLogging) return;
         Models.ActionLogging.create({
-            from: from,
-            to: to,
+            from,
+            to,
             text: c.stripColorsAndStyle(text),
             user: message.user,
-            host: message.host
+            host: message.host,
         })
             .catch(logger.error);
     };
     app.OnAction.set('actionLogger', {
         call: actionCmd,
-        name: 'actionLogger'
+        name: 'actionLogger',
     });
 
     const noticeCmd = (from, to, text, message) => {
         // We do not have database, or we are talking to ourselves
         if (!Models.NoticeLogging || _.isNull(from) || _.isNull(message.user) || _.isNull(message.host)) return;
         Models.NoticeLogging.create({
-            from: from,
-            to: to,
+            from,
+            to,
             text: c.stripColorsAndStyle(text),
             user: message.user,
-            host: message.host
+            host: message.host,
         })
             .catch(logger.error);
     };
     app.OnNotice.set('noticeLogger', {
         call: noticeCmd,
-        name: 'noticeLogger'
+        name: 'noticeLogger',
     });
 
     // Log Channel joins
     const joinCmd = (channel, nick, message) => {
         if (!Models.JoinLogging) return;
         Models.JoinLogging.create({
-            nick: nick,
-            channel: channel,
+            nick,
+            channel,
             user: message.user,
-            host: message.host
+            host: message.host,
         })
             .catch(logger.error);
     };
     app.OnJoin.set('joinLogger', {
         call: joinCmd,
-        name: 'joinLogger'
+        name: 'joinLogger',
     });
 
     // Log Channel Parts
     const partCmd = (channel, nick, reason, message) => {
         if (!Models.PartLogging) return;
         Models.PartLogging.create({
-            nick: nick,
-            channel: channel,
-            reason: reason,
+            nick,
+            channel,
+            reason,
             user: message.user,
-            host: message.host
+            host: message.host,
         })
             .catch(logger.error);
     };
     app.OnPart.set('partLogger', {
         call: partCmd,
-        name: 'partLogger'
+        name: 'partLogger',
     });
 
     // Log Kicks
     const kickCmd = (channel, nick, by, reason, message) => {
         if (!Models.KickLogging) return;
         Models.KickLogging.create({
-            nick: nick,
-            channel: channel,
-            reason: reason,
-            by: by,
+            nick,
+            channel,
+            reason,
+            by,
             user: message.user,
-            host: message.host
+            host: message.host,
         })
             .catch(logger.error);
     };
     app.OnKick.set('kickLogger', {
         call: kickCmd,
-        name: 'kickLogger'
+        name: 'kickLogger',
     });
 
     // Log Quits
     const quitCmd = (nick, reason, channels, message) => {
         if (!Models.QuitLogging) return;
         Models.QuitLogging.create({
-            nick: nick,
-            reason: reason,
+            nick,
+            reason,
             channels: _.isArray(channels) ? channels.join() : '',
             user: message.user,
-            host: message.host
+            host: message.host,
         })
             .catch(logger.error);
     };
     app.OnQuit.set('quitLogger', {
         call: quitCmd,
-        name: 'quitLogger'
+        name: 'quitLogger',
     });
 
     // Log Nick Changes
@@ -157,17 +156,17 @@ module.exports = app => {
         if (!Models.Alias) return;
         // If we have a database connection, log
         Models.Alias.create({
-            oldnick: oldnick,
-            newnick: newnick,
+            oldnick,
+            newnick,
             channels: channels.join(),
             user: message.user,
-            host: message.host
+            host: message.host,
         })
             .catch(logger.error);
     };
     app.NickChanges.set('nickLogger', {
         name: 'nickLogger',
-        call: nickCmd
+        call: nickCmd,
     });
 
     // Toppic logging handler
@@ -177,24 +176,23 @@ module.exports = app => {
             qb.where('channel', 'like', channel)
                 .orderBy('id', 'desc')
                 .limit(1)
-                .select(['topic'])
-        )
+                .select(['topic']))
             .fetch()
-            .then(lastTopic => {
+            .then((lastTopic) => {
                 if (lastTopic && topic === lastTopic.attributes.topic) return;
                 Models.Topics.create({
-                    channel: channel,
-                    topic: topic,
-                    nick: nick,
+                    channel,
+                    topic,
+                    nick,
                     user: message.user,
-                    host: message.host
+                    host: message.host,
                 });
             })
             .catch(logger.error);
     };
     app.OnTopic.set('topicLogger', {
         call: topicCmd,
-        name: 'topicLogger'
+        name: 'topicLogger',
     });
 
     // Return the script info

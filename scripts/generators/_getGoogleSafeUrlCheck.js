@@ -1,5 +1,4 @@
-'use strict';
-const endPoint = `https://safebrowsing.googleapis.com/v4/threatMatches:find`;
+const endPoint = 'https://safebrowsing.googleapis.com/v4/threatMatches:find';
 
 const _ = require('lodash');
 const rp = require('request-promise-native');
@@ -7,28 +6,25 @@ const logger = require('../../lib/logger');
 const config = require('../../config');
 
 // Handle dynamic input types
-const urlBuilder = url => {
+const urlBuilder = (url) => {
     // Setup the entries
-    let threatEntries = [];
+    const threatEntries = [];
     if (_.isArray(url)) {
         _.each(url, suburl => threatEntries.push({
-            url: suburl
+            url: suburl,
         }));
-    }
-    else {
+    } else {
         threatEntries.push({
-            url
+            url,
         });
     }
     return threatEntries;
 };
 
 module.exports = async (url) => {
-    if (_.isUndefined(config.apiKeys.google) || !_.isString(config.apiKeys.google) || _.isEmpty(config.apiKeys.google))
-        throw new Error('Url required for safe check');
+    if (_.isUndefined(config.apiKeys.google) || !_.isString(config.apiKeys.google) || _.isEmpty(config.apiKeys.google)) { throw new Error('Url required for safe check'); }
 
-    if (_.isUndefined(url) || (!_.isString(url) && !_.isArray(url)) || _.isEmpty(url))
-        throw new Error('Url required for safe check');
+    if (_.isUndefined(url) || (!_.isString(url) && !_.isArray(url)) || _.isEmpty(url)) { throw new Error('Url required for safe check'); }
 
     // Setup the entries
     const threatEntries = urlBuilder(url);
@@ -40,26 +36,26 @@ module.exports = async (url) => {
             method: 'POST',
             json: true,
             qs: {
-                key: config.apiKeys.google
+                key: config.apiKeys.google,
             },
             body: {
                 client: {
                     clientId: 'MrNodeBot',
-                    clientVersion: '1'
+                    clientVersion: '1',
                 },
                 threatInfo: {
                     threatTypes: ['THREAT_TYPE_UNSPECIFIED', 'MALWARE', 'SOCIAL_ENGINEERING', 'UNWANTED_SOFTWARE', 'POTENTIALLY_HARMFUL_APPLICATION'],
                     platformTypes: ['ALL_PLATFORMS'],
                     threatEntryTypes: ['URL'],
-                    threatEntries
-                }
-            }
+                    threatEntries,
+                },
+            },
         });
 
         // Return the results
         return results.matches || {};
     }
-        // Log Error
+    // Log Error
     catch (err) {
         logger.error('Error in Google URL Safe check Generator', {
             message: err.message || '',

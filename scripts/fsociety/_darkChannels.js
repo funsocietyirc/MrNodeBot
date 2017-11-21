@@ -1,4 +1,3 @@
-'use strict';
 // Thanks To Foxboron @ Freenode for the original Logic
 // Ascii Module shims
 const lowerCaseLetters = 'abcdefghijklmnopqrstuvwxyz';
@@ -10,9 +9,9 @@ const prefix = 'da';
 const ircChannelPrefix = '#';
 
 // Shift the Indices
-const shift = (letter, dic) => dic[dic.indexOf(letter) + 1] ? dic[dic.indexOf(letter) + 1] : dic[0];
+const shift = (letter, dic) => (dic[dic.indexOf(letter) + 1] ? dic[dic.indexOf(letter) + 1] : dic[0]);
 
-const fn = l => {
+const fn = (l) => {
     // Nothing to see here
     if (l === '_') return l;
     // Letter is in fact not a letter at all
@@ -24,15 +23,15 @@ const fn = l => {
 };
 
 // Return a channel name
-const channel = seed => {
+const channel = (seed) => {
     let string = '';
     // Iterate over the seed length and get a channel name
-    for (let i = 0, len = seed.length; i < len; i++) string = string + fn(seed[i]);
+    for (let i = 0, len = seed.length; i < len; i++) string += fn(seed[i]);
     return string;
 };
 
 // Return an array of channels (exported function)
-const channels = total => {
+const channels = (total) => {
     let output = [],
         seed = channel(initialSeed);
     for (let x = 0; x < total; x++) {

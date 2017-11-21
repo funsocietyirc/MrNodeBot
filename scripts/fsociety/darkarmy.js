@@ -1,14 +1,13 @@
-'use strict';
 const scriptInfo = {
     name: 'darkarmy',
-    desc: "Just a list of Dark Army Random channels, Topic Lock advertisements for main channel, Provide a list of currently joined Dark Army channels",
-    createdBy: 'IronY'
+    desc: 'Just a list of Dark Army Random channels, Topic Lock advertisements for main channel, Provide a list of currently joined Dark Army channels',
+    createdBy: 'IronY',
 };
 
 const _ = require('lodash');
 const logger = require('../../lib/logger');
 
-module.exports = app => {
+module.exports = (app) => {
     // Get threshold
 
     // Check to see if a main channel has been Set, if not bail out
@@ -25,7 +24,7 @@ module.exports = app => {
         if (!darkChannels.length) return;
 
         const interval = app.Config.features.fsociety.delay * 1000; // In seconds
-        const timeMessage = `I am joining the Dark Army! It will take me ` + app.Config.features.fsociety.delay * darkChannels.length + ` seconds...`;
+        const timeMessage = `I am joining the Dark Army! It will take me ${app.Config.features.fsociety.delay * darkChannels.length} seconds...`;
 
         logger.info(timeMessage);
 
@@ -35,14 +34,14 @@ module.exports = app => {
             .each((channel, i) =>
                 setTimeout(
                     () => app._ircClient.join(channel),
-                    interval * i, i)
-            );
+                    interval * i, i,
+                ));
     };
     // Provide a OnConnected provider, this will fire when the bot connects to the network
     app.OnConnected.set('darkarmy', {
         call: joinChannels,
         desc: 'Join Fsociety channels',
-        name: 'DarkArmy'
+        name: 'DarkArmy',
     });
 
     // Topic lock if possible
@@ -57,19 +56,19 @@ module.exports = app => {
     // Try to lock down a topic if possible
     app.OnTopic.set('topicjacking', {
         call: topicLock,
-        name: 'topicjacking'
+        name: 'topicjacking',
     });
 
     // Send someone a list of the channels
     const darkarmy = (to, from, text, message) => {
         app.say(to, `I have private messaged you the dark channels, ${from}`);
-        app.say(from, `Join me on ${app.Config.features.fsociety.mainChannel} or one of the other Mr. Robot channels: ` + darkChannels.join(' '));
+        app.say(from, `Join me on ${app.Config.features.fsociety.mainChannel} or one of the other Mr. Robot channels: ${darkChannels.join(' ')}`);
     };
     // A command to get a list of joined dark army channels
     app.Commands.set('dark-channels', {
         desc: 'Get a list of Dark Army Channels',
         access: app.Config.accessLevels.guest,
-        call: darkarmy
+        call: darkarmy,
     });
 
     // Return the script info

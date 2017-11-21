@@ -1,15 +1,14 @@
-'use strict';
 const scriptInfo = {
     name: 'voiceRegulars',
     desc: 'Voice regulars',
-    createdBy: 'IronY'
+    createdBy: 'IronY',
 };
 const _ = require('lodash');
 const logger = require('../../lib/logger');
 const scheduler = require('../../lib/scheduler');
 const voiceUsers = require('../lib/_voiceUsersInChannel');
 
-module.exports = app => {
+module.exports = (app) => {
     // We are missing things
     if (!app.Database ||
         !_.isObject(app.Config.features.voiceRegulars) || // We need a voiceRegulars block in the features section
@@ -29,7 +28,7 @@ module.exports = app => {
 
     const autoVoiceChannelIgnore = _.isArray(app.Config.features.autoVoiceChannelIgnore) ? app.Config.features.voiceRegulars.autoVoiceChannelIgnore : [];
 
-    let cronTime = new scheduler.RecurrenceRule();
+    const cronTime = new scheduler.RecurrenceRule();
     cronTime.minute = autoVoiceTimeInMins;
 
     scheduler.schedule('voiceRegulars', cronTime, () =>
@@ -40,15 +39,13 @@ module.exports = app => {
             try {
                 const result = await voiceUsers(channel, threshold, app);
                 logger.info(`Running Voice Regulars in ${channel}`);
-            }
-            catch(err) {
+            } catch (err) {
                 logger.error('Error in Voice Regulars', {
                     message: err.message || '',
                     stack: err.stack || '',
                 });
             }
-        })
-    );
+        }));
 
     // Voice Users on join if they meet a certain threshold
     app.OnJoin.set('voice-regulars', {
@@ -58,17 +55,16 @@ module.exports = app => {
 
             try {
                 await voiceUsers(channel, threshold, app, {
-                    nicks: [nick]
+                    nicks: [nick],
                 });
-            }
-            catch(err) {
+            } catch (err) {
                 logger.error('Something went wrong in the voice-regulars on-join', {
                     message: err.message || '',
                     stack: err.stack || '',
                 });
             }
         },
-        name: 'voice-regulars'
+        name: 'voice-regulars',
     });
 
     // Manually voice regulars
@@ -77,22 +73,21 @@ module.exports = app => {
         access: app.Config.accessLevels.channelOpIdentified,
         call: async (to, from, text, message) => {
             const channel = text.split(' ')[0] || to;
-            if(!app._ircClient.isOpInChannel(channel, app.nick)) {
+            if (!app._ircClient.isOpInChannel(channel, app.nick)) {
                 app.say(from, `I am not a op in ${to}, ${from}`);
                 return;
             }
             try {
                 await voiceUsers(channel, threshold, app);
                 app.say(to, `I have just voiced all users who meet the threshold of ${threshold} messages (per month), ${from}`);
-            }
-            catch(err) {
+            } catch (err) {
                 logger.error('Something went wrong in the voice-regulars command', {
                     message: err.message || '',
                     stack: err.stack || '',
                 });
                 app.say(to, `Something went wrong trying to voice the regulars, ${from}`);
             }
-        }
+        },
     });
 
     return scriptInfo;

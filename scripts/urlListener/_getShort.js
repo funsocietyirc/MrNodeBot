@@ -1,4 +1,3 @@
-'use strict';
 const _ = require('lodash');
 const logger = require('../../lib/logger');
 
@@ -10,7 +9,7 @@ module.exports = async (results) => {
     } catch (err) {
         logger.warn('Error in URL Shortener function', {
             message: err.message || '',
-            stack: err.stack || ''
+            stack: err.stack || '',
         });
         return results;
     }

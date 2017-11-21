@@ -1,4 +1,3 @@
-'use strict';
 // Original concept credited to http://www.hackerfactor.com/GenderGuesser.php
 const _ = require('lodash');
 
@@ -14,7 +13,7 @@ module.exports = text => new Promise((resolve, reject) => {
     let FemaleInformal = 0;
     let FemaleFormal = 0;
 
-    let TextArray = _(text.split(/[^a-zA-Z]+/))
+    const TextArray = _(text.split(/[^a-zA-Z]+/))
         .reject(_.isEmpty)
         .value();
 
@@ -23,7 +22,7 @@ module.exports = text => new Promise((resolve, reject) => {
         return;
     }
 
-    _(TextArray).each(Word => {
+    _(TextArray).each((Word) => {
         if (!isNaN(DictionaryInformal[Word])) {
             if (DictionaryInformal[Word] > 0) {
                 MaleInformal += DictionaryInformal[Word];
@@ -57,7 +56,7 @@ module.exports = text => new Promise((resolve, reject) => {
         0;
     CombinedPercentage = Math.round(CombinedPercentage);
 
-    let getSex = (male, female) => {
+    const getSex = (male, female) => {
         if (male > female) return 'Male';
         if (male < female) return 'Female';
         return 'Unknown';
@@ -92,9 +91,9 @@ module.exports = text => new Promise((resolve, reject) => {
                 diff: (MaleFormal + MaleInformal) - (FemaleFormal + FemaleInformal),
                 weak: CombinedPercentage > 40 && CombinedPercentage < 60,
                 sex: getSex(MaleFormal + MaleInformal, FemaleFormal + FemaleInformal),
-            }
+            },
         },
-        sampleSize: TextArray.length
+        sampleSize: TextArray.length,
     });
 });
 

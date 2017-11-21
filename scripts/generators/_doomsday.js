@@ -1,5 +1,3 @@
-'use strict';
-
 // API Endpoint
 const endPoint = 'http://thebulletin.org/timeline';
 
@@ -15,43 +13,42 @@ const midnight = new Date(2000, 0, 0, 0, 0, 0, 0);
 const toTime = minutes => new Date(midnight.getTime() + minutes * -60000);
 
 // Format date to string
-const dateToString = d => `${pad(2, d.getHours() - 12)}:${pad(2, d.getMinutes())}${d.getSeconds() ? ':' + pad(2, d.getSeconds()) : ''} PM`;
+const dateToString = d => `${pad(2, d.getHours() - 12)}:${pad(2, d.getMinutes())}${d.getSeconds() ? `:${pad(2, d.getSeconds())}` : ''} PM`;
 
 // Pad with 0's
 const pad = (min, input) => {
-    let out = input + '';
-    while (out.length < min)
-        out = '0' + out;
+    let out = `${input}`;
+    while (out.length < min) { out = `0${out}`; }
     return out;
 };
 
 // General Configuration
 const conf = {
     selector: '.view-content .node-title',
-    title: /(?:(\d+)|(one|two|three|four|five|six|seven|eight|nine)(.*?half)) minutes to midnight/i
+    title: /(?:(\d+)|(one|two|three|four|five|six|seven|eight|nine)(.*?half)) minutes to midnight/i,
 };
 
 // Numbers to english string
-const numberStringToInt = value => {
+const numberStringToInt = (value) => {
     switch (value.toLowerCase()) {
-        case 'one':
-            return 1;
-        case 'two':
-            return 2;
-        case 'three':
-            return 3;
-        case 'four':
-            return 4;
-        case 'five':
-            return 5;
-        case 'six':
-            return 6;
-        case 'seven':
-            return 7;
-        case 'eight':
-            return 8;
-        case 'nine':
-            return 9;
+    case 'one':
+        return 1;
+    case 'two':
+        return 2;
+    case 'three':
+        return 3;
+    case 'four':
+        return 4;
+    case 'five':
+        return 5;
+    case 'six':
+        return 6;
+    case 'seven':
+        return 7;
+    case 'eight':
+        return 8;
+    case 'nine':
+        return 9;
     }
     return NaN;
 };
@@ -59,15 +56,14 @@ const numberStringToInt = value => {
 // Request the current minutes to midnight feed.
 const _request = async () => {
     try {
-        return await rp({uri: endPoint, json: true});
-    }
-    catch (err) {
-        throw new Error("Unexpected Status Code");
+        return await rp({ uri: endPoint, json: true });
+    } catch (err) {
+        throw new Error('Unexpected Status Code');
     }
 };
 
 // Extract the relevant data
-const _extract = data => {
+const _extract = (data) => {
     const $ = cheerio.load(data);
 
     const nodes = $(conf.selector)
@@ -79,8 +75,7 @@ const _extract = data => {
     for (const node of nodes) {
         const result = node.match(conf.title);
         if (result) {
-            if (!isNaN(result[1]))
-                return parseInt(result[1]);
+            if (!isNaN(result[1])) { return parseInt(result[1]); }
             if (result[2]) {
                 const whole = numberStringToInt(result[2]);
                 if (!isNaN(whole)) return whole + 0.5;
@@ -88,7 +83,7 @@ const _extract = data => {
         }
     }
 
-    throw new Error("No result found");
+    throw new Error('No result found');
 };
 
 // Export the chain
@@ -97,8 +92,7 @@ module.exports = async () => {
         const requested = await _request();
         const extracted = await _extract(requested);
         return dateToString(toTime(extracted));
-    }
-    catch (err) {
+    } catch (err) {
         logger.error('Error in the _doomsday Generator', {
             message: err.message || '',
             stack: err.stack || '',

@@ -1,8 +1,7 @@
-'use strict';
 const scriptInfo = {
     name: 'usageApi',
     desc: 'The Usage Express API',
-    createdBy: 'IronY'
+    createdBy: 'IronY',
 };
 
 const _ = require('lodash');
@@ -10,9 +9,10 @@ const logger = require('../../lib/logger');
 const Models = require('funsociety-bookshelf-model-loader');
 const getUsageOverTime = require('../generators/_getUsageOverTime');
 const getUsageChansAvail = require('../generators/_getUsageChannelsAvailable');
+
 const hashPattern = new RegExp('%23', 'g');
 
-module.exports = app => {
+module.exports = (app) => {
     // No Database
     if (!Models.Logging) return scriptInfo;
 
@@ -22,23 +22,22 @@ module.exports = app => {
         path: '/api/usage/channels/available/:channel?',
         verb: 'get',
         handler: (req, res) => {
-            let channel = req.params.channel && _.isString(req.params.channel) ? req.params.channel.replace(hashPattern, '#') : null;
+            const channel = req.params.channel && _.isString(req.params.channel) ? req.params.channel.replace(hashPattern, '#') : null;
             getUsageChansAvail(app, channel)
                 .then(results =>
                     res.json({
                         status: 'success',
-                        channels: results
-                    })
-                )
-                .catch(err => {
+                        channels: results,
+                    }))
+                .catch((err) => {
                     logger.error('Error in api.usage.channels.available', {
-                        err
+                        err,
                     });
                     res.json({
-                        status: 'error'
+                        status: 'error',
                     });
                 });
-        }
+        },
     });
 
     // Subscribe to web service
@@ -50,23 +49,24 @@ module.exports = app => {
             try {
                 const results = await getUsageOverTime(req.params.channel.replace(hashPattern, '#'), req.params.nick);
                 // No Results available
-                if (!results) return res.json({
-                    message: 'No results available',
-                    status: 'error',
-                    results: [],
-                });
+                if (!results) {
+                    return res.json({
+                        message: 'No results available',
+                        status: 'error',
+                        results: [],
+                    });
+                }
 
                 results.status = 'success';
                 res.json(results);
-            }
-            catch(err) {
+            } catch (err) {
                 logger.error('Error fetching usage stats', {
                     message: err.message || '',
                     stack: err.stack || '',
                 });
                 res.json({
                     status: 'error',
-                    results: []
+                    results: [],
                 });
             }
         },

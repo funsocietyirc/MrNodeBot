@@ -1,12 +1,11 @@
-'use strict';
 const Models = require('funsociety-bookshelf-model-loader');
 
 const Alias = Models.Base.extend({
     tableName: 'alias',
     hasTimestamps: ['timestamp'],
-    soft: false
+    soft: false,
 });
 
 module.exports = {
-    Alias: Models.Bookshelf.model('alias', Alias)
+    Alias: Models.Bookshelf.model('alias', Alias),
 };

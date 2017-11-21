@@ -1,8 +1,7 @@
-'use strict';
 const scriptInfo = {
     name: 'quotes',
     desc: 'Privates add-quote, del-quote, and quote. Allows rudimentary quote system',
-    createdBy: 'IronY'
+    createdBy: 'IronY',
 };
 const Moment = require('moment');
 const color = require('irc-colors');
@@ -13,8 +12,8 @@ const _ = require('lodash');
 /**
  Keep Track of quotes
  Commands: quote-add quote-del quote
- **/
-module.exports = app => {
+ * */
+module.exports = (app) => {
     // Hold on to the collection
     let quotes = null;
 
@@ -38,9 +37,9 @@ module.exports = app => {
             app.say(to, 'Quote has been added');
             // Define the quote
             quotes.set(text, {
-                to: to,
-                from: from,
-                added: Moment()
+                to,
+                from,
+                added: Moment(),
             });
             storage.setItemSync('quotes', quotes);
         } else {
@@ -72,7 +71,6 @@ module.exports = app => {
     };
 
     const randomQuote = (to, from, text, message) => {
-
         // Bail out if we could not find key
         if (!quotes.size) {
             app.say(to, 'There must not be any quotes yet');
@@ -86,7 +84,7 @@ module.exports = app => {
         const quote = quotes.keys()[randomNumber - 1];
 
         // Get the metadata
-        let data = quotes.values()[randomNumber];
+        const data = quotes.values()[randomNumber];
 
         // Something went wrong extracting metadata
         if (!data || !data.added || !data.from) {
@@ -104,21 +102,21 @@ module.exports = app => {
     app.Commands.set('add-quote', {
         desc: 'Add A Quote',
         access: app.Config.accessLevels.admin,
-        call: addQuote
+        call: addQuote,
     });
 
     // Delete a quote
     app.Commands.set('del-quote', {
         desc: 'Delete a quote',
         access: app.Config.accessLevels.admin,
-        call: delQuote
+        call: delQuote,
     });
 
     // Get a random quote
     app.Commands.set('quote', {
         desc: 'Get a Random quote',
         access: app.Config.accessLevels.identified,
-        call: randomQuote
+        call: randomQuote,
     });
 
     // Return the script info

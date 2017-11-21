@@ -1,15 +1,12 @@
-'use strict';
 const _ = require('lodash');
 const Models = require('funsociety-bookshelf-model-loader');
 
 module.exports = async (channel) => {
     // Database does not exist
-    if (!Models.Upvote)
-        throw new Error('Database not available');
+    if (!Models.Upvote) { throw new Error('Database not available'); }
 
     // Channel not specified
-    if (!channel)
-        throw new Error('Channel is a required argument');
+    if (!channel) { throw new Error('Channel is a required argument'); }
 
     // Fetch the results from the database
     const results = await Models.Upvote.query(qb =>
@@ -20,8 +17,7 @@ module.exports = async (channel) => {
             .where('channel', 'like', channel)
             .groupBy('candidate')
             .orderBy('score', 'desc')
-            .orderBy('result', 'desc')
-    )
+            .orderBy('result', 'desc'))
         .fetchAll();
 
     // No results, return empty object
@@ -39,8 +35,7 @@ module.exports = async (channel) => {
         rankings: _results.map(x => ({
             candidate: x.candidate,
             score: parseInt(x.score),
-            votes: x.votes
+            votes: x.votes,
         })).value(),
     };
-
 };
