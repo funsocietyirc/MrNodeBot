@@ -28,6 +28,14 @@ module.exports = (app) => {
                 });
             }
 
+            // Check if recipient is a channel, then check if we are in that channel
+            if(app.client.isChannel(req.body.recipient) && !app.client.isInChannel(req.body.recipient)) {
+                return res.json({
+                    success: false,
+                    message: `I am currently not able to send messages to the channel ${req.body.recipient}`
+                });
+            }
+
             // A Very basic message
             app.say(req.body.recipient, req.body.payload);
 
