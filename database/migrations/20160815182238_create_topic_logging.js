@@ -4,7 +4,7 @@ exports.up = function (knex, Promise) {
         table.increments('id').primary();
         table.string('channel').collate('utf8mb4_unicode_ci');
         table.string('nick').collate('utf8mb4_unicode_ci');
-        table.string('topic').collate('utf8mb4_unicode_ci');
+        table.text('topic').collate('utf8mb4_unicode_ci');
         table.timestamp('timestamp').defaultTo(knex.fn.now());
     });
 };
