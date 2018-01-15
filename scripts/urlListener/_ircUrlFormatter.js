@@ -148,10 +148,11 @@ module.exports = (results, app) => {
         if (imgur.privacy !== 'public') {
             append('Private Imgur Album');
         } else {
-            append(`${logos.imgur} Album`)(imgur.account_url);
+            append(`${logos.imgur} Album`);
+            if (imgur.account_url && imgur.account_url !== 'null') append(imgur.account_url);
             if (imgur.title && imgur.title !== 'null') append(imgur.title);
             append(moment.unix(imgur.datetime).fromNow());
-            if (imgur.description && imgur.description !== 'null') append(imgur.description);
+            if (imgur.description && imgur.description !== null) append(imgur.description);
             if (imgur.section && imgur.section !== 'null') append(imgur.section);
             append(`${imgur.images_count} ${imgur.images_count > 1 ? 'Images' : 'Image'}`);
             append(`${icons.views} ${c.navy(helpers.formatNumber(imgur.views))}`);
