@@ -33,6 +33,9 @@ ignore:
     - i18next-sync-fs-backend > codecov > request > tunnel-agent:
         reason: None given
         expires: '2018-02-20T20:35:19.049Z'
+      funsociety-irc-rss-feed-emitter > request > tunnel-agent:
+        reason: Working on
+        expires: '2018-02-20T20:43:47.835Z'
     - funsociety-irc-rss-feed-emitter > request > tunnel-agent:
         reason: None given
         expires: '2017-12-10T06:21:14.298Z'
