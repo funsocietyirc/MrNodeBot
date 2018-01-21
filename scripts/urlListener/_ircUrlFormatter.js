@@ -9,7 +9,7 @@ const logos = ircTypography.logos;
 const icons = ircTypography.icons;
 
 // Formatting Helper
-module.exports = (results, app) => {
+formattingHelper = (results, app) => {
     // Site is not live
     if (results.unreachable) {
         // Do not post unverified links
@@ -197,3 +197,5 @@ module.exports = (results, app) => {
             ));
     }
 };
+
+module.exports = formattingHelper;
