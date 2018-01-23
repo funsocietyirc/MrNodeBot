@@ -8,8 +8,8 @@ ignore:
         expires: '2017-12-10T06:21:14.298Z'
   'npm:shelljs:20140723':
     - shelljs:
-        reason: None given
-        expires: '2018-02-20T20:35:19.049Z'
+        reason: unavailable
+        expires: '2018-02-22T05:02:12.274Z'
   'npm:brace-expansion:20170302':
     - node-pre-gyp > tar > fstream > rimraf > glob > minimatch > brace-expansion:
         reason: None available
@@ -31,14 +31,14 @@ ignore:
         expires: '2017-07-30T22:27:04.602Z'
   'npm:tunnel-agent:20170305':
     - i18next-sync-fs-backend > codecov > request > tunnel-agent:
-        reason: None given
-        expires: '2018-02-20T20:35:19.049Z'
-      funsociety-irc-rss-feed-emitter > request > tunnel-agent:
-        reason: Working on
-        expires: '2018-02-20T20:43:47.835Z'
+        reason: unavailable
+        expires: '2018-02-22T05:02:12.274Z'
     - funsociety-irc-rss-feed-emitter > request > tunnel-agent:
         reason: None given
         expires: '2017-12-10T06:21:14.298Z'
+    - funsociety-irc-rss-feed-emitter > request > tunnel-agent:
+        reason: Working on
+        expires: '2018-02-20T20:43:47.835Z'
   'npm:mime:20170907':
     - x-ray > x-ray-crawler > superagent > mime:
         reason: None given
@@ -58,7 +58,7 @@ ignore:
 patch:
   'npm:ms:20170412':
     - x-ray > debug > ms:
-        patched: '2018-01-21T20:34:35.133Z'
+        patched: '2018-01-23T05:01:34.712Z'
     - x-ray > x-ray-crawler > ms:
         patched: '2017-06-30T22:26:06.281Z'
     - socket.io > socket.io-adapter > debug > ms:
@@ -79,7 +79,7 @@ patch:
         patched: '2017-11-27T01:41:10.162Z'
   'npm:debug:20170905':
     - x-ray > debug:
-        patched: '2018-01-21T20:34:35.133Z'
+        patched: '2018-01-23T05:01:34.712Z'
     - helmet > connect > debug:
         patched: '2017-09-26T23:25:12.104Z'
     - helmet > connect > finalhandler > debug:
