@@ -71,8 +71,7 @@ module.exports = (app) => {
         access: app.Config.accessLevels.owner,
         call: async (to, from, text, message) => {
             // Parse arguments
-            let [nick,
-                amount] = text.split(' ');
+            let [nick, amount, seed] = text.split(' ');
 
             // Make sure we have a default amount
             amount = _.isSafeInteger(parseInt(amount))
@@ -108,40 +107,60 @@ module.exports = (app) => {
             instance.connect(() => {
                 // Add to ignore list
                 const wasIgnored = _.includes(app.Ignore, _.toLower(config.nick));
-                if (!wasIgnored) { app.Ignore.push(instance.nick); }
+                if (!wasIgnored) {
+                    app.Ignore.push(instance.nick);
+                }
 
                 // app.say(to, `I can feel ${config.nick} kicking ${from}!`);
-                instance.join(to, () => gen(amount).then(results => Models.Logging.query(qb => qb.select('text').where('from', 'like', nick).orderByRaw('rand()').limit(amount)).fetchAll().then(logs => new Promise((res, rej) => {
-                    // Hold All The Promises
-                    const promises = [];
-                    let key = 0;
+                instance.join(to, () => gen(amount).then(results => Models.Logging.query(
+                    qb => qb
+                        .select('text')
+                        // .where('from', 'like', nick)
+                        .where(clause => {
+                            clause.where('from', 'like', nick);
+                            if (!_.isEmpty(seed)) clause.andWhere('text', 'like', `%${seed}%`);
+                        })
+                        .orderByRaw('rand()')
+                        .limit(amount))
+                    .fetchAll().then(logs => new Promise((res, rej) => {
+                        // Hold All The Promises
+                        const promises = [];
+                        let key = 0;
 
-                    // The person we are spawning is in the channel
-                    if (originalNickIsActive) { promises.push(new Promise(r => setTimeout(() => r(instance.say(to, `Well hello ${config.originalNick}, seems there are two of us`)), ++key * 2500))); }
+                        // The person we are spawning is in the channel
+                        if (originalNickIsActive) {
+                            promises.push(new Promise(r => setTimeout(() => r(instance.say(to, `Well hello ${config.originalNick}, seems there are two of us`)), ++key * 2500)));
+                        }
 
-                    // Join delay delay
-                    promises.push(new Promise(r => setTimeout(r, ++key * 5000)));
+                        // Join delay delay
+                        promises.push(new Promise(r => setTimeout(r, ++key * 5000)));
 
-                    // We have no results
-                    if (!logs.length) { _.each(results, result => promises.push(new Promise(r => setTimeout(() => r(instance.say(to, result)), ++key * 2500)))); } // We have results
-                    else { _.each(logs.toJSON(), log => promises.push(new Promise(r => setTimeout(() => r(instance.say(to, log.text)), ++key * 2500)))); }
+                        // We have no results
+                        if (!logs.length) {
+                            _.each(results, result => promises.push(new Promise(r => setTimeout(() => r(instance.say(to, result)), ++key * 2500))));
+                        } // We have results
+                        else {
+                            _.each(logs.toJSON(), log => promises.push(new Promise(r => setTimeout(() => r(instance.say(to, log.text)), ++key * 2500))));
+                        }
 
-                    // Part delay
-                    promises.push(new Promise(r => setTimeout(r, ++key * 5000)));
+                        // Part delay
+                        promises.push(new Promise(r => setTimeout(r, ++key * 5000)));
 
-                    // Iterate over promises
-                    return Promise.all(promises).then(res);
-                })).then(() =>
-                    // Leave the channel
-                    instance.part(to, 'I was only but a dream', () => {
-                        // Disconnect
-                        instance.disconnect('Vici Vidi Vici');
-                        // Remove temp name from ignore list
-                        if (!wasIgnored) { _.remove(app.Ignore, instance.nick); }
-                    }))
-                // We have an error
+                        // Iterate over promises
+                        return Promise.all(promises).then(res);
+                    })).then(() =>
+                        // Leave the channel
+                        instance.part(to, 'I was only but a dream', () => {
+                            // Disconnect
+                            instance.disconnect('Vici Vidi Vici');
+                            // Remove temp name from ignore list
+                            if (!wasIgnored) {
+                                _.remove(app.Ignore, instance.nick);
+                            }
+                        }))
+                    // We have an error
                     .catch((err) => {
-                        logger.error('Something went wrong in the botUtils spawn command', { err });
+                        logger.error('Something went wrong in the botUtils spawn command', {err});
                         app.say('Something did not go quite right...');
                     })));
             });

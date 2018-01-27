@@ -9,6 +9,7 @@ module.exports = async (channel) => {
     if (!channel) { throw new Error('Channel is a required argument'); }
 
     // Fetch the results from the database
+    // TODO Math is funky
     const results = await Models.Upvote.query(qb =>
         qb
             .select(['candidate'])
