@@ -73,12 +73,13 @@ module.exports = (app) => {
             // Parse arguments
             const inputArr = text.split(' ');
             const nick = inputArr[0];
+
             // Make sure we have a default amount
             const amount = _.isSafeInteger(parseInt(inputArr[1]))
                 ? parseInt(inputArr[1])
                 : 1;
-            const seed = inputArr.slice(0, 1).join(' ');
-
+            const seed = inputArr.slice(2, inputArr.length).join(' ');
+            console.dir(seed);
             // Clone and modify initial config
             const config = _.cloneDeep(app.Config.irc);
 
