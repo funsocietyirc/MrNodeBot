@@ -79,7 +79,7 @@ module.exports = (app) => {
                 ? parseInt(inputArr[1])
                 : 1;
             const seed = inputArr.slice(2, inputArr.length).join(' ');
-            console.dir(seed);
+
             // Clone and modify initial config
             const config = _.cloneDeep(app.Config.irc);
 
