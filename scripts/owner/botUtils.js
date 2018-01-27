@@ -71,12 +71,13 @@ module.exports = (app) => {
         access: app.Config.accessLevels.owner,
         call: async (to, from, text, message) => {
             // Parse arguments
-            let [nick, amount, seed] = text.split(' ');
-
+            const inputArr = text.split(' ');
+            const nick = inputArr[0];
             // Make sure we have a default amount
-            amount = _.isSafeInteger(parseInt(amount))
-                ? parseInt(amount)
+            const amount = _.isSafeInteger(parseInt(inputArr[1]))
+                ? parseInt(inputArr[1])
                 : 1;
+            const seed = inputArr.slice(0, 1).join(' ');
 
             // Clone and modify initial config
             const config = _.cloneDeep(app.Config.irc);

@@ -1,5 +1,3 @@
-
-
 /**
  * @module Helpers
  * @author Dave Richer
