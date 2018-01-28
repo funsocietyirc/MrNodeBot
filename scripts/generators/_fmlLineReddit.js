@@ -1,4 +1,4 @@
-const endPoint = 'https://www.reddit.com/r/tifu/';
+const endPoint = 'https://www.reddit.com/r/tifu/.json';
 const _ = require('lodash');
 const rp = require('request-promise-native');
 
