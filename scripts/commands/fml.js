@@ -5,7 +5,7 @@ const scriptInfo = {
 };
 
 const _ = require('lodash');
-const gen = require('../generators/_fmlLine');
+const gen = require('../generators/_fmlLineReddit');
 const logger = require('../../lib/logger');
 const ircTypography = require('../lib/_ircTypography');
 
