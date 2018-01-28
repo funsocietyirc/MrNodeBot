@@ -15,5 +15,5 @@ module.exports = amount => rp({
             reject(new Error('No Data was available'));
             return;
         }
-        resolve(_.sampleSize(_.map(results.data.children, 'data.selftext'), amount || 1));
+        resolve(_.sampleSize(_.map(results.data.children, 'data.selftext').replace('TIFU', ''), amount || 1));
     }));
