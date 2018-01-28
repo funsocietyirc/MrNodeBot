@@ -1,4 +1,4 @@
-const endPoint = 'https://www.reddit.com/r/FML/.json';
+const endPoint = 'https://www.reddit.com/r/tifu/';
 const _ = require('lodash');
 const rp = require('request-promise-native');
 
@@ -11,7 +11,7 @@ module.exports = amount => rp({
 })
     .then(results => new Promise((resolve, reject) => {
         // We have No Data
-        if (!_.has(results, 'data.children[0].data') || !results.data.children) {
+        if (!_.has(results, 'data.children[0].data') || !results.data.title.replace('TIFU', '')) {
             reject(new Error('No Data was available'));
             return;
         }
