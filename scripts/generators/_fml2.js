@@ -1,4 +1,4 @@
-const endPoint = 'https://www.reddit.com/r/tifu/.json';
+const endPoint = 'https://www.reddit.com/r/tifu/hot/.json';
 const _ = require('lodash');
 const rp = require('request-promise-native');
 
@@ -11,9 +11,9 @@ module.exports = amount => rp({
 })
     .then(results => new Promise((resolve, reject) => {
         // We have No Data
-        if (!_.has(results, 'data.children[0].data') || !results.data.title.replace('TIFU', '')) {
+        if (!_.has(results, 'data.children[0].data') || !results.data.children) {
             reject(new Error('No Data was available'));
             return;
         }
-        resolve(_.sampleSize(_.map(results.data.children, 'data.selftext'), amount || 1));
+        resolve(_.sampleSize(_.map(results.data.children, 'data.title'), amount || 1));
     }));
