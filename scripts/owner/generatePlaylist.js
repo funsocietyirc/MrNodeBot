@@ -29,8 +29,10 @@ module.exports = (app) => {
                     .YouTubeLink
                     .query(qb =>
                         qb
+                            .select(['from', 'to', 'url', 'timestamp', 'title', 'restrictions', 'embeddable'])
                             .where('from', 'like', dj)
-                            .select(['from', 'url', 'timestamp'])
+                            .andWhere('restrictions', false)
+                            .andWhere('embeddable', true)
                             .orderByRaw('rand()')
                             .limit(100)
                     ).fetchAll();
@@ -132,8 +134,10 @@ module.exports = (app) => {
                             .YouTubeLink
                             .query(qb =>
                                 qb
+                                    .select(['from', 'to', 'url', 'timestamp', 'title', 'restrictions', 'embeddable'])
                                     .where('from', 'like', dj)
-                                    .select(['from', 'to', 'url', 'timestamp', 'title'])
+                                    .andWhere('restrictions', false)
+                                    .andWhere('embeddable', true)
                                     .orderByRaw('rand()')
                                     .limit(100)
                             ).fetchAll();
