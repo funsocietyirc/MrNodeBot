@@ -31,7 +31,7 @@ module.exports = (app) => {
                         qb
                             .where('from', 'like', dj)
                             .select(['from', 'url', 'timestamp'])
-                            .orderBy('timestamp', 'desc')
+                            .orderByRaw('rand()')
                             .limit(100)
                     ).fetchAll();
 
@@ -134,7 +134,7 @@ module.exports = (app) => {
                                 qb
                                     .where('from', 'like', dj)
                                     .select(['from', 'to', 'url', 'timestamp', 'title'])
-                                    .orderBy('timestamp', 'desc')
+                                    .orderByRaw('rand()')
                                     .limit(100)
                             ).fetchAll();
 
