@@ -8,6 +8,9 @@ const helpers = require('../../helpers');
 const logger = require('../../lib/logger');
 const Models = require('funsociety-bookshelf-model-loader');
 
+const initialLink = 'http://www.youtube.com/watch_videos?video_ids=';
+const short = require('../lib/_getShortService')();
+
 module.exports = (app) => {
 
     // Send Announcement Over IRC
@@ -29,16 +32,13 @@ module.exports = (app) => {
                 ).fetchAll();
 
             // Format Results
-            const jsonResults = _.map(dbResults.toJSON(), x => {
+            const ids = _.map(dbResults.toJSON(), x => {
                 const match =  x.url.match(helpers.YoutubeExpression);
-                if (!match || !match[2]) return;
-                return Object.assign({}, x, {
-                    videoId: match[2],
-                });
+                return (!match || !match[2]) ? null : match[2];
             }).filter(x => x);
-
-            const ids = _.map(jsonResults, 'videoId');
-            app.say(to, ids.join(','));
+            const url = `${initialLink}${ids.join(',')}`;
+            const shortUrl = await short(url);
+            app.say(to, shortUrl)
         } catch (err) {
             logger.error('Something went wrong generating a playlist', {
                 stack: err.stack,
