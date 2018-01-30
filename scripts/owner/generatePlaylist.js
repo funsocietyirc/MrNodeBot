@@ -20,7 +20,7 @@ module.exports = (app) => {
             app.say(to, `A nick is required for an announcement`);
             return;
         }
-        const textArr = text.split(' ');
+        const textArr = _.uniq(text.split(' '));
 
         try {
             // Fetch Results
@@ -29,6 +29,7 @@ module.exports = (app) => {
                 .query(qb =>
                     qb
                         .whereIn('from', textArr)
+                        .select(['from', 'url', 'timestamp'])
                         .distinct('url')
                         .orderBy('timestamp', 'desc')
                         .limit(25)
@@ -40,8 +41,7 @@ module.exports = (app) => {
                 return (!match || !match[2]) ? null : match[2];
             }).filter(x => x);
             const shortUrl = await short(`${initialLink}${ids.join(',')}`);
-
-            app.say(to, `Ayoh hommie ${from}, check out these ${ids.length} sick tracks by my peeps ${text}: `);
+            app.say(to, `A'yoh Hommie ${from.substr(0,1).toUpperCase()}, check out ${ids.length > 1 ? 'these' : 'this'} ${ids.length} sick ${ids.length > 1 ? 'tracks' : 'track'} by my peeps ${text}: ${shortUrl}`);
         } catch (err) {
             logger.error('Something went wrong generating a playlist', {
                 stack: err.stack,
