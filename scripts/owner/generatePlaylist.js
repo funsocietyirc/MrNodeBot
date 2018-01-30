@@ -44,7 +44,7 @@ module.exports = (app) => {
         }
         const finalTracks = _(tracks).flattenDeep().shuffle().sampleSize(25).value();
         const shortUrl = await short(`${initialLink}${finalTracks.join(',')}`);
-        app.say(to, `A'yoh Hommie ${from.substr(0, 1).toUpperCase()}, check out ${ids.length > 1 ? 'these' : 'this'} ${ids.length} sick ${ids.length > 1 ? 'tracks' : 'track'} by my peeps ${text}: ${shortUrl}`);
+        app.say(to, `A'yoh Hommie ${from.substr(0, 1).toUpperCase()}, check out ${finalTracks.length > 1 ? 'these' : 'this'} ${finalTracks.length} sick ${finalTracks.length > 1 ? 'tracks' : 'track'} by my peeps ${textArr.join(', ')}: ${shortUrl}`);
 
     };
 
@@ -76,7 +76,7 @@ module.exports = (app) => {
                 return (!match || !match[2]) ? null : match[2];
             }).filter(x => x);
             const shortUrl = await short(`${initialLink}${ids.join(',')}`);
-            app.say(to, `A'yoh Hommie ${from.substr(0,1).toUpperCase()}, check out ${ids.length > 1 ? 'these' : 'this'} ${ids.length} sick ${ids.length > 1 ? 'tracks' : 'track'} by my peeps ${text}: ${shortUrl}`);
+            app.say(to, `A'yoh Hommie ${from.substr(0, 1).toUpperCase()}, check out ${ids.length > 1 ? 'these' : 'this'} ${ids.length} sick ${ids.length > 1 ? 'tracks' : 'track'} by my peeps ${textArr.join(', ')}: ${shortUrl}`);
         } catch (err) {
             logger.error('Something went wrong generating a playlist', {
                 stack: err.stack,
