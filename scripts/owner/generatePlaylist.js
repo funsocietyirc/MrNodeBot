@@ -43,7 +43,9 @@ module.exports = (app) => {
             }).filter(x => x));
         }
         const finalTracks = _(tracks).flattenDeep().shuffle().sampleSize(25).value();
-        console.dir(finalTracks);
+        const shortUrl = await short(`${initialLink}${finalTracks.join(',')}`);
+        app.say(to, `A'yoh Hommie ${from.substr(0, 1).toUpperCase()}, check out ${ids.length > 1 ? 'these' : 'this'} ${ids.length} sick ${ids.length > 1 ? 'tracks' : 'track'} by my peeps ${text}: ${shortUrl}`);
+
     };
 
     // Send Announcement Over IRC
