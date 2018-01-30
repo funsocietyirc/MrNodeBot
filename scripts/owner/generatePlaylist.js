@@ -33,7 +33,8 @@ module.exports = (app) => {
                 videoId: x.url.match(helpers.YoutubeExpression)[2],
             }));
 
-            console.dir(jsonResults);
+            const ids = _.map(jsonResults, 'videoId');
+            app.say(to, ids.join(','));
         } catch (err) {
             logger.error('Something went wrong generating a playlist', {
                 stack: err.stack,
