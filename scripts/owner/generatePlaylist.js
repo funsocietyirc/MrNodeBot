@@ -29,6 +29,8 @@ module.exports = (app) => {
                     qb
                         .where('from', 'like', text)
                         .distinct('url')
+                        .orderBy('timestamp', 'desc')
+                        .limit(25)
                 ).fetchAll();
 
             // Format Results
