@@ -77,14 +77,14 @@ module.exports = (app) => {
                 .YouTubeLink
                 .query(qb =>
                     qb
+                        .select(['from', 'url', 'timestamp', 'restrictions', 'embeddable'])
                         .whereIn('from', textArr)
-                        .select(['from', 'url', 'timestamp'])
-                        .distinct('url')
+                        .andWhere('restrictions', false)
+                        .andWhere('embeddable', true)
                         .orderBy('timestamp', 'desc')
-                        .limit(25)
+                        .limit(100)
                 ).fetchAll();
 
-            // Format Results
             const ids = _.map(dbResults.toJSON(), x => {
                 const match = x.url.match(helpers.YoutubeExpression);
                 return (!match || !match[2]) ? null : match[2];
