@@ -20,8 +20,6 @@ module.exports = (app) => {
             return;
         }
         const textArr = _.sampleSize(_.uniq(text.split(' ')), 2);
-        // Only one nick was given, fall back to generate
-        //if(textArr.length === 1) return generate(to, from, text, message);
 
         tracks = [];
         for (const dj of textArr) {
@@ -42,8 +40,15 @@ module.exports = (app) => {
                 return (!match || !match[2]) ? null : match[2];
             }).filter(x => x));
         }
-        const finalTracks = _(tracks).flattenDeep().shuffle().sampleSize(25).value();
+
+        const finalTracks = _(tracks)
+            .flattenDeep()
+            .shuffle()
+            .sampleSize(25)
+            .value();
+
         const shortUrl = await short(`${initialLink}${finalTracks.join(',')}`);
+
         app.say(to, `A'yoh Hommie ${from.substr(0, 1).toUpperCase()}, check out ${finalTracks.length > 1 ? 'these' : 'this'} ${finalTracks.length} sick ${finalTracks.length > 1 ? 'tracks' : 'track'} by my peeps ${textArr.join(', ')}: ${shortUrl}`);
 
     };
@@ -96,5 +101,70 @@ module.exports = (app) => {
         access: app.Config.accessLevels.admin,
         call: mashup,
     });
+
+    // No SocketIO detected, or feature is disabled
+    if (app.WebServer.socketIO && !_.isEmpty(app.Config.features.watchYoutube) && app.Config.features.watchYoutube) {
+        app.Commands.set('tv-watch-seed', {
+            desc: '[nick1] [nick2?] [...] Generate a mashup youtube playlist (3 nicks max)',
+            access: app.Config.accessLevels.admin,
+            call: async (to, from, text, message) => {
+                const activeChannelFormat = chanName => (chanName !== null ?
+                    `/${chanName.toLowerCase()}` :
+                    '/');
+
+                // No text provided
+                if (_.isUndefined(text) || !_.isString(text) || _.isEmpty(text)) {
+                    app.say(to, `A nick or nicks are required to seed the tv station`);
+                    return;
+                }
+                const textArr = _.uniq(text.split(' '));
+
+                try {
+                    // Fetch Results
+                    const dbResults = await Models
+                        .YouTubeLink
+                        .query(qb =>
+                            qb
+                                .select(['from', 'to', 'url', 'timestamp', 'title'])
+                                .whereIn('from', textArr)
+                                .andWhere('to', to)
+                                .distinct('url')
+                                .orderBy('timestamp', 'desc')
+                                .limit(5)
+                        ).fetchAll();
+
+                    // Format Results
+                    _.map(dbResults.toJSON(), x => {
+                        const match = x.url.match(helpers.YoutubeExpression);
+                        return (!match || !match[2]) ? null : Object.assign({}, x, {
+                            videoId: match[2]
+                        });
+                    }).filter(x => x).forEach(x => {
+                        // Send to socket
+                        app.WebServer.socketIO.of('/youtube').to(activeChannelFormat(to)).emit('message', Object.assign({}, {
+                            to,
+                            from,
+                            timestamp: Date.now(),
+                            seekTime: 0,
+                            video: {
+                                videoTitle: x.title,
+                                key: x.videoId,
+                            },
+                        }));
+                    });
+
+                }
+                catch (err) {
+                    logger.error('Something went wrong seeding the tv station', {
+                        stack: err.stack,
+                        message: err.message,
+                    });
+                    app.say(to, `I am sorry ${from}, something went very very wrong`);
+                }
+            },
+        });
+    }
+
+
     return scriptInfo;
 };
