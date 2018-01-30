@@ -2890,9 +2890,9 @@ mime@^1.3.4, mime@^1.4.1:
   version "1.6.0"
   resolved "https://registry.yarnpkg.com/mime/-/mime-1.6.0.tgz#32cd9e5c64553bd58d19a568af452acff04981b1"
 
-minimatch@3.0.2:
-  version "3.0.2"
-  resolved "https://registry.yarnpkg.com/minimatch/-/minimatch-3.0.2.tgz#0f398a7300ea441e9c348c83d98ab8c9dbf9c40a"
+minimatch@3.0.3:
+  version "3.0.3"
+  resolved "https://registry.yarnpkg.com/minimatch/-/minimatch-3.0.3.tgz#2a4e4090b96b2db06a9d7df01055a62a77c9b774"
   dependencies:
     brace-expansion "^1.0.0"
 
@@ -3686,6 +3686,12 @@ rechoir@^0.6.2:
   dependencies:
     resolve "^1.1.6"
 
+recursive-readdir@^2.2.1:
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/recursive-readdir/-/recursive-readdir-2.2.1.tgz#90ef231d0778c5ce093c9a48d74e5c5422d13a99"
+  dependencies:
+    minimatch "3.0.3"
+
 redeyed@~1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/redeyed/-/redeyed-1.0.1.tgz#e96c193b40c0816b00aec842698e61185e55498a"
@@ -4107,12 +4113,6 @@ snyk-python-plugin@1.5.3:
   version "1.5.3"
   resolved "https://registry.yarnpkg.com/snyk-python-plugin/-/snyk-python-plugin-1.5.3.tgz#0d0d2ced89a4280a5108f00b5e076c631e1a6a1b"
 
-snyk-recursive-readdir@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/snyk-recursive-readdir/-/snyk-recursive-readdir-2.0.0.tgz#5cb59e94698169e0205a60e7d6a506d0b4d52ff3"
-  dependencies:
-    minimatch "3.0.2"
-
 snyk-resolve-deps@1.7.0:
   version "1.7.0"
   resolved "https://registry.yarnpkg.com/snyk-resolve-deps/-/snyk-resolve-deps-1.7.0.tgz#13743a058437dff890baaf437c333c966a743cb6"
@@ -4162,8 +4162,8 @@ snyk-try-require@^1.1.1, snyk-try-require@^1.2.0:
     then-fs "^2.0.0"
 
 snyk@^1.41.1:
-  version "1.69.3"
-  resolved "https://registry.yarnpkg.com/snyk/-/snyk-1.69.3.tgz#c948a05982b206002a09d4e55fb16aee6d5e80e0"
+  version "1.69.4"
+  resolved "https://registry.yarnpkg.com/snyk/-/snyk-1.69.4.tgz#12de4c52562cbc8437de53510fe4fd5fe9dd8812"
   dependencies:
     abbrev "^1.0.7"
     ansi-escapes "^1.3.0"
@@ -4177,6 +4177,7 @@ snyk@^1.41.1:
     open "^0.0.5"
     os-name "^1.0.3"
     proxy-from-env "^1.0.0"
+    recursive-readdir "^2.2.1"
     semver "^5.1.0"
     snyk-config "1.0.1"
     snyk-go-plugin "1.4.5"
@@ -4187,7 +4188,6 @@ snyk@^1.41.1:
     snyk-php-plugin "1.3.2"
     snyk-policy "^1.10.1"
     snyk-python-plugin "1.5.3"
-    snyk-recursive-readdir "^2.0.0"
     snyk-resolve "1.0.0"
     snyk-resolve-deps "1.7.0"
     snyk-sbt-plugin "1.2.2"
