@@ -39,9 +39,9 @@ module.exports = (app) => {
                 const match =  x.url.match(helpers.YoutubeExpression);
                 return (!match || !match[2]) ? null : match[2];
             }).filter(x => x);
-            const url = `${initialLink}${ids.join(',')}`;
-            const shortUrl = await short(url);
-            app.say(to, shortUrl)
+            const shortUrl = await short(`${initialLink}${ids.join(',')}`);
+
+            app.say(to, `Ayoh hommie ${from}, check out these ${ids.length} sick tracks by my peeps ${text}: `);
         } catch (err) {
             logger.error('Something went wrong generating a playlist', {
                 stack: err.stack,
@@ -54,8 +54,8 @@ module.exports = (app) => {
 
     // Handle IRC Command
     app.Commands.set('generate-youtube-playlist', {
-        desc: '[nick] Broadcast announcement',
-        access: app.Config.accessLevels.owner,
+        desc: '[nick1] [nick2?] [...] Generate a playlist with the last 25 results',
+        access: app.Config.accessLevels.admin,
         call: generate,
     });
 
