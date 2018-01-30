@@ -13,11 +13,44 @@ const short = require('../lib/_getShortService')();
 
 module.exports = (app) => {
 
+    const mashup = async (to, from, text, message) => {
+        // No text provided
+        if (_.isUndefined(text) || !_.isString(text) || _.isEmpty(text)) {
+            app.say(to, `A nick or nicks are required to generate a YouTube playlist`);
+            return;
+        }
+        const textArr = _.sampleSize(_.uniq(text.split(' ')), 2);
+        // Only one nick was given, fall back to generate
+        //if(textArr.length === 1) return generate(to, from, text, message);
+
+        tracks = [];
+        for (const dj of textArr) {
+            // Fetch Results
+            const dbResults = await Models
+                .YouTubeLink
+                .query(qb =>
+                    qb
+                        .where('from', 'like', dj)
+                        .select(['from', 'url', 'timestamp'])
+                        .orderBy('timestamp', 'desc')
+                        .limit(100)
+                ).fetchAll();
+
+            // Format Results
+            tracks.push(_.map(_.uniqBy(dbResults.toJSON(), 'url'), x => {
+                const match = x.url.match(helpers.YoutubeExpression);
+                return (!match || !match[2]) ? null : match[2];
+            }).filter(x => x));
+        }
+        const finalTracks = _(tracks).flattenDeep().shuffle().sampleSize(25).value();
+        console.dir(finalTracks);
+    };
+
     // Send Announcement Over IRC
     const generate = async (to, from, text, message) => {
         // No text provided
         if (_.isUndefined(text) || !_.isString(text) || _.isEmpty(text)) {
-            app.say(to, `A nick is required for an announcement`);
+            app.say(to, `A nick or nicks are required to generate a YouTube playlist`);
             return;
         }
         const textArr = _.uniq(text.split(' '));
@@ -50,14 +83,16 @@ module.exports = (app) => {
             app.say(to, `I am sorry ${from}, something went very very wrong`);
         }
     };
-
-
     // Handle IRC Command
     app.Commands.set('generate-youtube-playlist', {
         desc: '[nick1] [nick2?] [...] Generate a playlist with the last 25 results',
         access: app.Config.accessLevels.admin,
         call: generate,
     });
-
+    app.Commands.set('generate-youtube-mashup', {
+        desc: '[nick1] [nick2?] [...] Generate a mashup youtube playlist (3 nicks max)',
+        access: app.Config.accessLevels.admin,
+        call: mashup,
+    });
     return scriptInfo;
 };
