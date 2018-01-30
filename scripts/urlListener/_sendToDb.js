@@ -45,7 +45,7 @@ module.exports = async (results) => {
         ) {
             // Create YouTube record
             const youTubeRecord = await Models.YouTubeLink.create({
-                url: results.url,
+                url: results.youTube.video.key,
                 to: results.to,
                 from: results.from,
                 title: results.youTube.video.videoTitle,

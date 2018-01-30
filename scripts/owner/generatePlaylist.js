@@ -37,13 +37,8 @@ module.exports = (app) => {
                             .limit(100)
                     ).fetchAll();
 
-                // Format Results
-                tracks.push(_.map(_.uniqBy(dbResults.toJSON(), 'url'), x => {
-                    const match = x.url.match(helpers.YoutubeExpression);
-                    return (!match || !match[2]) ? null : match[2];
-                }).filter(x => x));
+                tracks.push(_(dbResults.toJSON()).map('url').uniq().value());
             }
-
             const finalTracks = _(tracks)
                 .flattenDeep()
                 .shuffle()
@@ -82,13 +77,10 @@ module.exports = (app) => {
                         .andWhere('restrictions', false)
                         .andWhere('embeddable', true)
                         .orderBy('timestamp', 'desc')
-                        .limit(100)
+                        .limit(25)
                 ).fetchAll();
 
-            const ids = _.map(dbResults.toJSON(), x => {
-                const match = x.url.match(helpers.YoutubeExpression);
-                return (!match || !match[2]) ? null : match[2];
-            }).filter(x => x);
+            const ids = _.map(dbResults.toJSON(), 'url');
             const shortUrl = await short(`${initialLink}${ids.join(',')}`);
             app.say(to, `A'yoh Hommie ${from.substr(0, 1).toUpperCase()}, check out ${ids.length > 1 ? 'these' : 'this'} ${ids.length} sick ${ids.length > 1 ? 'tracks' : 'track'} by my peeps ${textArr.join(', ')}: ${shortUrl}`);
         } catch (err) {
@@ -114,7 +106,7 @@ module.exports = (app) => {
     // No SocketIO detected, or feature is disabled
     if (app.WebServer.socketIO && !_.isEmpty(app.Config.features.watchYoutube) && app.Config.features.watchYoutube) {
         app.Commands.set('tv-watch-seed', {
-            desc: '[nick1] [nick2?] [...] Generate a mashup youtube playlist (3 nicks max)',
+            desc: '[nick1] [nick2?] [...] Seed a channels videos on watch-youtube',
             access: app.Config.accessLevels.admin,
             call: async (to, from, text, message) => {
                 const activeChannelFormat = chanName => (chanName !== null ?
@@ -144,11 +136,11 @@ module.exports = (app) => {
 
                         // Format Results
                         tracks.push(_.map(_.uniqBy(dbResults.toJSON(), 'url'), x => {
-                            const match = x.url.match(helpers.YoutubeExpression);
                             return (!match || !match[2]) ? null : Object.assign({}, x, {
-                                videoId: match[2]
+                                videoId: x.url
                             });
                         }).filter(x => x));
+
                     }
 
                     _(tracks)
