@@ -29,9 +29,13 @@ module.exports = (app) => {
                 ).fetchAll();
 
             // Format Results
-            const jsonResults = _.map(dbResults.toJSON(), x => Object.assign({}, x, {
-                videoId: x.url.match(helpers.YoutubeExpression)[2],
-            }));
+            const jsonResults = _.map(dbResults.toJSON(), x => {
+                const match =  x.url.match(helpers.YoutubeExpression);
+                if (!match || !match[2]) return;
+                return Object.assign({}, x, {
+                    videoId: match[2],
+                });
+            }).filter(x => x);
 
             const ids = _.map(jsonResults, 'videoId');
             app.say(to, ids.join(','));
