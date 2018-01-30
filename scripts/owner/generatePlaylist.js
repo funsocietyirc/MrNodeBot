@@ -20,7 +20,7 @@ module.exports = (app) => {
             app.say(to, `A nick is required for an announcement`);
             return;
         }
-        const textArr = text.split();
+        const textArr = text.split(' ');
 
         try {
             // Fetch Results
