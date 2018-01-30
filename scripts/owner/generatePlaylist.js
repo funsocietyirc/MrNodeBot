@@ -20,6 +20,7 @@ module.exports = (app) => {
             app.say(to, `A nick is required for an announcement`);
             return;
         }
+        const textArr = text.split();
 
         try {
             // Fetch Results
@@ -27,7 +28,7 @@ module.exports = (app) => {
                 .YouTubeLink
                 .query(qb =>
                     qb
-                        .where('from', 'like', text)
+                        .whereIn('from', textArr)
                         .distinct('url')
                         .orderBy('timestamp', 'desc')
                         .limit(25)
