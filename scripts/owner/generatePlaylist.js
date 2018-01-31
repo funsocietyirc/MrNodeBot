@@ -152,7 +152,7 @@ module.exports = (app) => {
                                 seekTime: 0,
                                 video: {
                                     videoTitle: x.title,
-                                    key: x.videoId,
+                                    key: x.url,
                                 },
                             }));
                         });
