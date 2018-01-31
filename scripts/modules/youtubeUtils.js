@@ -18,9 +18,8 @@ module.exports = (app) => {
     const cleanYoutube = async (to, from, text, message) => {
         app.say(to, `I am now verifying my memory for any faulty moving pictures ${from}..`);
         try {
-            const links = await Models.YouTubeLink.query(qb => qb.where('lastChecked', null).limit(100)).fetchAll();
+            const links = await Models.YouTubeLink.query(qb => qb.whereNotNull('lastChecked').limit(100)).fetchAll();
             let count = 0;
-
             for (const link of links.models) {
                 try {
                     const requestResults = await rp({
@@ -34,11 +33,12 @@ module.exports = (app) => {
                     });
 
                     if (!requestResults || _.isEmpty(requestResults.items)) {
+                        logger.info(`I am deleting a broken youtube link ${link.get('url')} by ${link.get('from')} to ${link.get('to')} on ${link.get('timestamp')}`);
                         await link.destroy();
                         count++;
                         continue;
                     }
-                    logger.info(`I am deleting a broken youtube link`, link.attributes);
+
                     link.set('lastChecked', Models.Bookshelf.knex.fn.now());
                     await link.save();
                 }
