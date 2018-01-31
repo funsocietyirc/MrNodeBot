@@ -14,12 +14,11 @@ module.exports = (app) => {
     // Bailout if we do not have database
     if (!Models.YouTubeLink || !apiKey) return scriptInfo;
 
-
     // Clean the DB of broken URLS
     const cleanYoutube = async (to, from, text, message) => {
         app.say(to, `I am not verifying my memory for any faulty moving pictures ${from}..`);
         try {
-            const links = await Models.YouTubeLink.fetchAll();
+            const links = await Models.YouTubeLink.query(qb => qb.where('lastChecked', null).limit(100)).fetchAll();
             let count = 0;
 
             for (const link of links.models) {
@@ -33,10 +32,15 @@ module.exports = (app) => {
                         },
                         json: true
                     });
+
                     if (!requestResults || _.isEmpty(requestResults.items)) {
-                        await link.del();
+                        await link.destroy();
                         count++;
+                        continue;
                     }
+
+                     link.set('lastChecked', Models.Bookshelf.knex.fn.now());
+                     await link.save();
                 }
                 catch (innerError) {
                     logger.error('Something went wrong cleaning youtube links (during iteration)', {
