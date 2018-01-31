@@ -8,6 +8,7 @@ const rp = require('request-promise-native');
 const logger = require('../../lib/logger');
 const Models = require('funsociety-bookshelf-model-loader');
 const apiKey = require('../../config').apiKeys.google;
+const scheduler = require('../../lib/scheduler');
 
 // Display a list of images in the Web Front end
 module.exports = (app) => {
@@ -16,9 +17,12 @@ module.exports = (app) => {
 
     // Clean the DB of broken URLS
     const cleanYoutube = async (to, from, text, message) => {
-        app.say(to, `I am now verifying my memory for any faulty moving pictures ${from}..`);
+        const unattended = !to || !from;
+        if (!unattended) app.say(to, `I am now verifying my memory for any faulty moving pictures ${from}..`);
+        else logger.info(`Running clean-youtube script`);
+
         try {
-            const links = await Models.YouTubeLink.query(qb => qb.whereNull('lastChecked').limit(100)).fetchAll();
+            const links = await Models.YouTubeLink.query(qb => qb.whereNull('lastChecked').limit(50)).fetchAll();
             let count = 0;
             for (const link of links.models) {
                 try {
@@ -50,10 +54,12 @@ module.exports = (app) => {
                 }
             }
 
-            app.say(to, `A total of ${count} broken YouTube links were removed ${from}`);
+
+            if (!unattended) app.say(to, `A total of ${count} broken YouTube links were removed, ${from}`);
+            else logger.info(`A total of ${count} broken YouTube links were removed`);
         }
         catch (err) {
-            app.say(to, `Something went wrong in my memory bank, I cannot compute ${from}..`);
+            if (!unattended) app.say(to, `Something went wrong in my memory bank, I cannot compute, ${from}..`);
             logger.error('Something went wrong cleaning youtube links', {
                 message: err.message || '',
                 stack: err.stack || '',
@@ -68,6 +74,12 @@ module.exports = (app) => {
         access: app.Config.accessLevels.owner,
         call: cleanYoutube,
     });
+
+    // TODO make this configurable ala config.js
+    const cronTime = new scheduler.RecurrenceRule();
+    cronTime.second = 0;
+    cronTime.minute = [4,22,44];
+    scheduler.schedule('cleanYoutube', cronTime, cleanYoutube);
 
     // Return the script info
     return scriptInfo;
