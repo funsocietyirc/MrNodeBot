@@ -18,7 +18,7 @@ module.exports = (app) => {
     const cleanYoutube = async (to, from, text, message) => {
         app.say(to, `I am now verifying my memory for any faulty moving pictures ${from}..`);
         try {
-            const links = await Models.YouTubeLink.query(qb => qb.whereNotNull('lastChecked').limit(100)).fetchAll();
+            const links = await Models.YouTubeLink.query(qb => qb.whereNull('lastChecked').limit(100)).fetchAll();
             let count = 0;
             for (const link of links.models) {
                 try {
