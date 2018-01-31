@@ -77,6 +77,7 @@ module.exports = (app) => {
                 });
                 return;
             }
+
             // Set the BTC rate based on inverse exchange
             fx.rates.BTC = 1 / btc.rate;
 
@@ -88,12 +89,9 @@ module.exports = (app) => {
             });
 
             for (const coin of coinMarketCap) {
-                if (coin.symbol === 'BTC') continue;
-                console.dir(coin);
+                if (coin.symbol === 'BTC' && !_.isInteger(coin.price_btc)) continue;
                 fx.rates[coin.symbol] = 1 / (btc.rate * coin.price_btc);
             }
-            console.dir(fx.rates);
-
         } catch (err) {
             logger.error('Something went wrong getting currency rates', {
                 message: err.message || '',
