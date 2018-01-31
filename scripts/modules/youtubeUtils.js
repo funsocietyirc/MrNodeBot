@@ -16,7 +16,7 @@ module.exports = (app) => {
 
     // Clean the DB of broken URLS
     const cleanYoutube = async (to, from, text, message) => {
-        app.say(to, `I am not verifying my memory for any faulty moving pictures ${from}..`);
+        app.say(to, `I am now verifying my memory for any faulty moving pictures ${from}..`);
         try {
             const links = await Models.YouTubeLink.query(qb => qb.where('lastChecked', null).limit(100)).fetchAll();
             let count = 0;
@@ -38,9 +38,9 @@ module.exports = (app) => {
                         count++;
                         continue;
                     }
-
-                     link.set('lastChecked', Models.Bookshelf.knex.fn.now());
-                     await link.save();
+                    logger.info(`I am deleting a broken youtube link`, link.attributes);
+                    link.set('lastChecked', Models.Bookshelf.knex.fn.now());
+                    await link.save();
                 }
                 catch (innerError) {
                     logger.error('Something went wrong cleaning youtube links (during iteration)', {
