@@ -22,6 +22,25 @@ module.exports = (app) => {
         else logger.info(`Running clean-youtube script`);
 
         try {
+            const recordCount = await Models.YouTubeLink.count();
+            // No records available
+            if (!recordCount) {
+                if (!unattended) app.say(to, `There is nothing to clean, ${from}`);
+                return;
+            }
+
+            // This cycle is completed, there is no more new records to check, lets start from the beginning
+            const affectedRecordCount = await Models.YouTubeLink.query(qb => qb.whereNull('lastChecked')).count();
+            if (!affectedRecordCount) {
+                await Models.YouTubeLink.query(qb => qb.whereNotNull('lastChecked')).save({
+                    lastChecked: null
+                }, {
+                    method: 'update',
+                    patch: true
+                });
+            }
+
+            // Clean
             const links = await Models.YouTubeLink.query(qb => qb.whereNull('lastChecked').limit(50)).fetchAll();
             let count = 0;
             for (const link of links.models) {
@@ -75,7 +94,6 @@ module.exports = (app) => {
         call: cleanYoutube,
     });
 
-    // TODO make this configurable ala config.js
     const cronTime = new scheduler.RecurrenceRule();
     cronTime.second = 0;
     cronTime.minute = [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55];
