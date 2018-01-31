@@ -157,6 +157,7 @@ module.exports = (app) => {
                             }));
                         });
 
+                    app.say(to, `I have seeded the watch channel with some sick beats ${from}`);
                 }
                 catch (err) {
                     logger.error('Something went wrong seeding the tv station', {
