@@ -88,9 +88,11 @@ module.exports = (app) => {
             });
 
             for (const coin of coinMarketCap) {
-                if (coins.symbol === 'BTC') continue;
-                fx.rates[coin.symbol] = fx.rates.BTC * coin.price_to_btc;
+                if (coin.symbol === 'BTC') continue;
+                console.dir(coin);
+                fx.rates[coin.symbol] = 1 / (btc.rate * coin.price_btc);
             }
+            console.dir(fx.rates);
 
         } catch (err) {
             logger.error('Something went wrong getting currency rates', {
