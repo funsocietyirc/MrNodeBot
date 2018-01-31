@@ -135,11 +135,7 @@ module.exports = (app) => {
                             ).fetchAll();
 
                         // Format Results
-                        tracks.push(_.map(_.uniqBy(dbResults.toJSON(), 'url'), x => {
-                            return (!match || !match[2]) ? null : Object.assign({}, x, {
-                                videoId: x.url
-                            });
-                        }).filter(x => x));
+                        tracks.push(_.uniqBy(dbResults.toJSON(), 'url'));
 
                     }
 
