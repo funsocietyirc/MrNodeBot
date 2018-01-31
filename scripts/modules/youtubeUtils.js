@@ -22,23 +22,23 @@ module.exports = (app) => {
         else logger.info(`Running clean-youtube script`);
 
         try {
-            const recordCount = await Models.YouTubeLink.count();
             // No records available
+            const recordCount = await Models.YouTubeLink.count();
             if (!recordCount) {
                 if (!unattended) app.say(to, `There is nothing to clean, ${from}`);
                 return;
             }
 
             // This cycle is completed, there is no more new records to check, lets start from the beginning
-            const affectedRecordCount = await Models.YouTubeLink.query(qb => qb.whereNull('lastChecked')).count();
-            if (!affectedRecordCount) {
-                await Models.YouTubeLink.query(qb => qb.whereNotNull('lastChecked')).save({
-                    lastChecked: null
-                }, {
-                    method: 'update',
-                    patch: true
-                });
-            }
+            // const affectedRecordCount = await Models.YouTubeLink.query(qb => qb.whereNull('lastChecked')).count();
+            // if (!affectedRecordCount) {
+            //     await Models.YouTubeLink.query(qb => qb.whereNotNull('lastChecked')).save({
+            //         lastChecked: null
+            //     }, {
+            //         method: 'update',
+            //         patch: true
+            //     });
+            // }
 
             // Clean
             const links = await Models.YouTubeLink.query(qb => qb.whereNull('lastChecked').limit(50)).fetchAll();
