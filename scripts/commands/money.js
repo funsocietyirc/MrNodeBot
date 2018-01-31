@@ -16,6 +16,7 @@ const accounting = require('accounting-js');
 // API Information
 const fixerApi = 'http://api.fixer.io/latest'; // API For Country exchange rates
 const btcApi = 'https://bitpay.com/api/rates'; // API For BTC exchange rates
+const coinMarketCapApi = 'https://api.coinmarketcap.com/v1/ticker';
 
 module.exports = (app) => {
     // Base currency
@@ -78,6 +79,19 @@ module.exports = (app) => {
             }
             // Set the BTC rate based on inverse exchange
             fx.rates.BTC = 1 / btc.rate;
+
+            // MISC
+            // Get the BTC Rate
+            const coinMarketCap = await request(coinMarketCapApi, {
+                json: true,
+                method: 'get',
+            });
+
+            for (const coin of coinMarketCap) {
+                if (coins.symbol === 'BTC') continue;
+                fx.rates[coin.symbol] = fx.rates.BTC * coin.price_to_btc;
+            }
+
         } catch (err) {
             logger.error('Something went wrong getting currency rates', {
                 message: err.message || '',
