@@ -78,7 +78,7 @@ module.exports = (app) => {
     // TODO make this configurable ala config.js
     const cronTime = new scheduler.RecurrenceRule();
     cronTime.second = 0;
-    cronTime.minute = [4,22,44];
+    cronTime.minute = [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55];
     scheduler.schedule('cleanYoutube', cronTime, cleanYoutube);
 
     // Return the script info
