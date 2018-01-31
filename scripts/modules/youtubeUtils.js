@@ -38,12 +38,12 @@ module.exports = (app) => {
                         count++;
                         continue;
                     }
-                    logger.info(`I am deleting a broken youtube link`, link.attributes);
-                    link.set('lastChecked', Models.Bookshelf.knex.fn.now());
-                    await link.save();
+
+                     link.set('lastChecked', Models.Bookshelf.knex.fn.now());
+                     await link.save();
                 }
                 catch (innerError) {
-                    logger.error('Something went wrong cleaning youtube links (during iteration)', {
+                    logger.error('Something went wrong cleaning YouTube links (during iteration)', {
                         message: innerError.message || '',
                         stack: innerError.stack || '',
                     });
@@ -54,7 +54,7 @@ module.exports = (app) => {
         }
         catch (err) {
             app.say(to, `Something went wrong in my memory bank, I cannot compute ${from}..`);
-            logger.error('Something went wrong cleaning youtube links', {
+            logger.error('Something went wrong cleaning YouTube links', {
                 message: err.message || '',
                 stack: err.stack || '',
             });
@@ -64,7 +64,7 @@ module.exports = (app) => {
 
     // Command to clean URLS
     app.Commands.set('clean-youtube-links', {
-        desc: 'clean youtube links',
+        desc: 'clean YouTube links',
         access: app.Config.accessLevels.owner,
         call: cleanYoutube,
     });
