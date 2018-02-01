@@ -89,7 +89,7 @@ const getDocuments = async (results, userAgent, maxLength) => {
                     headers: documentCheck.headers,
                     realUrl: documentCheck.request.uri.href,
                     statusCode: (_.isUndefined(documentCheck) || _.isUndefined(documentCheck.statusCode)) ? 'No Status' : documentCheck.statusCode,
-                    title: `${documentCheck.headers['content-type'].toUpperCase()} Document, ${helpers.formatNumber(documentCheck.headers['content-length'] || 0)} bytes - (${_.truncate(response.body, 30, '...')})`,
+                    title: `${documentCheck.headers['content-type'].toUpperCase()} Document, ${helpers.formatNumber(documentCheck.headers['content-length'] || 0)} bytes - (${helpers.StripNewLine(_.truncate(helpers.response.body, 30, '...'))})`,
                     overLength: true,
                 });
             }
