@@ -135,11 +135,7 @@ module.exports = (app) => {
                             ).fetchAll();
 
                         // Format Results
-                        tracks.push(_.map(_.uniqBy(dbResults.toJSON(), 'url'), x => {
-                            return (!match || !match[2]) ? null : Object.assign({}, x, {
-                                videoId: x.url
-                            });
-                        }).filter(x => x));
+                        tracks.push(_.uniqBy(dbResults.toJSON(), 'url'));
 
                     }
 
@@ -156,11 +152,12 @@ module.exports = (app) => {
                                 seekTime: 0,
                                 video: {
                                     videoTitle: x.title,
-                                    key: x.videoId,
+                                    key: x.url,
                                 },
                             }));
                         });
 
+                    app.say(to, `I have seeded the watch channel with some sick beats ${from}`);
                 }
                 catch (err) {
                     logger.error('Something went wrong seeding the tv station', {

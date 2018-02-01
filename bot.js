@@ -234,7 +234,6 @@ class MrNodeBot {
                     logger.info(message.args[0]);
                     return;
                 }
-
                 logger.error('Uncaught IRC Client error', {
                     message,
                 });

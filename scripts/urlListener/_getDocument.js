@@ -30,12 +30,15 @@ const getDocument = async (url, userAgent) => rp({
 
 const getDocuments = async (results, userAgent, maxLength) => {
     const documentCheck = await validDocument(results.url, userAgent);
-
     // TODO Sometimes head requests do not work
     if (
         documentCheck.headers['content-length'] > maxLength ||
         !documentCheck.headers.hasOwnProperty('content-type') ||
-        !_.includes(documentCheck.headers['content-type'], 'text/html')
+        !_.isString(documentCheck.headers['content-type']) ||
+        (
+            !_.includes(documentCheck.headers['content-type'], 'text/html') &&
+            !_.includes(documentCheck.headers['content-type'], 'application/json')
+        )
     ) {
         // TODO create a 'quite' mode on content-type discrepancies and content-length thresholds
         return Object.assign({}, results, {
@@ -61,23 +64,47 @@ const getDocuments = async (results, userAgent, maxLength) => {
         // No Response body
         if (!response.body || !_.isString(response.body) || _.isEmpty(response.body.trim())) return finalResults;
 
-        return new Promise((resolve, reject) => {
-            xray(response.body, 'title')((err, title) => {
-                if (err || !title) {
-                    // Something actually went wrong
-                    if (err) return reject(err);
+        if (_.includes(documentCheck.headers['content-type'], 'text/html')) {
+            return new Promise((resolve, reject) => {
+                xray(response.body, 'title')((err, title) => {
+                    if (err || !title) {
+                        // Something actually went wrong
+                        if (err) return reject(err);
 
-                    return resolve(finalResults);
-                }
-                // Set the Page Title
-                finalResults.title = helpers.StripNewLine(_.trim(title));
-                resolve(finalResults);
-            });
-        })
-            .catch((err) => {
-                finalResults.title = 'Invalid HTML document';
-                return finalResults;
-            });
+                        return resolve(finalResults);
+                    }
+                    // Set the Page Title
+                    finalResults.title = helpers.StripNewLine(_.trim(title));
+                    resolve(finalResults);
+                });
+            })
+                .catch((err) => {
+                    finalResults.title = 'Invalid HTML document';
+                    return finalResults;
+                });
+        } else if (_.includes(documentCheck.headers['content-type'], 'application/json')) {
+            try {
+                const jsonResults = JSON.parse(response.body);
+                return Object.assign({}, results, {
+                    headers: documentCheck.headers,
+                    realUrl: documentCheck.request.uri.href,
+                    statusCode: (_.isUndefined(documentCheck) || _.isUndefined(documentCheck.statusCode)) ? 'No Status' : documentCheck.statusCode,
+                    title: `${documentCheck.headers['content-type'].toUpperCase()} Document, ${helpers.formatNumber(documentCheck.headers['content-length'] || 0)} bytes - (${helpers.StripNewLine(_.truncate(response.body.replace(/\s\s+/g, ' '), 30, '...'))})`,
+                    overLength: true,
+                });
+            }
+            catch (err) {
+                return Object.assign({}, results, {
+                    headers: documentCheck.headers,
+                    realUrl: documentCheck.request.uri.href,
+                    statusCode: (_.isUndefined(documentCheck) || _.isUndefined(documentCheck.statusCode)) ? 'No Status' : documentCheck.statusCode,
+                    title: `${documentCheck.headers['content-type'].toUpperCase()} Document, ${helpers.formatNumber(documentCheck.headers['content-length'] || 0)} bytes - (Invalid JSON Document)`,
+                    overLength: true,
+                });
+            }
+        }
+
+        return finalResults;
     } catch (err) {
         logger.warn('Error in URL Get Document function', {
             message: err.message || '',
