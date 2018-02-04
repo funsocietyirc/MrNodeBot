@@ -41,6 +41,22 @@ module.exports = (app) => {
         },
     });
 
+    // Set the 'Drunk' add-on
+    app.Commands.set('slicced', {
+        desc: 'It\'s awesome yoh!',
+        access: app.Config.accessLevels.owner,
+        call: (to, from, text, message) => {
+            // The Key Already Exists
+            app.Config.slicced = _.isBoolean(app.Config.slicced)
+                ? !app.Config.slicced
+                : true;
+
+            app.say(to, app.Config.slicced
+                ? 'Lets Do this!'
+                : 'back to normal...');
+        },
+    });
+
     // Get a list of channels the bot is on
     app.Commands.set('channels', {
         desc: 'Get a list of the current joined channels',

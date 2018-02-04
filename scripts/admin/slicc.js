@@ -1,4 +1,4 @@
-const slicc = require('../lib/_extraThicc');
+const slicc = require('../../lib/sliccText');
 
 const scriptInfo = {
     name: 'slicc',
@@ -12,7 +12,7 @@ module.exports = (app) => {
         desc: '[text] Exactly what it sounds like',
         access: app.Config.accessLevels.admin,
         call: (to, from, text, message) => {
-            const newText = slicc(text, 'backward');
+            const newText = slicc(text);
             console.dir(newText);
             app.say(to, newText);
         }
