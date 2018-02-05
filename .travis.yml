@@ -1,6 +1,7 @@
 language: node_js
 node_js:
-  - "7"
+  - "9"
+  - "8"
 compiler:
   - gcc
   - clang
@@ -10,6 +11,10 @@ before_install:
   - sudo apt-get -y install libicu-dev
   - npm install -g npm
   - cp config.sample.js config.js
+cache:
+  yarn: true
+  directories:
+    - node_modules
 script:
   - "npm test"
 notifications:
