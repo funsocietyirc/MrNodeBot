@@ -26,8 +26,8 @@
     "framework"
   ],
   "engines": {
-    "node": ">=7.8.0",
-    "npm": ">=4.0.0"
+    "node": ">=8.0.0",
+    "npm": ">=5.0.0"
   },
   "dependencies": {
     "accounting-js": "^1.1.1",
