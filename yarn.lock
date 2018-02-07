@@ -1617,14 +1617,14 @@ funsociety-irc-rss-feed-emitter@1.0.12:
     request "^2.81.0"
     tiny-emitter "^2.0.1"
 
-funsocietyirc-client@^0.1.0:
-  version "0.1.3"
-  resolved "https://registry.yarnpkg.com/funsocietyirc-client/-/funsocietyirc-client-0.1.3.tgz#610aceeb9d22d97d91496729916de9d3f05cfaac"
+funsocietyirc-client@^0.1.5:
+  version "0.1.6"
+  resolved "https://registry.yarnpkg.com/funsocietyirc-client/-/funsocietyirc-client-0.1.6.tgz#2b6b5828e18a0f1701812f1c2ece2d128e388793"
   dependencies:
+    iconv-lite "^0.4.19"
     irc-colors "^1.3.3"
-    lodash "^4.17.4"
+    lodash "^4.17.5"
   optionalDependencies:
-    iconv "^2.3.0"
     node-icu-charset-detector "^0.2.0"
 
 generate-function@^2.0.0:
@@ -1997,15 +1997,9 @@ i18next@^10.3.0:
   version "10.3.0"
   resolved "https://registry.yarnpkg.com/i18next/-/i18next-10.3.0.tgz#6866d14f6ae7b3629921f78bc028d04914f0654c"
 
-iconv-lite@0.4.19, iconv-lite@^0.4.18, iconv-lite@^0.4.4:
+iconv-lite@0.4.19, iconv-lite@^0.4.18, iconv-lite@^0.4.19, iconv-lite@^0.4.4:
   version "0.4.19"
   resolved "https://registry.yarnpkg.com/iconv-lite/-/iconv-lite-0.4.19.tgz#f7468f60135f5e5dad3399c0a81be9a1603a082b"
-
-iconv@^2.3.0:
-  version "2.3.0"
-  resolved "https://registry.yarnpkg.com/iconv/-/iconv-2.3.0.tgz#9739887c2bd492d9a5e236dd3667c5358601201b"
-  dependencies:
-    nan "^2.3.5"
 
 ienoopen@1.0.0:
   version "1.0.0"
@@ -2775,7 +2769,7 @@ lodash@^3.2.0:
   version "3.10.1"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-3.10.1.tgz#5bf45e8e49ba4189e17d482789dfd15bd140b7b6"
 
-lodash@^4.0.0, lodash@^4.11.1, lodash@^4.14.0, lodash@^4.17.4, lodash@^4.3.0:
+lodash@^4.0.0, lodash@^4.11.1, lodash@^4.14.0, lodash@^4.17.4, lodash@^4.17.5, lodash@^4.3.0:
   version "4.17.5"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.5.tgz#99a92d65c0272debe8c96b6057bc8fbfa3bed511"
 
@@ -3031,7 +3025,7 @@ nan-x@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/nan-x/-/nan-x-1.0.0.tgz#0ee78e8d1cd0592d5b4260a5940154545c61c121"
 
-nan@^2.0.8, nan@^2.3.3, nan@^2.3.5:
+nan@^2.0.8, nan@^2.3.3:
   version "2.8.0"
   resolved "https://registry.yarnpkg.com/nan/-/nan-2.8.0.tgz#ed715f3fe9de02b57a5e6252d90a96675e1f085a"
 
