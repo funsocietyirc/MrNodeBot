@@ -1,17 +1,17 @@
-const slicc = require('../../lib/sliccText');
+const fancy = require('../../lib/fancyText');
 
 const scriptInfo = {
-    name: 'slicc',
-    desc: 'Slicc text back to the IRC user, a simple test script',
+    name: 'fancy',
+    desc: 'Fancy text back to the IRC user, a simple test script',
     createdBy: 'IronY',
 };
 
 module.exports = (app) => {
     // Echo Test command
-    app.Commands.set('slicc', {
+    app.Commands.set('fancy', {
         desc: '[text] Exactly what it sounds like',
         access: app.Config.accessLevels.admin,
-        call: (to, from, text, message) => app.say(to, slicc(text))
+        call: (to, from, text, message) => app._ircClient.say(to, fancy(text))
     });
 
     // Return the script info
