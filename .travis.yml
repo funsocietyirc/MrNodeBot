@@ -8,7 +8,6 @@ compiler:
 env:
   - CXX=g++-4.8
 before_install:
-  - sudo apt-get -y install libicu-dev
   - npm install -g npm
   - cp config.sample.js config.js
 cache:
