@@ -18,13 +18,7 @@ The bot currently depends on NickServ services supporting the ACC command for ce
 
 ## Dependencies
 -   A Database engine, either MySql, MariaDB, Postgres, Sqlite3
--   libicu (character encoding detection) [More Instructions](https://github.com/mooz/node-icu-charset-detector)
-    -   **Debian** (Ubuntu) ```apt-get install libicu-dev```
-    -   **Gentoo** ```emerge icu```
-    -   **Fedora/CentOS** ```yum install libicu-devel```
-    -   **macOS**
-        -   Homebrew ```brew install icu4c; brew link icu4c --force```
-        -   MacPorts ```port install icu +devel```
+-   node-gyp (python 2, and some sort of c build tools such as gcc or visual studio)
 
 ## Install Steps
 -   Install Node Modules ```npm install```
