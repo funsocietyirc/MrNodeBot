@@ -58,7 +58,7 @@ ignore:
 patch:
   'npm:ms:20170412':
     - x-ray > debug > ms:
-        patched: '2018-02-13T12:39:24.428Z'
+        patched: '2018-02-14T05:37:12.039Z'
     - x-ray > x-ray-crawler > ms:
         patched: '2017-06-30T22:26:06.281Z'
     - socket.io > socket.io-adapter > debug > ms:
@@ -79,7 +79,7 @@ patch:
         patched: '2017-11-27T01:41:10.162Z'
   'npm:debug:20170905':
     - x-ray > debug:
-        patched: '2018-02-13T12:39:24.428Z'
+        patched: '2018-02-14T05:37:12.039Z'
     - helmet > connect > debug:
         patched: '2017-09-26T23:25:12.104Z'
     - helmet > connect > finalhandler > debug:
