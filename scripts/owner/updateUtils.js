@@ -28,24 +28,24 @@ module.exports = (app) => {
         // Something went wrong running snyk
         if (code !== 0) {
             // Log Error
-            logger.error('Something went wrong securing packages with Snyk', { code, stdOut, stdErr });
+            logger.error('Something went wrong securing packages with Snyk', {code, stdOut, stdErr});
             return reject(new Error('Something went wrong securing my modules!'));
         }
 
         // Everything went fine
-        resolve({ stdCode: code, stdOut, stdErr });
+        resolve({stdCode: code, stdOut, stdErr});
     }));
 
     // Pull From Source Control
     const pullFromGit = () => new Promise((resolve, reject) => shell.exec('git pull', execSettings(), (code, stdOut, stdErr) => {
         // The Code did not exit properly
         if (code !== 0) {
-            logger.error('Something went wrong during pull request in the update command', { code, stdOut, stdErr });
+            logger.error('Something went wrong during pull request in the update command', {code, stdOut, stdErr});
             return reject(new Error('Something went wrong with the pull request'));
         }
 
         // Everything went fine
-        resolve({ stdCode: code, stdOut, stdErr });
+        resolve({stdCode: code, stdOut, stdErr});
     }));
 
     // Update packages
@@ -54,18 +54,18 @@ module.exports = (app) => {
         if (code !== 0) {
             // Log Error
             const errMsg = `Something went wrong running ${pkgManager.toUpperCase()} install`;
-            logger.error(errMsg, { code, stdErr, stdOut });
+            logger.error(errMsg, {code, stdErr, stdOut});
             return reject(new Error(errMsg));
         }
 
         // Everything went well
-        resolve({ stdCode: code, stdOut, stdErr });
+        resolve({stdCode: code, stdOut, stdErr});
     }));
 
     // Fetch the git log
     const getGitLog = () => new Promise((resolve, reject) => gitlog(app.Config.gitLog, (error, commits) => {
         if (error) {
-            logger.error('Something went wrong during the get git log process in the update command', { error });
+            logger.error('Something went wrong during the get git log process in the update command', {error});
             return reject(new Error('Something went wrong during the get git log process in the update command'));
         }
         resolve(commits);
@@ -75,11 +75,11 @@ module.exports = (app) => {
     const checkDiff = abbrevHash => new Promise((resolve, reject) => shell.exec(`git diff-tree --no-commit-id --name-only -r ${abbrevHash}`, execSettings(), (code, stdOut, stdErr) => {
         // Something went wrong
         if (code !== 0 || _.isEmpty(stdOut)) {
-            logger.error('Was unable to read the commit ', { code, stdOut, stdErr });
+            logger.error('Was unable to read the commit ', {code, stdOut, stdErr});
             return reject(new Error('I was unable to read the commit log'));
         }
         // Everything went ok
-        resolve({ stdCode: code, stdOut, stdErr });
+        resolve({stdCode: code, stdOut, stdErr});
     }));
 
     /* Commands */
@@ -236,7 +236,7 @@ module.exports = (app) => {
         let shouldInstallPackages = false;
 
         // Do we have a yarn file
-        const hasYarnLock = fs.existsSync(path.resolve(process.cwd()), 'yarn.lock');
+        const hasYarnLock = fs.existsSync(path.resolve(process.cwd(), 'yarn.lock'));
 
         // Files affected from last commit
         const files = _.compact(diffResults.stdOut.split(os.EOL));
@@ -266,52 +266,51 @@ module.exports = (app) => {
 
         // Build Output
         const output = new typo.StringBuilder();
-        output.appendBold('Update').append(commit.subject).append(commit.authorDateRel).append(url);
+        output
+            .appendBold('Update')
+            .append(commit.subject)
+            .append(commit.authorDateRel)
+            .append(url);
+
         app.say(to, output.text);
 
         // Update Modules
         if (shouldInstallPackages) {
             // Determine the package manager to use
-            let pkgManager;
-            if (shell.which('yarn') && hasYarnLock) { pkgManager = 'yarn'; } else if (shell.which('npm')) { pkgManager = 'npm'; } else {
-                attemptUnlock();
-                logger.error('Cannot find package manager during upgrade');
-                app.say(to, `I am afraid we are missing the package manager, ${from}`);
-                return;
-            }
 
-            // Run the package manager, hold results
-            app.say(to, `Running ${pkgManager.toUpperCase()}`);
-            let pkgResults;
             try {
+                const pkgManager = (shell.which('yarn') && hasYarnLock) ? 'yarn': (shell.which('npm')) ? 'npm' : false;
+
+                if (!pkgManager) {
+                    attemptUnlock();
+                    logger.error('Cannot find package manager during upgrade');
+                    app.say(to, `I am afraid we are missing the package manager, ${from}`);
+                    return;
+                }
+
+                // Run the package manager, hold results
+                app.say(to, `Running ${pkgManager.toUpperCase()}`);
                 await updatePackages(pkgManager);
-            } catch (err) {
-                attemptUnlock();
-                app.say(to, err.message);
-                return;
-            }
 
-            // Secure via synk
-            app.action(to, 'is getting all up in his safe space');
-            let secureResults;
-            try {
+                // Secure via synk
+                app.action(to, 'is getting all up in his safe space');
+
                 await protect();
+
+                attemptUnlock();
+
+                halt(to, from, output.text);
             } catch (err) {
                 attemptUnlock();
                 app.say(to, err.message);
-                return;
             }
-
-            // Halt
-            attemptUnlock();
-            halt(to, from, output.text);
         } else if (shouldCycle) { // Halt the process
             attemptUnlock();
             halt(to, from, output.text);
-        } else {
-            attemptUnlock();
-            reload(to, from); // Reload scripts
         }
+
+        attemptUnlock();
+        reload(to, from); // Reload scripts
     };
 
     // Update only works in production as to not git pull away any new changes
