@@ -293,8 +293,7 @@ module.exports = (app) => {
                 await updatePackages(pkgManager);
 
                 // Secure via synk
-                app.action(to, 'is getting all up in his safe space');
-
+                // app.action(to, 'is getting all up in his safe space');
                 // await protect();
 
                 attemptUnlock();
