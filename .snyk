@@ -1,5 +1,5 @@
 # Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
-version: v1.10.1
+version: v1.10.2
 # ignores vulnerabilities until expiry date; change duration by modifying expiry date
 ignore:
   'npm:qs:20170213':
@@ -9,7 +9,7 @@ ignore:
   'npm:shelljs:20140723':
     - shelljs:
         reason: unavailable
-        expires: '2018-02-22T05:02:12.274Z'
+        expires: '2018-04-09T18:16:58.638Z'
   'npm:brace-expansion:20170302':
     - node-pre-gyp > tar > fstream > rimraf > glob > minimatch > brace-expansion:
         reason: None available
@@ -33,9 +33,15 @@ ignore:
     - i18next-sync-fs-backend > codecov > request > tunnel-agent:
         reason: unavailable
         expires: '2018-02-22T05:02:12.274Z'
+      codecov > request > tunnel-agent:
+        reason: None given
+        expires: '2018-04-09T18:16:58.638Z'
     - funsociety-irc-rss-feed-emitter > request > tunnel-agent:
         reason: None given
         expires: '2017-12-10T06:21:14.298Z'
+      i18next-sync-fs-backend > codecov > request > tunnel-agent:
+        reason: unavailable
+        expires: '2018-04-09T18:16:58.638Z'
     - funsociety-irc-rss-feed-emitter > request > tunnel-agent:
         reason: Working on
         expires: '2018-02-20T20:43:47.835Z'
@@ -58,15 +64,30 @@ ignore:
     - i18next-sync-fs-backend > codecov > request > hawk > hoek:
         reason: None given
         expires: '2018-03-20T23:49:34.734Z'
+      boom > hoek:
+        reason: None given
+        expires: '2018-04-09T18:16:58.638Z'
     - i18next-sync-fs-backend > codecov > request > hawk > boom > hoek:
         reason: None given
         expires: '2018-03-20T23:49:34.734Z'
+      codecov > request > hawk > hoek:
+        reason: None given
+        expires: '2018-04-09T18:16:58.638Z'
     - i18next-sync-fs-backend > codecov > request > hawk > sntp > hoek:
         reason: None given
         expires: '2018-03-20T23:49:34.734Z'
+      codecov > request > hawk > boom > hoek:
+        reason: None given
+        expires: '2018-04-09T18:16:58.638Z'
     - i18next-sync-fs-backend > codecov > request > hawk > cryptiles > boom > hoek:
         reason: None given
         expires: '2018-03-20T23:49:34.734Z'
+      codecov > request > hawk > sntp > hoek:
+        reason: None given
+        expires: '2018-04-09T18:16:58.638Z'
+    - codecov > request > hawk > cryptiles > boom > hoek:
+        reason: None given
+        expires: '2018-04-09T18:16:58.638Z'
   'npm:lodash:20180130':
     - cheerio > lodash:
         reason: None given
@@ -74,6 +95,21 @@ ignore:
     - x-ray > x-ray-crawler > cheerio > lodash:
         reason: None given
         expires: '2018-03-20T23:49:34.734Z'
+  'npm:clean-css:20180306':
+    - pug > pug-filters > clean-css:
+        reason: None given
+        expires: '2018-04-09T18:16:58.638Z'
+  'npm:is-my-json-valid:20180214':
+    - codecov > request > har-validator > is-my-json-valid:
+        reason: None given
+        expires: '2018-04-09T18:16:58.638Z'
+    - i18next-sync-fs-backend > codecov > request > har-validator > is-my-json-valid:
+        reason: None given
+        expires: '2018-04-09T18:16:58.638Z'
+  'npm:nwmatcher:20180305':
+    - x-ray > cheerio > jsdom > nwmatcher:
+        reason: None given
+        expires: '2018-04-09T18:16:58.638Z'
 # patches apply the minimum changes required to fix a vulnerability
 patch:
   'npm:ms:20170412':
