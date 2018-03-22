@@ -23,6 +23,7 @@ const formatNumber = module.exports.formatNumber = input => accounting.formatNum
  */
 const isAsync = module.exports.isAsync = func => func.toString().toLowerCase().startsWith('async');
 
+
 /**
  * AccessString - Get A String representation of a Access Level
  * @param {String} str Number value of the access string
