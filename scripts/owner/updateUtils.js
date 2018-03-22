@@ -125,7 +125,6 @@ module.exports = (app) => {
         call: forceUnlockCommand,
     });
 
-
     // Update the bot
     const updateCommand = async (to, from, text, message) => {
         // Log failed attempts removing the lock file
@@ -184,6 +183,18 @@ module.exports = (app) => {
         // Give initial feedback
         app.action(to, 'is now forecasting the clouds for new data');
 
+        // Do we have a yarn file
+        const hasYarnLock = fs.existsSync(path.resolve(process.cwd(), 'yarn.lock'));
+
+        // Validate the package manager is available
+        const pkgManager = (shell.which('yarn') && hasYarnLock) ? 'yarn': (shell.which('npm')) ? 'npm' : false;
+        if (!pkgManager) {
+            attemptUnlock();
+            logger.error('Cannot find package manager during upgrade');
+            app.say(to, `I am afraid we are missing the package manager, ${from}`);
+            return;
+        }
+
         // Grab the commits
         let commits;
         try {
@@ -201,6 +212,7 @@ module.exports = (app) => {
             logger.error('Something went wrong finding the last commit data in updateUtils.js');
             return;
         }
+
 
         // Grab the last commit
         const commit = _.first(commits);
@@ -234,9 +246,6 @@ module.exports = (app) => {
 
         // Should we do a NPM/Yarn Install
         let shouldInstallPackages = false;
-
-        // Do we have a yarn file
-        const hasYarnLock = fs.existsSync(path.resolve(process.cwd(), 'yarn.lock'));
 
         // Files affected from last commit
         const files = _.compact(diffResults.stdOut.split(os.EOL));
@@ -272,44 +281,41 @@ module.exports = (app) => {
             .append(commit.authorDateRel)
             .append(url);
 
+        // Send
         app.say(to, output.text);
+        try {
 
-        // Update Modules
-        if (shouldInstallPackages) {
-            // Determine the package manager to use
+            const outText = output.text || `${from} has asked me if I could leave for a second and do something important, I shall return`;
 
-            try {
-                const pkgManager = (shell.which('yarn') && hasYarnLock) ? 'yarn': (shell.which('npm')) ? 'npm' : false;
-
-                if (!pkgManager) {
-                    attemptUnlock();
-                    logger.error('Cannot find package manager during upgrade');
-                    app.say(to, `I am afraid we are missing the package manager, ${from}`);
-                    return;
-                }
-
-                // Run the package manager, hold results
-                app.say(to, `Running ${pkgManager.toUpperCase()}`);
-                await updatePackages(pkgManager);
-
-                // Secure via synk
-                // app.action(to, 'is getting all up in his safe space');
-                // await protect();
-
-                attemptUnlock();
-
-                halt(to, from, output.text);
-            } catch (err) {
-                attemptUnlock();
-                app.say(to, err.message);
+            // New Packages need installing
+            if (shouldInstallPackages) {
+                app._ircClient.disconnect(outText, async () => {
+                    logger.info('Updating packages....');
+                    await updatePackages(pkgManager);
+                    process.exit(0);
+                });
             }
-        } else if (shouldCycle) { // Halt the process
-            attemptUnlock();
-            halt(to, from, output.text);
-        }
+            // Process needs to be restarted
+            else if (shouldCycle) {
+                app._ircClient.disconnect(outText, async () => {
+                    logger.info('Restarting due to update');
+                    process.exit(0);
+                });
 
-        attemptUnlock();
-        reload(to, from); // Reload scripts
+            }
+            // Just do a reload
+            else {
+                reload(to, from); // Reload scripts
+            }
+        } catch(err) {
+            logger.error('Something went wrong updating', {
+                message: err.message || '',
+                stack: err.stack || '',
+            });
+        }
+        finally {
+            attemptUnlock();
+        }
     };
 
     // Update only works in production as to not git pull away any new changes
