@@ -33,18 +33,18 @@ ignore:
     - i18next-sync-fs-backend > codecov > request > tunnel-agent:
         reason: unavailable
         expires: '2018-02-22T05:02:12.274Z'
-      codecov > request > tunnel-agent:
-        reason: None given
-        expires: '2018-04-09T18:16:58.638Z'
     - funsociety-irc-rss-feed-emitter > request > tunnel-agent:
         reason: None given
         expires: '2017-12-10T06:21:14.298Z'
-      i18next-sync-fs-backend > codecov > request > tunnel-agent:
-        reason: unavailable
-        expires: '2018-04-09T18:16:58.638Z'
     - funsociety-irc-rss-feed-emitter > request > tunnel-agent:
         reason: Working on
         expires: '2018-02-20T20:43:47.835Z'
+    - codecov > request > tunnel-agent:
+        reason: None given
+        expires: '2018-04-09T18:16:58.638Z'
+    - i18next-sync-fs-backend > codecov > request > tunnel-agent:
+        reason: unavailable
+        expires: '2018-04-09T18:16:58.638Z'
   'npm:mime:20170907':
     - x-ray > x-ray-crawler > superagent > mime:
         reason: None given
@@ -63,38 +63,38 @@ ignore:
   'npm:hoek:20180212':
     - i18next-sync-fs-backend > codecov > request > hawk > hoek:
         reason: None given
-        expires: '2018-03-20T23:49:34.734Z'
-      boom > hoek:
-        reason: None given
-        expires: '2018-04-09T18:16:58.638Z'
+        expires: '2018-04-29T06:00:43.304Z'
     - i18next-sync-fs-backend > codecov > request > hawk > boom > hoek:
         reason: None given
-        expires: '2018-03-20T23:49:34.734Z'
-      codecov > request > hawk > hoek:
-        reason: None given
-        expires: '2018-04-09T18:16:58.638Z'
+        expires: '2018-04-29T06:00:43.304Z'
     - i18next-sync-fs-backend > codecov > request > hawk > sntp > hoek:
         reason: None given
-        expires: '2018-03-20T23:49:34.734Z'
-      codecov > request > hawk > boom > hoek:
-        reason: None given
-        expires: '2018-04-09T18:16:58.638Z'
+        expires: '2018-04-29T06:00:43.304Z'
     - i18next-sync-fs-backend > codecov > request > hawk > cryptiles > boom > hoek:
         reason: None given
-        expires: '2018-03-20T23:49:34.734Z'
-      codecov > request > hawk > sntp > hoek:
+        expires: '2018-04-29T06:00:43.304Z'
+    - codecov > request > hawk > cryptiles > boom > hoek:
         reason: None given
         expires: '2018-04-09T18:16:58.638Z'
-    - codecov > request > hawk > cryptiles > boom > hoek:
+    - boom > hoek:
+        reason: None given
+        expires: '2018-04-09T18:16:58.638Z'
+    - codecov > request > hawk > hoek:
+        reason: None given
+        expires: '2018-04-09T18:16:58.638Z'
+    - codecov > request > hawk > boom > hoek:
+        reason: None given
+        expires: '2018-04-09T18:16:58.638Z'
+    - codecov > request > hawk > sntp > hoek:
         reason: None given
         expires: '2018-04-09T18:16:58.638Z'
   'npm:lodash:20180130':
     - cheerio > lodash:
         reason: None given
-        expires: '2018-03-20T23:49:34.734Z'
+        expires: '2018-04-29T06:00:43.304Z'
     - x-ray > x-ray-crawler > cheerio > lodash:
         reason: None given
-        expires: '2018-03-20T23:49:34.734Z'
+        expires: '2018-04-29T06:00:43.304Z'
   'npm:clean-css:20180306':
     - pug > pug-filters > clean-css:
         reason: None given
@@ -114,7 +114,7 @@ ignore:
 patch:
   'npm:ms:20170412':
     - x-ray > debug > ms:
-        patched: '2018-02-18T23:48:39.439Z'
+        patched: '2018-03-30T05:59:44.164Z'
     - x-ray > x-ray-crawler > ms:
         patched: '2017-06-30T22:26:06.281Z'
     - socket.io > socket.io-adapter > debug > ms:
@@ -135,7 +135,7 @@ patch:
         patched: '2017-11-27T01:41:10.162Z'
   'npm:debug:20170905':
     - x-ray > debug:
-        patched: '2018-02-18T23:48:39.439Z'
+        patched: '2018-03-30T05:59:44.164Z'
     - helmet > connect > debug:
         patched: '2017-09-26T23:25:12.104Z'
     - helmet > connect > finalhandler > debug:
