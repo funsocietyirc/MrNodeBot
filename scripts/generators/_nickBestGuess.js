@@ -2,15 +2,17 @@ const nn = require('nearest-neighbor');
 const logger = require('../../lib/logger');
 const Models = require('funsociety-bookshelf-model-loader');
 
-module.exports = async (nick) => {
+module.exports = async (nick, channel) => {
     // No Database
     if (!Models.Logging) throw new Error('Database not available');
     // Invalid Arguments
     if (!nick) throw new Error('Nick is a required argument');
+    if (!channel) throw new Error('Channel is a required argument');
 
     try {
         const results = await Models.Logging.query((qb) => {
             qb
+                .where('to', channel)
                 .distinct('from')
                 .select('from');
         }).fetchAll();

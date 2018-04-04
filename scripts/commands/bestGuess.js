@@ -14,7 +14,7 @@ module.exports = (app) => {
             return;
         }
 
-        const result = await gen(nick);
+        const result = await gen(nick, to);
         if(_.isEmpty(result) || _.isEmpty(result.nearestNeighbor) || _.isNull(result.nearestNeighbor.probability)) {
             app.say(to, `I got nothing, ${from}`);
             return;
