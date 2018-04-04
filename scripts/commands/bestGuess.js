@@ -20,7 +20,7 @@ module.exports = (app) => {
             return;
         }
 
-        app.say(to, `There is a ${(result.probability * 100).toFixed(2)}% chance you are looking for ${result.nearestNeighbor.from}, ${from}`);
+        app.say(to, `There is a ${(result.probability * 100).toFixed(2)}% chance you're looking for ${result.nearestNeighbor.from}, ${from}`);
     };
 
     app.Commands.set('bg', {
