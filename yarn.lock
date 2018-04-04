@@ -3255,6 +3255,10 @@ nconf@^0.7.2:
     ini "1.x.x"
     yargs "~3.15.0"
 
+nearest-neighbor@^0.0.3:
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/nearest-neighbor/-/nearest-neighbor-0.0.3.tgz#7d834b19d27b8304314117948e496d6cb8849980"
+
 needle@^2.0.1:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/needle/-/needle-2.2.0.tgz#f14efc69cee1024b72c8b21c7bdf94a731dc12fa"
