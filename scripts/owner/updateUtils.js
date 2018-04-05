@@ -289,16 +289,23 @@ module.exports = (app) => {
 
             // New Packages need installing
             if (shouldInstallPackages) {
+                // Update the packages just before the processes closes
+                process.on('exit', async () => {
+                    await updatePackages(pkgManager);
+                });
+
                 app._ircClient.disconnect(outText, async () => {
                     logger.info('Updating packages....');
-                    await updatePackages(pkgManager);
                     process.exit(0);
                 });
             }
             // Process needs to be restarted
             else if (shouldCycle) {
-                app._ircClient.disconnect(outText, async () => {
+                process.on('exit', async () => {
                     logger.info('Restarting due to update');
+                });
+
+                app._ircClient.disconnect(outText, async () => {
                     process.exit(0);
                 });
 

@@ -2,6 +2,43 @@ const nn = require('nearest-neighbor');
 const logger = require('../../lib/logger');
 const Models = require('funsociety-bookshelf-model-loader');
 
+const tokenize = (string) => {
+    const tokens = [];
+    if (typeof string !== 'undefined' && string !== null) {
+        let i = 0;
+        while (i < string.length - 1) {
+            tokens.push(string.substr(i, 2).toLowerCase());
+            i++;
+        }
+    }
+    return tokens.sort();
+};
+
+const intersect = (a, b) => {
+    const result = [];
+    let ai = 0;
+    let bi = 0;
+    while (ai < a.length && bi < b.length) {
+        if (a[ai] < b[bi]) {
+            ai++;
+        } else if (a[ai] > b[bi]) {
+            bi++;
+        } else {
+            result.push(a[ai]);
+            ai++;
+            bi++;
+        }
+    }
+    return result;
+};
+nn.comparisonMethods.custom = (a, b) => {
+    const left = tokenize(a);
+    const right = tokenize(b);
+    return (2 * intersect(left, right).length) / (left.length + right.length);
+};
+
+
+
 module.exports = async (nick, channel) => {
     // No Database
     if (!Models.Logging) throw new Error('Database not available');

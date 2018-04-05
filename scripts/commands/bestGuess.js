@@ -10,7 +10,7 @@ module.exports = (app) => {
     const bg = async (to, from, text, message) => {
         const [nick] = text.split(' ');
         if (!nick) {
-            app.say(to, `You are going to have to give me something to work with ${from}`);
+            app.say(to, `You are going to have to give me something to work with, ${from}`);
             return;
         }
 
