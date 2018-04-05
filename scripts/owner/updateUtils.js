@@ -291,11 +291,11 @@ module.exports = (app) => {
             if (shouldInstallPackages) {
                 // Update the packages just before the processes closes
                 process.on('exit', async () => {
+                    logger.info('Updating packages....');
                     await updatePackages(pkgManager);
                 });
 
                 app._ircClient.disconnect(outText, async () => {
-                    logger.info('Updating packages....');
                     process.exit(0);
                 });
             }
