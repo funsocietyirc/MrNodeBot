@@ -23,7 +23,8 @@
     "bot",
     "fsociety",
     "nodejs",
-    "framework"
+    "framework",
+    "mrnodebot"
   ],
   "engines": {
     "node": ">=8.0.0",
