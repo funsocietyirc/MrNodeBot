@@ -5,23 +5,10 @@ const scriptInfo = {
 };
 const _ = require('lodash');
 const logger = require('../../lib/logger');
-
-const moment = require('moment');
-const countdown = require('countdown');
-
-// Give moment a countdown
-slice = [].slice;
-moment.fn.countdown = function () {
-    let args, other;
-    other = arguments[0];
-    args = 2 <= arguments.length ? slice.call(arguments, 1) : [];
-    return countdown.apply(null, [this.toDate(), moment(other).toDate()].concat(slice.call(args)));
-};
-
+const moment = require('../../lib/moment');
 const scheduler = require('../../lib/scheduler.js');
 
 // Extend moment with countdown
-
 module.exports = (app) => {
     // No Configuration available, bail
     if (!_.isArray(app.Config.features.countdowns)) return scriptInfo;
