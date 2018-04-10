@@ -1748,12 +1748,12 @@ funsociety-irc-rss-feed-emitter@1.0.12:
     tiny-emitter "^2.0.1"
 
 funsocietyirc-client@^0.1.7:
-  version "0.1.9"
-  resolved "https://registry.yarnpkg.com/funsocietyirc-client/-/funsocietyirc-client-0.1.9.tgz#7d1c387f9a4d3b7e17eaa28557ce29d2f3458cf1"
+  version "0.1.10"
+  resolved "https://registry.yarnpkg.com/funsocietyirc-client/-/funsocietyirc-client-0.1.10.tgz#35734c561e5255ea2bab199fc1fa849b2be81adb"
   dependencies:
     iconv-lite "^0.4.19"
     irc-colors "^1.3.3"
-    jschardet "^1.6.0"
+    jschardet "https://github.com/dfoody/jschardet.git"
     lodash "^4.17.5"
 
 generate-function@^2.0.0:
@@ -2142,9 +2142,15 @@ i18next@^10.3.0:
   version "10.6.0"
   resolved "https://registry.yarnpkg.com/i18next/-/i18next-10.6.0.tgz#90ffd9f9bc617f34b9a12e037260f524445f7684"
 
-iconv-lite@0.4.19, iconv-lite@^0.4.18, iconv-lite@^0.4.19, iconv-lite@^0.4.4:
+iconv-lite@0.4.19, iconv-lite@^0.4.18, iconv-lite@^0.4.4:
   version "0.4.19"
   resolved "https://registry.yarnpkg.com/iconv-lite/-/iconv-lite-0.4.19.tgz#f7468f60135f5e5dad3399c0a81be9a1603a082b"
+
+iconv-lite@^0.4.19:
+  version "0.4.21"
+  resolved "https://registry.yarnpkg.com/iconv-lite/-/iconv-lite-0.4.21.tgz#c47f8733d02171189ebc4a400f3218d348094798"
+  dependencies:
+    safer-buffer "^2.1.0"
 
 ienoopen@1.0.0:
   version "1.0.0"
@@ -2618,9 +2624,9 @@ jsbn@~0.1.0:
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/jsbn/-/jsbn-0.1.1.tgz#a5e654c2e5a2deb5f201d96cefbca80c0ef2f513"
 
-jschardet@^1.6.0:
+"jschardet@git+https://github.com/dfoody/jschardet.git":
   version "1.6.0"
-  resolved "https://registry.yarnpkg.com/jschardet/-/jschardet-1.6.0.tgz#c7d1a71edcff2839db2f9ec30fc5d5ebd3c1a678"
+  resolved "git+https://github.com/dfoody/jschardet.git#2f074a0433182b1be218e60f11a270660866c1d4"
 
 jsdoc@^3.5.4:
   version "3.5.5"
@@ -4139,6 +4145,10 @@ safe-regex@^1.1.0:
   resolved "https://registry.yarnpkg.com/safe-regex/-/safe-regex-1.1.0.tgz#40a3669f3b077d1e943d44629e157dd48023bf2e"
   dependencies:
     ret "~0.1.10"
+
+safer-buffer@^2.1.0:
+  version "2.1.2"
+  resolved "https://registry.yarnpkg.com/safer-buffer/-/safer-buffer-2.1.2.tgz#44fa161b0187b9549dd84bb91802f9bd8385cd6a"
 
 samsam@1.3.0:
   version "1.3.0"
