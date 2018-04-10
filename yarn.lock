@@ -1748,8 +1748,8 @@ funsociety-irc-rss-feed-emitter@1.0.12:
     tiny-emitter "^2.0.1"
 
 funsocietyirc-client@^0.1.7:
-  version "0.1.11"
-  resolved "https://registry.yarnpkg.com/funsocietyirc-client/-/funsocietyirc-client-0.1.11.tgz#4dc933a8dd7505442290b8f5499777aca22629f0"
+  version "0.1.12"
+  resolved "https://registry.yarnpkg.com/funsocietyirc-client/-/funsocietyirc-client-0.1.12.tgz#dd161ab29dddb4bd418f033e52ef82340ff5b555"
   dependencies:
     iconv-lite "^0.4.19"
     irc-colors "^1.3.3"
