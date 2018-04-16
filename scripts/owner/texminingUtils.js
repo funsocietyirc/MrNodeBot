@@ -48,9 +48,9 @@ module.exports = (app) => {
                 else return 0;
             });
 
-            const top10Terms = _.map(termsByFrequency.slice(0, 10), 'term').join(',');
+            const top10Terms = _(termsByFrequency).map('term').uniq().filter(x => _.isEmpty(x.term)).take(10).value().join(',');
 
-            app.say(to, `The Top 10 Terms for ${nick} are ${top10Terms}, ${from}`);
+            app.say(to, `The Top 10 Terms for ${nick} are: ${top10Terms}`);
         } catch (err) {
             logger.error('Error in popularityClear command', {
                 message: err.message || '',
