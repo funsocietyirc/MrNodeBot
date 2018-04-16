@@ -46,11 +46,10 @@ module.exports = (app) => {
                 app.say(to, 'I could not seem to find any TIFU lines');
                 return;
             }
-            result.replace('TIFU', '');
             const output = new ircTypography.StringBuilder({
                 logo: 'tifu',
             });
-            output.append(result[0]);
+            output.append(result[0].replace('TIFU', ''));
             app.say(to, output.text);
         } catch (err) {
             logger.error('FML Command Error:', {
