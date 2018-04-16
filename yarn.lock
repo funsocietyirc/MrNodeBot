@@ -4765,6 +4765,10 @@ text-encoding@^0.6.4:
   version "0.6.4"
   resolved "https://registry.yarnpkg.com/text-encoding/-/text-encoding-0.6.4.tgz#e399a982257a276dae428bb92845cb71bdc26d19"
 
+textmining@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/textmining/-/textmining-1.0.3.tgz#064a5e955347dc08e0c94a002aae9a7f1a4ef6b6"
+
 then-fs@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/then-fs/-/then-fs-2.0.0.tgz#72f792dd9d31705a91ae19ebfcf8b3f968c81da2"

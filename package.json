@@ -79,6 +79,7 @@
     "shelljs": "^0.8.1",
     "snyk": "^1.41.1",
     "socket.io": "2.0.4",
+    "textmining": "^1.0.3",
     "twit": "2.2.9",
     "underscore": "^1.8.3",
     "urijs": "^1.18.12",
