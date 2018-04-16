@@ -43,12 +43,13 @@ module.exports = (app) => {
 
             // Sort terms by global frequency and print the top 10
             const termsByFrequency = bag.terms.sort(function (a, b) {
+                if (_.isEmpty(a) || _.isEmpty(b)) return 0;
                 if (a.frequency > b.frequency) return -1;
                 else if (a.frequency < b.frequency) return 1;
                 else return 0;
             });
 
-            const top10Terms = _(termsByFrequency).map('term').uniq().filter(x => _.isEmpty(x.term)).take(10).value().join(',');
+            const top10Terms = _(termsByFrequency).map('term').uniq().take(10).value().join(',');
 
             app.say(to, `The Top 10 Terms for ${nick} are: ${top10Terms}`);
         } catch (err) {
