@@ -14,8 +14,9 @@ module.exports = (app) => {
         return scriptInfo;
     }
 
-    const top10 = async (to, from, text, message) => {
-        const [nick] = text.split(' ');
+    const topTerms = async (to, from, text, message) => {
+        const [nick, amount] = text.split(' ');
+        const finalAmount = _.isSafeInteger(parseInt(amount)) ? amount : 10;
         if (!nick) {
             app.say(`I do not have enough information, ${from}`);
             return;
@@ -43,28 +44,26 @@ module.exports = (app) => {
 
             // Sort terms by global frequency and print the top 10
             const termsByFrequency = bag.terms.sort(function (a, b) {
-                if (_.isEmpty(a) || _.isEmpty(b)) return 0;
                 if (a.frequency > b.frequency) return -1;
                 else if (a.frequency < b.frequency) return 1;
                 else return 0;
             });
 
-            const top10Terms = _(termsByFrequency).map('term').uniq().take(10).value().join(',');
-
-            app.say(to, `The Top 10 Terms for ${nick} are: ${top10Terms}`);
+            const top10Terms = _(termsByFrequency).map('term').filter(x => x !== '').uniq().take(finalAmount).value();
+            app.say(to, `The Top ${finalAmount} Terms for ${nick} are: ${top10Terms.join(',')}`);
         } catch (err) {
-            logger.error('Error in popularityClear command', {
+            logger.error('Error in topTerms command', {
                 message: err.message || '',
                 stack: err.stack || '',
             });
-            app.say(to, 'An Error has occurred with your top10 command');
+            app.say(to, 'An Error has occurred with your topTerms command');
         }
     };
     // Bind purge command
-    app.Commands.set('top10', {
-        desc: '[nick] - Get the top 10 words of a user',
+    app.Commands.set('topTerms', {
+        desc: '[nick] (amount?) - Get the top terms of a user',
         access: app.Config.accessLevels.owner,
-        call: top10,
+        call: topTerms,
     });
 
 
