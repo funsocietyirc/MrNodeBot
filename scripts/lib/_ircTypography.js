@@ -27,6 +27,7 @@ const logos = {
     bitBucket: c.navy.bold('BitBucket'),
     imdb: c.brown.bold('IMDB'),
     fml: c.blue.bold('FML'),
+    tifu: c.blue.bold('TIFU'),
     twss: c.blue('TWSS'),
     bofh: c.grey.bold('BOFH'),
     mrrobot: c.red.bold('#MrRobot'),
