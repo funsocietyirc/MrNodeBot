@@ -155,3 +155,4 @@ patch:
   'npm:minimatch:20160620':
     - winston-daily-rotate-file > winston-compat > vows > glob > minimatch:
         patched: '2018-04-17T22:43:03.287Z'
+
