@@ -8,8 +8,8 @@ ignore:
         expires: '2017-12-10T06:21:14.298Z'
   'npm:shelljs:20140723':
     - shelljs:
-        reason: unavailable
-        expires: '2018-04-09T18:16:58.638Z'
+        reason: None given
+        expires: '2018-05-17T22:43:47.788Z'
   'npm:brace-expansion:20170302':
     - node-pre-gyp > tar > fstream > rimraf > glob > minimatch > brace-expansion:
         reason: None available
@@ -31,8 +31,8 @@ ignore:
         expires: '2017-07-30T22:27:04.602Z'
   'npm:tunnel-agent:20170305':
     - i18next-sync-fs-backend > codecov > request > tunnel-agent:
-        reason: unavailable
-        expires: '2018-02-22T05:02:12.274Z'
+        reason: None given
+        expires: '2018-05-17T22:43:47.788Z'
     - funsociety-irc-rss-feed-emitter > request > tunnel-agent:
         reason: None given
         expires: '2017-12-10T06:21:14.298Z'
@@ -63,16 +63,16 @@ ignore:
   'npm:hoek:20180212':
     - i18next-sync-fs-backend > codecov > request > hawk > hoek:
         reason: None given
-        expires: '2018-04-29T06:00:43.304Z'
+        expires: '2018-05-17T22:43:47.788Z'
     - i18next-sync-fs-backend > codecov > request > hawk > boom > hoek:
         reason: None given
-        expires: '2018-04-29T06:00:43.304Z'
+        expires: '2018-05-17T22:43:47.788Z'
     - i18next-sync-fs-backend > codecov > request > hawk > sntp > hoek:
         reason: None given
-        expires: '2018-04-29T06:00:43.304Z'
+        expires: '2018-05-17T22:43:47.788Z'
     - i18next-sync-fs-backend > codecov > request > hawk > cryptiles > boom > hoek:
         reason: None given
-        expires: '2018-04-29T06:00:43.304Z'
+        expires: '2018-05-17T22:43:47.788Z'
     - codecov > request > hawk > cryptiles > boom > hoek:
         reason: None given
         expires: '2018-04-09T18:16:58.638Z'
@@ -92,6 +92,9 @@ ignore:
     - cheerio > lodash:
         reason: None given
         expires: '2018-04-29T06:00:43.304Z'
+      x-ray > x-ray-crawler > cheerio > lodash:
+        reason: None given
+        expires: '2018-05-17T22:43:47.788Z'
     - x-ray > x-ray-crawler > cheerio > lodash:
         reason: None given
         expires: '2018-04-29T06:00:43.304Z'
@@ -109,12 +112,12 @@ ignore:
   'npm:nwmatcher:20180305':
     - x-ray > cheerio > jsdom > nwmatcher:
         reason: None given
-        expires: '2018-04-09T18:16:58.638Z'
+        expires: '2018-05-17T22:43:47.788Z'
 # patches apply the minimum changes required to fix a vulnerability
 patch:
   'npm:ms:20170412':
     - x-ray > debug > ms:
-        patched: '2018-03-30T05:59:44.164Z'
+        patched: '2018-04-17T22:43:03.287Z'
     - x-ray > x-ray-crawler > ms:
         patched: '2017-06-30T22:26:06.281Z'
     - socket.io > socket.io-adapter > debug > ms:
@@ -135,7 +138,7 @@ patch:
         patched: '2017-11-27T01:41:10.162Z'
   'npm:debug:20170905':
     - x-ray > debug:
-        patched: '2018-03-30T05:59:44.164Z'
+        patched: '2018-04-17T22:43:03.287Z'
     - helmet > connect > debug:
         patched: '2017-09-26T23:25:12.104Z'
     - helmet > connect > finalhandler > debug:
@@ -149,3 +152,6 @@ patch:
         patched: '2018-01-21T20:34:35.133Z'
     - funsociety-bookshelf-model-loader > bookshelf-modelbase > joi > moment:
         patched: '2018-01-21T20:34:35.133Z'
+  'npm:minimatch:20160620':
+    - winston-daily-rotate-file > winston-compat > vows > glob > minimatch:
+        patched: '2018-04-17T22:43:03.287Z'
