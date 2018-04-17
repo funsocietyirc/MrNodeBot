@@ -10,6 +10,7 @@ const knexConfig = config.knex.engine === 'sqlite' ? config.knex.sqlite : config
 
 // Knex configuration object
 const knexBuilder = {
+    // debug: true,
     client: knexConfig.client,
     connection: knexConfig.connection,
     pool: {

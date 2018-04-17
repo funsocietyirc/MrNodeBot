@@ -360,7 +360,7 @@ class MrNodeBot {
      */
     _initStorageSubSystem() {
         // Load the storage before the Bot connects (Sync)
-        storage.initSync();
+       Promise.resolve(storage.init());
 
         // Load the Ignore list
         storage.getItem('ignored', (err, value) => {
