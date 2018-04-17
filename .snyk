@@ -149,3 +149,6 @@ patch:
         patched: '2018-01-21T20:34:35.133Z'
     - funsociety-bookshelf-model-loader > bookshelf-modelbase > joi > moment:
         patched: '2018-01-21T20:34:35.133Z'
+  'npm:minimatch:20160620':
+    - winston-daily-rotate-file > winston-compat > vows > glob > minimatch:
+        patched: '2018-04-17T22:38:58.981Z'
