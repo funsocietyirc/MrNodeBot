@@ -10,14 +10,14 @@ compiler:
 env:
   - CXX=g++-4.8
 before_install:
-  - npm install -g npm
+  - npm install -g npm yarn
   - cp config.sample.js config.js
 cache:
   yarn: true
   directories:
     - node_modules
 script:
-  - "npm test"
+  - "yarn test"
 notifications:
   irc: "chat.freenode.net#mrnodebot"
 addons:
