@@ -73,31 +73,33 @@ class MrNodeBot {
         this.Ignore = [];
         /** Admin list */
         this.Admins = [];
+
         // Initialize local storage
-        this._initStorageSubSystem();
+        this._initStorageSubSystem().then(() => {
+            /** Loaded Scripts */
+            this.LoadedScripts = [];
 
-        /** Loaded Scripts */
-        this.LoadedScripts = [];
+            /** Application Root Path */
+            this.AppRoot = require('app-root-path').toString();
 
-        /** Application Root Path */
-        this.AppRoot = require('app-root-path').toString();
+            /** Database Instance */
+            this.Database = null;
+            this._initDbSubSystem();
 
-        /** Database Instance */
-        this.Database = null;
-        this._initDbSubSystem();
+            /** Web Server Instance */
+            this.WebServer = null;
+            this._initWebServer();
 
-        /** Web Server Instance */
-        this.WebServer = null;
-        this._initWebServer();
+            /** User Manager */
+            this._userManager = null;
+            this._initUserManager();
 
-        /** User Manager */
-        this._userManager = null;
-        this._initUserManager();
+            /** Irc Client Instance */
+            this._ircClient = require('./lib/ircClient');
+            this._ircWrappers = null;
+            this._initIrc();
 
-        /** Irc Client Instance */
-        this._ircClient = require('./lib/ircClient');
-        this._ircWrappers = null;
-        this._initIrc();
+        });
     }
 
     /**
@@ -358,34 +360,23 @@ class MrNodeBot {
      * Initialize Locale Storage subsystem
      * @private
      */
-    _initStorageSubSystem() {
-        // Load the storage before the Bot connects (Sync)
-       Promise.resolve(storage.init());
-
-        // Load the Ignore list
-        storage.getItem('ignored', (err, value) => {
-            if (err) {
-                logger.error('Error Loading the Ignore List'); // TODO Localize
-                return;
-            }
-            this.Ignore = value || this.Ignore;
-            logger.info(t('storage.ignored', {
-                total: this.Ignore.length,
-            }));
-        });
-
-        // Load the Admin list
-        storage.getItem('admins', (err, value) => {
-            if (value) this.Admins = value;
-            // Default to owner nick if no admin list exists
-            else {
+    async _initStorageSubSystem() {
+       await storage.init();
+       try {
+            const tmpIgnore = await storage.getItem('ignored');
+            this.Ignore = tmpIgnore || this.Ignore;
+            const tmpAdmins = await storage.getItem('admins');
+            if(tmpAdmins) {
+                this.Admins = tmpAdmins;
+            } else {
                 this.Admins = [_.toLower(this.Config.owner.nick)];
-                storage.setItemSync('admins', this.Admins);
+                await storage.setItem('admins', this.Admins);
             }
-            logger.info(t('storage.admins', {
-                total: this.Admins.length,
-            }));
-        });
+       }
+       catch (err) {
+           logger.error('Error Loading the Persisted Assets'); // TODO Localize
+           return;
+       }
         logger.info(t('storage.initialized'));
     }
 
