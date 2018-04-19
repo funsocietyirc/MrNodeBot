@@ -98,7 +98,6 @@ class MrNodeBot {
             this._ircClient = require('./lib/ircClient');
             this._ircWrappers = null;
             this._initIrc();
-
         });
     }
 

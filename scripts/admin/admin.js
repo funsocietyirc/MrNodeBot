@@ -30,7 +30,7 @@ i18next.addResources('en', 'admin', {
 // Administrator List manipulation
 // Commands: admin [list add del help]
 module.exports = (app) => {
-    const admin = (to, from, text, message) => {
+    const admin = async (to, from, text, message) => {
         const textArray = text.split(' ');
         let [cmd, user] = textArray;
         cmd = cmd || 'help';
@@ -80,7 +80,7 @@ module.exports = (app) => {
             }
 
             app.Admins.push(user.toLowerCase());
-            storage.setItemSync('admins', app.Admins);
+            await storage.setItem('admins', app.Admins);
 
             app.say(from, t('admin:isNowAdmin', {
                 nick: user,
@@ -115,7 +115,7 @@ module.exports = (app) => {
 
             // Everything checked out
             app.Admins = _.without(app.Admins, user);
-            storage.setItemSync('admins', app.Admins);
+            await storage.setItem('admins', app.Admins);
 
             app.say(from, t('admin:isNoLongerAdmin', {
                 nick: user,

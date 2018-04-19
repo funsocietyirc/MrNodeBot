@@ -23,7 +23,7 @@ module.exports = (app) => {
         else quotes = new Map();
     });
 
-    const addQuote = (to, from, text, message) => {
+    const addQuote = async (to, from, text, message) => {
         // No Quote provided
         if (_.isEmpty(text)) {
             app.say(to, 'No quote specified');
@@ -41,13 +41,13 @@ module.exports = (app) => {
                 from,
                 added: Moment(),
             });
-            storage.setItemSync('quotes', quotes);
+            storage.setItem('quotes', quotes);
         } else {
             app.say(to, 'Quote already exists');
         }
     };
 
-    const delQuote = (to, from, text, message) => {
+    const delQuote = async (to, from, text, message) => {
         // No Quote provided
         if (_.isEmpty(text)) {
             app.say(to, 'Invalid quote specified');
@@ -65,7 +65,7 @@ module.exports = (app) => {
 
         // Delete quote
         quotes.delete(text);
-        storage.setItemSync('quotes', quotes);
+        storage.setItem('quotes', quotes);
 
         app.say(to, ' Quote has been removed');
     };
