@@ -92,12 +92,12 @@ ignore:
     - cheerio > lodash:
         reason: None given
         expires: '2018-04-29T06:00:43.304Z'
-      x-ray > x-ray-crawler > cheerio > lodash:
-        reason: None given
-        expires: '2018-05-17T22:43:47.788Z'
     - x-ray > x-ray-crawler > cheerio > lodash:
         reason: None given
         expires: '2018-04-29T06:00:43.304Z'
+    - x-ray > x-ray-crawler > cheerio > lodash:
+        reason: None given
+        expires: '2018-05-17T22:43:47.788Z'
   'npm:clean-css:20180306':
     - pug > pug-filters > clean-css:
         reason: None given
@@ -155,4 +155,3 @@ patch:
   'npm:minimatch:20160620':
     - winston-daily-rotate-file > winston-compat > vows > glob > minimatch:
         patched: '2018-04-17T22:43:03.287Z'
-
