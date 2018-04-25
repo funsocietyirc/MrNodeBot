@@ -53,7 +53,7 @@ module.exports = (app) => {
                 stack: err.stack,
                 message: err.message,
             });
-            app.say(to, `I am sorry ${from}, something went very very wrong`);
+            app.say(to, `I am sorry, ${from}, something went very, very wrong`);
         }
     };
 
@@ -88,7 +88,7 @@ module.exports = (app) => {
                 stack: err.stack,
                 message: err.message,
             });
-            app.say(to, `I am sorry ${from}, something went very very wrong`);
+            app.say(to, `I am sorry, ${from}, something went very, very wrong`);
         }
     };
     // Handle IRC Command
@@ -157,14 +157,14 @@ module.exports = (app) => {
                             }));
                         });
 
-                    app.say(to, `I have seeded the watch channel with some sick beats ${from}`);
+                    app.say(to, `I have seeded the watch channel with some sick beats, ${from}`);
                 }
                 catch (err) {
                     logger.error('Something went wrong seeding the tv station', {
                         stack: err.stack,
                         message: err.message,
                     });
-                    app.say(to, `I am sorry ${from}, something went very very wrong`);
+                    app.say(to, `I am sorry, ${from}, something went very, very wrong`);
                 }
             },
         });
