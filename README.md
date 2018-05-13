@@ -95,7 +95,6 @@ I am currently in the processes of providing jsdoc style docblocks for documenta
     -   [socket.io](https://github.com/socketio/socket.io) Realtime application framework (Node.JS server)
     -   [bot](https://github.com/vesln/bot) Feeling lonely? You personal bot is here.
     -   [scrypt](https://github.com/barrysteyn/node-scrypt) Scrypt for Node (crypto)
-    -   [watson-developer-cloud](https://github.com/watson-developer-cloud/node-sdk) Node.js library to access IBM Watson services.
     -   [twit](https://github.com/ttezel/twit) Twitter API Client for Node (REST & Streaming API)
     -   [minimist](https://github.com/substack/minimist) Parse argument options
     -   [money](http://openexchangerates.github.io/money.js/) Convert exchange rates

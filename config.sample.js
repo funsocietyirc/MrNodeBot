@@ -167,17 +167,6 @@ module.exports = {
             tokenKey: '',
             tokenSecret: '',
         },
-        watson: {
-            alchemy: {
-                url: 'https://gateway-a.watsonplatform.net/calls',
-                apikey: '',
-            },
-            personality: {
-                url: 'https://gateway.watsonplatform.net/personality-insights/api',
-                password: '',
-                userName: '',
-            },
-        },
         worldWeatherOnline: {
             key: '',
         },
