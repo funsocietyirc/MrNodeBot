@@ -1,5 +1,5 @@
 # Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
-version: v1.10.2
+version: v1.12.0
 # ignores vulnerabilities until expiry date; change duration by modifying expiry date
 ignore:
   'npm:qs:20170213':
@@ -113,6 +113,35 @@ ignore:
     - x-ray > cheerio > jsdom > nwmatcher:
         reason: None given
         expires: '2018-05-17T22:43:47.788Z'
+  'npm:base64url:20180511':
+    - jsonwebtoken > jws > base64url:
+        reason: None given
+        expires: '2018-06-13T22:45:02.085Z'
+    - jsonwebtoken > jws > jwa > base64url:
+        reason: None given
+        expires: '2018-06-13T22:45:02.085Z'
+    - jsonwebtoken > jws > jwa > ecdsa-sig-formatter > base64url:
+        reason: None given
+        expires: '2018-06-13T22:45:02.085Z'
+  'npm:stringstream:20180511':
+    - funsociety-irc-rss-feed-emitter > request > stringstream:
+        reason: None given
+        expires: '2018-06-13T22:45:02.085Z'
+    - request > stringstream:
+        reason: None given
+        expires: '2018-06-13T22:45:02.085Z'
+    - request-promise-native > request > stringstream:
+        reason: None given
+        expires: '2018-06-13T22:45:02.085Z'
+    - request-promise-native > request-promise-core > request > stringstream:
+        reason: None given
+        expires: '2018-06-13T22:45:02.085Z'
+    - twit > request > stringstream:
+        reason: None given
+        expires: '2018-06-13T22:45:02.085Z'
+    - x-ray > cheerio > jsdom > request > stringstream:
+        reason: None given
+        expires: '2018-06-13T22:45:02.085Z'
 # patches apply the minimum changes required to fix a vulnerability
 patch:
   'npm:ms:20170412':
