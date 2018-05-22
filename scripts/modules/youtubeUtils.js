@@ -29,17 +29,6 @@ module.exports = (app) => {
                 return;
             }
 
-            // This cycle is completed, there is no more new records to check, lets start from the beginning
-            // const affectedRecordCount = await Models.YouTubeLink.query(qb => qb.whereNull('lastChecked')).count();
-            // if (!affectedRecordCount) {
-            //     await Models.YouTubeLink.query(qb => qb.whereNotNull('lastChecked')).save({
-            //         lastChecked: null
-            //     }, {
-            //         method: 'update',
-            //         patch: true
-            //     });
-            // }
-
             // Clean
             const links = await Models.YouTubeLink.query(qb => qb.whereNull('lastChecked').limit(50)).fetchAll();
             let count = 0;
@@ -75,8 +64,12 @@ module.exports = (app) => {
             }
 
 
-            if (!unattended) app.say(to, `A total of ${count} broken YouTube links were removed, ${from}`);
-            else logger.info(`A total of ${count} broken YouTube links were removed`);
+            if (!unattended) {
+                app.say(to, `A total of ${count} broken YouTube links were removed, ${from}`);
+            }
+            else if (count) {
+                logger.info(`A total of ${count} broken YouTube links were removed`);
+            }
         }
         catch (err) {
             app.say(to, `Something went wrong in my memory bank, I cannot compute ${from}..`);
@@ -97,7 +90,8 @@ module.exports = (app) => {
 
     const cronTime = new scheduler.RecurrenceRule();
     cronTime.second = 0;
-    cronTime.minute = [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55];
+    cronTime.minute = 0;
+    cronTime.hour = [0, 4, 8, 12, 16, 20];
     scheduler.schedule('cleanYoutube', cronTime, cleanYoutube);
 
     // Return the script info
