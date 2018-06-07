@@ -14,13 +14,19 @@ const getSymbol = require('currency-symbol-map');
 const fx = require('money');
 const accounting = require('accounting-js');
 // API Information
-const fixerApi = 'http://api.fixer.io/latest'; // API For Country exchange rates
 const btcApi = 'https://bitpay.com/api/rates'; // API For BTC exchange rates
 const coinMarketCapApi = 'https://api.coinmarketcap.com/v1/ticker';
+const fixerApi = `http://data.fixer.io/api/latest`; // API For Country exchange rates
 
 module.exports = (app) => {
+    const apiKey = _.get(app.Config, 'features.exchangeRate.apiKey', false);
+
+    if (!apiKey) {
+        logger.error('A API key is required from http://fixer.io for the currency exchange feature to work')
+    }
+
     // Base currency
-    const baseCur = _.getString(_.get(app.Config, 'features.exchangeRate.base'), 'USD').toUpperCase();
+    const baseCur = 'USD';
     const updateScheduleTime = _.get(app.Config, 'features.exchangeRate.updateScheduleTime', {
         hour: [...new Array(24).keys()], // Every hour
         minute: 0, // On the hour
@@ -36,7 +42,7 @@ module.exports = (app) => {
                 json: true,
                 method: 'get',
                 qs: {
-                    base: baseCur,
+                    access_key: apiKey,
                 },
             });
 

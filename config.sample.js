@@ -300,7 +300,7 @@ module.exports = {
             ignoredChans: [],
         },
         exchangeRate: {
-            base: 'USD',
+            apiKey: '', // obtain a free API key from fixer.io
             updateScheduleTime: {
                 hour: [...Array(24).keys()], // Every hour
                 minute: 0, // On the hour
