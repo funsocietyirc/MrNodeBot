@@ -26,7 +26,7 @@ module.exports = (app) => {
     }
 
     // Base currency
-    const baseCur = 'USD';
+    const baseCur = 'EUR';
     const updateScheduleTime = _.get(app.Config, 'features.exchangeRate.updateScheduleTime', {
         hour: [...new Array(24).keys()], // Every hour
         minute: 0, // On the hour
