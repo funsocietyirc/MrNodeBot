@@ -54,11 +54,11 @@
     "funsocietyirc-client": "^0.1.13",
     "gitlog": "^3.1.1",
     "helmet": "^3.12.1",
-    "i18next": "^11.3.2",
+    "i18next": "^11.3.3",
     "i18next-sync-fs-backend": "^1.1.0",
     "irc-colors": "^1.4.2",
     "is-promise": "^2.1.0",
-    "jsonwebtoken": "^8.2.2",
+    "jsonwebtoken": "^8.3.0",
     "knex": "^0.14.6",
     "lodash": "^4.17.10",
     "lodash-addons": "^2.0.1",
@@ -78,7 +78,7 @@
     "scrypt": "^6.0.3",
     "serve-favicon": "^2.5.0",
     "shelljs": "^0.8.2",
-    "snyk": "^1.82.1",
+    "snyk": "^1.83.0",
     "socket.io": "^2.1.1",
     "textmining": "^1.0.3",
     "twit": "^2.2.10",
@@ -96,7 +96,7 @@
     "jsdoc": "^3.5.4",
     "mocha": "^5.2.0",
     "sinon": "^5.1.0",
-    "sinon-chai": "^3.1.0"
+    "sinon-chai": "^3.2.0"
   },
   "snyk": true
 }
