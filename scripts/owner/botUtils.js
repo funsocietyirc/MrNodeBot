@@ -8,6 +8,7 @@ const gen = require('../generators/_showerThoughts');
 const typo = require('../lib/_ircTypography');
 const Models = require('funsociety-bookshelf-model-loader');
 const logger = require('../../lib/logger');
+const preprocessText = require('../../lib/preprocessText');
 
 module.exports = (app) => {
     // Change the bots nick
@@ -41,7 +42,7 @@ module.exports = (app) => {
         },
     });
 
-    // Set the 'Drunk' add-on
+    // Set the 'Slick text' add-on
     app.Commands.set('slicced', {
         desc: 'It\'s awesome yoh!',
         access: app.Config.accessLevels.owner,
@@ -97,20 +98,21 @@ module.exports = (app) => {
             const seed = inputArr.slice(2, inputArr.length).join(' ');
 
             // Clone and modify initial config
-            const config = _.cloneDeep(app.Config.irc);
+            const config = _.cloneDeep(app.Config);
 
             // Set Nick
-            config.nick = (!_.isString(nick) || _.isEmpty(nick))
+            config.irc.nick = (!_.isString(nick) || _.isEmpty(nick))
                 ? app.nick
                 : nick;
 
             // Hold on to initial nick
-            config.originalNick = config.nick;
+            config.irc.originalNick = config.irc.nick;
 
             // Reset variables
-            config.password = '';
-            config.sasl = false;
-            config.channels = [];
+            config.irc.password = '';
+            config.irc.sasl = false;
+            config.irc.channels = [];
+
 
             // Action to channel
             app.action(to, 'focuses real hard');
@@ -119,12 +121,12 @@ module.exports = (app) => {
             const originalNickIsActive = app._ircClient.isInChannel(to, nick);
 
             // Create IRC Instance
-            const instance = new app._ircClient.Client(config.server, config.nick, config);
+            const instance = new app._ircClient.Client(config.irc.server, config.irc.nick, config.irc);
 
             // Connect
             instance.connect(() => {
                 // Add to ignore list
-                const wasIgnored = _.includes(app.Ignore, _.toLower(config.nick));
+                const wasIgnored = _.includes(app.Ignore, _.toLower(config.irc.nick));
                 if (!wasIgnored) {
                     app.Ignore.push(instance.nick);
                 }
@@ -147,7 +149,7 @@ module.exports = (app) => {
 
                         // The person we are spawning is in the channel
                         if (originalNickIsActive) {
-                            promises.push(new Promise(r => setTimeout(() => r(instance.say(to, `Well hello ${config.originalNick}, seems there are two of us`)), ++key * 2500)));
+                            promises.push(new Promise(r => setTimeout(() => r(instance.say(to, preprocessText(`Well hello ${config.irc.originalNick}, seems there are two of us`, config))), ++key * 2500)));
                         }
 
                         // Join delay delay
@@ -155,10 +157,10 @@ module.exports = (app) => {
 
                         // We have no results
                         if (!logs.length) {
-                            _.each(results, result => promises.push(new Promise(r => setTimeout(() => r(instance.say(to, result)), ++key * 2500))));
+                            _.each(results, result => promises.push(new Promise(r => setTimeout(() => r(instance.say(to, preprocessText(result, config))), ++key * 2500))));
                         } // We have results
                         else {
-                            _.each(logs.toJSON(), log => promises.push(new Promise(r => setTimeout(() => r(instance.say(to, log.text)), ++key * 2500))));
+                            _.each(logs.toJSON(), log => promises.push(new Promise(r => setTimeout(() => r(instance.say(to, preprocessText(log.text, config))), ++key * 2500))));
                         }
 
                         // Part delay
