@@ -132,6 +132,7 @@ module.exports = (app) => {
         verb: 'get',
     });
 
+
     // Return the script info
     return scriptInfo;
 };
