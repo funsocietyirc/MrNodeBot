@@ -77,7 +77,7 @@ const linkMatcher = async (results) => {
             // No API key for OMDB Provided
             if (!_.isString(config.apiKeys.omdb) || _.isEmpty(config.apiKeys.omdb)) break;
             const segments = results.uri.segmentCoded();
-            if (segments.indexOf('title') !== -1) {
+            if (_.includes(segments, 'title')) {
                 const titleId = results.uri.segmentCoded(segments.indexOf('title') + 1);
                 if (_.isString(titleId) && titleId.startsWith('tt')) return getImdb(titleId, results);
             }

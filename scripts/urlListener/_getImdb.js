@@ -6,10 +6,8 @@ const logger = require('../../lib/logger');
 const getImdb = async (key, results) => {
     // No Key provided, return the results
     if (!_.isString(key) || _.isEmpty(key)) return results;
-
     try {
         const data = await gen(key, 'id');
-
         // No Data, or malformed data, bail
         if (!data || !data.Response || data.Response === 'False') return results;
 

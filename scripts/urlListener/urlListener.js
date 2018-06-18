@@ -91,7 +91,7 @@ module.exports = (app) => {
                     .then(results => sendToSocket(app, results))), // Then broadcast to socketio
             )
             .then(endChain) // End the chain, cache results
-            .catch(err => logger.warn('Error in URL Listener chain', {
+            .catch(err => logger.error('Error in URL Listener chain', {
                 err: err.message || '',
                 stack: err.stack || '',
             }));
