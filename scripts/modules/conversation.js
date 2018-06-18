@@ -4,7 +4,7 @@ const scriptInfo = {
     createdBy: 'IronY',
 };
 const _ = require('lodash');
-const gen = require('../generators/_chatBotLine');
+const gen = require('../../lib/chatBotLine');
 const random = require('../../lib/randomEngine.js');
 
 // Make the bot randomly conversational

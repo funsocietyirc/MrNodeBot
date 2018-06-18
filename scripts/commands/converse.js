@@ -3,7 +3,7 @@ const scriptInfo = {
     desc: 'Converse with the bot',
     createdBy: 'IronY',
 };
-const gen = require('../generators/_chatBotLine');
+const gen = require('../../lib/chatBotLine');
 
 module.exports = (app) => {
     const line = async (to, from, text, message) => {

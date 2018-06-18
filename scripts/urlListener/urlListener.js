@@ -102,11 +102,6 @@ module.exports = (app) => {
         // Check to see if the user is ignored from url listening, good for bots that repeat
         if (_.includes(userIgnore, from)) return;
 
-        if (to === from) {
-            app.say(from, `You cannot paste me URLS ${from}, if you register with NickServ you can use the url command how ever.`);
-            return;
-        }
-
         // Set chaining limit
         const limit = (
             _.isObject(app.Config.features.urls.chainingLimit) &&
@@ -115,11 +110,17 @@ module.exports = (app) => {
         ) ? app.Config.features.urls.chainingLimit[to] : 0;
 
         // Url Processing chain
-        _(extractUrls(text, limit))
+        const urls = _(extractUrls(text, limit))
             .uniq() // Assure No Duplicated URLS on the same line return multiple results
             .filter(url => url.match(/^(www|http[s]?)/im)) // Filter out undesired protocols
-            .map(url => (url.toLowerCase().startsWith('http') ? url : `http://${url}`)) // Does not start with a protocol, prepend http://
-            .each(url => processUrl(url, to, from, text, message, is));
+            .map(url => (url.toLowerCase().startsWith('http') ? url : `http://${url}`)); // Does not start with a protocol, prepend http://
+
+        if (urls.length && to === from) {
+            app.say(from, `You cannot paste me URLS ${from}, if you register with NickServ you can use the url command how ever.`);
+            return;
+        }
+
+        urls.each(url => processUrl(url, to, from, text, message, is));
     };
 
     // List for urls
