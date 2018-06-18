@@ -42,7 +42,6 @@ describe('The Configuration File', () => {
         it('has the property owner that is a object', () => expect(config.owner).to.be.a('object'));
         it('has the property irc that is a object', () => expect(config.irc).to.be.a('object'));
         it('has the property knex that is a object', () => expect(config.knex).to.be.a('object'));
-        it('has the property logio that is a object', () => expect(config.logio).to.be.a('object'));
         it('has the property nickserv that is a object', () => expect(config.nickserv).to.be.a('object'));
         it('has the property apiKeys that is a object', () => expect(config.apiKeys).to.be.a('object'));
         it('has the property gitLog that is a object', () => expect(config.gitLog).to.be.a('object'));

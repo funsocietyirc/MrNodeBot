@@ -72,7 +72,6 @@ I am currently in the processes of providing jsdoc style docblocks for documenta
 -   Scheduler [node-scheduler](https://github.com/node-schedule/node-schedule)
 -   Logging [Winston](https://github.com/winstonjs/winston)
     -   Log File Rotation [winston-daily-rotate-file](https://github.com/winstonjs/winston-daily-rotate-file)
-    -   Real-Time Logging via HTTP [winston-logio-mirror](https://github.com/jaakkos/winston-logio)
     -   Express Web Server Request Logging [express-winston](https://github.com/bithavoc/express-winston)
 -   Time [Moment](http://momentjs.com/)
 -   Localization [i18next](https://github.com/i18next/i18next)

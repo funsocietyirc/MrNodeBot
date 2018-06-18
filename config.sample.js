@@ -137,13 +137,6 @@ module.exports = {
             },
         },
     },
-    // Log.io Information
-    logio: {
-        enabled: true,
-        nodeName: 'MrNodeBot',
-        port: 28777,
-        host: '127.0.0.1',
-    },
     // Nickserv configuration options
     nickserv: {
         password: '',
