@@ -240,6 +240,7 @@ module.exports = (app) => {
             return res.status(403).send({
                 success: false,
                 message: 'No Token Provided',
+                code: 501,
             });
         }
 
@@ -249,6 +250,7 @@ module.exports = (app) => {
                 return res.json({
                     success: false,
                     message: 'Authentication failed',
+                    code: 503
                 });
             }
             req.userInfo = userInfo;
