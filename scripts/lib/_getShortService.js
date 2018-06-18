@@ -5,15 +5,15 @@ const _ = require('lodash');
 const config = require('../../config');
 
 const isGd = require('../generators/_isGdShortUrl');
-const google = require('../generators/_googleShortUrl');
 const bitly = require('../generators/_getBitlyShort');
+const firebase = require('../generators/_getFirebaseUrl');
 
 module.exports = (domain) => {
     const secondary = !_.isEmpty(config.apiKeys.bitly) ? bitly : isGd;
 
     // default
-    const defaultShort = !_.isEmpty(config.apiKeys.google)
-        ? google
+    const defaultShort = (!_.isEmpty(config.apiKeys.firebase.apiKey) && !_.isEmpty(config.apiKeys.firebase.pageLinkDomain))
+        ? firebase
         : secondary;
 
     // No Domain provided

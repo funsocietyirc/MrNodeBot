@@ -112,7 +112,8 @@ I am currently in the processes of providing jsdoc style docblocks for documenta
     -   [docstrap](https://github.com/docstrap/docstrap)
 
 ## API Keys
--   **Google API Key** - For most features a *Google API key* with **Shortener** service, **SafeSearch** service, and **YouTube search** service enabled is required, however, if one is not provided, the bot will try to gracefully fall back onto is.gd
+-   **Firebase API Key** - The preferred URL shortner requires this (google is deprecating their other service), if not it will fall back to another option
+-   **Google API Key** - For most features a *Google API key* with **SafeSearch** service, and **YouTube search** service enabled is required, however, if one is not provided, the bot will try to gracefully fall back onto is.gd
 -   **Imgur API Key** - A *Imgur API key* is required to extract meta data on Imgur links in the URL announcer
 -   **Twitter API Key** A *Twitter API key* is required to be able to send tweets, subscribe to tweets, or have a tweet sent out during the announce process
 -   **Bitly API Key** A *Bitly API key* assists the amount of url shortners you have available to you
@@ -121,9 +122,9 @@ I am currently in the processes of providing jsdoc style docblocks for documenta
 ## URL Shortner service
 The Url shortner service, found in *scripts/libs/_getShortService* will provide a url shortner based on your API key availability.
 ```const shortService = require('../lib/_getShortService')(DOMAIN?)```
--   DOMAIN is optional, but usefull for things like avoiding googles blocking of certain domains.
--   If a google api key is provided, the Google API will be used to shorten
--   After Google, if a Bitly API key is provided, Bitly will be used to shorten
+-   DOMAIN is optional, but useful for things like avoiding googles blocking of certain domains.
+-   If a firebase api key and url short domain is provided, the Firebase API will be used to shorten
+-   After Firebase, if a Bitly API key is provided, Bitly will be used to shorten
 -   If neither API key is available, isGd will be used to shorten (no key required, but certain pitfalls attached)
 
 ## HTTP Codes

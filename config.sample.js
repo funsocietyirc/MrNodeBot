@@ -146,6 +146,10 @@ module.exports = {
     },
     // API Keys
     apiKeys: {
+        firebase: {
+            apiKey: '',
+            pageLinkDomain: '',
+        },
         mashape: '',
         bitly: '',
         omdb: '',
