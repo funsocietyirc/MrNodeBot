@@ -46,7 +46,7 @@
     "express": "^4.16.3",
     "express-fileupload": "^0.4.0",
     "express-rate-limit": "^2.9.0",
-    "express-winston": "^2.5.1",
+    "express-winston": "git+https://github.com/bithavoc/express-winston.git#winston-3",
     "file-type": "^8.0.0",
     "freeport": "^1.0.5",
     "funsociety-bookshelf-model-loader": "0.9.9",
@@ -83,9 +83,8 @@
     "textmining": "^1.0.3",
     "twit": "^2.2.10",
     "urijs": "^1.19.1",
-    "winston": "^2.4.2",
+    "winston": "^3.0.0",
     "winston-daily-rotate-file": "^3.2.1",
-    "winston-logio-mirror": "^0.3.0",
     "x-ray": "2.3.2"
   },
   "devDependencies": {
