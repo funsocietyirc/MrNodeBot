@@ -126,6 +126,11 @@ The Url shortner service, found in *scripts/libs/_getShortService* will provide 
 -   After Google, if a Bitly API key is provided, Bitly will be used to shorten
 -   If neither API key is available, isGd will be used to shorten (no key required, but certain pitfalls attached)
 
+## HTTP Codes
+When dealing with the API, you will find a code property on most errors.
+- *501* Token not provided
+- *503* Token is invalid
+
 ## Command Access Levels
 -   **owner** - The Command can only be run by the bot owner (hard coded username/host combo in config.js)
 -   **admin** - The Command can be run by the owner or anyone in the admin list
