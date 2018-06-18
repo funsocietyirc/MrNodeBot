@@ -14,6 +14,14 @@ module.exports = (app) => {
         return scriptInfo;
     }
 
+    /**
+     * Top Terms Command
+     * @param to
+     * @param from
+     * @param text
+     * @param message
+     * @return {Promise<void>}
+     */
     const topTerms = async (to, from, text, message) => {
         const [nick, amount] = text.split(' ');
         const finalAmount = _.isSafeInteger(parseInt(amount)) ? amount : 10;
@@ -62,7 +70,7 @@ module.exports = (app) => {
     // Bind purge command
     app.Commands.set('topTerms', {
         desc: '[nick] (amount?) - Get the top terms of a user',
-        access: app.Config.accessLevels.owner,
+        access: app.Config.accessLevels.admin,
         call: topTerms,
     });
 
