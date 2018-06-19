@@ -104,10 +104,10 @@ module.exports = (app) => {
                         .insert('on').insertBold(`[${lastAction.channels.replace(',', ', ')}]`)
                         .insert(Moment(lastAction.timestamp).fromNow());
 
-                    // First result to channel, any chains elsewhere
-                    if (iteration === 0 && from !== to) output.insertDivider().append(`additional results have been messaged to you ${from}`);
-
                     const outputLine = `${lastAction.newnick || ''}!${lastAction.user || ''}@${lastAction.host || ''} ${lastSaid.to || lastAction.channel || ''}`;
+
+                    // First result to channel, any chains elsewhere
+                    if (iteration === 0 && from !== to && lastLine !== outputLine) output.insertDivider().append(`additional results have been messaged to you ${from}`);
 
                     // Prevent edge case caused by nick switching
                     if (outputLine === lastLine) {
