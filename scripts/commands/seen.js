@@ -115,7 +115,7 @@ module.exports = (app) => {
                     }
 
                     // Recurse
-                    seen(to, from, outputLine, message, iteration + 1, descending);
+                    seen(to, from, message, outputLine, iteration + 1, descending);
                     break;
                 case 'aliasNew':
                     output.insert('Changing their nick from').insertBold(lastAction.oldnick)
