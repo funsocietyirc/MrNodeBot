@@ -380,6 +380,22 @@ class MrNodeBot {
     }
 
     /**
+     * Normalize all command keys to lowercase
+     * @private
+     */
+    _normalizeCommandKeys() {
+        // Normalize all command keys to be lowercase
+        for (const [key, value] of this.Commands.entries()) {
+            const lowercaseKey = key.toLowerCase();
+            if (key !== lowercaseKey) {
+                logger.info(`Switching ${key} command to lowercase ${lowercaseKey}`);
+                this.Commands.set(lowercaseKey, value);
+                this.Commands.delete(key);
+            }
+        }
+    }
+
+    /**
      * Read the configuration and alias any commands specified
      * @private
      */
@@ -439,15 +455,8 @@ class MrNodeBot {
             this._scriptDirectories.forEach((script) => {
                 this._loadScriptsFromDir(script, clearCache);
             });
-            // Normalize all command keys to be lowercase
-            for (const [key, value] of this.Commands.entries()) {
-                const lowercaseKey = key.toLowerCase();
-                if (key !== lowercaseKey) {
-                    logger.info(`Switching ${key} command to lowercase ${lowercaseKey}`);
-                    this.Commands.set(lowercaseKey, value);
-                    this.Commands.delete(key);
-                }
-            }
+            // Normalize Keys
+            this._normalizeCommandKeys();
             // Assign command aliases
             this._createCommandAliases();
         }
