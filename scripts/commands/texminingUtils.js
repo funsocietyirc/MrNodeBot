@@ -25,8 +25,12 @@ module.exports = (app) => {
     const topTerms = async (to, from, text, message) => {
         const [nick, amount] = text.split(' ');
         const finalAmount = _.isSafeInteger(parseInt(amount)) ? amount : 10;
+        if (finalAmount < 1) {
+            app.say(to, `you think you are clever, don't you ${from}`);
+            return;
+        }
         if (!nick) {
-            app.say(`I do not have enough information, ${from}`);
+            app.say(to, `I do not have enough information, ${from}`);
             return;
         }
         // Attempt
