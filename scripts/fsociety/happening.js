@@ -125,7 +125,7 @@ module.exports = (app) => {
 
             // The countdown has already happened
             if (isBefore(countdown)) {
-                logger.error(`The ${countdown.who} countdown for ${countdown.when} has already occurred and was not loaded`);
+                logger.warn(`The ${countdown.who} countdown for ${countdown.when} has already occurred and was not loaded`);
                 continue;
             }
 

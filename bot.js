@@ -439,6 +439,15 @@ class MrNodeBot {
             this._scriptDirectories.forEach((script) => {
                 this._loadScriptsFromDir(script, clearCache);
             });
+            // Normalize Commands
+            Object.keys(this.Commands).forEach((key) => {
+                const lowerCaseKey = key.toLowerCase();
+                if (key !== lowerCaseKey) {
+                    logger.info(`Switching ${key} command to ${lowerCaseKey}`);
+                    this.Commands[lowerCaseKey] = this.Commands[key];
+                    delete this.Commands[key];
+                }
+            });
             // Assign command aliases
             this._createCommandAliases();
         }
