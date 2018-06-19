@@ -24,7 +24,7 @@ module.exports = (app) => {
      */
     const topTerms = async (to, from, text, message) => {
         const [nick, amount] = text.split(' ');
-        const finalAmount = _.isSafeInteger(parseInt(amount)) ? amount : 10;
+        const finalAmount = _.isSafeInteger(parseInt(amount)) ? (amount > 50 ? 50 : amount) : 10;
         if (finalAmount < 1) {
             app.say(to, `you think you are clever, don't you ${from}`);
             return;
@@ -73,7 +73,7 @@ module.exports = (app) => {
     };
     // Bind purge command
     app.Commands.set('topTerms', {
-        desc: '[nick] (amount?) - Get the top terms of a user',
+        desc: '[nick] (amount?) - Get the top terms of a user, upper limit is 50',
         access: app.Config.accessLevels.admin,
         call: topTerms,
     });
