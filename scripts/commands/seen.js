@@ -28,7 +28,7 @@ module.exports = (app) => {
         !Models.Alias) return scriptInfo;
 
     // Show activity of given host mask
-    const seen = async (to, from, text, message, iteration = 0, lastLine, descending = true) => {
+    const seen = async (to, from, text, message, lastLine, iteration = 0, descending = true) => {
         if (iteration >= maxIteration) return;
 
         // Gate
