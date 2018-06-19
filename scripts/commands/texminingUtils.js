@@ -64,7 +64,7 @@ module.exports = (app) => {
                 else return 0;
             });
 
-            const top10Terms = _(termsByFrequency).map('term').filter(x => x !== '').uniq().take(finalAmount).value();
+            const top10Terms = _(termsByFrequency).uniqBy('term').map(x => `${x.term} (${x.frequency})`).take(finalAmount).value();
             app.say(to, `The Top ${finalAmount} Terms for ${nick} are: ${top10Terms.join(',')}`);
         } catch (err) {
             logger.error('Error in topTerms command', {
