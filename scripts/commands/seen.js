@@ -114,11 +114,6 @@ module.exports = (app) => {
 
                     if (!allowRecursion) break;
 
-                    // First result to channel, any chains elsewhere
-                    if (iteration === 1 && from !== to) {
-                        app.say(to, `additional seen results have been messaged to you, ${from}`);
-                    }
-
                     // Recurse
                     seen(to, from, text, message, outputLine, iteration + 1, descending);
                     break;
@@ -139,6 +134,11 @@ module.exports = (app) => {
             if (iteration === 0 && !_.isEmpty(output.text)) output.prepend(iteration === 0 ? 'Seen' : '|');
 
             // report back to IRC
+            // First result to channel, any chains elsewhere
+            if (iteration === 1 && from !== to) {
+                app.say(to, `additional seen results have been messaged to you, ${from}`);
+            }
+
             app.say(iteration === 0 ? to : from, !_.isEmpty(output.text) ? output.text : `It seems there is no more data for ${result.args.nick || result.args.user || result.args.host}, ${from}`);
         };
 
