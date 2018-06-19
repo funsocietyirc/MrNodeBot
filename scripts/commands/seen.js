@@ -28,8 +28,8 @@ module.exports = (app) => {
         !Models.Alias) return scriptInfo;
 
     // Show activity of given host mask
-    const seen = async (to, from, text, message, iteration = 0, descending = true) => {
-        if (iteration > maxIteration) return;
+    const seen = async (to, from, text, message, iteration = 0, lastLine, descending = true) => {
+        if (iteration >= maxIteration) return;
 
         // Gate
         if (!_.isString(text) || _.isEmpty(text)) {
@@ -107,8 +107,15 @@ module.exports = (app) => {
                     // First result to channel, any chains elsewhere
                     if (iteration === 0 && from !== to) output.insertDivider().append(`additional results have been messaged to you ${from}`);
 
+                    const outputLine = `${lastAction.newnick || ''}!${lastAction.user || ''}@${lastAction.host || ''} ${lastSaid.to || lastAction.channel || ''}`;
+
+                    // Prevent edge case caused by nick switching
+                    if (outputLine === lastLine) {
+                        return;
+                    }
+
                     // Recurse
-                    seen(to, from, `${lastAction.newnick || ''}!${lastAction.user || ''}@${lastAction.host || ''} ${lastSaid.to || lastAction.channel || ''}`, message, iteration + 1, descending);
+                    seen(to, from, outputLine, message, iteration + 1, descending);
                     break;
                 case 'aliasNew':
                     output.insert('Changing their nick from').insertBold(lastAction.oldnick)
@@ -153,7 +160,7 @@ module.exports = (app) => {
     app.Commands.set('first-seen', {
         desc: '[nick!user@host channel] shows the first activity of the user',
         access: app.Config.accessLevels.identified,
-        call: (to, from, text, message) => seen(to, from, text, message, 0, false),
+        call: (to, from, text, message) => seen(to, from, text, message, null, 0, false),
     });
 
     // Return the script info
