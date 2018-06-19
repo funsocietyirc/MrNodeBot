@@ -45,8 +45,8 @@ module.exports = async (word) => {
                     // Set the Page Title
                     res({
                         definition: xresults.definition,
-                        type:  _.upperFirst(xresults.type),
-                        date: xresults.date.replace(';', '').replace(',', '').trim(),
+                        type: _.upperFirst(xresults.type).replace(',', '').trim(),
+                        date: xresults.date.replace(';', '').trim(),
                         link
                     });
                 });
