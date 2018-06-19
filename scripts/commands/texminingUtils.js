@@ -33,6 +33,9 @@ module.exports = (app) => {
             app.say(to, `I do not have enough information, ${from}`);
             return;
         }
+
+        const isChannel = app._ircClient.isChannel(nick);
+
         // Attempt
         try {
             // Fetch Results
@@ -41,7 +44,7 @@ module.exports = (app) => {
                 .query(qb =>
                     qb
                         .select(['text'])
-                        .where('from', 'like', nick)
+                        .where(isChannel ? 'to' : 'from', 'like', nick)
                 )
                 .fetchAll();
 
