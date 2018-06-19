@@ -7,8 +7,8 @@ module.exports = {
     project: require('./package.json'),
     // Bot specific
     bot: {
-        // trigger: '!', // Uncomment and set to specify custom trigger, defaults to bots nick
-        triggerSpace: true, // Require a space after the trigger
+        // trigger: '`', // Uncomment and set to specify custom trigger, defaults to bots nick
+        // triggerSpace: false, // Require a space after the trigger
         debug: true,
         debugLevel: 'info',
         webDebug: true,
@@ -150,7 +150,6 @@ module.exports = {
             apiKey: '',
             pageLinkDomain: '',
         },
-        mashape: '',
         bitly: '',
         omdb: '',
         imgur: {

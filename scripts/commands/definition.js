@@ -28,7 +28,6 @@ module.exports = (app) => {
                 .insert(results.definition)
                 .insertIcon('anchor')
                 .insert(results.link);
-
             app.say(to, sb.toString());
         } catch (err) {
             if ('innerErr' in err) {

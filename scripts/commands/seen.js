@@ -11,6 +11,9 @@ const logger = require('../../lib/logger');
 const typo = require('../lib/_ircTypography');
 const gen = require('../generators/_getLastUsageData');
 
+// Set a upper limit to prevent infinite recursions in some edge case situations
+const maxIteration = 5;
+
 // Exports
 module.exports = (app) => {
     // Bail if we do not have a complete set of database tables
@@ -26,6 +29,8 @@ module.exports = (app) => {
 
     // Show activity of given host mask
     const seen = async (to, from, text, message, iteration = 0, descending = true) => {
+        if (iteration > maxIteration) return;
+
         // Gate
         if (!_.isString(text) || _.isEmpty(text)) {
             app.say(to, `I need someone to look for ${from}`);
