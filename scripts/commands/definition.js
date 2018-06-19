@@ -7,6 +7,7 @@ const scriptInfo = {
 const _ = require('lodash');
 const gen = require('../generators/_getDefinition');
 const logger = require('../../lib/logger');
+const ircTypography = require('../lib/_ircTypography');
 
 module.exports = (app) => {
     const getDefinition = async (to, from, text, message) => {
@@ -15,8 +16,20 @@ module.exports = (app) => {
             return;
         }
         try {
+            const sb = new ircTypography.StringBuilder({
+                logo: 'dictionary',
+            });
             const results = await gen(text);
-            console.dir(results);
+            sb
+                .append(from)
+                .append(text)
+                .append(results.date)
+                .append(results.type)
+                .insert(results.definition)
+                .insertIcon('anchor')
+                .insert(results.link);
+
+            app.say(to, sb.toString());
         } catch (err) {
             if ('innerErr' in err) {
                 logger.error('Something went wrong fetching a definition', {
@@ -32,7 +45,7 @@ module.exports = (app) => {
     // Echo Test command
     app.Commands.set('definition', {
         desc: '[text] Exactly what it sounds like',
-        access: app.Config.accessLevels.admin,
+        access: app.Config.accessLevels.identified,
         call: getDefinition,
     });
 

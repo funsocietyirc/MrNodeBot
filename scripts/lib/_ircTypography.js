@@ -38,6 +38,7 @@ const logos = {
     chuckNorris: c.yellow.bold('Chuck Norris'),
     m2m: c.yellow.bold('Apocalypse Clock'),
     rss: c.blue.bold('RSS'),
+    dictionary: c.white.bold('DICT'),
 };
 
 // Return Green color number for numbers less then 50
