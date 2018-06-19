@@ -217,6 +217,10 @@ module.exports = {
     },
     // Feature Configuration
     features: {
+        seen: {
+            recursionLimit: 5,
+            allowRecursion: true,
+        },
         watchYoutube: {
             enabled: true,
         },

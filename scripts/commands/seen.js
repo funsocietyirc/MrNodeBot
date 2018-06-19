@@ -12,7 +12,6 @@ const typo = require('../lib/_ircTypography');
 const gen = require('../generators/_getLastUsageData');
 
 // Set a upper limit to prevent infinite recursions in some edge case situations
-const maxIteration = 5;
 
 // Exports
 module.exports = (app) => {
@@ -26,6 +25,10 @@ module.exports = (app) => {
         !Models.QuitLogging ||
         !Models.KickLogging ||
         !Models.Alias) return scriptInfo;
+
+    // Set a recursion limit
+    const allowRecursion = _.getBoolean(_.get(app.Config, 'features.seen.allowRecursion', true), true);
+    const maxIteration = _.getNumber(_.get(app.config, 'features.seen.recursionLimit', 5), 5);
 
     // Show activity of given host mask
     const seen = async (to, from, text, message, lastLine, iteration = 0, descending = true) => {
@@ -100,18 +103,20 @@ module.exports = (app) => {
                     if (!lastSaid || lastAction.nick !== lastSaid.from) output.insert('as').insertBold(lastAction.nick);
                     break;
                 case 'aliasOld':
+                    const outputLine = `${lastAction.newnick || ''}!${lastAction.user || ''}@${lastAction.host || ''} ${lastSaid.to || lastAction.channel || ''}`;
+
+                    // Prevent edge case caused by nick switching
+                    if (outputLine === lastLine) return;
+
                     output.insert('Changing their nick to').insertBold(lastAction.newnick)
                         .insert('on').insertBold(`[${lastAction.channels.replace(',', ', ')}]`)
                         .insert(Moment(lastAction.timestamp).fromNow());
 
-                    const outputLine = `${lastAction.newnick || ''}!${lastAction.user || ''}@${lastAction.host || ''} ${lastSaid.to || lastAction.channel || ''}`;
+                    if (!allowRecursion) break;
 
                     // First result to channel, any chains elsewhere
-                    if (iteration === 0 && from !== to && lastLine !== outputLine) output.insertDivider().append(`additional results have been messaged to you ${from}`);
-
-                    // Prevent edge case caused by nick switching
-                    if (outputLine === lastLine) {
-                        return;
+                    if (iteration === 1 && from !== to) {
+                        app.say(to, `additional seen results have been messaged to you, ${from}`);
                     }
 
                     // Recurse
