@@ -439,15 +439,15 @@ class MrNodeBot {
             this._scriptDirectories.forEach((script) => {
                 this._loadScriptsFromDir(script, clearCache);
             });
-            // Normalize Commands
-            Object.keys(this.Commands).forEach((key) => {
-                const lowerCaseKey = key.toLowerCase();
-                if (key !== lowerCaseKey) {
-                    logger.info(`Switching ${key} command to ${lowerCaseKey}`);
-                    this.Commands[lowerCaseKey] = this.Commands[key];
-                    delete this.Commands[key];
+            // Normalize all command keys to be lowercase
+            for (const [key, value] of this.Commands.entries()) {
+                const lowercaseKey = key.toLowerCase();
+                if (key !== lowercaseKey) {
+                    logger.info(`Switching ${key} command to lowercase ${lowercaseKey}`);
+                    this.Commands.set(lowercaseKey, value);
+                    this.Commands.delete(key);
                 }
-            });
+            }
             // Assign command aliases
             this._createCommandAliases();
         }
