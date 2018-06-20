@@ -10,6 +10,7 @@ const Models = require('funsociety-bookshelf-model-loader');
 const logger = require('../../lib/logger');
 const typo = require('../lib/_ircTypography');
 const gen = require('../generators/_getLastUsageData');
+const getBestGuess = require('../generators/_nickBestGuess');
 
 // Set a upper limit to prevent infinite recursions in some edge case situations
 
@@ -61,8 +62,15 @@ module.exports = (app) => {
                 _.isObject(lastSaid) &&
                 !_.isEmpty(lastSaid)
             ) {
-                if (!iteration) output.insertBold(lastSaid.from).insert('Saying');
-                else output.insert('Then saying');
+                if (!iteration) {
+                    if (result.originalNick) {
+                        output.appendBold(result.originalNick);
+                    }
+                    output.appendBold(lastSaid.from).insert('Saying');
+                }
+                else {
+                    output.insert('Then saying');
+                }
                 output
                     .insertBold(lastSaid.text)
                     .insert('via')
@@ -143,7 +151,17 @@ module.exports = (app) => {
         };
 
         try {
-            const result = await gen(text, { descending });
+            const initialNick = text.split(' ')[0];
+
+            // Get best guess nick
+            const bestGuess = await getBestGuess(initialNick);
+
+            const result = await gen(bestGuess.nearestNeighbor.from, {descending});
+
+            if (initialNick !== bestGuess) {
+                result.originalNick = initialNick;
+            }
+
             sendToIRC(result);
         } catch (err) {
             logger.error('Error in the last active Promise.all chain', {
