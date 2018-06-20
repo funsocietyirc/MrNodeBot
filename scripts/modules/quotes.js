@@ -123,7 +123,7 @@ module.exports = (app) => {
                 .append(dbResults.attributes.text)
                 .append(dbResults.attributes.from)
                 .append(Moment(dbResults.attributes.timestamp).fromNow())
-                .append(dbResults.id);
+                .append(dbResults.attributes.id);
 
             app.say(to,  output.toString());
         }
