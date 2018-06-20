@@ -8,6 +8,7 @@ const c = require('irc-colors');
 const Models = require('funsociety-bookshelf-model-loader');
 const Moment = require('moment');
 const getLocationData = require('../generators/_ipLocationData');
+const getBestGuess = require('../generators/_nickBestGuess');
 
 const errorMessage = 'Something went wrong fetching your results';
 const locationErrorMessage = 'Something went wrong fetching your location results';
@@ -135,12 +136,15 @@ module.exports = (app) => {
         qb.where(field, 'like', value);
     }).fetchAll();
 
-    const init = async (to, nick, subCommand, argument, processor) => {
+    const init = async (to, rawNick, subCommand, argument, processor) => {
         // Verify Info object
-        if (!nick) {
+        if (!rawNick) {
             app.say(to, 'A Nick is required');
             return;
         }
+
+        const bestGuess = await getBestGuess(rawNick);
+        const nick = bestGuess.nearestNeighbor.from;
 
         // Hold whois results
         let whoisResults;

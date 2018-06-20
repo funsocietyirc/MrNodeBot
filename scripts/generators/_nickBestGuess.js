@@ -18,7 +18,9 @@ const nickBestGuess = async (nick) => {
         // Is it a exact match already?
         if (_.includes(allNicks, nick)) {
             return {
-                nearestNeighbor: nick,
+                nearestNeighbor: {
+                    from: nick,
+                },
                 probability: 1,
             };
         }
