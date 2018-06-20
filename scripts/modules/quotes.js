@@ -119,7 +119,8 @@ module.exports = (app) => {
             }
 
             output
-                .insertDivider(dbResults.attributes.to)
+                .insertDivider()
+                .append(dbResults.attributes.to)
                 .append(dbResults.attributes.text)
                 .append(dbResults.attributes.from)
                 .append(Moment(dbResults.attributes.timestamp).fromNow());
