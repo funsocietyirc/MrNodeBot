@@ -5,6 +5,7 @@ const scriptInfo = {
 };
 const Models = require('funsociety-bookshelf-model-loader');
 const logger = require('../../lib/logger');
+const getBestGuess = require('../generators/_nickBestGuess');
 
 module.exports = (app) => {
     // Log nick changes in the alias table
@@ -16,12 +17,15 @@ module.exports = (app) => {
             return;
         }
 
+        const bestGuess = await getBestGuess(text);
+        const finalNick = bestGuess.nearestNeighbor.from;
+
         try {
             const results = await Models.Alias
                 .query((qb) => {
                     qb
                         .distinct('newnick')
-                        .where('oldnick', 'like', text)
+                        .where('oldnick', 'like', finalNick)
                         .select('newnick');
                 })
                 .fetchAll();
@@ -32,7 +36,7 @@ module.exports = (app) => {
             }
 
             const nicks = results.pluck('newnick').join(' | ');
-            app.say(to, `${text} is also known as: ${nicks}`);
+            app.say(to, `${finalNick} is also known as: ${nicks}`);
         } catch (err) {
             logger.error('Something went wrong in the aka command file', {
                 message: err.message || '',
