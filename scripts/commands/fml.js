@@ -7,6 +7,7 @@ const scriptInfo = {
 const _ = require('lodash');
 const fml = require('../generators/_fmlLine');
 const tifu = require('../generators/_tifuLine');
+const til = require('../generators/_tilLine');
 
 const logger = require('../../lib/logger');
 const ircTypography = require('../lib/_ircTypography');
@@ -64,6 +65,33 @@ module.exports = (app) => {
         desc: 'Get a random TIFU quote',
         access: app.Config.accessLevels.identified,
         call: tifuLine,
+    });
+
+    const tilLine = async (to, from, text, message) => {
+        try {
+            const result = await til();
+            if (!result) {
+                app.say(to, 'I could not seem to find any TIL lines');
+                return;
+            }
+            const output = new ircTypography.StringBuilder({
+                logo: 'til',
+            });
+            output.append(result[0].replace('TIL', ''));
+            app.say(to, output.text);
+        } catch (err) {
+            logger.error('FML Command Error:', {
+                message: err.message || '',
+                stack: err.stack || '',
+            });
+            app.say(to, 'Something went wrong with the TIL API');
+        }
+    };
+
+    app.Commands.set('til', {
+        desc: 'Get a random TIL quote',
+        access: app.Config.accessLevels.identified,
+        call: tilLine,
     });
 
     return scriptInfo;

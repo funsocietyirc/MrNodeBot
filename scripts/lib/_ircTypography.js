@@ -28,6 +28,7 @@ const logos = {
     imdb: c.brown.bold('IMDB'),
     fml: c.blue.bold('FML'),
     tifu: c.blue.bold('TIFU'),
+    til: c.blue.bold('TIL'),
     twss: c.blue('TWSS'),
     bofh: c.grey.bold('BOFH'),
     mrrobot: c.red.bold('#MrRobot'),
