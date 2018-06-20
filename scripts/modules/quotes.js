@@ -118,7 +118,12 @@ module.exports = (app) => {
                 return;
             }
 
-            output.append(dbResults.attributes.to).append(dbResults.attributes.text).append(dbResults.attributes.from).append(Moment(dbResults.attributes.timestamp).fromNow());
+            output
+                .append(dbResults.attributes.to)
+                .append(dbResults.attributes.text)
+                .append(dbResults.attributes.from)
+                .append(Moment(dbResults.attributes.timestamp).fromNow())
+                .append(dbResults.id);
 
             app.say(to,  output.toString());
         }
