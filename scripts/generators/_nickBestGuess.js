@@ -1,29 +1,39 @@
+const _ = require('lodash');
 const nn = require('nearest-neighbor');
+const getAllNicks = require('../../lib/getAllNicks');
 const logger = require('../../lib/logger');
 const Models = require('funsociety-bookshelf-model-loader');
 
-module.exports = async (nick, channel) => {
-    // No Database
-    if (!Models.Logging) throw new Error('Database not available');
+const nickBestGuess = async (nick) => {
     // Invalid Arguments
     if (!nick) throw new Error('Nick is a required argument');
-    if (!channel) throw new Error('Channel is a required argument');
 
     try {
-        const results = await Models.Logging.query((qb) => {
-            qb
-                .where('to', channel)
-                .distinct('from')
-                .select('from');
-        }).fetchAll();
+        // Get a summation of most nicks in the system
+        const allNicks = await getAllNicks();
 
         // No results
-        if (!results.length) return {};
+        if (!allNicks) return {};
 
+        // Is it a exact match already?
+        if (_.includes(allNicks, nick)) {
+            return {
+                nearestNeighbor: nick,
+                probability: 1,
+            };
+        }
+
+        // Format for Library
+        const results = _.map(allNicks, result => Object.assign({
+            from: result
+        }));
+
+
+        // Perform core logic
         return new Promise((res, rej) => {
             nn.findMostSimilar({
                 from: nick,
-            }, results.toJSON(), [
+            }, results, [
                 { name: "from", measure: nn.comparisonMethods.word },
             ], function(nearestNeighbor, probability) {
                 res({
@@ -33,13 +43,15 @@ module.exports = async (nick, channel) => {
             });
         });
     } catch (err) {
-        logger.error('Something went wrong in the _getCandidatePopularityRanking file', {
+        logger.error('Something went wrong in the _nickBestGuess file', {
             message: err.message || '',
             stack: err.stack || '',
         });
-        throw new Error('Something went wrong getting the ranking');
+        throw err;
     }
 };
+
+module.exports = nickBestGuess;
 
 // TODO: Going to need this to write custom comparator
 // const tokenize = (string) => {
