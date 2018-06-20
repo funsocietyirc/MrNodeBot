@@ -63,7 +63,7 @@ module.exports = (app) => {
             }
 
             // Assure the input is a number
-            if (!_.isNumber(parseInt(normalizedText)) || normalizedText < 1) {
+            if (isNaN(parseInt(normalizedText)) || normalizedText < 1) {
                 app.say(to, `I was expecting a positive number, ${from}`);
                 return;
             }
@@ -109,13 +109,17 @@ module.exports = (app) => {
             const dbResults = idProvided ?
                 await Models.Quotes.query(qb => qb.where('id', normalizedText)).fetch() :
                 await Models.Quotes.query(qb => qb.where('to', 'like', to).orderByRaw('rand()').limit(1)).fetch();
+
             const output = new typo.StringBuilder({ logo: 'quotes' });
+
             if (!dbResults) {
                 output.append(idProvided ? `A quote with the ID ${normalizedText} is not available, ${from}` : `There are no quotes available for ${to}, ${from}`);
                 app.say(to, output.toString());
                 return;
             }
+
             output.append(dbResults.attributes.to).append(dbResults.attributes.text).append(dbResults.attributes.from).append(Moment(dbResults.attributes.timestamp).fromNow());
+
             app.say(to,  output.toString());
         }
         catch (err) {
