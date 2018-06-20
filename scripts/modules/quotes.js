@@ -85,7 +85,7 @@ module.exports = (app) => {
                 const quoteText = quote.attributes.text;
                 // Delete the quote
                 await quote.destroy();
-                app.say(to, `I have detroyed quote ${normalizedText} (${quoteText}), ${from}`);
+                app.say(to, `I have destroyed quote ${normalizedText} (${quoteText}), ${from}`);
                 return;
             }
 
