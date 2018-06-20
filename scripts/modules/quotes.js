@@ -103,9 +103,19 @@ module.exports = (app) => {
     const randomQuote = async (to, from, text, message) => {
         try {
             // Get a quote
-            const dbResults = await Models.Quotes.query(qb => qb.where('to', 'like', to).orderByRaw('rand()').limit(1)).fetch();
+            const normalizedText = text.split(' ')[0];
+            const idProvided = normalizedText && !isNaN(parseInt(normalizedText));
+
+            const dbResults = idProvided ?
+                await Models.Quotes.query(qb => qb.where('id', normalizedText)).fetch() :
+                await Models.Quotes.query(qb => qb.where('to', 'like', to).orderByRaw('rand()').limit(1)).fetch();
             const output = new typo.StringBuilder({ logo: 'quotes' });
-            output.append(dbResults.attributes.text).append(dbResults.attributes.from).append(Moment(dbResults.attributes.timestamp).fromNow());
+            if (!dbResults) {
+                output.append(idProvided ? `A quote with the ID ${normalizedText} is not available, ${from}` : `There are no quotes available for ${to}, ${from}`);
+                app.say(to, output.toString());
+                return;
+            }
+            output.append(dbResults.attributes.to).append(dbResults.attributes.text).append(dbResults.attributes.from).append(Moment(dbResults.attributes.timestamp).fromNow());
             app.say(to,  output.toString());
         }
         catch (err) {
