@@ -64,7 +64,15 @@ module.exports = (app) => {
                 else return 0;
             });
 
-            const top10Terms = _(termsByFrequency).filter(x => x.term !== '').uniqBy('term').map(x => `${x.term}(${x.frequency})`).take(finalAmount).value();
+            // Build output
+            const top10Terms = _(termsByFrequency)
+                .filter(x => x.term !== '')
+                .uniqBy('term')
+                .map(x => `${x.term}(${x.frequency})`)
+                .take(finalAmount)
+                .value();
+
+            // Report
             app.say(to, `The Top ${finalAmount} Terms for ${nick} are: ${top10Terms.join(', ')}`);
         } catch (err) {
             logger.error('Error in topTerms command', {
@@ -80,7 +88,6 @@ module.exports = (app) => {
         access: app.Config.accessLevels.admin,
         call: topTerms,
     });
-
 
     // Return the script info
     return scriptInfo;
