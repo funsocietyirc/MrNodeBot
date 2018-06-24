@@ -50,9 +50,6 @@ module.exports = (app) => {
 
     const delQuote = async (to, from, text, message) => {
         try {
-            // app._ircClient.isOpInChannel(to)
-            // if (!_.includes(app.Admins, user)) {
-
             // Filter the input down to the first word
             const normalizedText = text.split(' ')[0];
 
@@ -140,14 +137,14 @@ module.exports = (app) => {
     // Add a quote
     app.Commands.set('add-quote', {
         desc: 'Add A Quote',
-        access: app.Config.accessLevels.admin,
+        access: app.Config.accessLevels.identified,
         call: addQuote,
     });
 
     // Delete a quote
     app.Commands.set('del-quote', {
         desc: 'Delete a quote',
-        access: app.Config.accessLevels.admin,
+        access: app.Config.accessLevels.identified,
         call: delQuote,
     });
 
@@ -157,6 +154,23 @@ module.exports = (app) => {
         access: app.Config.accessLevels.identified,
         call: randomQuote,
     });
+
+    // Provide Web Route for script listing
+    app.WebRoutes.set('quotes', {
+        desc: 'Quotes',
+        path: '/quotes',
+        handler: async (req, res) => {
+            // Return sorted result
+            const results = await Models.Quotes.fetchAll();
+            res.render('quotes', {
+                // Do not expose full path
+                results: _.map(results.toJSON(), x => Object.assign({}, x, {
+                    timestamp: Moment(x.timestamp).fromNow(),
+                })),
+            });
+        },
+    });
+
 
     // Return the script info
     return scriptInfo;

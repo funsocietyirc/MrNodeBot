@@ -1,0 +1,27 @@
+extends ./includes/layout.pug
+block title
+    title Quotes
+block content
+    div.row
+        div.col-md-12
+            div.text-center
+                div.page-header
+                    h1 Quotes
+                table.table.table-bordered.table-striped
+                    tbody
+                        tr.info
+                            th ID
+                            th To
+                            th From
+                            th Time
+                            th Quote
+                    tbody
+                        each quote in results
+                            tr.text-left
+                                td #{quote.id}
+                                td #{quote.to}
+                                td #{quote.from}
+                                td #{quote.timestamp}
+                                td #{quote.text}
+block body
+    script(src='/assets/bootstrap-sortable.js')
