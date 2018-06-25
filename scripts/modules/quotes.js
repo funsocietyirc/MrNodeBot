@@ -75,7 +75,7 @@ module.exports = (app) => {
             }
 
             if (
-                _.includes(app.Admins, from) ||
+                app.isAdmin(from) ||
                 app._ircClient.isOpInChannel(to, from) ||
                 quote.attributes.from === from
             ) {

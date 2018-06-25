@@ -550,6 +550,31 @@ class MrNodeBot {
     }
 
     /**
+     * Verify a nick is on the admin list
+     * @param {string} nick
+     * @return {boolean}
+     */
+    isAdmin(nick) {
+        if(!nick || !_.isString(nick)) {
+            throw new Error('invalid argument (isAdmin)');
+        }
+        return _.includes(this.Admins, nick.toLowerCase());
+    }
+
+    /**
+     * Verify a nick is on the ignore list
+     * @param {string} nick
+     * @return {boolean}
+     */
+    isIgnored(nick) {
+        if(!nick || !_.isString(nick)) {
+            throw new Error('invalid argument (isIgnored)');
+        }
+        return _.includes(this.Ignore, nick.toLowerCase());
+    }
+
+
+    /**
      * Perform a Notice over IRC
      * @param {string} target Nick / Channel to say it to
      * @param {string} message What to say
