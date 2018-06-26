@@ -46,6 +46,7 @@
     "express": "^4.16.3",
     "express-fileupload": "^0.4.0",
     "express-rate-limit": "^2.9.0",
+    "express-vue": "^5.6.6",
     "express-winston": "git+https://github.com/bithavoc/express-winston.git#winston-3",
     "file-type": "^8.0.0",
     "freeport": "^1.0.5",
@@ -88,6 +89,8 @@
     "x-ray": "^2.3.3"
   },
   "devDependencies": {
+    "babel-core": "^6.26.3",
+    "babel-preset-env": "^1.7.0",
     "chai": "^4.1.2",
     "chai-bookshelf": "^1.0.0",
     "chai-moment": "^0.1.0",

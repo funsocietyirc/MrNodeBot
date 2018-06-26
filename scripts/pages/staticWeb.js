@@ -34,13 +34,42 @@ module.exports = (app) => {
                         .limit(1)
                 ).fetchAll();
             res.redirect(
-                results.length  ? results.models[0].attributes.url : '/'
+                results.length ? results.models[0].attributes.url : '/'
             );
         };
         app.WebRoutes.set('randomurl', {
             handler: randomUrlHandler,
             desc: 'Random URL',
             path: '/randomurl',
+            verb: 'get',
+        });
+
+
+        app.WebRoutes.set('links', {
+            handler: (req, res, next) => {
+                const data = {};
+
+                req.vueOptions = {
+                    head: {
+                        title: 'Links',
+                        styles: [
+                            {style: '/assets/uikit-external.css', type: 'text/css'},
+                            {style: '/assets/app-external.css', type: 'text/css'},
+                        ],
+                        scripts: [
+                            {src: 'https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js'},
+                            {src: 'https://cdnjs.cloudflare.com/ajax/libs/uikit/2.27.5/js/uikit.min.js'},
+                            {src: 'https://cdnjs.cloudflare.com/ajax/libs/uikit/2.27.5/js/components/lightbox.min.js'},
+                            {src: 'https://cdnjs.cloudflare.com/ajax/libs/uikit/2.27.5/js/components/notify.min.js'},
+                            {src: 'https://cdnjs.cloudflare.com/ajax/libs/uikit/2.27.5/js/components/tooltip.min.js'},
+                            {src: 'https://cdnjs.cloudflare.com/ajax/libs/uikit/2.27.5/js/components/grid.min.js'},
+                            {src: 'https://cdnjs.cloudflare.com/ajax/libs/uikit/2.27.5/js/components/accordion.min.js'}]
+                    }
+                };
+                res.renderVue('links.vue', data, req.vueOptions);
+            },
+            desc: 'Links',
+            path: '/links',
             verb: 'get',
         });
     }

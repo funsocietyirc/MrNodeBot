@@ -1,5 +1,6 @@
 const _ = require('lodash');
 const jwt = require('jsonwebtoken');
+const path = require('path');
 const rotate = require('winston-daily-rotate-file');
 const helmet = require('helmet');
 const logger = require('../lib/logger');
@@ -11,6 +12,47 @@ const RateLimit = require('express-rate-limit');
 const bodyParser = require('body-parser');
 const fileUpload = require('express-fileupload');
 const expressWinston = require('express-winston');
+const expressVue = require("express-vue");
+
+console.dir(path.join(__dirname, '../example/views'));
+
+// Default express view options
+const expressVueOptions = {
+    rootPath: path.join(__dirname, '../web/vue'),
+    vueVersion: "2.5.16",
+    // template: {
+    //     html: {
+    //         start: '<!DOCTYPE html><html>',
+    //         end: '</html>'
+    //     },
+    //     body: {
+    //         start: '<body>',
+    //         end: '</body>'
+    //     },
+    //     template: {
+    //         start: '<div id="app">',
+    //         end: '</div>'
+    //     }
+    // },
+    head: {
+        // title: 'Hello this is a global title',
+        scripts: [
+            { src: 'https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js' },
+            { src: 'https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.10/lodash.min.js' },
+        ],
+        // styles: [
+        //     { style: '/assets/rendered/style.css' }
+        // ]
+    },
+    // data: {
+    //     foo: true,
+    //     bar: 'yes',
+    //     qux: {
+    //         id: 123,
+    //         baz: 'anything you wish, you can have any kind of object in the data object, it will be global and on every route'
+    //     }
+    // }
+};
 
 //   Web Server component:
 //   Features: named-routes, favicon, file upload, jade template engine, body parser, json parser, rate limiting, simple auth
@@ -33,6 +75,11 @@ module.exports = (app) => {
 
     // Initialize Helmet
     webServer.use(helmet());
+
+    // Initiate express-vue
+    const finalVueOptions = _.isObject(app.Config.vueOptions) ? _.defaults(expressVueOptions, app.Config.vueOptions) :  expressVueOptions;
+    const expressVueMiddleware = expressVue.init(finalVueOptions);
+    webServer.use(expressVueMiddleware);
 
     // Hold on to HTTP Server
     const server = require('http').createServer(webServer);
@@ -165,6 +212,7 @@ module.exports = (app) => {
 
     // Static routes
     webServer.use('/assets', Express.static(`${__dirname}/assets`));
+    webServer.use('/fonts', Express.static(`${__dirname}/fonts`));
 
     // Uploads
     webServer.use('/uploads', Express.static(`${__dirname}/uploads`));
