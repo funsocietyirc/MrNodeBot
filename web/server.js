@@ -14,8 +14,6 @@ const fileUpload = require('express-fileupload');
 const expressWinston = require('express-winston');
 const expressVue = require("express-vue");
 
-console.dir(path.join(__dirname, '../example/views'));
-
 // Default express view options
 const expressVueOptions = {
     rootPath: path.join(__dirname, '../web/vue'),

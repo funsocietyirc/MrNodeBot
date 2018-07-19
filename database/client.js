@@ -13,9 +13,15 @@ const knexBuilder = {
     // debug: true,
     client: knexConfig.client,
     connection: knexConfig.connection,
+    supportBigNumbers:true,
     pool: {
         min: 2,
-        max: 10
+        max: 10,
+        afterCreate: function (conn, cb) {
+            conn.query('SET sql_mode="NO_ENGINE_SUBSTITUTION";', function (err) {
+                cb(err, conn);
+            });
+        },
     },
     migrations: {
         directory: 'database/migrations'

@@ -44,14 +44,47 @@ module.exports = (app) => {
             verb: 'get',
         });
 
+        app.WebRoutes.set('watch', {
+            handler: (req, res, next) => {
+                const data = {
+                    activeChannel: app.Config.features.fsociety.mainChannel,
+                };
 
-        app.WebRoutes.set('links', {
+                req.vueOptions = {
+                    head: {
+                        title: 'Watch',
+                        styles: [
+                            {style: '/assets/uikit-external.css', type: 'text/css'},
+                            {style: '/assets/app-external.css', type: 'text/css'},
+                        ],
+                        scripts: [
+                            {src: 'https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js'},
+                            {src: 'https://cdnjs.cloudflare.com/ajax/libs/uikit/2.27.5/js/uikit.min.js'},
+                            {src: 'https://cdnjs.cloudflare.com/ajax/libs/uikit/2.27.5/js/components/lightbox.min.js'},
+                            {src: 'https://cdnjs.cloudflare.com/ajax/libs/uikit/2.27.5/js/components/notify.min.js'},
+                            {src: 'https://cdnjs.cloudflare.com/ajax/libs/uikit/2.27.5/js/components/tooltip.min.js'},
+                            {src: 'https://cdnjs.cloudflare.com/ajax/libs/uikit/2.27.5/js/components/grid.min.js'},
+                            {src: 'https://cdnjs.cloudflare.com/ajax/libs/uikit/2.27.5/js/components/accordion.min.js'},
+                            {src: 'https://cdn.jsdelivr.net/npm/vue-slider-component@2.7.2/dist/index.min.js'},
+                            {src: 'https://cdn.jsdelivr.net/npm/vue-youtube-embed@2.1.3/lib/vue-youtube-embed.min.js'},
+                        ]
+                    }
+                };
+                res.renderVue('watch.vue', data, req.vueOptions);
+            },
+            desc: 'Watch',
+            path: '/watch',
+            verb: 'get',
+        });
+
+
+        app.WebRoutes.set('channels', {
             handler: (req, res, next) => {
                 const data = {};
 
                 req.vueOptions = {
                     head: {
-                        title: 'Links',
+                        title: 'Channels',
                         styles: [
                             {style: '/assets/uikit-external.css', type: 'text/css'},
                             {style: '/assets/app-external.css', type: 'text/css'},
@@ -66,14 +99,45 @@ module.exports = (app) => {
                             {src: 'https://cdnjs.cloudflare.com/ajax/libs/uikit/2.27.5/js/components/accordion.min.js'}]
                     }
                 };
-                res.renderVue('links.vue', data, req.vueOptions);
+                res.renderVue('channelDash.vue', data, req.vueOptions);
             },
-            desc: 'Links',
-            path: '/links',
+            desc: 'Channels',
+            path: '/channels',
             verb: 'get',
         });
     }
+    ;
 
-    // Return the script info
+
+    app.WebRoutes.set('links', {
+        handler: (req, res, next) => {
+            const data = {};
+
+            req.vueOptions = {
+                head: {
+                    title: 'Links',
+                    styles: [
+                        {style: '/assets/uikit-external.css', type: 'text/css'},
+                        {style: '/assets/app-external.css', type: 'text/css'},
+                    ],
+                    scripts: [
+                        {src: 'https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js'},
+                        {src: 'https://cdnjs.cloudflare.com/ajax/libs/uikit/2.27.5/js/uikit.min.js'},
+                        {src: 'https://cdnjs.cloudflare.com/ajax/libs/uikit/2.27.5/js/components/lightbox.min.js'},
+                        {src: 'https://cdnjs.cloudflare.com/ajax/libs/uikit/2.27.5/js/components/notify.min.js'},
+                        {src: 'https://cdnjs.cloudflare.com/ajax/libs/uikit/2.27.5/js/components/tooltip.min.js'},
+                        {src: 'https://cdnjs.cloudflare.com/ajax/libs/uikit/2.27.5/js/components/grid.min.js'},
+                        {src: 'https://cdnjs.cloudflare.com/ajax/libs/uikit/2.27.5/js/components/accordion.min.js'}]
+                }
+            };
+            res.renderVue('links.vue', data, req.vueOptions);
+        },
+        desc: 'Links',
+        path: '/links',
+        verb: 'get',
+    });
+
+// Return the script info
     return scriptInfo;
-};
+}
+;

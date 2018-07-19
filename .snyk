@@ -9,7 +9,7 @@ ignore:
   'npm:shelljs:20140723':
     - shelljs:
         reason: None given
-        expires: '2018-06-24T18:23:50.968Z'
+        expires: '2018-07-28T11:03:56.107Z'
   'npm:brace-expansion:20170302':
     - 'node-pre-gyp > tar > fstream > rimraf > glob > minimatch > brace-expansion':
         reason: None available
@@ -94,13 +94,16 @@ ignore:
         expires: '2018-04-29T06:00:43.304Z'
       'x-ray > x-ray-crawler > cheerio > lodash':
         reason: None given
-        expires: '2018-06-24T18:23:50.968Z'
+        expires: '2018-07-28T11:03:56.107Z'
     - 'x-ray > x-ray-crawler > cheerio > lodash':
         reason: None given
         expires: '2018-04-29T06:00:43.304Z'
     - 'x-ray > x-ray-crawler > cheerio > lodash':
         reason: None given
         expires: '2018-05-17T22:43:47.788Z'
+    - 'x-ray > x-ray-crawler > cheerio > lodash':
+        reason: None given
+        expires: '2018-06-24T18:23:50.968Z'
   'npm:clean-css:20180306':
     - 'pug > pug-filters > clean-css':
         reason: None given
@@ -145,6 +148,10 @@ ignore:
     - 'x-ray > cheerio > jsdom > request > stringstream':
         reason: None given
         expires: '2018-06-13T22:45:02.085Z'
+  'npm:braces:20180219':
+    - 'express-vue > vue-pronto > find-node-modules > findup-sync > micromatch > braces':
+        reason: None given
+        expires: '2018-07-28T11:03:56.107Z'
 # patches apply the minimum changes required to fix a vulnerability
 patch:
   'npm:ms:20170412':
