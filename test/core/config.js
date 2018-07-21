@@ -14,6 +14,7 @@ describe('The Configuration File', () => {
     const requiredTopLevelKeys = [
         'ircClientDebug',
         'project',
+        'socketIO',
         'bot',
         'localization',
         'userManager',
@@ -21,7 +22,6 @@ describe('The Configuration File', () => {
         'owner',
         'irc',
         'knex',
-        'logio',
         'nickserv',
         'apiKeys',
         'gitLog',
