@@ -57,7 +57,7 @@
     "helmet": "^3.12.2",
     "i18next": "^11.4.0",
     "i18next-sync-fs-backend": "^1.1.0",
-    "irc-colors": "^1.4.2",
+    "irc-colors": "^1.4.3",
     "is-promise": "^2.1.0",
     "jsonwebtoken": "^8.3.0",
     "knex": "^0.15.2",

@@ -14,7 +14,6 @@ describe('The Configuration File', () => {
     const requiredTopLevelKeys = [
         'ircClientDebug',
         'project',
-        'socketIO',
         'bot',
         'localization',
         'userManager',
@@ -27,7 +26,7 @@ describe('The Configuration File', () => {
         'gitLog',
         'accessLevels',
         'express',
-        'features'
+        'features',
     ];
 
     it('has required top level keys', () => expect(config).to.include.all.keys(requiredTopLevelKeys));

@@ -97,6 +97,14 @@ module.exports = (app) => {
         }
     };
 
+    /**
+     * Provide a random quote
+     * @param to
+     * @param from
+     * @param text
+     * @param message
+     * @return {Promise<void>}
+     */
     const randomQuote = async (to, from, text, message) => {
         try {
             // Get a quote
@@ -171,6 +179,21 @@ module.exports = (app) => {
         },
     });
 
+    // API Endpoint to get quotes
+    app.WebRoutes.set('api.quotes.get', {
+        desc: 'api.quotes.get',
+        path: '/api/quotes/get/:to?',
+        handler: async (req, res) => {
+            // Add ability to filter on channel (to)
+            const quotes = req.params.to ? Models.Quotes.where('to', req.params.to) : Models.Quotes;
+            const results = await quotes.fetchAll();
+            res.json({
+                status: 'success',
+                payload: results.toJSON(),
+                count: results.length,
+            });
+        },
+    });
 
     // Return the script info
     return scriptInfo;
