@@ -64,6 +64,9 @@ class MrNodeBot {
         /** Irc Client Instance */
         this._ircClient = require('./lib/ircClient');
 
+        /** Declare command map for readability **/
+        this._commandMap = null;
+
         // Dynamically create Collections
         dynCollections.each((v) => {
             this[v] = new Map();
@@ -396,6 +399,15 @@ class MrNodeBot {
     }
 
     /**
+     * Return a list of mapped commands
+     * @return {{cmd: any}[]}
+     * @private
+     */
+    _buildCommandMap() {
+        this._commandMap = Array.from(this.Commands.keys()).map(x => ({cmd: x}));
+    }
+
+    /**
      * Read the configuration and alias any commands specified
      * @private
      */
@@ -459,6 +471,8 @@ class MrNodeBot {
             this._normalizeCommandKeys();
             // Assign command aliases
             this._createCommandAliases();
+            // Create command map
+            this._buildCommandMap();
         }
 
         // Load the web routes
@@ -628,6 +642,14 @@ class MrNodeBot {
      */
     get channels() {
         return _(this._ircClient.chans).keys().uniq().value();
+    }
+
+    /**
+     * Return the command map
+     * @return {{cmd: any}[] | *}
+     */
+    get commandMap() {
+        return this._commandMap;
     }
 
     /**
