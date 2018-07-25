@@ -55,7 +55,7 @@ module.exports = (app) => {
             }
 
             // Build a Bag Of Words (automatically normalize and remove stop words in the process)
-            const bag = tm.bagOfWords(_.map(results.toJSON(), 'text'), true, true);
+            const bag = tm.bagOfWords(results.pluck('text'), true, true);
 
             // Sort terms by global frequency and print the top 10
             const termsByFrequency = bag.terms.sort(function (a, b) {
