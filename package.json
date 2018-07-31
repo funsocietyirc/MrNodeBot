@@ -79,7 +79,7 @@
     "scrypt": "^6.0.3",
     "serve-favicon": "^2.5.0",
     "shelljs": "^0.8.2",
-    "snyk": "^1.89.0",
+    "snyk": "^1.89.1",
     "socket.io": "^2.1.1",
     "textmining": "^1.0.3",
     "twit": "^2.2.11",
