@@ -18,9 +18,11 @@ const knexBuilder = {
         min: 2,
         max: 10,
         afterCreate: function (conn, cb) {
-            conn.query('SET sql_mode="NO_ENGINE_SUBSTITUTION";', function (err) {
-                cb(err, conn);
-            });
+            if (conn && conn.query ) {
+                conn.query('SET sql_mode="NO_ENGINE_SUBSTITUTION";', function (err) {
+                    cb(err, conn);
+                });
+            }
         },
     },
     migrations: {
