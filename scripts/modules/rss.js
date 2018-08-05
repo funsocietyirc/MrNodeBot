@@ -1,6 +1,6 @@
 const scriptInfo = {
     name: 'rss',
-    desc: 'RSS Feed System (Database Related)',
+    desc: 'RSS Feed System',
     createdBy: 'IronY',
 };
 
@@ -19,7 +19,7 @@ module.exports = (app) => {
     if (!Models.RssFeed || !Models.RssChannelSubscription) return scriptInfo;
 
     // Initial RSS Feed Loader
-    const feeder = new RssFeedEmitter({ userAgent: 'MrNodeBot' });
+    const feeder = new RssFeedEmitter({userAgent: 'MrNodeBot'});
 
     /**
      * Handle New RSS Items
@@ -42,9 +42,10 @@ module.exports = (app) => {
             const dateAgo = date ? Moment(date).fromNow() : 'No Date';
 
             subscriptions.forEach((subscription) => {
+                // Output to IRC
                 if (!app._ircClient.isInChannel(subscription.attributes.channel, app.nick)) return;
 
-                const output = new typo.StringBuilder({ logo: 'rss' });
+                const output = new typo.StringBuilder({logo: 'rss'});
                 output
                     .appendBold(feed.attributes.name)
                     .insertIcon('person')
@@ -84,7 +85,6 @@ module.exports = (app) => {
         }
 
         const id = parseInt(text.split(' ')[0]);
-
         if (!_.isSafeInteger(id)) {
             app.say(to, `I am sorry ${from}, the ID you gave me is not a numeric value`);
             return;

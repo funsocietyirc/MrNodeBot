@@ -48,7 +48,8 @@ knex.migrate
         _.forEach(results[1], result => logger.info(`Adding Migration: ${result}`));
     })
     .catch(err => logger.error(`Error in updating to most recent migration`, {
-        err
+        message: err.message || '',
+        stack: err.stack || '',
     }));
 
 // Export bookshelf
