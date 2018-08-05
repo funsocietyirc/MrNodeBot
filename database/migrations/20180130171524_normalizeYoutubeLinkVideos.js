@@ -15,4 +15,5 @@ exports.up = async (knex, Promise) => {
 };
 
 exports.down = function (knex, Promise) {
+    return new Promise();
 };
