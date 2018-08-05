@@ -86,11 +86,11 @@
     "urijs": "^1.19.1",
     "winston": "^3.0.0",
     "winston-daily-rotate-file": "^3.3.0",
-    "x-ray": "^2.3.3"
+    "x-ray": "^2.3.3",
+    "babel-core": "^6.26.3",
+    "babel-preset-env": "^1.7.0"
   },
   "devDependencies": {
-    "babel-core": "^6.26.3",
-    "babel-preset-env": "^1.7.0",
     "chai": "^4.1.2",
     "chai-bookshelf": "^1.0.0",
     "chai-moment": "^0.1.0",
