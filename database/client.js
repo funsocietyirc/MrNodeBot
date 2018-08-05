@@ -14,17 +14,6 @@ const knexBuilder = {
     client: knexConfig.client,
     connection: knexConfig.connection,
     supportBigNumbers:true,
-    pool: {
-        min: 2,
-        max: 10,
-        afterCreate: function (conn, cb) {
-            if (conn && conn.query ) {
-                conn.query('SET sql_mode="NO_ENGINE_SUBSTITUTION";', function (err) {
-                    cb(err, conn);
-                });
-            }
-        },
-    },
     migrations: {
         directory: 'database/migrations'
     },
@@ -32,6 +21,18 @@ const knexBuilder = {
         directory: 'database/seeds'
     }
 };
+
+if (config.knex.engine !== 'sqlite') {
+    knexBuilder.pool = {
+        min: 2,
+        max: 10,
+        afterCreate: function (conn, cb) {
+            conn.query('SET sql_mode="NO_ENGINE_SUBSTITUTION";', function (err) {
+                cb(err, conn);
+            });
+        },
+    };
+}
 
 // Set flags on sqlite instances
 if (config.knex.engine === 'sqlite') knexBuilder.useNullAsDefault = true;
