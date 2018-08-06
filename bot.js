@@ -229,6 +229,8 @@ class MrNodeBot {
             netError: (exception) => {
                 logger.error('Something went wrong in the IRC Client network connection', exception);
             },
+            // channel forward
+            channelForward: (nick, originalChannel, forwardedChannel, dialog) => this._ircWrappers.handleChannelForward(nick, originalChannel, forwardedChannel, dialog),
             abort: (retryCount) => {
                 logger.error(`Lost Connection to server, retrying (attempt ${retryCount})`);
             },
