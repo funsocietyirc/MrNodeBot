@@ -54,7 +54,7 @@
     "freeport": "^1.0.5",
     "funsociety-bookshelf-model-loader": "^0.9.9",
     "funsociety-irc-rss-feed-emitter": "^1.0.12",
-    "funsocietyirc-client": "^0.1.16",
+    "funsocietyirc-client": "^0.1.17",
     "gitlog": "^3.1.1",
     "helmet": "^3.13.0",
     "i18next": "^11.5.0",
