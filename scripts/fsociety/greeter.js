@@ -61,11 +61,11 @@ module.exports = (app) => {
             if (_.isFunction(callback)) callback();
         });
 
-    const mainChannel = app.Config.features.fsociety.mainChannel.toLowerCase();
-
     // Provide a onJoin handler
     const onJoin = (channel, nick, message) => {
         const lowerCaseChannel = channel.toLowerCase();
+        const mainChannel = app.Config.features.fsociety.mainChannel.toLowerCase();
+
         // Make sure we are not reporting ourselves
         if (
             nick !== app.nick &&

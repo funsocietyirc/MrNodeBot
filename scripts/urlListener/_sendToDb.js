@@ -43,6 +43,7 @@ module.exports = async (results) => {
             !_.isUndefined(results.youTube) &&
             !_.isUndefined(results.youTube.video)
         ) {
+
             // Create YouTube record
             const youTubeRecord = await Models.YouTubeLink.create({
                 url: results.youTube.video.key,
