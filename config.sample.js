@@ -1,8 +1,4 @@
 module.exports = {
-    // We are using a local version of the IRC client
-    // To use this you must have a node-irc directory at a child level
-    // of the MrNodeBot directory
-    ircClientDebug: false,
     // Project Config
     project: require('./package.json'),
     // Bot specific

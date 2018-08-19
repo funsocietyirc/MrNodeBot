@@ -10,8 +10,6 @@ chai.expect();
 chai.use(sinonChai);
 const expect = chai.expect;
 
-const _ = require('lodash');
-
 describe('test the actBack script', () => {
 
     const app = {
