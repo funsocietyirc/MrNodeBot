@@ -62,7 +62,7 @@ module.exports = (app) => {
                 }
 
                 app.say(to,
-                    `${nick} was most active on ${channel} ${moment(results.highest.timestamp).format('MMMM Do, YYYY')} with a total of ${results.highest.messages} lines, they were least active on ${moment(results.lowest.timestamp).format('MMMM Do, YYYY')} with a total of ${results.lowest.messages} lines`
+                    `${nick} was most active on ${channel} ${moment(results.highest.timestamp).format('MMMM Do, YYYY')} with a total of ${results.highest.messages} ${helpers.Plural('line', results.highest.messages)}, they were least active on ${moment(results.lowest.timestamp).format('MMMM Do, YYYY')} with a total of ${results.lowest.messages} ${helpers.Plural('line', results.lowest.messages)}`
                 );
                 console.dir(results);
             } catch (err) {
