@@ -202,7 +202,9 @@
             if (this.player !== null && this.player.destroy) {
                 this.player.destroy();
             }
-            delete this.player;
+
+            // Delete the player Object
+            Reflect.deleteProperty(this, 'player');
         }
     };
 
