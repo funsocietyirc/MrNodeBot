@@ -3,194 +3,197 @@ version: v1.12.0
 # ignores vulnerabilities until expiry date; change duration by modifying expiry date
 ignore:
   'npm:qs:20170213':
-    - 'x-ray > x-ray-crawler > superagent > qs':
+    - x-ray > x-ray-crawler > superagent > qs:
         reason: None available
         expires: '2017-12-10T06:21:14.298Z'
   'npm:shelljs:20140723':
     - shelljs:
         reason: None given
-        expires: '2018-07-28T11:03:56.107Z'
+        expires: '2018-09-22T07:51:00.649Z'
   'npm:brace-expansion:20170302':
-    - 'node-pre-gyp > tar > fstream > rimraf > glob > minimatch > brace-expansion':
+    - node-pre-gyp > tar > fstream > rimraf > glob > minimatch > brace-expansion:
         reason: None available
         expires: '2017-07-30T22:27:04.600Z'
-    - 'node-pre-gyp > tar-pack > tar > fstream > rimraf > glob > minimatch > brace-expansion':
+    - node-pre-gyp > tar-pack > tar > fstream > rimraf > glob > minimatch > brace-expansion:
         reason: None available
         expires: '2017-07-30T22:27:04.600Z'
-    - 'fstream-ignore > fstream > rimraf > glob > minimatch > brace-expansion':
+    - fstream-ignore > fstream > rimraf > glob > minimatch > brace-expansion:
         reason: None available
         expires: '2017-07-30T22:27:04.601Z'
-    - 'node-pre-gyp > tar-pack > fstream-ignore > fstream > rimraf > glob > minimatch > brace-expansion':
+    - node-pre-gyp > tar-pack > fstream-ignore > fstream > rimraf > glob > minimatch > brace-expansion:
         reason: None available
         expires: '2017-07-30T22:27:04.601Z'
-    - 'fstream-ignore > minimatch > brace-expansion':
+    - fstream-ignore > minimatch > brace-expansion:
         reason: None available
         expires: '2017-07-30T22:27:04.602Z'
-    - 'node-pre-gyp > tar-pack > fstream-ignore > minimatch > brace-expansion':
+    - node-pre-gyp > tar-pack > fstream-ignore > minimatch > brace-expansion:
         reason: None available
         expires: '2017-07-30T22:27:04.602Z'
   'npm:tunnel-agent:20170305':
-    - 'i18next-sync-fs-backend > codecov > request > tunnel-agent':
+    - i18next-sync-fs-backend > codecov > request > tunnel-agent:
         reason: None given
         expires: '2018-05-17T22:43:47.788Z'
-    - 'funsociety-irc-rss-feed-emitter > request > tunnel-agent':
+    - funsociety-irc-rss-feed-emitter > request > tunnel-agent:
         reason: None given
         expires: '2017-12-10T06:21:14.298Z'
-    - 'funsociety-irc-rss-feed-emitter > request > tunnel-agent':
+    - funsociety-irc-rss-feed-emitter > request > tunnel-agent:
         reason: Working on
         expires: '2018-02-20T20:43:47.835Z'
-    - 'codecov > request > tunnel-agent':
+    - codecov > request > tunnel-agent:
         reason: None given
         expires: '2018-04-09T18:16:58.638Z'
-    - 'i18next-sync-fs-backend > codecov > request > tunnel-agent':
+    - i18next-sync-fs-backend > codecov > request > tunnel-agent:
         reason: unavailable
         expires: '2018-04-09T18:16:58.638Z'
   'npm:mime:20170907':
-    - 'x-ray > x-ray-crawler > superagent > mime':
+    - x-ray > x-ray-crawler > superagent > mime:
         reason: None given
         expires: '2017-12-10T06:21:14.298Z'
   'npm:superagent:20170807':
-    - 'x-ray > x-ray-crawler > superagent':
+    - x-ray > x-ray-crawler > superagent:
         reason: None given
         expires: '2017-12-10T06:21:14.298Z'
   'npm:ws:20171108':
-    - 'socket.io > engine.io > ws':
+    - socket.io > engine.io > ws:
         reason: None given
         expires: '2017-12-10T06:21:14.298Z'
-    - 'socket.io > socket.io-client > engine.io-client > ws':
+    - socket.io > socket.io-client > engine.io-client > ws:
         reason: None given
         expires: '2017-12-10T06:21:14.298Z'
   'npm:hoek:20180212':
-    - 'i18next-sync-fs-backend > codecov > request > hawk > hoek':
+    - i18next-sync-fs-backend > codecov > request > hawk > hoek:
         reason: None given
         expires: '2018-05-17T22:43:47.788Z'
-    - 'i18next-sync-fs-backend > codecov > request > hawk > boom > hoek':
+    - i18next-sync-fs-backend > codecov > request > hawk > boom > hoek:
         reason: None given
         expires: '2018-05-17T22:43:47.788Z'
-    - 'i18next-sync-fs-backend > codecov > request > hawk > sntp > hoek':
+    - i18next-sync-fs-backend > codecov > request > hawk > sntp > hoek:
         reason: None given
         expires: '2018-05-17T22:43:47.788Z'
-    - 'i18next-sync-fs-backend > codecov > request > hawk > cryptiles > boom > hoek':
+    - i18next-sync-fs-backend > codecov > request > hawk > cryptiles > boom > hoek:
         reason: None given
         expires: '2018-05-17T22:43:47.788Z'
-    - 'codecov > request > hawk > cryptiles > boom > hoek':
+    - codecov > request > hawk > cryptiles > boom > hoek:
         reason: None given
         expires: '2018-04-09T18:16:58.638Z'
-    - 'boom > hoek':
+    - boom > hoek:
         reason: None given
         expires: '2018-04-09T18:16:58.638Z'
-    - 'codecov > request > hawk > hoek':
+    - codecov > request > hawk > hoek:
         reason: None given
         expires: '2018-04-09T18:16:58.638Z'
-    - 'codecov > request > hawk > boom > hoek':
+    - codecov > request > hawk > boom > hoek:
         reason: None given
         expires: '2018-04-09T18:16:58.638Z'
-    - 'codecov > request > hawk > sntp > hoek':
+    - codecov > request > hawk > sntp > hoek:
         reason: None given
         expires: '2018-04-09T18:16:58.638Z'
   'npm:lodash:20180130':
-    - 'cheerio > lodash':
+    - cheerio > lodash:
         reason: None given
         expires: '2018-04-29T06:00:43.304Z'
-    - 'x-ray > x-ray-crawler > cheerio > lodash':
+    - x-ray > x-ray-crawler > cheerio > lodash:
         reason: None given
         expires: '2018-04-29T06:00:43.304Z'
-    - 'x-ray > x-ray-crawler > cheerio > lodash':
+    - x-ray > x-ray-crawler > cheerio > lodash:
         reason: None given
         expires: '2018-05-17T22:43:47.788Z'
-    - 'x-ray > x-ray-crawler > cheerio > lodash':
+    - x-ray > x-ray-crawler > cheerio > lodash:
         reason: None given
         expires: '2018-06-24T18:23:50.968Z'
-    - 'x-ray > x-ray-crawler > cheerio > lodash':
+    - x-ray > x-ray-crawler > cheerio > lodash:
         reason: None given
         expires: '2018-07-28T11:03:56.107Z'
   'npm:clean-css:20180306':
-    - 'pug > pug-filters > clean-css':
+    - pug > pug-filters > clean-css:
         reason: None given
         expires: '2018-04-09T18:16:58.638Z'
   'npm:is-my-json-valid:20180214':
-    - 'codecov > request > har-validator > is-my-json-valid':
+    - codecov > request > har-validator > is-my-json-valid:
         reason: None given
         expires: '2018-04-09T18:16:58.638Z'
-    - 'i18next-sync-fs-backend > codecov > request > har-validator > is-my-json-valid':
+    - i18next-sync-fs-backend > codecov > request > har-validator > is-my-json-valid:
         reason: None given
         expires: '2018-04-09T18:16:58.638Z'
   'npm:nwmatcher:20180305':
-    - 'x-ray > cheerio > jsdom > nwmatcher':
+    - x-ray > cheerio > jsdom > nwmatcher:
         reason: None given
         expires: '2018-05-17T22:43:47.788Z'
   'npm:base64url:20180511':
-    - 'jsonwebtoken > jws > base64url':
+    - jsonwebtoken > jws > base64url:
         reason: None given
         expires: '2018-06-13T22:45:02.085Z'
-    - 'jsonwebtoken > jws > jwa > base64url':
+    - jsonwebtoken > jws > jwa > base64url:
         reason: None given
         expires: '2018-06-13T22:45:02.085Z'
-    - 'jsonwebtoken > jws > jwa > ecdsa-sig-formatter > base64url':
+    - jsonwebtoken > jws > jwa > ecdsa-sig-formatter > base64url:
         reason: None given
         expires: '2018-06-13T22:45:02.085Z'
   'npm:stringstream:20180511':
-    - 'funsociety-irc-rss-feed-emitter > request > stringstream':
+    - funsociety-irc-rss-feed-emitter > request > stringstream:
         reason: None given
         expires: '2018-06-13T22:45:02.085Z'
-    - 'request > stringstream':
+    - request > stringstream:
         reason: None given
         expires: '2018-06-13T22:45:02.085Z'
-    - 'request-promise-native > request > stringstream':
+    - request-promise-native > request > stringstream:
         reason: None given
         expires: '2018-06-13T22:45:02.085Z'
-    - 'request-promise-native > request-promise-core > request > stringstream':
+    - request-promise-native > request-promise-core > request > stringstream:
         reason: None given
         expires: '2018-06-13T22:45:02.085Z'
-    - 'twit > request > stringstream':
+    - twit > request > stringstream:
         reason: None given
         expires: '2018-06-13T22:45:02.085Z'
-    - 'x-ray > cheerio > jsdom > request > stringstream':
+    - x-ray > cheerio > jsdom > request > stringstream:
         reason: None given
         expires: '2018-06-13T22:45:02.085Z'
   'npm:braces:20180219':
-    - 'express-vue > vue-pronto > find-node-modules > findup-sync > micromatch > braces':
+    - express-vue > vue-pronto > find-node-modules > findup-sync > micromatch > braces:
         reason: None given
-        expires: '2018-07-28T11:03:56.107Z'
+        expires: '2018-09-22T07:51:00.649Z'
 # patches apply the minimum changes required to fix a vulnerability
 patch:
   'npm:ms:20170412':
-    - 'x-ray > debug > ms':
+    - x-ray > debug > ms:
         patched: '2018-04-17T22:43:03.287Z'
-    - 'x-ray > x-ray-crawler > ms':
+    - x-ray > x-ray-crawler > ms:
         patched: '2017-06-30T22:26:06.281Z'
-    - 'socket.io > socket.io-adapter > debug > ms':
+    - socket.io > socket.io-adapter > debug > ms:
         patched: '2017-06-30T22:26:06.281Z'
-    - 'socket.io > socket.io-client > debug > ms':
+    - socket.io > socket.io-client > debug > ms:
         patched: '2017-05-23T21:00:06.210Z'
-    - 'x-ray > x-ray-crawler > ms':
+    - x-ray > x-ray-crawler > ms:
         patched: '2017-11-19T07:45:36.397Z'
-    - 'x-ray > debug > ms':
+    - x-ray > debug > ms:
         patched: '2017-11-19T07:45:36.397Z'
-    - 'x-ray > x-ray-crawler > ms':
+    - x-ray > x-ray-crawler > ms:
         patched: '2017-11-21T01:01:26.388Z'
-    - 'x-ray > debug > ms':
+    - x-ray > debug > ms:
         patched: '2017-11-21T01:01:26.388Z'
-    - 'x-ray > x-ray-crawler > ms':
+    - x-ray > x-ray-crawler > ms:
         patched: '2017-11-27T01:41:10.162Z'
-    - 'x-ray > debug > ms':
+    - x-ray > debug > ms:
         patched: '2017-11-27T01:41:10.162Z'
   'npm:debug:20170905':
-    - 'x-ray > debug':
+    - x-ray > debug:
         patched: '2018-04-17T22:43:03.287Z'
-    - 'helmet > connect > debug':
+    - helmet > connect > debug:
         patched: '2017-09-26T23:25:12.104Z'
-    - 'helmet > connect > finalhandler > debug':
+    - helmet > connect > finalhandler > debug:
         patched: '2017-09-26T23:25:12.104Z'
   'npm:moment:20170905':
-    - 'jsonwebtoken > joi > moment':
+    - jsonwebtoken > joi > moment:
         patched: '2018-01-21T20:34:35.133Z'
     - moment:
         patched: '2018-01-21T20:34:35.133Z'
-    - 'moment-countdown > moment':
+    - moment-countdown > moment:
         patched: '2018-01-21T20:34:35.133Z'
-    - 'funsociety-bookshelf-model-loader > bookshelf-modelbase > joi > moment':
+    - funsociety-bookshelf-model-loader > bookshelf-modelbase > joi > moment:
         patched: '2018-01-21T20:34:35.133Z'
   'npm:minimatch:20160620':
-    - 'winston-daily-rotate-file > winston-compat > vows > glob > minimatch':
+    - winston-daily-rotate-file > winston-compat > vows > glob > minimatch:
         patched: '2018-04-17T22:43:03.287Z'
+  'npm:lodash:20180130':
+    - x-ray > x-ray-crawler > cheerio > lodash:
+        patched: '2018-08-23T07:49:34.800Z'
