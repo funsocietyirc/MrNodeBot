@@ -1,7 +1,6 @@
 const _ = require('lodash');
 const jwt = require('jsonwebtoken');
 const path = require('path');
-const rotate = require('winston-daily-rotate-file');
 const helmet = require('helmet');
 const logger = require('../lib/logger');
 const Router = require('named-routes');
@@ -13,6 +12,7 @@ const bodyParser = require('body-parser');
 const fileUpload = require('express-fileupload');
 const expressWinston = require('express-winston');
 const expressVue = require("express-vue");
+const twitterWebhooks = require('twitter-webhooks');
 
 // Default express view options
 const expressVueOptions = {
@@ -55,7 +55,7 @@ const expressVueOptions = {
 //   Web Server component:
 //   Features: named-routes, favicon, file upload, jade template engine, body parser, json parser, rate limiting, simple auth
 //  json web tokens
-module.exports = (app) => {
+module.exports = async (app) => {
     // Helper Function to return the Configuration jwt secret, or a default with a warning
     const getJwtSecret = () => {
         // Issue User Web Tokens
@@ -141,6 +141,31 @@ module.exports = (app) => {
         res.header('X-powered-by', 'MrNodeBot');
         next();
     });
+
+    // Twitter hooks
+    const userActivityWebhook = twitterWebhooks.userActivity({
+        serverUrl: app.Config.express.address,
+        route: 'twitter-api',
+        consumerKey: app.Config.apiKeys.twitter.consumerKey,
+        consumerSecret: app.Config.apiKeys.twitter.consumerSecret,
+        accessToken: app.Config.apiKeys.twitter.tokenKey,
+        accessTokenSecret: app.Config.apiKeys.twitter.tokenSecret,
+        environment: app.Config.bot.env, //default : 'env-beta'
+        webServer
+    });
+
+    //Register your webhook url - just needed once per URL
+    await userActivityWebhook.register();
+
+    // Subscribe to Twitter
+
+    //Subscribe for a particular user activity
+    await userActivityWebhook.subscribe({
+        userId: '[TWITTER USER ID]',
+        accessToken: '[TWITTER USER ACCESS TOKEN]',
+        accessTokenSecret: '[TWITTER USER ACCESS TOKEN SECRET]'
+    });
+
 
     // Check for Simple Authentication
     // Enable this in the configuration, and set a username + password

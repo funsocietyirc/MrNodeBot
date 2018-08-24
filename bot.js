@@ -91,16 +91,16 @@ class MrNodeBot {
 
             /** Web Server Instance */
             this.WebServer = null;
-            this._initWebServer();
+            this._initWebServer().then(() => {
+                /** User Manager */
+                this._userManager = null;
+                this._initUserManager();
 
-            /** User Manager */
-            this._userManager = null;
-            this._initUserManager();
-
-            /** Irc Client Instance */
-            this._ircClient = require('./lib/ircClient');
-            this._ircWrappers = null;
-            this._initIrc();
+                /** Irc Client Instance */
+                this._ircClient = require('./lib/ircClient');
+                this._ircWrappers = null;
+                this._initIrc();
+            });
         });
     }
 
@@ -121,9 +121,9 @@ class MrNodeBot {
      * Initialize Web Server
      * @private
      */
-    _initWebServer() {
+    async _initWebServer() {
         logger.info(t('webServer.starting'));
-        this.WebServer = require('./web/server')(this);
+        this.WebServer = await require('./web/server')(this);
 
         logger.info(t('webServer.started', {
             port: this.Config.express.port,
