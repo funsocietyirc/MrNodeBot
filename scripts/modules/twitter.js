@@ -45,25 +45,29 @@ module.exports = (app) => {
     });
 
     // the Main twitter watcher
+    // const watcher = () => {
+    //     if (!app._twitterClient) return;
+    //
+    //     const newStream = app._twitterClient.stream('user', {
+    //         with: app.Config.features.twitter.followers,
+    //     });
+    //
+    //     newStream.once('connected', (res) => {
+    //         if (currentStream) currentStream.stop();
+    //
+    //         // Fire off the listeners, being sure to clear the previous
+    //         // as to not overload on script reload
+    //         newStream.removeAllListeners('tweet');
+    //         newStream.on('tweet', onTweetData);
+    //         newStream.removeAllListeners('error');
+    //         newStream.on('error', onTweetError);
+    //
+    //         currentStream = newStream;
+    //     });
+    // };
+    // TODO Find a way ti reimplement
     const watcher = () => {
-        if (!app._twitterClient) return;
-
-        const newStream = app._twitterClient.stream('user', {
-            with: app.Config.features.twitter.followers,
-        });
-
-        newStream.once('connected', (res) => {
-            if (currentStream) currentStream.stop();
-
-            // Fire off the listeners, being sure to clear the previous
-            // as to not overload on script reload
-            newStream.removeAllListeners('tweet');
-            newStream.on('tweet', onTweetData);
-            newStream.removeAllListeners('error');
-            newStream.on('error', onTweetError);
-
-            currentStream = newStream;
-        });
+        logger.warn('Twitter has closed its public streaming API, we are re-evaluating this feature');
     };
 
     // Tweet a message
