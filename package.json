@@ -85,7 +85,6 @@
     "socket.io": "^2.1.1",
     "textmining": "^1.0.3",
     "twit": "^2.2.11",
-    "twitter-webhooks": "^0.2.1",
     "urijs": "^1.19.1",
     "winston": "^3.0.0",
     "winston-daily-rotate-file": "^3.3.2",

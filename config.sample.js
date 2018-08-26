@@ -287,8 +287,6 @@ module.exports = {
         },
         twitter: {
             enabled: false,
-            followers: 'funsocietyirc',
-            channels: ['#MrNodeBot'],
         },
         conversational: {
             randomChance: 5000,

@@ -12,7 +12,6 @@ const bodyParser = require('body-parser');
 const fileUpload = require('express-fileupload');
 const expressWinston = require('express-winston');
 const expressVue = require("express-vue");
-const twitterWebhooks = require('twitter-webhooks');
 
 // Default express view options
 const expressVueOptions = {
@@ -141,31 +140,6 @@ module.exports = async (app) => {
         res.header('X-powered-by', 'MrNodeBot');
         next();
     });
-
-    // Twitter hooks
-    const userActivityWebhook = twitterWebhooks.userActivity({
-        serverUrl: app.Config.express.address,
-        route: 'twitter-api',
-        consumerKey: app.Config.apiKeys.twitter.consumerKey,
-        consumerSecret: app.Config.apiKeys.twitter.consumerSecret,
-        accessToken: app.Config.apiKeys.twitter.tokenKey,
-        accessTokenSecret: app.Config.apiKeys.twitter.tokenSecret,
-        environment: app.Config.bot.env, //default : 'env-beta'
-        webServer
-    });
-
-    //Register your webhook url - just needed once per URL
-    await userActivityWebhook.register();
-
-    // Subscribe to Twitter
-
-    //Subscribe for a particular user activity
-    await userActivityWebhook.subscribe({
-        userId: '[TWITTER USER ID]',
-        accessToken: '[TWITTER USER ACCESS TOKEN]',
-        accessTokenSecret: '[TWITTER USER ACCESS TOKEN SECRET]'
-    });
-
 
     // Check for Simple Authentication
     // Enable this in the configuration, and set a username + password
