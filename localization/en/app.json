@@ -59,6 +59,7 @@
     "genericError": "Error in: {{command}}",
     "moreInformation": "I need some more information, {{- nick}}",
     "invalidCommand": "I am sorry, {{- from}}, I am unable to do that. Let me clarify, {{- cmd}} is an invalid command",
-    "invalidIdentCommand": "Error with identified command {{- cmd}} from {{- from}} to {{- to}}"
+    "invalidIdentCommand": "Error with identified command {{- cmd}} from {{- from}} to {{- to}}",
+    "information": "I am sorry, {{- nick}}, I am unable to complete that request."
   }
 }
