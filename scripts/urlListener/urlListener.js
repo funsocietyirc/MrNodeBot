@@ -98,29 +98,37 @@ module.exports = (app) => {
     };
 
     // Handler
-    const listener = (to, from, text, message, is) => {
-        // Check to see if the user is ignored from url listening, good for bots that repeat
-        if (_.includes(userIgnore, from)) return;
+    const listener = async (to, from, text, message, is) => {
+        try {
+            // Check to see if the user is ignored from url listening, good for bots that repeat
+            if (_.includes(userIgnore, from)) return;
 
-        // Set chaining limit
-        const limit = (
-            _.isObject(app.Config.features.urls.chainingLimit) &&
-            to in app.Config.features.urls.chainingLimit &&
-            _.isNumber(app.Config.features.urls.chainingLimit[to])
-        ) ? app.Config.features.urls.chainingLimit[to] : 0;
+            // Set chaining limit
+            const limit = (
+                _.isObject(app.Config.features.urls.chainingLimit) &&
+                to in app.Config.features.urls.chainingLimit &&
+                _.isNumber(app.Config.features.urls.chainingLimit[to])
+            ) ? app.Config.features.urls.chainingLimit[to] : 0;
 
-        // Url Processing chain
-        const urls = _(extractUrls(text, limit))
-            .uniq() // Assure No Duplicated URLS on the same line return multiple results
-            .filter(url => url.match(/^(www|http[s]?)/im)) // Filter out undesired protocols
-            .map(url => (url.toLowerCase().startsWith('http') ? url : `http://${url}`)); // Does not start with a protocol, prepend http://
+            // Url Processing chain
+            const urls = _(extractUrls(text, limit))
+                .uniq() // Assure No Duplicated URLS on the same line return multiple results
+                .filter(url => url.match(/^(www|http[s]?)/im)) // Filter out undesired protocols
+                .map(url => (url.toLowerCase().startsWith('http') ? url : `http://${url}`)); // Does not start with a protocol, prepend http://
 
-        if (urls.length && to === from) {
-            app.say(from, `You cannot paste me URLS ${from}, if you register with NickServ you can use the url command how ever.`);
-            return;
+            if (urls.length && to === from) {
+                app.say(from, `You cannot paste me URLS ${from}, if you register with NickServ you can use the url command how ever.`);
+                return;
+            }
+
+            urls.each(url => processUrl(url, to, from, text, message, is));
         }
-
-        urls.each(url => processUrl(url, to, from, text, message, is));
+        catch (err) {
+            logger.warn(`Something went wrong fetching data for a URL`, {
+                message: err.message || '',
+                stack: err.stack || '',
+            });
+        }
     };
 
     // List for urls

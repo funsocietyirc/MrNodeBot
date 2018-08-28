@@ -154,13 +154,7 @@ module.exports = {
         },
         google: '',
         twitter: {
-            consumerKey: '',
-            consumerSecret: '',
-            tokenKey: '',
-            tokenSecret: '',
-        },
-        worldWeatherOnline: {
-            key: '',
+            enabled: false,
         },
     },
     // Git Log configuration
