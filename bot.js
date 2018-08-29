@@ -182,11 +182,24 @@ class MrNodeBot {
             this._errorHandler('Something went wrong calling the _connectToIrc method', err);
         }
 
-        const first = this.Config.nickserv.host ? `@${this.Config.nickserv.host}` : '';
-        const nickserv = `${this.Config.nickserv.nick}${first}`;
-
-        this._ircClient.say(nickserv, `identify ${this.Config.nickserv.password}`);
-
+        // We have Nickserv configuration
+        if (
+            _.isString(this.Config.nickserv.nick) &&
+            _.isString(this.Config.nickserv.password) &&
+            !_.isEmpty(this.Config.nickserv.nick) &&
+            !_.isEmpty(this.Config.nickserv.password)
+        ) {
+            try {
+                const first = (
+                    _.isString(this.Config.nickserv.host) &&
+                    !_.isEmpty(this.Config.nickserv.host)
+                ) ? `@${this.Config.nickserv.host}` : '';
+                const nickserv = `${this.Config.nickserv.nick}${first}`;
+                this._ircClient.send('PRIVMSG', nickserv, ':identify', this.Config.nickserv.password);
+            } catch (err) {
+                this._errorHandler('Something went wrong during the join channels with NickServ identified process', err);
+            }
+        }
         try {
             await this._loadDynamicAssets(false);
         } catch (err) {
@@ -207,9 +220,31 @@ class MrNodeBot {
             pm: (nick, text, message) => this._ircWrappers.handleCommands(nick, nick, text, message),
             // Handle Notices, also used to check validation for NickServ requests
             notice: (nick, to, text, message) => {
-                // Check for auth command, return if we have one
-                if (_.toLower(nick) === _.toLower(this.Config.nickserv.nick)) this._ircWrappers.handleAuthenticatedCommands(nick, to, text, message);
-                else this._ircWrappers.handleOnNotice(nick, to, text, message);
+
+                if (!this.Config.nickserv.nick || !_.isString(this.Config.nickserv.nick) || _.isEmpty(this.Config.nickserv.nick)) {
+                    logger.error('Your configuration does not contain a valid nickserv nick, this is needed for elevated commands. Please fill Config.nickserv.nick with a string');
+                    this._ircWrappers.handleOnNotice(nick, to, text, message);
+                } else {
+                    if (
+                        _.toLower(nick) === _.toLower(this.Config.nickserv.nick) &&
+                        _.isString(this.Config.nickserv.password) && !_.isEmpty(this.Config.nickserv.password) &&
+                        _.toLower(c.stripColorsAndStyle(text)) === `you are now identified for ${_.toLower(to)}.`
+                    ) {
+                        // You are now identified, join channels
+                        _(this.Config.irc.channels)
+                            .each((channel, i) =>
+                                setTimeout(
+                                    () => {
+                                        logger.info(`[Identified] Joining ${channel}`);
+                                        this._ircClient.join(channel)
+                                    },
+                                    2 * 1000 * i, i,
+                                ));
+                    }
+                    else if (_.toLower(nick) === _.toLower(this.Config.nickserv.nick)) this._ircWrappers.handleAuthenticatedCommands(nick, to, text, message);
+                    else this._ircWrappers.handleOnNotice(nick, to, text, message);
+                }
+
             },
             // Handle CTCP Requests
             ctcp: (nick, to, text, type, message) => this._ircWrappers.handleCtcpCommands(nick, to, text, type, message),
@@ -365,22 +400,22 @@ class MrNodeBot {
      * @private
      */
     async _initStorageSubSystem() {
-       await storage.init();
-       try {
+        await storage.init();
+        try {
             const tmpIgnore = await storage.getItem('ignored');
             this.Ignore = tmpIgnore || this.Ignore;
             const tmpAdmins = await storage.getItem('admins');
-            if(tmpAdmins) {
+            if (tmpAdmins) {
                 this.Admins = tmpAdmins;
             } else {
                 this.Admins = [_.toLower(this.Config.owner.nick)];
                 await storage.setItem('admins', this.Admins);
             }
-       }
-       catch (err) {
-           logger.error('Error Loading the Persisted Assets'); // TODO Localize
-           return;
-       }
+        }
+        catch (err) {
+            logger.error('Error Loading the Persisted Assets'); // TODO Localize
+            return;
+        }
         logger.info(t('storage.initialized'));
     }
 
@@ -571,7 +606,7 @@ class MrNodeBot {
      * @return {boolean}
      */
     isAdmin(nick) {
-        if(!nick || !_.isString(nick)) {
+        if (!nick || !_.isString(nick)) {
             throw new Error('invalid argument (isAdmin)');
         }
         return _.includes(this.Admins, nick.toLowerCase());
@@ -583,7 +618,7 @@ class MrNodeBot {
      * @return {boolean}
      */
     isIgnored(nick) {
-        if(!nick || !_.isString(nick)) {
+        if (!nick || !_.isString(nick)) {
             throw new Error('invalid argument (isIgnored)');
         }
         return _.includes(this.Ignore, nick.toLowerCase());
