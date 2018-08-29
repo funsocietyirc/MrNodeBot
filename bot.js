@@ -178,28 +178,29 @@ class MrNodeBot {
     async _initIrc() {
         try {
             await this._connectToIrc();
+
+            // We have Nickserv configuration
+            if (
+                _.isString(this.Config.nickserv.nick) &&
+                _.isString(this.Config.nickserv.password) &&
+                !_.isEmpty(this.Config.nickserv.nick) &&
+                !_.isEmpty(this.Config.nickserv.password)
+            ) {
+                try {
+                    const first = (
+                        _.isString(this.Config.nickserv.host) &&
+                        !_.isEmpty(this.Config.nickserv.host)
+                    ) ? `@${this.Config.nickserv.host}` : '';
+                    const nickserv = `${this.Config.nickserv.nick}${first}`;
+                    this.say(nickserv, `identify ${this.Config.nickserv.password}`);
+                } catch (err) {
+                    this._errorHandler('Something went wrong during the join channels with NickServ identified process', err);
+                }
+            }
         } catch (err) {
             this._errorHandler('Something went wrong calling the _connectToIrc method', err);
         }
 
-        // We have Nickserv configuration
-        if (
-            _.isString(this.Config.nickserv.nick) &&
-            _.isString(this.Config.nickserv.password) &&
-            !_.isEmpty(this.Config.nickserv.nick) &&
-            !_.isEmpty(this.Config.nickserv.password)
-        ) {
-            try {
-                const first = (
-                    _.isString(this.Config.nickserv.host) &&
-                    !_.isEmpty(this.Config.nickserv.host)
-                ) ? `@${this.Config.nickserv.host}` : '';
-                const nickserv = `${this.Config.nickserv.nick}${first}`;
-                this._ircClient.send('PRIVMSG', nickserv, ':identify', this.Config.nickserv.password);
-            } catch (err) {
-                this._errorHandler('Something went wrong during the join channels with NickServ identified process', err);
-            }
-        }
         try {
             await this._loadDynamicAssets(false);
         } catch (err) {
@@ -220,7 +221,6 @@ class MrNodeBot {
             pm: (nick, text, message) => this._ircWrappers.handleCommands(nick, nick, text, message),
             // Handle Notices, also used to check validation for NickServ requests
             notice: (nick, to, text, message) => {
-
                 if (!this.Config.nickserv.nick || !_.isString(this.Config.nickserv.nick) || _.isEmpty(this.Config.nickserv.nick)) {
                     logger.error('Your configuration does not contain a valid nickserv nick, this is needed for elevated commands. Please fill Config.nickserv.nick with a string');
                     this._ircWrappers.handleOnNotice(nick, to, text, message);
@@ -232,6 +232,7 @@ class MrNodeBot {
                     ) {
                         // You are now identified, join channels
                         _(this.Config.irc.channels)
+                            .filter(x => !this.channels.includes(x))
                             .each((channel, i) =>
                                 setTimeout(
                                     () => {
@@ -244,7 +245,6 @@ class MrNodeBot {
                     else if (_.toLower(nick) === _.toLower(this.Config.nickserv.nick)) this._ircWrappers.handleAuthenticatedCommands(nick, to, text, message);
                     else this._ircWrappers.handleOnNotice(nick, to, text, message);
                 }
-
             },
             // Handle CTCP Requests
             ctcp: (nick, to, text, type, message) => this._ircWrappers.handleCtcpCommands(nick, to, text, type, message),
