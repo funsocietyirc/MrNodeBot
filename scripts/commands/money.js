@@ -22,7 +22,8 @@ module.exports = (app) => {
     const apiKey = _.get(app.Config, 'features.exchangeRate.apiKey', false);
 
     if (!apiKey) {
-        logger.error('A API key is required from http://fixer.io for the currency exchange feature to work')
+        logger.warn('A API key is required from http://fixer.io for the currency exchange feature to work');
+        return scriptInfo;
     }
 
     // Base currency
