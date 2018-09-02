@@ -63,39 +63,54 @@ module.exports = (app) => {
             .then(results =>
                 app.say(to, 'The images from the URL Database have been successfully purged'));
 
-    // Clean the DB of broken URLS
-    const cleanImages = (to) => {
+    const cleanImages = async (to) => {
         if (_.isString(to) && !_.isEmpty(to)) app.say(to, 'Running Clean Image command');
         else logger.info('Running Clean Images');
 
-        Models.Url.query(qb => qb.where(whereImages))
-            .fetchAll()
-            .then(results =>
-                results
-                    .pluck('url').forEach(url =>
-                        rp({
-                            uri: url,
-                            method: 'GET',
-                            encoding: null,
-                        })
-                            .then((urlResult) => {
-                                const type = fileType(urlResult);
+        try {
+            const results = await Models.Url.query(qb => qb.where(whereImages)).fetchAll();
+            const urls = results.pluck('url');
+            for (const url of urls) {
+                try {
+                    const urlResult = await rp({
+                        uri: url,
+                        method: 'GET',
+                        encoding: null,
+                    });
 
-                                // Get extension
-                                let ext = '';
-                                if (type && type.ext) ext = type.ext;
+                    const type = fileType(urlResult);
 
-                                // If Valid image extension bailout
-                                if (ext.match(/^(png|gif|jpg|jpeg)$/i)) return;
+                    // Get extension
+                    let ext = '';
+                    if (type && type.ext) ext = type.ext;
 
-                                logger.info(`Removing Non Image link ${url}`);
-                                Models.Url.where('url', url).destroy();
-                            })
-                            .catch((err) => {
-                                logger.info(`Removing Dead Image link ${url}`);
-                                Models.Url.where('url', url).destroy();
-                            })));
+                    // If Valid image extension bailout
+                    if (ext.match(/^(png|gif|jpg|jpeg)$/i)) return;
+
+                    logger.info(`Removing Non Image link ${url}`);
+                    Models.Url.where('url', url).destroy();
+                } catch (innerErr) {
+                    logger.info(`Removing Dead Image link ${url}`);
+                    try {
+                        Models.Url.where('url', url).destroy();
+                    }
+                    catch (innerInnerError) {
+                        logger.error(`Something went wrong removing a dead image link`, {
+                            message: innerInnerError.message || '',
+                            stack: innerInnerError.stack || '',
+                        });
+                    }
+                }
+            }
+        }
+        catch (err) {
+            logger.error(`Something went wrong deleting a non image link`, {
+                message: err.message || '',
+                stack: err.stack || '',
+            })
+        }
     };
+
 
     // Web Front End (Pug View)
     const imagesView = (req, res) => Models.Url.query((qb) => {
