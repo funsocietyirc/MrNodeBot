@@ -54,44 +54,59 @@ module.exports = (app) => {
                 app.say(to, 'The Image URL entries have been successfully rebuilt');
             });
 
-    // Destroy All images in the URL Table
-    const destroyImages = (to, from, text, message) =>
-        Models.Url.query(qb =>
-            qb
-                .where(whereImages))
-            .destroy()
-            .then(results =>
-                app.say(to, 'The images from the URL Database have been successfully purged'));
+    const destroyImages = async (to, from, text, message) => {
+      try {
+          await Models.Url.query(qb => qb.where(whereImages)).destroy();
+          app.say(to, `The images from the URL Database have been purged`);
+      }
+      catch (err) {
+          logger.error('Something went wrong purging images form the URL database', {
+              message: err.message || '',
+              stack: err.stack || '',
+          });
+      }
+    };
 
+    /**
+     * Clean Images
+     * @param to
+     * @returns {Promise<void>}
+     */
     const cleanImages = async (to) => {
-        if (_.isString(to) && !_.isEmpty(to)) app.say(to, 'Running Clean Image command');
-        else logger.info('Running Clean Images');
-
         try {
+            if (_.isString(to) && !_.isEmpty(to)) app.say(to, 'Running Clean Image command');
+            else logger.info('Running Clean Images');
             const results = await Models.Url.query(qb => qb.where(whereImages)).fetchAll();
             const urls = results.pluck('url');
+
+            // Check we have results
+            if (_.isEmpty(urls)) {
+                logger.info('No URLS found during clean up');
+                return;
+            }
+
             for (const url of urls) {
                 try {
+                    // Grab the web results
                     const urlResult = await rp({
                         uri: url,
                         method: 'GET',
                         encoding: null,
                     });
 
-                    const type = fileType(urlResult);
-
                     // Get extension
-                    let ext = '';
-                    if (type && type.ext) ext = type.ext;
+                    const type = fileType(urlResult);
+                    const ext = (type && type.ext) ? type.ext : '';
 
                     // If Valid image extension bailout
-                    if (ext.match(/^(png|gif|jpg|jpeg)$/i)) return;
+                    if (ext.match(/^(png|gif|jpg|jpeg)$/i)) continue;
 
+                    // Attempt Removal
                     logger.info(`Removing Non Image link ${url}`);
                     Models.Url.where('url', url).destroy();
                 } catch (innerErr) {
-                    logger.info(`Removing Dead Image link ${url}`);
                     try {
+                        logger.info(`Removing Dead Image link ${url}`);
                         Models.Url.where('url', url).destroy();
                     }
                     catch (innerInnerError) {
@@ -172,8 +187,8 @@ module.exports = (app) => {
     // Scheduler automatic cleanup
     // TODO make this configurable ala config.js
     const cronTime = new scheduler.RecurrenceRule();
-    cronTime.minute = 45;
-    cronTime.hour = 0;
+    cronTime.minute = 40;
+    cronTime.hour = 1;
     scheduler.schedule('cleanImages', cronTime, () => cleanImages(false));
 
     // Return the script info
