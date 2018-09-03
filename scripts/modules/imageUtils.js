@@ -28,7 +28,7 @@ module.exports = (app) => {
             .orWhere(field, 'like', '%.gif')
             .orWhere(field, 'like', '%.png');
     };
-
+    
     // Rebuild all images inside the URL table from the Logging table resource
     const buildImages = (to, from, text, message) =>
         Models.Logging.query(qb =>
@@ -55,16 +55,16 @@ module.exports = (app) => {
             });
 
     const destroyImages = async (to, from, text, message) => {
-      try {
-          await Models.Url.query(qb => qb.where(whereImages)).destroy();
-          app.say(to, `The images from the URL Database have been purged`);
-      }
-      catch (err) {
-          logger.error('Something went wrong purging images form the URL database', {
-              message: err.message || '',
-              stack: err.stack || '',
-          });
-      }
+        try {
+            await Models.Url.query(qb => qb.where(whereImages)).destroy();
+            app.say(to, `The images from the URL Database have been purged`);
+        }
+        catch (err) {
+            logger.error('Something went wrong purging images form the URL database', {
+                message: err.message || '',
+                stack: err.stack || '',
+            });
+        }
     };
 
     /**
@@ -92,6 +92,7 @@ module.exports = (app) => {
                         uri: url,
                         method: 'GET',
                         encoding: null,
+                        timeout: 120000,
                     });
 
                     // Get extension
@@ -126,21 +127,20 @@ module.exports = (app) => {
         }
     };
 
+    const imagesView = async (req, res, next) => {
+        try {
+            const results = await Models.Url.query((qb) => {
+                // If there is a channel in the query string
+                if (req.params.channel) qb.where('to', req.params.channel.replace(hashPattern, '#'));
+                // If there is a from in the query string
+                if (req.params.user) qb.where('from', req.params.user);
+                // Build Up Query
+                qb
+                    .where(whereImages)
+                    .orderBy('timestamp', req.query.sort || 'desc')
+                    .limit(req.query.length || 50);
+            }).fetchAll();
 
-    // Web Front End (Pug View)
-    const imagesView = (req, res) => Models.Url.query((qb) => {
-        // If there is a channel in the query string
-        if (req.params.channel) qb.where('to', req.params.channel.replace(hashPattern, '#'));
-        // If there is a from in the query string
-        if (req.params.user) qb.where('from', req.params.user);
-        // Build Up Query
-        qb
-            .where(whereImages)
-            .orderBy('timestamp', req.query.sort || 'desc')
-            .limit(req.query.length || 50);
-    })
-        .fetchAll()
-        .then((results) => {
             // Get Unique list of channels from results
             const channels = _.uniqBy(results.pluck('to'), c => _.toLower(c));
             // Get Unique list of users from the results
@@ -154,7 +154,11 @@ module.exports = (app) => {
                 currentUser: req.params.user || false,
                 moment: require('moment'),
             });
-        });
+        }
+        catch (err) {
+            return next(err);
+        }
+    };
 
     // Register Route with Application
     app.WebRoutes.set('urls', {

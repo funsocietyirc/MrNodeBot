@@ -161,7 +161,7 @@ class MrNodeBot {
      * @private
      */
     async _connectToIrc() {
-        return new Promise((resolve, reject) => this._ircClient.connect(20, () => {
+        return new Promise((resolve) => this._ircClient.connect(20, () => {
             logger.info(t('irc.connected', {
                 server: this.Config.irc.server,
                 nick: this.nick,
