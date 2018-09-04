@@ -238,14 +238,17 @@ class MrNodeBot {
                         // You are now identified, join channels
                         _(this.Config.irc.channels)
                             .filter(x => !this.channels.includes(x))
-                            .each((channel, i) =>
-                                setTimeout(
-                                    () => {
-                                        logger.info(`[Identified] Joining ${channel}`);
-                                        this._ircClient.join(channel)
-                                    },
-                                    2 * 1000 * ( i + 1),
-                                ));
+                            .each((channel, i) => {
+                                    console.dir(channel);
+                                    setTimeout(
+                                        () => {
+                                            logger.info(`[Identified] Joining ${channel}`);
+                                            this._ircClient.join(channel)
+                                        },
+                                        2 * 1000 * ( i + 1),
+                                    );
+                                }
+                            );
                     }
                     else if (_.toLower(nick) === _.toLower(this.Config.nickserv.nick)) this._ircWrappers.handleAuthenticatedCommands(nick, to, text, message);
                     else this._ircWrappers.handleOnNotice(nick, to, text, message);
