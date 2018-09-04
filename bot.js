@@ -228,6 +228,10 @@ class MrNodeBot {
                     const normalizedText = _.toLower(c.stripColorsAndStyle(text));
                     const normalizedNick = _.toLower(to);
                     const normalizedSelf = _.toLower(this.Config.nickserv.nick);
+                    console.dir(normalizedNick);
+                    console.dir(normalizedText);
+                    console.dir(normalizedSelf);
+
                     if (
                         normalizedNick === normalizedSelf &&
                         _.isString(this.Config.nickserv.password) && !_.isEmpty(this.Config.nickserv.password) &&
