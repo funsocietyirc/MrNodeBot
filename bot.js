@@ -225,35 +225,25 @@ class MrNodeBot {
                     logger.error('Your configuration does not contain a valid nickserv nick, this is needed for elevated commands. Please fill Config.nickserv.nick with a string');
                     this._ircWrappers.handleOnNotice(nick, to, text, message);
                 } else {
-                    const normalizedText = _.toLower(c.stripColorsAndStyle(text));
-                    const normalizedNick = _.toLower(to);
-                    const normalizedSelf = _.toLower(this.Config.nickserv.nick);
-                    console.dir(normalizedNick);
-                    console.dir(normalizedText);
-                    console.dir(normalizedSelf);
-
                     if (
-                        normalizedNick === normalizedSelf &&
+                        _.toLower(nick) === _.toLower(this.Config.nickserv.nick) &&
                         _.isString(this.Config.nickserv.password) && !_.isEmpty(this.Config.nickserv.password) &&
                         (
-                            normalizedText === `you are now identified for ${normalizedSelf}.` ||
-                            normalizedText === `You are already logged in as ${normalizedSelf}.`
+                            _.toLower(c.stripColorsAndStyle(text)) === `you are now identified for ${_.toLower(to)}.` ||
+                            _.toLower(c.stripColorsAndStyle(text)) === `You are already logged in as ${_.toLower(to)}.`
                         )
                     ) {
                         // You are now identified, join channels
                         _(this.Config.irc.channels)
                             .filter(x => !this.channels.includes(x))
-                            .each((channel, i) => {
-                                    console.dir(channel);
-                                    setTimeout(
-                                        () => {
-                                            logger.info(`[Identified] Joining ${channel}`);
-                                            this._ircClient.join(channel)
-                                        },
-                                        2 * 1000 * ( i + 1),
-                                    );
-                                }
-                            );
+                            .each((channel, i) =>
+                                setTimeout(
+                                    () => {
+                                        logger.info(`[Identified] Joining ${channel}`);
+                                        this._ircClient.join(channel)
+                                    },
+                                    2 * 1000 * ( i + 1),
+                                ));
                     }
                     else if (_.toLower(nick) === _.toLower(this.Config.nickserv.nick)) this._ircWrappers.handleAuthenticatedCommands(nick, to, text, message);
                     else this._ircWrappers.handleOnNotice(nick, to, text, message);
