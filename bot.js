@@ -228,9 +228,11 @@ class MrNodeBot {
                     if (
                         _.toLower(nick) === _.toLower(this.Config.nickserv.nick) &&
                         _.isString(this.Config.nickserv.password) && !_.isEmpty(this.Config.nickserv.password) &&
-                        _.toLower(c.stripColorsAndStyle(text)) === `you are now identified for ${_.toLower(to)}.`
+                        (
+                            _.toLower(c.stripColorsAndStyle(text)) === `you are now identified for ${_.toLower(to)}.` ||
+                            _.toLower(c.stripColorsAndStyle(text)) === `You are already logged in as ${_.toLower(to)}.`
+                        )
                     ) {
-                        const self = this;
                         // You are now identified, join channels
                         _(this.Config.irc.channels)
                             .filter(x => !this.channels.includes(x))
@@ -238,7 +240,7 @@ class MrNodeBot {
                                 setTimeout(
                                     () => {
                                         logger.info(`[Identified] Joining ${channel}`);
-                                        self._ircClient.join(channel)
+                                        this._ircClient.join(channel)
                                     },
                                     2 * 1000 * ( i + 1),
                                 ));
