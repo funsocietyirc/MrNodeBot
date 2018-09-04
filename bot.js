@@ -227,12 +227,13 @@ class MrNodeBot {
                 } else {
                     const normalizedText = _.toLower(c.stripColorsAndStyle(text));
                     const normalizedNick = _.toLower(to);
+                    const normalizedSelf = _.toLower(this.Config.nickserv.nick);
                     if (
-                        normalizedNick === _.toLower(this.Config.nickserv.nick) &&
+                        normalizedNick === normalizedSelf &&
                         _.isString(this.Config.nickserv.password) && !_.isEmpty(this.Config.nickserv.password) &&
                         (
-                            normalizedText === `you are now identified for ${normalizedNick}.` ||
-                            normalizedText === `You are already logged in as ${normalizedNick}.`
+                            normalizedText === `you are now identified for ${normalizedSelf}.` ||
+                            normalizedText === `You are already logged in as ${normalizedSelf}.`
                         )
                     ) {
                         // You are now identified, join channels
