@@ -225,12 +225,14 @@ class MrNodeBot {
                     logger.error('Your configuration does not contain a valid nickserv nick, this is needed for elevated commands. Please fill Config.nickserv.nick with a string');
                     this._ircWrappers.handleOnNotice(nick, to, text, message);
                 } else {
+                    const normalizedText = _.toLower(c.stripColorsAndStyle(text));
+                    const normalizedNick = _.toLower(to);
                     if (
-                        _.toLower(nick) === _.toLower(this.Config.nickserv.nick) &&
+                        normalizedNick === _.toLower(this.Config.nickserv.nick) &&
                         _.isString(this.Config.nickserv.password) && !_.isEmpty(this.Config.nickserv.password) &&
                         (
-                            _.toLower(c.stripColorsAndStyle(text)) === `you are now identified for ${_.toLower(to)}.` ||
-                            _.toLower(c.stripColorsAndStyle(text)) === `You are already logged in as ${_.toLower(to)}.`
+                            normalizedText === `you are now identified for ${normalizedNick}.` ||
+                            normalizedText === `You are already logged in as ${normalizedNick}.`
                         )
                     ) {
                         // You are now identified, join channels
