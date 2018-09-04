@@ -230,10 +230,9 @@ class MrNodeBot {
                         _.isString(this.Config.nickserv.password) && !_.isEmpty(this.Config.nickserv.password) &&
                         (
                             _.toLower(c.stripColorsAndStyle(text)) === `you are now identified for ${_.toLower(to)}.` ||
-                            _.toLower(c.stripColorsAndStyle(text)) === `You are already logged in as ${_.toLower(to)}.`
+                            _.toLower(c.stripColorsAndStyle(text)) === `you are already logged in as ${_.toLower(to)}.`
                         )
                     ) {
-                        console.dir('hit!!!');
                         // You are now identified, join channels
                         _(this.Config.irc.channels)
                             .filter(x => !this.channels.includes(x))
