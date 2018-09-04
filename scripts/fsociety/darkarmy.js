@@ -34,7 +34,7 @@ module.exports = (app) => {
             .each((channel, i) =>
                 setTimeout(
                     () => app._ircClient.join(channel),
-                    interval * i, i,
+                    interval * (i + 1),
                 ));
     };
     // Provide a OnConnected provider, this will fire when the bot connects to the network
