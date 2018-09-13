@@ -211,83 +211,101 @@ class MrNodeBot {
 
         logger.info(t('listeners.init'));
         _({
-            // Handle OnAction
-            action: (nick, to, text, message) => this._ircWrappers.handleAction(nick, to, text, message),
-            // Handle On First Line received from IRC Client
-            registered: message => this._ircWrappers.handleRegistered(message),
-            // Handle Channel Messages
-            'message#': (nick, to, text, message) => this._ircWrappers.handleCommands(nick, to, text, message),
-            // Handle Private Messages
-            pm: (nick, text, message) => this._ircWrappers.handleCommands(nick, nick, text, message),
-            // Handle Notices, also used to check validation for NickServ requests
-            notice: (nick, to, text, message) => {
-                if (!this.Config.nickserv.nick || !_.isString(this.Config.nickserv.nick) || _.isEmpty(this.Config.nickserv.nick)) {
-                    logger.error('Your configuration does not contain a valid nickserv nick, this is needed for elevated commands. Please fill Config.nickserv.nick with a string');
-                    this._ircWrappers.handleOnNotice(nick, to, text, message);
-                } else {
-                    if (
-                        _.toLower(nick) === _.toLower(this.Config.nickserv.nick) &&
-                        _.isString(this.Config.nickserv.password) && !_.isEmpty(this.Config.nickserv.password) &&
-                        (
-                            _.toLower(c.stripColorsAndStyle(text)) === `you are now identified for ${_.toLower(to)}.` ||
-                            _.toLower(c.stripColorsAndStyle(text)) === `you are already logged in as ${_.toLower(to)}.`
-                        )
-                    ) {
-                        // You are now identified, join channels
-                        _(this.Config.irc.channels)
-                            .filter(x => !this.channels.includes(x))
-                            .each((channel, i) =>
-                                setTimeout(
-                                    () => {
-                                        logger.info(`[Identified] Joining ${channel}`);
-                                        this._ircClient.join(channel)
-                                    },
-                                    2 * 1000 * ( i + 1),
-                                ));
+                // Handle OnAction
+                action: (nick, to, text, message) => this._ircWrappers.handleAction(nick, to, text, message),
+                // Handle On First Line received from IRC Client
+                registered: message => this._ircWrappers.handleRegistered(message),
+                // Handle Channel Messages
+                'message#': (nick, to, text, message) => this._ircWrappers.handleCommands(nick, to, text, message),
+                // Handle Private Messages
+                pm: (nick, text, message) => this._ircWrappers.handleCommands(nick, nick, text, message),
+                // Handle Notices, also used to check validation for NickServ requests
+                notice: (nick, to, text, message) => {
+                    if (!this.Config.nickserv.nick || !_.isString(this.Config.nickserv.nick) || _.isEmpty(this.Config.nickserv.nick)) {
+                        logger.warn('Your configuration does not contain a valid nickserv nick, this is needed for elevated commands. Please fill Config.nickserv.nick with a string');
+                        this._ircWrappers.handleOnNotice(nick, to, text, message);
                     }
-                    else if (_.toLower(nick) === _.toLower(this.Config.nickserv.nick)) this._ircWrappers.handleAuthenticatedCommands(nick, to, text, message);
+                    // We have a notice from nickserv
+                    else if (_.toLower(nick) === _.toLower(this.Config.nickserv.nick)) {
+                        if (_.isString(this.Config.nickserv.password) && !_.isEmpty(this.Config.nickserv.password)) {
+                            const normalizedText = _.toLower(c.stripColorsAndStyle(text));
+                            const normalizedTo = _.toLower(to);
+
+                            if (
+                                normalizedText === `you are now identified for ${normalizedTo}.` ||
+                                normalizedText === `you are already logged in as ${normalizedTo}.`) {
+                                // You are now identified, join channels
+                                let i = 0;
+                                for (const channel of this.Config.irc.channels.filter(x => !this.channels.includes(x))) {
+                                    setTimeout(
+                                        () => {
+                                            logger.info(`[Identified] Joining ${channel}`);
+                                            this._ircClient.join(channel);
+                                        },
+                                        2 * 1000 * ++i,
+                                    )
+                                }
+                            }
+                            else this._ircWrappers.handleAuthenticatedCommands(nick, to, text, message);
+                        }
+                        else {
+                            logger.warn('An elevated command has been attempted but NickServ is not setup');
+                        }
+                    }
                     else this._ircWrappers.handleOnNotice(nick, to, text, message);
-                }
-            },
-            // Handle CTCP Requests
-            ctcp: (nick, to, text, type, message) => this._ircWrappers.handleCtcpCommands(nick, to, text, type, message),
-            // Handle Nick changes
-            nick: (oldNick, newNick, channels, message) => this._ircWrappers.handleNickChanges(oldNick, newNick, channels, message),
-            // Handle Joins
-            join: (channel, nick, message) => this._ircWrappers.handleOnJoin(channel, nick, message),
-            // Handle On Parts
-            part: (channel, nick, reason, message) => this._ircWrappers.handleOnPart(channel, nick, reason, message),
-            // Handle On Kick
-            kick: (channel, nick, by, reason, message) => this._ircWrappers.handleOnKick(channel, nick, by, reason, message),
-            // Handle On Quit
-            quit: (nick, reason, channels, message) => this._ircWrappers.handleOnQuit(nick, reason, channels, message),
-            // Handle Topic changes
-            topic: (channel, topic, nick, message) => this._ircWrappers.handleOnTopic(channel, topic, nick, message),
-            // Catch Network Errors
-            netError: (exception) => {
-                logger.error('Something went wrong in the IRC Client network connection', exception);
-            },
-            // channel forward
-            channelForward: (nick, originalChannel, forwardedChannel, dialog) => this._ircWrappers.handleChannelForward(nick, originalChannel, forwardedChannel, dialog),
-            abort: (retryCount) => {
-                logger.error(`Lost Connection to server, retrying (attempt ${retryCount})`);
-            },
-            // Catch all to prevent drop on error
-            error: (message) => {
-                if (message.args.length && message.args[0].startsWith('Closing Link:')) {
-                    logger.info(message.args[0]);
-                    return;
-                }
-                logger.error('Uncaught IRC Client error', {
-                    message,
-                });
-            },
-        }).each((value, key) => this._ircClient.addListener(key, value));
+                },
+                // Handle CTCP Requests
+                ctcp:
+                    (nick, to, text, type, message) => this._ircWrappers.handleCtcpCommands(nick, to, text, type, message),
+                // Handle Nick changes
+                nick:
+                    (oldNick, newNick, channels, message) => this._ircWrappers.handleNickChanges(oldNick, newNick, channels, message),
+                // Handle Joins
+                join:
+                    (channel, nick, message) => this._ircWrappers.handleOnJoin(channel, nick, message),
+                // Handle On Parts
+                part:
+                    (channel, nick, reason, message) => this._ircWrappers.handleOnPart(channel, nick, reason, message),
+                // Handle On Kick
+                kick:
+                    (channel, nick, by, reason, message) => this._ircWrappers.handleOnKick(channel, nick, by, reason, message),
+                // Handle On Quit
+                quit:
+                    (nick, reason, channels, message) => this._ircWrappers.handleOnQuit(nick, reason, channels, message),
+                // Handle Topic changes
+                topic:
+                    (channel, topic, nick, message) => this._ircWrappers.handleOnTopic(channel, topic, nick, message),
+                // Catch Network Errors
+                netError:
+                    (exception) => {
+                        logger.error('Something went wrong in the IRC Client network connection', exception);
+                    },
+                // channel forward
+                channelForward:
+                    (nick, originalChannel, forwardedChannel, dialog) => this._ircWrappers.handleChannelForward(nick, originalChannel, forwardedChannel, dialog),
+                abort:
+                    (retryCount) => {
+                        logger.error(`Lost Connection to server, retrying (attempt ${retryCount})`);
+                    },
+                // Catch all to prevent drop on error
+                error:
+                    (message) => {
+                        if (message.args.length && message.args[0].startsWith('Closing Link:')) {
+                            logger.info(message.args[0]);
+                            return;
+                        }
+                        logger.error('Uncaught IRC Client error', {
+                            message,
+                        });
+                    },
+            }
+        ).each((value,key) => this._ircClient.addListener(key, value));
 
         this.OnConnected.forEach(async (x) => {
             try {
                 await x.call();
-            } catch (err) {
+            }
+            catch (err) {
                 this._errorHandler('Error in onConnected', err);
             }
         });
@@ -650,7 +668,7 @@ class MrNodeBot {
         this.Config.irc.autoConnect = false;
     }
 
-    // Properties
+// Properties
 
     /**
      * Bots IRC Nickname
