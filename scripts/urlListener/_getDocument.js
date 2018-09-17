@@ -43,11 +43,17 @@ const getDocuments = async (results, userAgent, maxLength) => {
             )
         ) {
             // TODO create a 'quite' mode on content-type discrepancies and content-length thresholds
+            const headersNormalized = ( _.has(documentCheck, 'headers') && _.has(documentCheck.headers, 'content-type') && _.isString(documentCheck.headers['content-type'])) ?
+                documentCheck.headers['content-type'].toUpperCase() : 'Unknown';
+
+            const contentLengthNormalized = ( _.has(documentCheck, 'headers') && _.has(documentCheck.headers, 'content-length') && _.isString(documentCheck.headers['content-type'])) ?
+                helpers.formatNumber(documentCheck.headers['content-length']) : 'Unknown';
+
             return Object.assign({}, results, {
                 headers: documentCheck.headers,
                 realUrl: documentCheck.request.uri.href,
                 statusCode: (_.isUndefined(documentCheck) || _.isUndefined(documentCheck.statusCode)) ? 'No Status' : documentCheck.statusCode,
-                title: `${documentCheck.headers['content-type'].toUpperCase()} Document, ${helpers.formatNumber(documentCheck.headers['content-length'] || 0)} bytes`,
+                title: `${headersNormalized} Document, ${contentLengthNormalized} bytes`,
                 overLength: true,
             });
         }

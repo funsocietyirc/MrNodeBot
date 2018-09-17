@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const logger = require('../../lib/logger');
 const Models = require('funsociety-bookshelf-model-loader');
 const getChanPopRank = require('../generators/_getChannelPopularityRanking');
 const chanParticipation = require('../lib/_channelParticipation');
