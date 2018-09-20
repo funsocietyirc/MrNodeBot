@@ -164,8 +164,11 @@ module.exports = (app) => {
                 symbol: getSymbol(normalizedFrom) || '',
             });
 
+            const formattedDiff = accounting.formatMoney( normalizedAmount - result, {
+               symbol: getSymbol(normalizedFrom) || '',
+            });
             // Report back to IRC
-            app.say(to, `At the current exchange rate ${formattedAmount} ${normalizedFrom} is ${finalResult} ${normalizedTo}, ${from}`);
+            app.say(to, `At the current exchange rate ${formattedAmount} ${normalizedFrom} is ${finalResult} ${normalizedTo}. A difference of ${formattedDiff} ${normalizedFrom}, ${from}`);
         }
         // Problem with money.js conversion
         catch (err) {
