@@ -7,7 +7,6 @@ const endPoint = 'http://www.fmylife.com/random';
 const _ = require('lodash');
 const xray = require('x-ray')();
 module.exports = count => new Promise((resolve, reject) => xray(endPoint, 'span.facebook', ['@data-text'])((err, results) => {
-    console.dir(results);
     // Error In request
     if (err) return reject(err);
     // No Results

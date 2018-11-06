@@ -8,7 +8,6 @@ const c = require('irc-colors');
 const xray = require('x-ray')();
 const Models = require('funsociety-bookshelf-model-loader');
 const excuse = require('../generators/_simpleExcuse');
-const logger = require('../../lib/logger');
 
 module.exports = (app) => {
     // Check Jeeks Website to make sure he is still alive

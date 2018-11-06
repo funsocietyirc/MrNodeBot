@@ -1,7 +1,5 @@
 const _ = require('lodash');
 
-module.exports = size => new Promise(resolve => resolve(_.sampleSize(excuses, size || 1)));
-
 /* Get a BOFH Excuse */
 const excuses = _.map([
     'clock speed', 'solar flares', 'electromagnetic radiation from satellite debris', 'static from nylon underwear', 'static from plastic slide rules',
@@ -159,3 +157,6 @@ const excuses = _.map([
     'Power surges on the Underground.', 'Don\'t worry; it\'s been deprecated. The new one is worse.', 'Excess condensation in cloud network', 'It is a layer 8 problem',
     'The math co-processor had an overflow error that leaked out and shorted the RAM', 'Leap second overloaded RHEL6 servers', 'DNS server drank too much and had a hiccup',
 ], _.capitalize);
+
+
+module.exports = size => new Promise(resolve => resolve(_.sampleSize(excuses, size || 1)));

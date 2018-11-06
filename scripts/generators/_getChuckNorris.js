@@ -3,7 +3,7 @@ const rp = require('request-promise-native');
 
 const endPoint = 'https://api.chucknorris.io/jokes/random';
 
-module.exports = async (amount) => {
+module.exports = async () => {
     try {
         const results = await rp({ uri: endPoint, json: true });
 
