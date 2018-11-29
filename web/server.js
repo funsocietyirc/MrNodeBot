@@ -12,7 +12,7 @@ const bodyParser = require('body-parser');
 const fileUpload = require('express-fileupload');
 const expressWinston = require('express-winston');
 const expressVue = require("express-vue");
-
+const socketIO = require('socket.io');
 // Default express view options
 const expressVueOptions = {
     rootPath: path.join(__dirname, '../web/vue'),
@@ -82,11 +82,15 @@ module.exports = async (app) => {
     const server = require('http').createServer(webServer);
 
     // Bind Socket.io
-    const io = webServer.socketIO =
-        _.isArray(app.Config.express.allowedOrigins) && !_.isEmpty(app.Config.express.allowedOrigins) ?
-            require('socket.io')(server, {
-                origins: app.Config.express.allowedOrigins.join(' ').trim()
-            }) : require('socket.io')(server);
+    const io = webServer.socketIO = socketIO(server);
+
+    // Add some allowed origins
+    if (
+        _.isArray(app.Config.express.allowedOrigins) && !_.isEmpty(app.Config.express.allowedOrigins)
+    ) {
+        io.origins(app.Config.express.allowedOrigins);
+    }
+
 
     // Hold on to the Logging transports
     const transports = [];
