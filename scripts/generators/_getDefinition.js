@@ -1,6 +1,7 @@
 const _ = require('lodash');
 const rp = require('request-promise-native');
 const xray = require('x-ray')();
+const helpers = require('../../helpers');
 const shortService = require('../lib/_getShortService')();
 
 const endPoint = 'http://www.dictionary.com/browse';
@@ -37,6 +38,8 @@ module.exports = async (word) => {
                     res(`No definition is available for ${xresults.definition}`);
                     return;
                 }
+
+                const text = helpers.StripNewLine(_.trim(xresults.definition.replace('See more.', '')));
 
                 shortService(apiUrl).then(link => {
                     // Set the Page Title
