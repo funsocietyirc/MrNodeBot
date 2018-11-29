@@ -1,6 +1,5 @@
 const _ = require('lodash');
 const jwt = require('jsonwebtoken');
-const cors = require('cors');
 const path = require('path');
 const helmet = require('helmet');
 const logger = require('../lib/logger');
@@ -49,24 +48,6 @@ module.exports = async (app) => {
 
     // Initialize Helmet
     webServer.use(helmet());
-
-    // Enable Cors
-    const allowedOrigins = [
-        'https://www.fsociety.online'
-    ];
-
-    webServer.use(cors({
-        origin: function (origin, callback) {
-            // allow requests with no origin
-            // (like mobile apps or curl requests)
-            if (!origin) return callback(null, true);
-            if (allowedOrigins.indexOf(origin) === -1) {
-                return callback(new Error('The CORS policy for this site does not ' +
-                    'allow access from the specified Origin.'), false);
-            }
-            return callback(null, true);
-        }
-    }));
 
     // Initiate express-vue
     const finalVueOptions = _.isObject(app.Config.vueOptions) ? _.defaults(expressVueOptions, app.Config.vueOptions) : expressVueOptions;
