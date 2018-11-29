@@ -46,7 +46,7 @@ module.exports = async (word) => {
                     res({
                         definition: xresults.definition,
                         type: _.upperFirst(xresults.type).replace(',', '').trim(),
-                        date: xresults.date.replace(';', '').trim(),
+                        date: _.isString(xresults.date) ? xresults.date.replace(';', '').trim() : 'No Date',
                         link
                     });
                 });

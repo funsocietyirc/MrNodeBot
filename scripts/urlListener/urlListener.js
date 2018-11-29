@@ -16,6 +16,7 @@ const scriptInfo = {
 const _ = require('lodash');
 const logger = require('../../lib/logger');
 const extractUrls = require('../../lib/extractUrls');
+const statusCodeErrors = require('request-promise-native/errors');
 
 // Build
 const startChain = require('./_startChain.js'); // Begin the chain
@@ -91,10 +92,18 @@ module.exports = (app) => {
                     .then(results => sendToSocket(app, results))), // Then broadcast to socketio
             )
             .then(endChain) // End the chain, cache results
-            .catch(err => logger.warn('Error in URL Listener chain', {
-                err: err.message || '',
-                stack: err.stack || '',
-            }));
+            .catch(err => {
+                //
+                if (err instanceof statusCodeErrors.StatusCodeError) {
+                    app.say(to, `Improperly configured Web Server (${url}), ${from}`);
+                    return;
+                }
+                // Something went wrong
+                logger.warn('Error in URL Listener chain', {
+                    err: err.message || '',
+                    stack: err.stack || '',
+                });
+            });
     };
 
     // Handler
