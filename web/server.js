@@ -13,6 +13,7 @@ const fileUpload = require('express-fileupload');
 const expressWinston = require('express-winston');
 const expressVue = require("express-vue");
 const socketIO = require('socket.io');
+
 // Default express view options
 const expressVueOptions = {
     rootPath: path.join(__dirname, '../web/vue'),
@@ -83,6 +84,7 @@ module.exports = async (app) => {
 
     // Bind Socket.io
     const io = webServer.socketIO = socketIO(server);
+    io.origins(['https://www.fsociety.online:443']);
 
     // Hold on to the Logging transports
     const transports = [];
