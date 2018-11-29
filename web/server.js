@@ -84,7 +84,12 @@ module.exports = async (app) => {
     // Bind Socket.io
     const io = webServer.socketIO = socketIO(server);
 
-    io.set('origins', 'https://www.fsociety.online:*');
+    io.origins((origin, callback) => {
+        if (origin !== 'https://www.fsociety.online') {
+            return callback('origin not allowed', false);
+        }
+        callback(null, true);
+    });
 
     // Hold on to the Logging transports
     const transports = [];
