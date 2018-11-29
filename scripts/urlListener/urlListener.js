@@ -20,7 +20,7 @@ const extractUrls = require('../../lib/extractUrls');
 // Build
 const startChain = require('./_startChain.js'); // Begin the chain
 const startCachedChain = require('./_startCachedChain'); // Begin cache chain
-const getDocument = require('./_getDocument'); // Get the title
+const processDocument = require('./_processDocument'); // Get the title
 const matcher = require('././_linkMatcher'); // Link Matcher
 const getShorten = require('./_getShort'); // Shorten the URL
 const safeCheck = require('./_googleSafeCheck'); // Google Safe Check
@@ -65,7 +65,7 @@ module.exports = (app) => {
 
         chain(url, to, from, text, message, is) // Begin Chain
             .then(results => (results.cached ? results : // If we Have a cached object, continue in chain
-                getDocument(results, userAgent, maxLength) // Make a request, verify the site exists, and grab metadata
+                processDocument(results, userAgent, maxLength) // Make a request, verify the site exists, and grab metadata
                     .then(safeCheck)
                     .then(results => (results.unreachable ? results : // If the site is not up, continue the chain
                         getShorten(results) // Otherwise grab the google SHORT Url

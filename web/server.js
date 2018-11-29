@@ -1,5 +1,6 @@
 const _ = require('lodash');
 const jwt = require('jsonwebtoken');
+const cors = require('cors');
 const path = require('path');
 const helmet = require('helmet');
 const logger = require('../lib/logger');
@@ -18,38 +19,13 @@ const socketIO = require('socket.io');
 const expressVueOptions = {
     rootPath: path.join(__dirname, '../web/vue'),
     vueVersion: "2.5.16",
-    // template: {
-    //     html: {
-    //         start: '<!DOCTYPE html><html>',
-    //         end: '</html>'
-    //     },
-    //     body: {
-    //         start: '<body>',
-    //         end: '</body>'
-    //     },
-    //     template: {
-    //         start: '<div id="app">',
-    //         end: '</div>'
-    //     }
-    // },
     head: {
-        // title: 'Hello this is a global title',
+        title: 'MrNodeBot',
         scripts: [
             { src: 'https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js' },
             { src: 'https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.10/lodash.min.js' },
         ],
-        // styles: [
-        //     { style: '/assets/rendered/style.css' }
-        // ]
     },
-    // data: {
-    //     foo: true,
-    //     bar: 'yes',
-    //     qux: {
-    //         id: 123,
-    //         baz: 'anything you wish, you can have any kind of object in the data object, it will be global and on every route'
-    //     }
-    // }
 };
 
 //   Web Server component:
@@ -74,6 +50,9 @@ module.exports = async (app) => {
     // Initialize Helmet
     webServer.use(helmet());
 
+    // Enable Cors
+    webServer.use(cors());
+
     // Initiate express-vue
     const finalVueOptions = _.isObject(app.Config.vueOptions) ? _.defaults(expressVueOptions, app.Config.vueOptions) :  expressVueOptions;
     const expressVueMiddleware = expressVue.init(finalVueOptions);
@@ -84,7 +63,6 @@ module.exports = async (app) => {
 
     // Bind Socket.io
     const io = webServer.socketIO = socketIO(server);
-    io.origins(['https://www.fsociety.online:443']);
 
     // Hold on to the Logging transports
     const transports = [];

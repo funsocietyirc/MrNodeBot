@@ -6,7 +6,7 @@ const helpers = require('../../helpers');
 const logger = require('../../lib/logger');
 
 // Check head for valid file size
-const validDocument = async (url, userAgent) => rp({
+const performHEADRequest = async (url, userAgent) => rp({
     uri: url,
     resolveWithFullResponse: true,
     method: 'HEAD',
@@ -18,7 +18,7 @@ const validDocument = async (url, userAgent) => rp({
 });
 
 // Fetch the Document
-const getDocument = async (url, userAgent) => rp({
+const preformGetRequest = async (url, userAgent) => rp({
     uri: url,
     resolveWithFullResponse: true,
     headers: {
@@ -28,9 +28,9 @@ const getDocument = async (url, userAgent) => rp({
     },
 });
 
-const getDocuments = async (results, userAgent, maxLength) => {
+const processDocument = async (results, userAgent, maxLength) => {
     try {
-        const documentCheck = await validDocument(results.url, userAgent);
+        const documentCheck = await performHEADRequest(results.url, userAgent);
 
         // TODO Sometimes head requests do not work
         if (
@@ -60,7 +60,7 @@ const getDocuments = async (results, userAgent, maxLength) => {
 
         try {
             // Get the document
-            const response = await getDocument(results.url, userAgent);
+            const response = await preformGetRequest(results.url, userAgent);
 
             // Append to the results Object
             const finalResults = Object.assign({}, results, {
@@ -86,13 +86,14 @@ const getDocuments = async (results, userAgent, maxLength) => {
                         resolve(finalResults);
                     });
                 })
-                    .catch((err) => {
+                    .catch(() => {
                         finalResults.title = 'Invalid HTML document';
                         return finalResults;
                     });
             } else if (_.includes(documentCheck.headers['content-type'], 'application/json')) {
                 try {
-                    const jsonResults = JSON.parse(response.body);
+                    // If invalid, a exception will be thrown
+                    JSON.parse(response.body);
                     return Object.assign({}, results, {
                         headers: documentCheck.headers,
                         realUrl: documentCheck.request.uri.href,
@@ -139,4 +140,4 @@ const getDocuments = async (results, userAgent, maxLength) => {
 
 };
 
-module.exports = getDocuments;
+module.exports = processDocument;

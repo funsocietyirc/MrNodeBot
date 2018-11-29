@@ -43,6 +43,7 @@
     "brace-expansion": "^1.1.11",
     "cheerio": "^1.0.0-rc.2",
     "clear-module": "^3.0.0",
+    "cors": "^2.8.5",
     "countdown": "^2.6.0",
     "currency-symbol-map": "^4.0.4",
     "express": "^4.16.4",
