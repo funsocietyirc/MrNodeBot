@@ -183,6 +183,12 @@ module.exports = {
     express: {
         port: 8084, // Bind Port
         address: 'http://127.0.0.1:8084', // Bind address
+        // Deal with CORS allowed Origins
+        allowedOrigins: [
+            'http://localhost:*',
+            'http://127.0.0.1:*',
+            'www.fsociety.online:*',
+        ],
         forwarded: false, // Indiciate the site is behind a Http proxy
         noFollow: true, // Prevent the express routes from being indexed by spiders
         // Rate limiter for routes in the /api/ uir space

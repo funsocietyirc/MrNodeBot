@@ -82,7 +82,11 @@ module.exports = async (app) => {
     const server = require('http').createServer(webServer);
 
     // Bind Socket.io
-    const io = webServer.socketIO = require('socket.io')(server);
+    const io = webServer.socketIO =
+        _.isArray(app.Config.express.allowedOrigins) && !_.isEmpty(app.Config.express.allowedOrigins) ?
+            require('socket.io')(server, {
+                origins: app.Config.express.allowedOrigins.join(' ').trim()
+            }) : require('socket.io')(server);
 
     // Hold on to the Logging transports
     const transports = [];
