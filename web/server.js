@@ -84,7 +84,7 @@ module.exports = async (app) => {
     // Bind Socket.io
     const io = webServer.socketIO = socketIO(server);
 
-    io.origins('*:*');
+    io.set('origins', 'https://www.fsociety.online:*');
 
     // Hold on to the Logging transports
     const transports = [];
