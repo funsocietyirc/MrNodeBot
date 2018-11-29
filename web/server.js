@@ -22,8 +22,8 @@ const expressVueOptions = {
     head: {
         title: 'MrNodeBot',
         scripts: [
-            { src: 'https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js' },
-            { src: 'https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.10/lodash.min.js' },
+            {src: 'https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js'},
+            {src: 'https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.10/lodash.min.js'},
         ],
     },
 };
@@ -51,10 +51,25 @@ module.exports = async (app) => {
     webServer.use(helmet());
 
     // Enable Cors
-    webServer.use(cors());
+    const allowedOrigins = [
+        'https://www.fsociety.online'
+    ];
+
+    webServer.use(cors({
+        origin: function (origin, callback) {
+            // allow requests with no origin
+            // (like mobile apps or curl requests)
+            if (!origin) return callback(null, true);
+            if (allowedOrigins.indexOf(origin) === -1) {
+                return callback(new Error('The CORS policy for this site does not ' +
+                    'allow access from the specified Origin.'), false);
+            }
+            return callback(null, true);
+        }
+    }));
 
     // Initiate express-vue
-    const finalVueOptions = _.isObject(app.Config.vueOptions) ? _.defaults(expressVueOptions, app.Config.vueOptions) :  expressVueOptions;
+    const finalVueOptions = _.isObject(app.Config.vueOptions) ? _.defaults(expressVueOptions, app.Config.vueOptions) : expressVueOptions;
     const expressVueMiddleware = expressVue.init(finalVueOptions);
     webServer.use(expressVueMiddleware);
 
@@ -136,8 +151,8 @@ module.exports = async (app) => {
         webServer.use((req, res, next) => {
             const credentials = auth(req);
             if (!credentials ||
-                    credentials.name !== app.Config.express.simpleAuth.username ||
-                    credentials.pass !== app.Config.express.simpleAuth.password
+                credentials.name !== app.Config.express.simpleAuth.username ||
+                credentials.pass !== app.Config.express.simpleAuth.password
             ) {
                 res.statusCode = 401;
                 const realm = _.isString(app.Config.express.simpleAuth.realm) && !_.isEmpty(app.Config.express.simpleAuth.realm) ? app.Config.express.simpleAuth.realm : 'MrNodeBot';
