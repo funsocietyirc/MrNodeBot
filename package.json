@@ -84,7 +84,7 @@
     "serve-favicon": "^2.5.0",
     "shelljs": "^0.8.3",
     "snyk": "^1.111.1",
-    "socket.io": "^2.2.0",
+    "socket.io": "2.1.1",
     "textmining": "^1.0.3",
     "twit": "^2.2.11",
     "urijs": "^1.19.1",
