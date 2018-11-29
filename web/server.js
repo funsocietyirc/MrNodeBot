@@ -82,9 +82,7 @@ module.exports = async (app) => {
     const server = require('http').createServer(webServer);
 
     // Bind Socket.io
-    const io = webServer.socketIO = socketIO(server, {
-        origins: 'https://www.fsociety.online'
-    });
+    const io = webServer.socketIO = socketIO(server);
 
     // Hold on to the Logging transports
     const transports = [];
