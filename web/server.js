@@ -84,13 +84,7 @@ module.exports = async (app) => {
     // Bind Socket.io
     const io = webServer.socketIO = socketIO(server);
 
-    // Add some allowed origins
-    if (
-        _.isArray(app.Config.express.allowedOrigins) && !_.isEmpty(app.Config.express.allowedOrigins)
-    ) {
-        io.origins(app.Config.express.allowedOrigins);
-    }
-
+    io.origins('*:*');
 
     // Hold on to the Logging transports
     const transports = [];
