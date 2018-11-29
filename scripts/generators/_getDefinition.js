@@ -1,11 +1,9 @@
 const _ = require('lodash');
 const rp = require('request-promise-native');
 const xray = require('x-ray')();
-const helpers = require('../../helpers');
 const shortService = require('../lib/_getShortService')();
 
 const endPoint = 'http://www.dictionary.com/browse';
-const config = require('../../config');
 
 module.exports = async (word) => {
     const apiUrl = `${endPoint}/${word}`;
@@ -35,16 +33,15 @@ module.exports = async (word) => {
                     return;
                 }
 
-                if (!xresults || !xresults.definition) {
+                if (!xresults || !xresults.definition || !_.isString(xresults.definition)) {
                     res(`No definition is available for ${xresults.definition}`);
                     return;
                 }
 
-                const text = helpers.StripNewLine(_.trim(xresults.definition.replace('See more.', '')));
                 shortService(apiUrl).then(link => {
                     // Set the Page Title
                     res({
-                        definition: xresults.definition,
+                        definition: text,
                         type: _.upperFirst(xresults.type).replace(',', '').trim(),
                         date: _.isString(xresults.date) ? xresults.date.replace(';', '').trim() : 'No Date',
                         link
