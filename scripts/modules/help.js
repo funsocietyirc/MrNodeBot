@@ -13,13 +13,14 @@ module.exports = (app) => {
     const list = (to, from, text, message) => {
         app.say(from, color.white.bggray.bold(`${app._ircClient.nick} has the following commands available.`));
 
+        const out = [];
         app.Commands.forEach((value, key) => {
             if (
                 app.Commands.get(key).access !== app.Config.accessLevels.admin &&
                 app.Commands.get(key).access !== app.Config.accessLevels.owner
-            ) app.say(from, `${color.bgwhite.black.bold(key)} ${helpers.ColorHelpArgs(value.desc)}`);
+            ) out.push(`${color.bgwhite.black.bold(key)} ${helpers.ColorHelpArgs(value.desc)}`);
         });
-
+        app.say(from, out.join(' -> '));
         if (to !== from) app.say(to, `The list has been sent to you ${from}, please consider messaging me directly next time`);
     };
 
