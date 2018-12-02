@@ -8,7 +8,12 @@ const _ = require('lodash');
 const c = require('irc-colors');
 const fs = require('fs');
 const path = require('path');
+const moment = require('moment');
 const storage = require('node-persist');
+const helpers = require('./helpers');
+const {exec} = require('child_process');
+const {promisify} = require('util');
+const execPromise = promisify(exec);
 
 // Project libs
 const logger = require('./lib/logger');
@@ -390,14 +395,33 @@ class MrNodeBot {
                         file,
                     }));
 
+                    // Create Script Info Object
                     const scriptInfo = {
                         fullPath,
                         info: require(`./${dir}/${file}`)(this),
                     };
 
-                    // If we have a name field, run it through a start case filter
-                    if (scriptInfo.info.name) scriptInfo.info.name = _.startCase(scriptInfo.info.name);
-                    this.LoadedScripts.push(scriptInfo);
+                    // Build up last updated information, do not await on this and throw it async so it does not slow down startup
+                    (async () => {
+                        const together = await execPromise('git log -1 --format="%cI *|*|* %cn *|*|*  %cE *|*|* %s" -- ' + fullPath);
+
+                        if (together.stderr) {
+                            throw new Error('There was an issue getting git information for scripts, git is neither not installed or not present in the PATH');
+                        }
+
+                        const togetherArr = together.stdout.split(' *|*|* ').map(x => helpers.StripNewLine(x).trim());
+
+                        scriptInfo.info.lastUpdated = {
+                            date: moment(helpers.StripNewLine(togetherArr[0]).trim()).fromNow(),
+                            author: togetherArr[1],
+                            email: togetherArr[2],
+                            subject: togetherArr[3],
+                        };
+
+                        // If we have a name field, run it through a start case filter
+                        if (scriptInfo.info.name) scriptInfo.info.name = _.startCase(scriptInfo.info.name);
+                        this.LoadedScripts.push(scriptInfo);
+                    })();
 
                     // If we have a on command, call it
                     if (_.isFunction(scriptInfo.info.onLoad)) {

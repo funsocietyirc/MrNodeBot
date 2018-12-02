@@ -3,8 +3,8 @@ const scriptInfo = {
     desc: 'Dynamically created help system',
     createdBy: 'IronY',
 };
-const color = require('irc-colors');
 const _ = require('lodash');
+const color = require('irc-colors');
 const helpers = require('../../helpers');
 
 // Provide User help
@@ -73,8 +73,14 @@ module.exports = (app) => {
         path: '/scripts',
         handler: (req, res) => {
             // Return sorted result
-            const results = _(app.LoadedScripts).map('info').compact().sortBy('name')
-                .value();
+            const results = _(app.LoadedScripts).map('info').map( x => {
+                // Assure sensible defaults
+                x.lastUpdated.date = x.lastUpdated.date || 'Unknown';
+                x.lastUpdated.author = x.lastUpdated.author || 'Unknown';
+                x.lastUpdated.subject = x.lastUpdated.subject || 'Unknown';
+                x.lastUpdated.email = x.lastUpdated.email || 'Unknown';
+                return x;
+            }).compact().sortBy(dateObj => new Date(dateObj.lastUpdated.date)).value();
             res.render('scripts', {
                 // Do not expose full path
                 results,

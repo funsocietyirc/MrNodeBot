@@ -13,11 +13,18 @@ block content
                             th Name
                             th Description
                             th Creator
+                            th Last Updated
+                            th Last Commit
+                            th Notes
                     tbody
                         each script in results
                             tr.text-left
                                 td #{script.name}
                                 td #{script.desc}
                                 td #{script.createdBy}
+                                td #{script.lastUpdated.date}
+                                td
+                                    a(href="mailto:" + script.lastUpdated.email) #{script.lastUpdated.author}
+                                td #{script.lastUpdated.subject}
 block body
     script(src='/assets/bootstrap-sortable.js')
