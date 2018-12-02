@@ -80,7 +80,7 @@ module.exports = (app) => {
                 x.lastUpdated.subject = x.lastUpdated.subject || 'Unknown';
                 x.lastUpdated.email = x.lastUpdated.email || 'Unknown';
                 return x;
-            }).compact().sortBy(dateObj => new Date(dateObj.lastUpdated.date)).value();
+            }).compact().sortBy(dateObj => new Date(dateObj.lastUpdated.rawDate)).value();
             res.render('scripts', {
                 // Do not expose full path
                 results,

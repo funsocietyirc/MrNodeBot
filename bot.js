@@ -413,6 +413,7 @@ class MrNodeBot {
 
                         scriptInfo.info.lastUpdated = {
                             date: moment(helpers.StripNewLine(togetherArr[0]).trim()).fromNow(),
+                            rawDate: moment(helpers.StripNewLine(togetherArr[0]).trim()).fromNow(),
                             author: togetherArr[1],
                             email: togetherArr[2],
                             subject: togetherArr[3],
