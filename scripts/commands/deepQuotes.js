@@ -10,7 +10,7 @@ module.exports = (app) => {
     app.Commands.set('deepquote', {
         desc: 'Deep Quotes By Jack Handy',
         access: app.Config.accessLevels.identified,
-        call: (toe) =>  app.say(to, `${gen()} -- By Jack Handy`),
+        call: (to) =>  app.say(to, `${gen()} -- By Jack Handy`),
     });
     // Return the script info
     return scriptInfo;
