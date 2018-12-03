@@ -62,9 +62,9 @@ module.exports = (app) => {
                     hit: 0,
                 })
                 .then((result) => {
-                    result.set('fired', result.get('fired') + 1);
+                    result.set('fired', result.get('fired', 0) + 1);
                     if (loadedChamber) {
-                        result.set('hit', result.get('hit') + 1);
+                        result.set('hit', result.get('hit', 0) + 1);
                     }
                     // Save
                     result.save();
