@@ -53,28 +53,32 @@ module.exports = (app) => {
         }
 
         if (Models.RouletteStats) {
-            // Async Save
-            Models.RouletteStats
-                .findOrCreate({
-                    from,
-                }, {
-                    fired: 1,
-                    hit: 0,
-                })
-                .then((result) => {
-                    result.set('fired', result.get('fired', 0) + 1);
-                    if (loadedChamber) {
-                        result.set('hit', result.get('hit', 0) + 1);
-                    }
-                    // Save
-                    result.save();
-                })
-                .catch((err) => {
+            const original = await Models.RouletteStats.findOne({
+               where: {
+                   'from': from,
+               }
+            });
+
+            if (original) {
+                original.set('fired', original.get('fired') + 1);
+                if (loadedChamber) {
+                    original.set('hit', original.get('hit') + 1);
+                }
+            }
+            else {
+                try {
+                    await Models.RouletteStats.create({
+                        'from': from,
+                        fired: 0,
+                        hit: 0,
+                    });
+                } catch (err) {
                     logger.error('Something went wrong saving a Roulette Stat', {
                         message: err.message || '',
                         stack: err.stack || '',
                     });
-                });
+                }
+            }
         }
     };
 
