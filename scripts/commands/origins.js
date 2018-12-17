@@ -1,3 +1,5 @@
+const gitlog = require('gitlog');
+
 const scriptInfo = {
     name: 'origins',
     desc: 'Show the Bots current up-time and other statistics',
@@ -5,6 +7,7 @@ const scriptInfo = {
 };
 
 const helpers = require('../../helpers');
+const short = require('../lib/_getShortService')();
 
 /**
  * Get Origins
@@ -48,7 +51,18 @@ const getOrigins = (to, from, app) => {
  * @param from
  * @param app
  */
-const getVersion = (to, from, app) => app.say(to, `My state of mind is ${app.Config.project.version}, ${from}. `);
+const getVersion = async (to, from, app) => {
+    gitlog(app.Config.gitLog, async (error, commits) => {
+        // Exit on error
+        if (error || !commits || !commits[0]) {
+            app.say(to, `My current state of mind is ${app.Config.project.version}, ${from}`);
+            return;
+        }
+        const url = `${app.Config.project.repository.url}/commit/${commits[0].abbrevHash}`;
+        const shortUrl = await short(url);
+        app.say(to, `My current state of mind is ${app.Config.project.version} (${commits[0].abbrevHash} | ${shortUrl}), ${from}`);
+    });
+};
 
 // Provide users with a brief origins story
 // Commands: origins
