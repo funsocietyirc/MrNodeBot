@@ -1,5 +1,5 @@
 # Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
-version: v1.12.0
+version: v1.13.1
 # ignores vulnerabilities until expiry date; change duration by modifying expiry date
 ignore:
   'npm:qs:20170213':
@@ -9,7 +9,7 @@ ignore:
   'npm:shelljs:20140723':
     - shelljs:
         reason: None given
-        expires: '2018-09-22T07:51:00.649Z'
+        expires: '2019-02-03T05:20:14.831Z'
   'npm:brace-expansion:20170302':
     - node-pre-gyp > tar > fstream > rimraf > glob > minimatch > brace-expansion:
         reason: None available
@@ -151,12 +151,16 @@ ignore:
   'npm:braces:20180219':
     - express-vue > vue-pronto > find-node-modules > findup-sync > micromatch > braces:
         reason: None given
-        expires: '2018-09-22T07:51:00.649Z'
+        expires: '2019-02-03T05:20:14.830Z'
+  'npm:mem:20180117':
+    - npm-check > depcheck > yargs > os-locale > mem:
+        reason: None given
+        expires: '2019-02-03T05:20:14.831Z'
 # patches apply the minimum changes required to fix a vulnerability
 patch:
   'npm:ms:20170412':
     - x-ray > debug > ms:
-        patched: '2018-04-17T22:43:03.287Z'
+        patched: '2019-01-04T05:19:35.555Z'
     - x-ray > x-ray-crawler > ms:
         patched: '2017-06-30T22:26:06.281Z'
     - socket.io > socket.io-adapter > debug > ms:
@@ -177,7 +181,7 @@ patch:
         patched: '2017-11-27T01:41:10.162Z'
   'npm:debug:20170905':
     - x-ray > debug:
-        patched: '2018-04-17T22:43:03.287Z'
+        patched: '2019-01-04T05:19:35.555Z'
     - helmet > connect > debug:
         patched: '2017-09-26T23:25:12.104Z'
     - helmet > connect > finalhandler > debug:
@@ -196,4 +200,4 @@ patch:
         patched: '2018-04-17T22:43:03.287Z'
   'npm:lodash:20180130':
     - x-ray > x-ray-crawler > cheerio > lodash:
-        patched: '2018-08-23T07:49:34.800Z'
+        patched: '2019-01-04T05:19:35.555Z'

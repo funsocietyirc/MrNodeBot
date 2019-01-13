@@ -4,7 +4,6 @@ const scriptInfo = {
     createdBy: 'IronY',
 };
 const _ = require('lodash');
-const util = require('util');
 const dict = require('../generators/_getUrbanDictionaryDefinition');
 const short = require('../lib/_getShortService')();
 const logger = require('../../lib/logger.js');
