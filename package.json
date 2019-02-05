@@ -82,7 +82,7 @@
     "scrypt": "^6.0.3",
     "serve-favicon": "^2.5.0",
     "shelljs": "^0.8.3",
-    "snyk": "^1.122.0",
+    "snyk": "^1.124.1",
     "socket.io": "^2.2.0",
     "textmining": "^1.0.3",
     "twit": "^2.2.11",
