@@ -1,7 +1,6 @@
 const _ = require('lodash');
 const Models = require('funsociety-bookshelf-model-loader');
 const extract = require('../../lib/extractNickUserIdent');
-const logger = require('../../lib/logger');
 const Moment = require('moment');
 // Configuration
 const saidCats = ['log', 'action', 'notice'];
@@ -86,8 +85,21 @@ module.exports = (input, options) => new Promise((res, rej) => {
             finalResults,
         };
 
-        // Only return the action if it happened after the last said
-        if (_.isObject(lastSaid) && _.isObject(lastAction) && !_.isUndefined(lastSaid.timestamp) && !_.isUndefined(lastAction.timestamp) && Moment(lastAction.timestamp).isAfter(Moment(lastSaid.timestamp))) { output.lastAction = lastAction; }
+
+
+
+        if (
+            !lastSaid && lastAction ||
+            (
+                _.isObject(lastSaid) &&
+                _.isObject(lastAction) &&
+                !_.isUndefined(lastSaid.timestamp) &&
+                !_.isUndefined(lastAction.timestamp) &&
+                Moment(lastAction.timestamp).isAfter(Moment(lastSaid.timestamp))
+            )
+        ) {
+            output.lastAction = lastAction;
+        }
 
         // Return
         return output;
