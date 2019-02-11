@@ -15,7 +15,7 @@ const init = (httpServer, config, logger) => new Promise((res, rej) => {
         logger.info('Initializing MQTT');
         const server = new mosca.Server(config.mqtt);
 
-        server.attachHttpServer(httpServer, 'mqtt');
+        server.attachHttpServer(httpServer, '/mqtt');
 
         server.on('ready', () => {
             // TODO attach authentication, block any publish
