@@ -21,7 +21,6 @@ const scheduler = require('./lib/scheduler');
 const preprocessText = require('./lib/preprocessText');
 const t = require('./lib/localize');
 const IrcWrappers = require('./lib/ircWrappers');
-
 const clearModule = require('clear-module');
 
 /** Dynamically created collections */
@@ -94,18 +93,24 @@ class MrNodeBot {
             this.Database = null;
             this._initDbSubSystem();
 
-            /** Web Server Instance */
-            this.WebServer = null;
-            this._initWebServer().then(() => {
-                /** User Manager */
-                this._userManager = null;
-                this._initUserManager();
+            // Attempt to Initialize MQTT server
+            require('./mqtt/server')().then(MQTTserver => {
+                this._MQTTserver = MQTTserver;
 
-                /** Irc Client Instance */
-                this._ircClient = require('./lib/ircClient');
-                this._ircWrappers = null;
-                this._initIrc();
-            });
+                /** Web Server Instance */
+                this.WebServer = null;
+                this._initWebServer().then(() => {
+                    /** User Manager */
+                    this._userManager = null;
+                    this._initUserManager();
+
+                    /** Irc Client Instance */
+                    this._ircClient = require('./lib/ircClient');
+                    this._ircWrappers = null;
+                    this._initIrc();
+                });
+           });
+
         });
     }
 

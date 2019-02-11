@@ -85,9 +85,6 @@ module.exports = (input, options) => new Promise((res, rej) => {
             finalResults,
         };
 
-
-
-
         if (
             !lastSaid && lastAction ||
             (
