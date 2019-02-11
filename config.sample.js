@@ -114,7 +114,7 @@ module.exports = {
     // Mosca configuration
     mqtt: {
         enabled: true,
-        port: 1884,
+        port: 1883,
         backend: {
             type: 'mongo',
             url: 'mongodb://127.0.0.1:27017/mrnodebot',
