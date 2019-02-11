@@ -94,12 +94,13 @@ class MrNodeBot {
             this._initDbSubSystem();
 
             // Attempt to Initialize MQTT server
-            require('./mqtt/server')().then(MQTTserver => {
-                this._MQTTserver = MQTTserver;
 
-                /** Web Server Instance */
-                this.WebServer = null;
-                this._initWebServer().then(() => {
+            /** Web Server Instance */
+            this.WebServer = null;
+            this._initWebServer().then(() => {
+                require('./mqtt/server')(this.WebServer, this.Config, logger).then(MQTTserver => {
+                    this._MQTTserver = MQTTserver;
+
                     /** User Manager */
                     this._userManager = null;
                     this._initUserManager();
@@ -109,8 +110,7 @@ class MrNodeBot {
                     this._ircWrappers = null;
                     this._initIrc();
                 });
-           });
-
+            });
         });
     }
 
@@ -255,14 +255,11 @@ class MrNodeBot {
                                         2 * 1000 * ++i,
                                     )
                                 }
-                            }
-                            else this._ircWrappers.handleAuthenticatedCommands(nick, to, text, message);
-                        }
-                        else {
+                            } else this._ircWrappers.handleAuthenticatedCommands(nick, to, text, message);
+                        } else {
                             logger.warn('An elevated command has been attempted but NickServ is not setup');
                         }
-                    }
-                    else this._ircWrappers.handleOnNotice(nick, to, text, message);
+                    } else this._ircWrappers.handleOnNotice(nick, to, text, message);
                 },
                 // Handle CTCP Requests
                 ctcp:
@@ -309,13 +306,12 @@ class MrNodeBot {
                         });
                     },
             }
-        ).each((value,key) => this._ircClient.addListener(key, value));
+        ).each((value, key) => this._ircClient.addListener(key, value));
 
         this.OnConnected.forEach(async (x) => {
             try {
                 await x.call();
-            }
-            catch (err) {
+            } catch (err) {
                 this._errorHandler('Error in onConnected', err);
             }
         });
@@ -462,8 +458,7 @@ class MrNodeBot {
                 this.Admins = [_.toLower(this.Config.owner.nick)];
                 await storage.setItem('admins', this.Admins);
             }
-        }
-        catch (err) {
+        } catch (err) {
             logger.error('Error Loading the Persisted Assets'); // TODO Localize
             return;
         }

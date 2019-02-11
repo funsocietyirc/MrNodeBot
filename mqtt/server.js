@@ -1,13 +1,12 @@
 const _ = require('lodash');
 const mosca = require('mosca');
-const config = require('../config');
-const logger = require('../lib/logger');
+
 
 /**
  * Promise wrapper around Mosca
  * @returns {Promise<any>}
  */
-const init = () => new Promise((res, rej) => {
+const init = (httpServer, config, logger) => new Promise((res, rej) => {
     try {
         if (!_.isObject(config.mqtt) || _.isEmpty(config.mqtt) || !_.isBoolean(config.mqtt.enabled) || !config.mqtt.enabled) {
             return res(false);
@@ -15,6 +14,8 @@ const init = () => new Promise((res, rej) => {
 
         logger.info('Initializing MQTT');
         const server = new mosca.Server(config.mqtt);
+
+        server.attachHttpServer(httpServer, 'mqtt');
 
         server.on('ready', () => {
             // TODO attach authentication, block any publish
