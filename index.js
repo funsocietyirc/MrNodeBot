@@ -69,4 +69,10 @@ const bot = new Bot((app) => {
             }
         }
     });
+
 }, args.config);
+
+// Initialize
+(async () => {
+    await bot.init();
+})();

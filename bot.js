@@ -41,6 +41,8 @@ const dynCollections = _([
     'OnConnected', // Fired when Connection to IRC is established
     'OnNotice', // Fired when a notice is received
     'OnCtcp', // Fired when a ctcp is received
+    'OnMQTTConnect', // Fired when MQTT Client connects
+    'OnMQTTDisconnect', // Fired when MQTT Client disconnects
 ]);
 
 /**
@@ -56,6 +58,7 @@ class MrNodeBot {
         /** Configuration Object */
         const currentConfigPath = configPath || './config';
         this.Config = require(currentConfigPath);
+
         // Fail-safe to prevent against auto-connect
         this.Config.irc.autoConnect = false;
 
@@ -75,43 +78,43 @@ class MrNodeBot {
         dynCollections.each((v) => {
             this[v] = new Map();
         });
+    }
 
-        /** Ignore List */
-        this.Ignore = [];
-        /** Admin list */
-        this.Admins = [];
-
-        // Initialize local storage
-        this._initStorageSubSystem().then(() => {
+    /**
+     * Initialize the bot
+     * @returns {Promise<void>}
+     * @private
+     */
+    async init() {
+        try {
+            /** Ignore List */
+            this.Ignore = [];
+            /** Admin list */
+            this.Admins = [];
+            /** Initialize Storage */
+            await this._initStorageSubSystem();
             /** Loaded Scripts */
             this.LoadedScripts = [];
-
             /** Application Root Path */
             this.AppRoot = require('app-root-path').toString();
-
             /** Database Instance */
-            this.Database = null;
-            this._initDbSubSystem();
-
-            // Attempt to Initialize MQTT server
-
+            this.Database = await this._initDbSubSystem();
             /** Web Server Instance */
-            this.WebServer = null;
-            this._initWebServer().then(() => {
-                require('./mqtt/server')(this.WebServer, this.Config, logger).then(MQTTserver => {
-                    this._MQTTserver = MQTTserver;
-
-                    /** User Manager */
-                    this._userManager = null;
-                    this._initUserManager();
-
-                    /** Irc Client Instance */
-                    this._ircClient = require('./lib/ircClient');
-                    this._ircWrappers = null;
-                    this._initIrc();
-                });
-            });
-        });
+            this.WebServer = await this._initWebServer();
+            /** Initialize SocketIO */
+            this._initSocketIO(this.WebServer);
+            /** Initialize MQTT Server */
+            this._MQTTserver = await this._initMQTTServer();
+            /** Initialize the User manager */
+            this._userManager = await this._initUserManager();
+            /** Initialize the IRC Client */
+            this._ircClient = require('./lib/ircClient');
+            /** Initialize the IRC Wrappers */
+            this._ircWrappers = await this._initIrc();
+        }
+        catch (err) {
+            this._errorHandler('Something went wrong in the primary init function', err);
+        }
     }
 
     /**
@@ -133,25 +136,24 @@ class MrNodeBot {
      */
     async _initWebServer() {
         logger.info(t('webServer.starting'));
-        this.WebServer = await require('./web/server')(this);
+        const webServer = await require('./web/server')(this);
 
         logger.info(t('webServer.started', {
             port: this.Config.express.port,
         }));
 
-        // Initialize the SocketIO service
-        this._initSocketIO();
+        return webServer;
     }
 
     /**
      * Initialize SocketIO
      * @private
      */
-    _initSocketIO() {
+    _initSocketIO(webServer) {
         logger.info(`SocketIO is now bound to the Express instance running on ${this.Config.express.port}`);
 
         // Socket IO Master connection event
-        this.WebServer.socketIO.on('connection', (sock) => {
+        webServer.socketIO.on('connection', (sock) => {
             // Logging is turned off, bail
             if (!_.isObject(this.Config.socketIO) || !this.Config.socketIO.logging) return;
             // Log Connection
@@ -163,6 +165,81 @@ class MrNodeBot {
             // Log Error
             sock.on('error', err => this._errorHandler('Socket.IO Error', err));
         });
+    }
+
+    /**
+     * Spin up the mqtt server
+     * @returns {Promise<any>}
+     * @private
+     */
+    async _initMQTTServer() {
+        const mqttServer = await require('./mqtt/server')(this.Config, logger);
+
+        // No MQTT server enabled
+        if (!mqttServer) {
+            logger.info(`MQTT is not enabled`);
+            return mqttServer;
+        }
+
+        // Client Disconnected
+        mqttServer.on('clientConnected', (client) => {
+            this.OnMQTTConnect.forEach(async (command, key) => {
+                try {
+                    // Is the callback a promise?
+                    const isPromise = helpers.isAsync(command.call);
+                    // Call Function
+                    const call = command.call.bind(this, client);
+                    if (isPromise) return await call();
+                    call();
+                } catch (err) {
+                    this._errorHandler(t('errors.genericError', {
+                        command: 'onMQTTConnect',
+                    }), err);
+                }
+            });
+        });
+
+        // Client Connected
+        mqttServer.on('clientConnected', (client) => {
+            logger.info(`MQTT Client Connected ${client.id}`);
+
+            this.OnMQTTConnect.forEach(async (command, key) => {
+                try {
+                    // Is the callback a promise?
+                    const isPromise = helpers.isAsync(command.call);
+                    // Call Function
+                    const call = command.call.bind(this, client);
+                    if (isPromise) return await call();
+                    call();
+                } catch (err) {
+                    this._errorHandler(t('errors.genericError', {
+                        command: 'onMQTTConnect',
+                    }), err);
+                }
+            });
+        });
+
+        // Client Connected
+        mqttServer.on('clientDisconnected', (client) => {
+            logger.info(`MQTT Client Disconnected ${client.id}`);
+
+            this.OnMQTTConnect.forEach(async (command, key) => {
+                try {
+                    // Is the callback a promise?
+                    const isPromise = helpers.isAsync(command.call);
+                    // Call Function
+                    const call = command.call.bind(this, client);
+                    if (isPromise) return await call();
+                    call();
+                } catch (err) {
+                    this._errorHandler(t('errors.genericError', {
+                        command: 'onMQTTDisconnect',
+                    }), err);
+                }
+            });
+        });
+
+        return mqttServer;
     }
 
     /**
@@ -217,23 +294,23 @@ class MrNodeBot {
             this._errorHandler('Something went wrong calling the _loadDynamicAssets method', err);
         }
 
-        this._ircWrappers = new IrcWrappers(this);
+        const ircWrappers = new IrcWrappers(this);
 
         logger.info(t('listeners.init'));
         _({
                 // Handle OnAction
-                action: (nick, to, text, message) => this._ircWrappers.handleAction(nick, to, text, message),
+                action: (nick, to, text, message) => ircWrappers.handleAction(nick, to, text, message),
                 // Handle On First Line received from IRC Client
-                registered: message => this._ircWrappers.handleRegistered(message),
+                registered: message => ircWrappers.handleRegistered(message),
                 // Handle Channel Messages
-                'message#': (nick, to, text, message) => this._ircWrappers.handleCommands(nick, to, text, message),
+                'message#': (nick, to, text, message) => ircWrappers.handleCommands(nick, to, text, message),
                 // Handle Private Messages
-                pm: (nick, text, message) => this._ircWrappers.handleCommands(nick, nick, text, message),
+                pm: (nick, text, message) => ircWrappers.handleCommands(nick, nick, text, message),
                 // Handle Notices, also used to check validation for NickServ requests
                 notice: (nick, to, text, message) => {
                     if (!this.Config.nickserv.nick || !_.isString(this.Config.nickserv.nick) || _.isEmpty(this.Config.nickserv.nick)) {
                         logger.warn('Your configuration does not contain a valid nickserv nick, this is needed for elevated commands. Please fill Config.nickserv.nick with a string');
-                        this._ircWrappers.handleOnNotice(nick, to, text, message);
+                        ircWrappers.handleOnNotice(nick, to, text, message);
                     }
                     // We have a notice from nickserv
                     else if (_.toLower(nick) === _.toLower(this.Config.nickserv.nick)) {
@@ -255,33 +332,33 @@ class MrNodeBot {
                                         2 * 1000 * ++i,
                                     )
                                 }
-                            } else this._ircWrappers.handleAuthenticatedCommands(nick, to, text, message);
+                            } else ircWrappers.handleAuthenticatedCommands(nick, to, text, message);
                         } else {
                             logger.warn('An elevated command has been attempted but NickServ is not setup');
                         }
-                    } else this._ircWrappers.handleOnNotice(nick, to, text, message);
+                    } else ircWrappers.handleOnNotice(nick, to, text, message);
                 },
                 // Handle CTCP Requests
                 ctcp:
-                    (nick, to, text, type, message) => this._ircWrappers.handleCtcpCommands(nick, to, text, type, message),
+                    (nick, to, text, type, message) => ircWrappers.handleCtcpCommands(nick, to, text, type, message),
                 // Handle Nick changes
                 nick:
-                    (oldNick, newNick, channels, message) => this._ircWrappers.handleNickChanges(oldNick, newNick, channels, message),
+                    (oldNick, newNick, channels, message) => ircWrappers.handleNickChanges(oldNick, newNick, channels, message),
                 // Handle Joins
                 join:
-                    (channel, nick, message) => this._ircWrappers.handleOnJoin(channel, nick, message),
+                    (channel, nick, message) => ircWrappers.handleOnJoin(channel, nick, message),
                 // Handle On Parts
                 part:
-                    (channel, nick, reason, message) => this._ircWrappers.handleOnPart(channel, nick, reason, message),
+                    (channel, nick, reason, message) => ircWrappers.handleOnPart(channel, nick, reason, message),
                 // Handle On Kick
                 kick:
-                    (channel, nick, by, reason, message) => this._ircWrappers.handleOnKick(channel, nick, by, reason, message),
+                    (channel, nick, by, reason, message) => ircWrappers.handleOnKick(channel, nick, by, reason, message),
                 // Handle On Quit
                 quit:
-                    (nick, reason, channels, message) => this._ircWrappers.handleOnQuit(nick, reason, channels, message),
+                    (nick, reason, channels, message) => ircWrappers.handleOnQuit(nick, reason, channels, message),
                 // Handle Topic changes
                 topic:
-                    (channel, topic, nick, message) => this._ircWrappers.handleOnTopic(channel, topic, nick, message),
+                    (channel, topic, nick, message) => ircWrappers.handleOnTopic(channel, topic, nick, message),
                 // Catch Network Errors
                 netError:
                     (exception) => {
@@ -289,7 +366,7 @@ class MrNodeBot {
                     },
                 // channel forward
                 channelForward:
-                    (nick, originalChannel, forwardedChannel, dialog) => this._ircWrappers.handleChannelForward(nick, originalChannel, forwardedChannel, dialog),
+                    (nick, originalChannel, forwardedChannel, dialog) => ircWrappers.handleChannelForward(nick, originalChannel, forwardedChannel, dialog),
                 abort:
                     (retryCount) => {
                         logger.error(`Lost Connection to server, retrying (attempt ${retryCount})`);
@@ -317,19 +394,21 @@ class MrNodeBot {
         });
 
         if (_.isFunction(this._callback)) this._callback(this);
+
+        return ircWrappers;
     }
 
     /**
      * Initialize Database Subsystem
      * @private
      */
-    _initDbSubSystem() {
+    async _initDbSubSystem() {
         // We have a Database available
         if (this.Config.knex.enabled) {
             logger.info(t('database.initializing'));
-            this.Database = require('./database/client');
+            const db = require('./database/client');
             logger.info(t('database.initialized'));
-            return;
+            return db;
         }
 
         // We have no Database available
@@ -337,23 +416,21 @@ class MrNodeBot {
             feature: 'Database Core',
         }));
 
-        this.Database = false;
+        return false;
     }
 
     /**
      * Initialize User Manager
      * @private
      */
-    _initUserManager() {
+    async _initUserManager() {
         if (!this.Database) {
             logger.info(t('database.missing', {
                 feature: 'User Manager',
             }));
             return;
         }
-
-        const UserManager = require('./lib/userManager');
-        this._userManager = new UserManager();
+        return new (require('./lib/userManager'))();
     }
 
     /**

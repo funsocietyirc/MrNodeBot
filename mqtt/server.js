@@ -6,16 +6,25 @@ const mosca = require('mosca');
  * Promise wrapper around Mosca
  * @returns {Promise<any>}
  */
-const init = (httpServer, config, logger) => new Promise((res, rej) => {
+const init = (config, logger) => new Promise((res, rej) => {
     try {
         if (!_.isObject(config.mqtt) || _.isEmpty(config.mqtt) || !_.isBoolean(config.mqtt.enabled) || !config.mqtt.enabled) {
             return res(false);
         }
 
         logger.info('Initializing MQTT');
-        const server = new mosca.Server(config.mqtt);
 
-        server.attachHttpServer(httpServer, '/mqtt');
+        // Normalize Configuration
+        const normalizedConfig = (_.isString(config.mqtt.persistence) && !_.isEmpty(config.mqtt.persistence)) ?
+            Object.assign({},config.mqtt, {
+                persistence: {
+                    factory: mosca.persistence[config.mqtt.persistence],
+                    url: config.mqtt.backend.url
+                },
+            }) : config.mqtt;
+
+        // Initialize Server
+        const server = new mosca.Server(normalizedConfig);
 
         server.on('ready', () => {
             // TODO attach authentication, block any publish

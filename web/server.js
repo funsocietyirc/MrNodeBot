@@ -58,7 +58,7 @@ module.exports = async (app) => {
     const server = require('http').createServer(webServer);
 
     // Bind Socket.io
-    const io = webServer.socketIO = socketIO(server);
+    webServer.socketIO = socketIO(server);
 
     // Hold on to the Logging transports
     const transports = [];
