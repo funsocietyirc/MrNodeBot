@@ -15,7 +15,13 @@ const init = () => new Promise((res, rej) => {
 
         logger.info('Initializing MQTT');
         const server = new mosca.Server(config.mqtt);
+
         server.on('ready', () => {
+            // TODO attach authentication, block any publish
+            server.authorizePublish = function(client, topic, payload, callback) {
+                callback(null, false);
+            };
+
             logger.info('MQTT Ready');
             res(server);
         });
