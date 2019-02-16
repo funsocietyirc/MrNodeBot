@@ -1,5 +1,5 @@
 # Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
-version: v1.13.1
+version: v1.13.3
 # ignores vulnerabilities until expiry date; change duration by modifying expiry date
 ignore:
   'npm:qs:20170213':
@@ -9,7 +9,7 @@ ignore:
   'npm:shelljs:20140723':
     - shelljs:
         reason: None given
-        expires: '2019-02-03T05:20:14.831Z'
+        expires: '2019-03-18T02:52:24.366Z'
   'npm:brace-expansion:20170302':
     - node-pre-gyp > tar > fstream > rimraf > glob > minimatch > brace-expansion:
         reason: None available
@@ -151,11 +151,43 @@ ignore:
   'npm:braces:20180219':
     - express-vue > vue-pronto > find-node-modules > findup-sync > micromatch > braces:
         reason: None given
-        expires: '2019-02-03T05:20:14.830Z'
+        expires: '2019-03-18T02:52:24.366Z'
   'npm:mem:20180117':
     - npm-check > depcheck > yargs > os-locale > mem:
         reason: None given
-        expires: '2019-02-03T05:20:14.831Z'
+        expires: '2019-03-18T02:52:24.366Z'
+  SNYK-JS-LODASH-73638:
+    - mosca > ioredis > lodash:
+        reason: None given
+        expires: '2019-03-18T02:52:24.366Z'
+    - mosca > ascoltatori > kafka-node > lodash:
+        reason: None given
+        expires: '2019-03-18T02:52:24.366Z'
+    - x-ray > x-ray-crawler > cheerio > lodash:
+        reason: None given
+        expires: '2019-03-18T02:52:24.366Z'
+  SNYK-JS-LODASH-73639:
+    - mosca > ioredis > lodash:
+        reason: None given
+        expires: '2019-03-18T02:52:24.366Z'
+    - mosca > ascoltatori > kafka-node > lodash:
+        reason: None given
+        expires: '2019-03-18T02:52:24.366Z'
+    - x-ray > x-ray-crawler > cheerio > lodash:
+        reason: None given
+        expires: '2019-03-18T02:52:24.366Z'
+  SNYK-JS-STATICEVAL-173693:
+    - mosca > brfs > static-module > static-eval:
+        reason: None given
+        expires: '2019-03-18T02:52:24.366Z'
+  'npm:bl:20160119':
+    - mosca > level-sublevel > levelup > bl:
+        reason: None given
+        expires: '2019-03-18T02:52:24.366Z'
+  'npm:bson:20180225':
+    - mosca > mongodb > mongodb-core > bson:
+        reason: None given
+        expires: '2019-03-18T02:52:24.366Z'
 # patches apply the minimum changes required to fix a vulnerability
 patch:
   'npm:ms:20170412':
@@ -201,3 +233,7 @@ patch:
   'npm:lodash:20180130':
     - x-ray > x-ray-crawler > cheerio > lodash:
         patched: '2019-01-04T05:19:35.555Z'
+      mosca > ascoltatori > kafka-node > lodash:
+        patched: '2019-02-16T02:50:52.932Z'
+    - mosca > ioredis > lodash:
+        patched: '2019-02-16T02:50:52.932Z'
