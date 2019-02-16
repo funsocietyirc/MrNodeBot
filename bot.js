@@ -32,6 +32,7 @@ const dynCollections = _([
     'WebRoutes', // Express JS Web routes
     'Commands', // IRC Trigger commands
     'Stats', // Basic usage stats
+    // IRC Events
     'OnAction', // Action Listeners
     'OnJoin', // Fired when user joins channel
     'OnKick', // Fired when user is kicked from channel
@@ -40,9 +41,15 @@ const dynCollections = _([
     'OnTopic', // Fired when topic is changed
     'OnConnected', // Fired when Connection to IRC is established
     'OnNotice', // Fired when a notice is received
-    'OnCtcp', // Fired when a ctcp is received
+    'OnCtcp', // Fired when a CTCP is received
+    // MQTT Events
     'OnMQTTConnect', // Fired when MQTT Client connects
-    'OnMQTTDisconnect', // Fired when MQTT Client disconnects
+    'OnMQTTDisconnect', // Fired when MQTT Client disconnects,
+    'OnMQTTDisconnecting', // MQTT Disconnected
+    'OnMQTTPublished', // MQTT Messaged Published
+    'OnMQTTDelivered', // MQTT Message Delivered
+    'OnMQTTSubscribed', // MQTT Subscribed
+    'OnMQTTUnsubscribed', // MQTT Unsubscribed
 ]);
 
 /**
@@ -180,24 +187,6 @@ class MrNodeBot {
             logger.info(`MQTT is not enabled`);
             return mqttServer;
         }
-
-        // Client Disconnected
-        mqttServer.on('clientConnected', (client) => {
-            this.OnMQTTConnect.forEach(async (command, key) => {
-                try {
-                    // Is the callback a promise?
-                    const isPromise = helpers.isAsync(command.call);
-                    // Call Function
-                    const call = command.call.bind(this, client);
-                    if (isPromise) return await call();
-                    call();
-                } catch (err) {
-                    this._errorHandler(t('errors.genericError', {
-                        command: 'onMQTTConnect',
-                    }), err);
-                }
-            });
-        });
 
         // Client Connected
         mqttServer.on('clientConnected', (client) => {

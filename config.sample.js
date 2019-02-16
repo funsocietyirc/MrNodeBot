@@ -270,6 +270,10 @@ module.exports = {
             repostLimit: {
                 '#mrnodebot3': 2,
             },
+            // Head whitelist, anything here will not require a pre-flight head request for URL matching
+            // use host format, eg: 'news.ycombinator.com'
+            headWhitelist: [
+            ],
             // Amount of characters to limit title to, 0 or nothing for no limit
             titleMaxLimit: {
                 '#mrnodebot3': 255,

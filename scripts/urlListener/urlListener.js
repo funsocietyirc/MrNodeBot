@@ -66,7 +66,7 @@ module.exports = (app) => {
 
         chain(url, to, from, text, message, is) // Begin Chain
             .then(results => (results.cached ? results : // If we Have a cached object, continue in chain
-                processDocument(results, userAgent, maxLength) // Make a request, verify the site exists, and grab metadata
+                processDocument(results, userAgent, maxLength, _.isArray(app.Config.features.urls.headWhitelist)  ? app.Config.features.urls.headWhitelist : []) // Make a request, verify the site exists, and grab metadata
                     .then(safeCheck)
                     .then(results => (results.unreachable ? results : // If the site is not up, continue the chain
                         getShorten(results) // Otherwise grab the google SHORT Url
@@ -99,6 +99,7 @@ module.exports = (app) => {
                     return;
                 }
                 // Something went wrong
+                    console.dir(err)
                 logger.warn('Error in URL Listener chain', {
                     err: err.message || '',
                     stack: err.stack || '',
