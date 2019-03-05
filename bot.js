@@ -118,8 +118,7 @@ class MrNodeBot {
             this._ircClient = require('./lib/ircClient');
             /** Initialize the IRC Wrappers */
             this._ircWrappers = await this._initIrc();
-        }
-        catch (err) {
+        } catch (err) {
             this._errorHandler('Something went wrong in the primary init function', err);
         }
     }
@@ -385,6 +384,15 @@ class MrNodeBot {
         if (_.isFunction(this._callback)) this._callback(this);
 
         return ircWrappers;
+    }
+
+    /**
+     * Convenience wrapper for running code if there is a MQTT connection established
+     * @param callback
+     * @returns {Promise<*>} | Function | boolean
+     */
+    async hasMqtt(callback) {
+        return !this._MQTTserver ? false : (helpers.isAsync(callback) ? await callback() : callback());
     }
 
     /**
@@ -737,7 +745,7 @@ class MrNodeBot {
     }
 
 
-    /**
+    /**4
      * Perform a Notice over IRC
      * @param {string} target Nick / Channel to say it to
      * @param {string} message What to say
