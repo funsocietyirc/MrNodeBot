@@ -2,8 +2,9 @@ dist: trusty
 sudo: false
 language: node_js
 node_js:
-  - "9"
-  - "8"
+  - "12"
+    "11"
+  - "10"
 compiler:
   - gcc
   - clang
@@ -17,9 +18,7 @@ before_install:
   - npm install -g npm
   - cp config.sample.js config.js
 cache:
-#  yarn: true
   directories:
-    - $HOME/.yarn-cache
     - node_modules
 script:
   - "npm test"
