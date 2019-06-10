@@ -47,7 +47,7 @@
     "currency-symbol-map": "^4.0.4",
     "express": "^4.17.0",
     "express-fileupload": "^1.1.4",
-    "express-rate-limit": "^4.0.1",
+    "express-rate-limit": "^5.0.0",
     "express-vue": "^5.8.2",
     "express-winston": "git+https://github.com/bithavoc/express-winston.git#winston-3",
     "file-type": "^11.1.0",
