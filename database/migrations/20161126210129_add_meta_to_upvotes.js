@@ -1,4 +1,4 @@
-exports.up = function (knex, Promise) {
+exports.up = function (knex) {
     return knex.schema.table('upvotes', table => Promise.all([
         knex.schema.hasColumn('upvotes', 'user').then((exists) => {
             if (!exists) knex.schema.table('upvotes', t => t.string('user').collate('utf8mb4_unicode_ci'));

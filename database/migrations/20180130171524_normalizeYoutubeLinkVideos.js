@@ -1,6 +1,6 @@
 const helpers = require('../../helpers');
 
-exports.up = async (knex, Promise) => {
+exports.up = async (knex) => {
     const results = await knex('youTubeLink').select();
     const actions = [];
     for (const result of results) {
