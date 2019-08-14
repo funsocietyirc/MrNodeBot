@@ -1,12 +1,11 @@
 const _ = require('lodash');
 const mosca = require('mosca');
 
-
 /**
  * Promise wrapper around Mosca
  * @returns {Promise<any>}
  */
-const init = (config, logger) => new Promise((res, rej) => {
+const init = (config, logger) => new Promise((res) => {
     try {
         if (!_.isObject(config.mqtt) || _.isEmpty(config.mqtt) || !_.isBoolean(config.mqtt.enabled) || !config.mqtt.enabled) {
             return res(false);
