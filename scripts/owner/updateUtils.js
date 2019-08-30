@@ -49,7 +49,7 @@ module.exports = (app) => {
     }));
 
     // Update packages
-    const updatePackages = pkgManager => new Promise((resolve, reject) => shell.exec(pkgManager === 'yarn' ? 'yarn' : `${pkgManager} install`, execSettings(), (code, stdOut, stdErr) => {
+    const updatePackages = pkgManager => new Promise((resolve, reject) => shell.exec(pkgManager === 'yarn' ? 'yarn' : `${pkgManager} install --no-optional --no-audit --no-package-lock`, execSettings(), (code, stdOut, stdErr) => {
         // Something went wrong updating packages
         if (code !== 0) {
             // Log Error
