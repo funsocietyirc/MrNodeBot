@@ -72,7 +72,7 @@ module.exports = (app) => {
     }));
 
     // Check Diff
-    const checkDiff = abbrevHash => new Promise((resolve, reject) => shell.exec(`git diff-tree --no-commit-id --name-only -r ${abbrevHash}`, execSettings(), (code, stdOut, stdErr) => {
+    const checkDiff = abbrevHash => new Promise((resolve, reject) => shell.exec(`git diff --name-only`, execSettings(), (code, stdOut, stdErr) => {
         // Something went wrong
         if (code !== 0 || _.isEmpty(stdOut)) {
             logger.error('Was unable to read the commit ', {code, stdOut, stdErr});
