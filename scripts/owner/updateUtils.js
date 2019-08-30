@@ -49,7 +49,7 @@ module.exports = (app) => {
     }));
 
     // Update packages
-    const updatePackages = pkgManager => new Promise((resolve, reject) => shell.exec(pkgManager === 'yarn' ? 'yarn' : `${pkgManager} install --no-optional --no-audit --no-package-lock`, execSettings(), (code, stdOut, stdErr) => {
+    const updatePackages = pkgManager => new Promise((resolve, reject) => shell.exec(pkgManager === 'yarn' ? 'yarn' : `${pkgManager} install`, execSettings(), (code, stdOut, stdErr) => {
         // Something went wrong updating packages
         if (code !== 0) {
             // Log Error
@@ -71,9 +71,8 @@ module.exports = (app) => {
         resolve(commits);
     }));
 
-    // Stop gap requires git config --global core.pager cat
     // Check Diff
-    const checkDiff = abbrevHash => new Promise((resolve, reject) => shell.exec(`git diff --name-only`, execSettings(), (code, stdOut, stdErr) => {
+    const checkDiff = abbrevHash => new Promise((resolve, reject) => shell.exec(`git diff-tree --no-commit-id --name-only -r ${abbrevHash}`, execSettings(), (code, stdOut, stdErr) => {
         // Something went wrong
         if (code !== 0 || _.isEmpty(stdOut)) {
             logger.error('Was unable to read the commit ', {code, stdOut, stdErr});
