@@ -71,6 +71,7 @@ module.exports = (app) => {
         resolve(commits);
     }));
 
+    // Stop gap requires git config --global core.pager cat
     // Check Diff
     const checkDiff = abbrevHash => new Promise((resolve, reject) => shell.exec(`git diff --name-only`, execSettings(), (code, stdOut, stdErr) => {
         // Something went wrong
