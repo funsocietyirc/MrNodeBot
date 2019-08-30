@@ -49,20 +49,18 @@ module.exports = (app) => {
     }));
 
     // Update packages
-    const updatePackages = pkgManager => new Promise(
-        (resolve, reject) =>
-            shell.exec(pkgManager === 'yarn' ? 'yarn' : `${pkgManager} install --no-optional --no-audit --no-package-lock`, execSettings(), (code, stdOut, stdErr) => {
-                // Something went wrong updating packages
-                if (code !== 0) {
-                    // Log Error
-                    const errMsg = `Something went wrong running ${pkgManager.toUpperCase()} install`;
-                    logger.error(errMsg, {code, stdErr, stdOut});
-                    return reject(new Error(errMsg));
-                }
+    const updatePackages = pkgManager => new Promise((resolve, reject) => shell.exec(pkgManager === 'yarn' ? 'yarn' : `${pkgManager} install --no-optional --no-audit --no-package-lock`, execSettings(), (code, stdOut, stdErr) => {
+        // Something went wrong updating packages
+        if (code !== 0) {
+            // Log Error
+            const errMsg = `Something went wrong running ${pkgManager.toUpperCase()} install`;
+            logger.error(errMsg, {code, stdErr, stdOut});
+            return reject(new Error(errMsg));
+        }
 
-                // Everything went well
-                resolve({stdCode: code, stdOut, stdErr});
-            }));
+        // Everything went well
+        resolve({stdCode: code, stdOut, stdErr});
+    }));
 
     // Fetch the git log
     const getGitLog = () => new Promise((resolve, reject) => gitlog(app.Config.gitLog, (error, commits) => {
@@ -189,7 +187,7 @@ module.exports = (app) => {
         const hasYarnLock = fs.existsSync(path.resolve(process.cwd(), 'yarn.lock'));
 
         // Validate the package manager is available
-        const pkgManager = (shell.which('yarn') && hasYarnLock) ? 'yarn' : (shell.which('npm')) ? 'npm' : false;
+        const pkgManager = (shell.which('yarn') && hasYarnLock) ? 'yarn': (shell.which('npm')) ? 'npm' : false;
         if (!pkgManager) {
             attemptUnlock();
             logger.error('Cannot find package manager during upgrade');
@@ -316,12 +314,13 @@ module.exports = (app) => {
             else {
                 reload(to, from); // Reload scripts
             }
-        } catch (err) {
+        } catch(err) {
             logger.error('Something went wrong updating', {
                 message: err.message || '',
                 stack: err.stack || '',
             });
-        } finally {
+        }
+        finally {
             attemptUnlock();
         }
     };
