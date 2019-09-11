@@ -158,7 +158,7 @@ module.exports = (app) => {
 
     // Register IRC Command
     app.Commands.set('happening', {
-        desc: 'Mr. Robot Season 3 countdown',
+        desc: 'Mr. Robot Season 4 countdown',
         access: app.Config.accessLevels.identified,
         call: happening,
     });
