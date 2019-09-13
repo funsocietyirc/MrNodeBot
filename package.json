@@ -81,7 +81,7 @@
     "request-promise-native": "^1.0.7",
     "serve-favicon": "^2.5.0",
     "shelljs": "^0.8.3",
-    "snyk": "^1.222.0",
+    "snyk": "^1.226.2",
     "socket.io": "^2.2.0",
     "textmining": "^1.0.3",
     "twit": "^2.2.11",
