@@ -1,11 +1,12 @@
-const Models = require('funsociety-bookshelf-model-loader');
+const Models = require("funsociety-bookshelf-model-loader");
 
 const Greeter = Models.Base.extend({
-    tableName: 'greeter',
-    hasTimestamps: ['timestamp'],
+    tableName: "greeter",
+    hasTimestamps: ["timestamp"],
     soft: false,
+    requireFetch: false
 });
 
 module.exports = {
-    Greeter: Models.Bookshelf.model('greeter', Greeter),
+    Greeter: Models.Bookshelf.model("greeter", Greeter)
 };

@@ -1,11 +1,12 @@
-const Models = require('funsociety-bookshelf-model-loader');
+const Models = require("funsociety-bookshelf-model-loader");
 
 const JoinLogging = Models.Base.extend({
-    tableName: 'joinLogging',
-    hasTimestamps: ['timestamp'],
+    tableName: "joinLogging",
+    hasTimestamps: ["timestamp"],
     soft: false,
+    requireFetch: false
 });
 
 module.exports = {
-    JoinLogging: Models.Bookshelf.model('joinLogging', JoinLogging),
+    JoinLogging: Models.Bookshelf.model("joinLogging", JoinLogging)
 };

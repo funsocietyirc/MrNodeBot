@@ -1,14 +1,15 @@
-const Models = require('funsociety-bookshelf-model-loader');
+const Models = require("funsociety-bookshelf-model-loader");
 
 const Mention = Models.Base.extend({
-    tableName: 'mention',
-    hasTimestamps: ['timestamp'],
+    tableName: "mention",
+    hasTimestamps: ["timestamp"],
     soft: false,
+    requireFetch: false,
     mentioned() {
         return this.hasMany(Models.Mentioned);
-    },
+    }
 });
 
 module.exports = {
-    Mention: Models.Bookshelf.model('mention', Mention),
+    Mention: Models.Bookshelf.model("mention", Mention)
 };

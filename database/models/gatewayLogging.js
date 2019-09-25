@@ -1,12 +1,12 @@
-
-const Models = require('funsociety-bookshelf-model-loader');
+const Models = require("funsociety-bookshelf-model-loader");
 
 const GatewayLogging = Models.Base.extend({
-    tableName: 'gatewayLogging',
-    hasTimestamps: ['timestamp'],
+    tableName: "gatewayLogging",
+    hasTimestamps: ["timestamp"],
     soft: false,
+    requireFetch: false
 });
 
 module.exports = {
-    GatewayLogging: Models.Bookshelf.model('gatewayLogging', GatewayLogging),
+    GatewayLogging: Models.Bookshelf.model("gatewayLogging", GatewayLogging)
 };

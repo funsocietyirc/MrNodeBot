@@ -1,11 +1,12 @@
-const Models = require('funsociety-bookshelf-model-loader');
+const Models = require("funsociety-bookshelf-model-loader");
 
 const KickLogging = Models.Base.extend({
-    tableName: 'kickLogging',
-    hasTimestamps: ['timestamp'],
+    tableName: "kickLogging",
+    hasTimestamps: ["timestamp"],
     soft: false,
+    requireFetch: false
 });
 
 module.exports = {
-    KickLogging: Models.Bookshelf.model('kickLogging', KickLogging),
+    KickLogging: Models.Bookshelf.model("kickLogging", KickLogging)
 };
