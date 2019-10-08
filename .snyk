@@ -256,11 +256,16 @@ patch:
   'npm:lodash:20180130':
     - x-ray > x-ray-crawler > cheerio > lodash:
         patched: '2019-01-04T05:19:35.555Z'
-      mosca > ascoltatori > kafka-node > lodash:
-        patched: '2019-09-13T06:10:00.975Z'
     - mosca > ioredis > lodash:
         patched: '2019-09-13T06:10:00.975Z'
     - mosca > ascoltatori > kafka-node > lodash:
         patched: '2019-02-16T02:50:52.932Z'
     - mosca > ascoltatori > kafka-node > lodash:
         patched: '2019-05-24T15:17:46.348Z'
+    - mosca > ascoltatori > kafka-node > lodash:
+        patched: '2019-09-13T06:10:00.975Z'
+  SNYK-JS-HTTPSPROXYAGENT-469131:
+    - snyk > proxy-agent > https-proxy-agent:
+        patched: '2019-10-08T22:55:09.232Z'
+    - snyk > proxy-agent > pac-proxy-agent > https-proxy-agent:
+        patched: '2019-10-08T22:55:09.232Z'
