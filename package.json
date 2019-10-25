@@ -58,7 +58,7 @@
     "funsocietyirc-client": "^0.1.20",
     "gitlog": "^3.1.1",
     "helmet": "^3.21.1",
-    "i18next": "^17.0.17",
+    "i18next": "^18.0.0",
     "i18next-sync-fs-backend": "^1.1.1",
     "irc-colors": "^1.5.0",
     "is-promise": "^2.1.0",
