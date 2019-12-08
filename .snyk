@@ -191,11 +191,11 @@ ignore:
   SNYK-JS-JSYAML-173999:
     - express-vue > vue-pronto > vueify > cssnano > postcss-svgo > svgo > js-yaml:
         reason: No Patch
-        expires: '2019-10-13T06:11:00.488Z'
+        expires: '2020-01-07T08:39:38.574Z'
   SNYK-JS-JSYAML-174129:
     - express-vue > vue-pronto > vueify > cssnano > postcss-svgo > svgo > js-yaml:
         reason: No Patch
-        expires: '2019-10-13T06:11:00.488Z'
+        expires: '2020-01-07T08:39:38.574Z'
   SNYK-JS-LODASHMERGE-173732:
     - x-ray > x-ray-crawler > cheerio > lodash.merge:
         reason: None given
@@ -211,6 +211,13 @@ ignore:
     - mosca > ascoltatori > kafka-node > lodash:
         reason: No Patch
         expires: '2019-10-13T06:11:00.488Z'
+  SNYK-JS-SERIALIZEJAVASCRIPT-536840:
+    - express-vue > vue-pronto > js-to-string > serialize-javascript:
+        reason: None given
+        expires: '2020-01-07T08:39:38.574Z'
+    - express-vue > vue-pronto > vue-server-renderer > serialize-javascript:
+        reason: None given
+        expires: '2020-01-07T08:39:38.574Z'
 # patches apply the minimum changes required to fix a vulnerability
 patch:
   'npm:ms:20170412':
@@ -256,11 +263,11 @@ patch:
   'npm:lodash:20180130':
     - x-ray > x-ray-crawler > cheerio > lodash:
         patched: '2019-01-04T05:19:35.555Z'
-      mosca > ascoltatori > kafka-node > lodash:
-        patched: '2019-09-13T06:10:00.975Z'
     - mosca > ioredis > lodash:
         patched: '2019-09-13T06:10:00.975Z'
     - mosca > ascoltatori > kafka-node > lodash:
         patched: '2019-02-16T02:50:52.932Z'
     - mosca > ascoltatori > kafka-node > lodash:
         patched: '2019-05-24T15:17:46.348Z'
+    - mosca > ascoltatori > kafka-node > lodash:
+        patched: '2019-09-13T06:10:00.975Z'
