@@ -9,8 +9,7 @@
     "test-watch": "./node_modules/mocha/bin/mocha test/**/*.js --reporter spec -w",
     "generate-docs": "node_modules/.bin/jsdoc -c jsdoc.json",
     "prepublish": "snyk protect",
-    "snyk-protect": "snyk protect",
-    "prepare": "npm run snyk-protect"
+    "snyk-protect": "snyk protect"
   },
   "author": "Dave Richer <davericher@gmail.com>",
   "license": "MIT",
@@ -49,7 +48,7 @@
     "express": "^4.17.1",
     "express-fileupload": "^1.1.6",
     "express-rate-limit": "^5.0.0",
-    "express-vue": "^5.13.1",
+    "express-vue": "^5.14.1",
     "express-winston": "git+https://github.com/bithavoc/express-winston.git#winston-3",
     "file-type": "^12.4.0",
     "freeport": "^1.0.5",
@@ -69,7 +68,6 @@
     "minimist": "^1.2.0",
     "moment": "^2.24.0",
     "money": "^0.2.0",
-    "mosca": "^2.8.3",
     "mysql2": "^2.0.2",
     "named-routes": "^2.0.7",
     "nearest-neighbor": "^0.0.3",

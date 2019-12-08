@@ -11,8 +11,8 @@ const path = require('path');
 const moment = require('moment');
 const storage = require('node-persist');
 const helpers = require('./helpers');
-const {exec} = require('child_process');
-const {promisify} = require('util');
+const { exec } = require('child_process');
+const { promisify } = require('util');
 const execPromise = promisify(exec);
 
 // Project libs
@@ -42,14 +42,6 @@ const dynCollections = _([
     'OnConnected', // Fired when Connection to IRC is established
     'OnNotice', // Fired when a notice is received
     'OnCtcp', // Fired when a CTCP is received
-    // MQTT Events
-    'OnMQTTConnect', // Fired when MQTT Client connects
-    'OnMQTTDisconnect', // Fired when MQTT Client disconnects,
-    'OnMQTTDisconnecting', // MQTT Disconnected
-    'OnMQTTPublished', // MQTT Messaged Published
-    'OnMQTTDelivered', // MQTT Message Delivered
-    'OnMQTTSubscribed', // MQTT Subscribed
-    'OnMQTTUnsubscribed', // MQTT Unsubscribed
 ]);
 
 /**
@@ -110,8 +102,6 @@ class MrNodeBot {
             this.WebServer = await this._initWebServer();
             /** Initialize SocketIO */
             this._initSocketIO(this.WebServer);
-            /** Initialize MQTT Server */
-            this._MQTTserver = await this._initMQTTServer();
             /** Initialize the User manager */
             this._userManager = await this._initUserManager();
             /** Initialize the IRC Client */
@@ -174,63 +164,6 @@ class MrNodeBot {
     }
 
     /**
-     * Spin up the mqtt server
-     * @returns {Promise<any>}
-     * @private
-     */
-    async _initMQTTServer() {
-        const mqttServer = await require('./mqtt/server')(this.Config, logger);
-
-        // No MQTT server enabled
-        if (!mqttServer) {
-            logger.info(`MQTT is not enabled`);
-            return mqttServer;
-        }
-
-        // Client Connected
-        mqttServer.on('clientConnected', (client) => {
-            logger.info(`MQTT Client Connected ${client.id}`);
-
-            this.OnMQTTConnect.forEach(async (command, key) => {
-                try {
-                    // Is the callback a promise?
-                    const isPromise = helpers.isAsync(command.call);
-                    // Call Function
-                    const call = command.call.bind(this, client);
-                    if (isPromise) return await call();
-                    call();
-                } catch (err) {
-                    this._errorHandler(t('errors.genericError', {
-                        command: 'onMQTTConnect',
-                    }), err);
-                }
-            });
-        });
-
-        // Client Connected
-        mqttServer.on('clientDisconnected', (client) => {
-            logger.info(`MQTT Client Disconnected ${client.id}`);
-
-            this.OnMQTTConnect.forEach(async (command, key) => {
-                try {
-                    // Is the callback a promise?
-                    const isPromise = helpers.isAsync(command.call);
-                    // Call Function
-                    const call = command.call.bind(this, client);
-                    if (isPromise) return await call();
-                    call();
-                } catch (err) {
-                    this._errorHandler(t('errors.genericError', {
-                        command: 'onMQTTDisconnect',
-                    }), err);
-                }
-            });
-        });
-
-        return mqttServer;
-    }
-
-    /**
      * Connect to the IRC server
      * @returns {Promise}
      * @private
@@ -286,91 +219,91 @@ class MrNodeBot {
 
         logger.info(t('listeners.init'));
         _({
-                // Handle OnAction
-                action: (nick, to, text, message) => ircWrappers.handleAction(nick, to, text, message),
-                // Handle On First Line received from IRC Client
-                registered: message => ircWrappers.handleRegistered(message),
-                // Handle Channel Messages
-                'message#': (nick, to, text, message) => ircWrappers.handleCommands(nick, to, text, message),
-                // Handle Private Messages
-                pm: (nick, text, message) => ircWrappers.handleCommands(nick, nick, text, message),
-                // Handle Notices, also used to check validation for NickServ requests
-                notice: (nick, to, text, message) => {
-                    if (!this.Config.nickserv.nick || !_.isString(this.Config.nickserv.nick) || _.isEmpty(this.Config.nickserv.nick)) {
-                        logger.warn('Your configuration does not contain a valid nickserv nick, this is needed for elevated commands. Please fill Config.nickserv.nick with a string');
-                        ircWrappers.handleOnNotice(nick, to, text, message);
-                    }
-                    // We have a notice from nickserv
-                    else if (_.toLower(nick) === _.toLower(this.Config.nickserv.nick)) {
-                        if (_.isString(this.Config.nickserv.password) && !_.isEmpty(this.Config.nickserv.password)) {
-                            const normalizedText = _.toLower(c.stripColorsAndStyle(text));
-                            const normalizedTo = _.toLower(to);
+            // Handle OnAction
+            action: (nick, to, text, message) => ircWrappers.handleAction(nick, to, text, message),
+            // Handle On First Line received from IRC Client
+            registered: message => ircWrappers.handleRegistered(message),
+            // Handle Channel Messages
+            'message#': (nick, to, text, message) => ircWrappers.handleCommands(nick, to, text, message),
+            // Handle Private Messages
+            pm: (nick, text, message) => ircWrappers.handleCommands(nick, nick, text, message),
+            // Handle Notices, also used to check validation for NickServ requests
+            notice: (nick, to, text, message) => {
+                if (!this.Config.nickserv.nick || !_.isString(this.Config.nickserv.nick) || _.isEmpty(this.Config.nickserv.nick)) {
+                    logger.warn('Your configuration does not contain a valid nickserv nick, this is needed for elevated commands. Please fill Config.nickserv.nick with a string');
+                    ircWrappers.handleOnNotice(nick, to, text, message);
+                }
+                // We have a notice from nickserv
+                else if (_.toLower(nick) === _.toLower(this.Config.nickserv.nick)) {
+                    if (_.isString(this.Config.nickserv.password) && !_.isEmpty(this.Config.nickserv.password)) {
+                        const normalizedText = _.toLower(c.stripColorsAndStyle(text));
+                        const normalizedTo = _.toLower(to);
 
-                            if (
-                                normalizedText === `you are now identified for ${normalizedTo}.` ||
-                                normalizedText === `you are already logged in as ${normalizedTo}.`) {
-                                // You are now identified, join channels
-                                let i = 0;
-                                for (const channel of this.Config.irc.channels.filter(x => !this.channels.includes(x))) {
-                                    setTimeout(
-                                        () => {
-                                            logger.info(`[Identified] Joining ${channel}`);
-                                            this._ircClient.join(channel);
-                                        },
-                                        2 * 1000 * ++i,
-                                    )
-                                }
-                            } else ircWrappers.handleAuthenticatedCommands(nick, to, text, message);
-                        } else {
-                            logger.warn('An elevated command has been attempted but NickServ is not setup');
-                        }
-                    } else ircWrappers.handleOnNotice(nick, to, text, message);
+                        if (
+                            normalizedText === `you are now identified for ${normalizedTo}.` ||
+                            normalizedText === `you are already logged in as ${normalizedTo}.`) {
+                            // You are now identified, join channels
+                            let i = 0;
+                            for (const channel of this.Config.irc.channels.filter(x => !this.channels.includes(x))) {
+                                setTimeout(
+                                    () => {
+                                        logger.info(`[Identified] Joining ${channel}`);
+                                        this._ircClient.join(channel);
+                                    },
+                                    2 * 1000 * ++i,
+                                )
+                            }
+                        } else ircWrappers.handleAuthenticatedCommands(nick, to, text, message);
+                    } else {
+                        logger.warn('An elevated command has been attempted but NickServ is not setup');
+                    }
+                } else ircWrappers.handleOnNotice(nick, to, text, message);
+            },
+            // Handle CTCP Requests
+            ctcp:
+                (nick, to, text, type, message) => ircWrappers.handleCtcpCommands(nick, to, text, type, message),
+            // Handle Nick changes
+            nick:
+                (oldNick, newNick, channels, message) => ircWrappers.handleNickChanges(oldNick, newNick, channels, message),
+            // Handle Joins
+            join:
+                (channel, nick, message) => ircWrappers.handleOnJoin(channel, nick, message),
+            // Handle On Parts
+            part:
+                (channel, nick, reason, message) => ircWrappers.handleOnPart(channel, nick, reason, message),
+            // Handle On Kick
+            kick:
+                (channel, nick, by, reason, message) => ircWrappers.handleOnKick(channel, nick, by, reason, message),
+            // Handle On Quit
+            quit:
+                (nick, reason, channels, message) => ircWrappers.handleOnQuit(nick, reason, channels, message),
+            // Handle Topic changes
+            topic:
+                (channel, topic, nick, message) => ircWrappers.handleOnTopic(channel, topic, nick, message),
+            // Catch Network Errors
+            netError:
+                (exception) => {
+                    logger.error('Something went wrong in the IRC Client network connection', exception);
                 },
-                // Handle CTCP Requests
-                ctcp:
-                    (nick, to, text, type, message) => ircWrappers.handleCtcpCommands(nick, to, text, type, message),
-                // Handle Nick changes
-                nick:
-                    (oldNick, newNick, channels, message) => ircWrappers.handleNickChanges(oldNick, newNick, channels, message),
-                // Handle Joins
-                join:
-                    (channel, nick, message) => ircWrappers.handleOnJoin(channel, nick, message),
-                // Handle On Parts
-                part:
-                    (channel, nick, reason, message) => ircWrappers.handleOnPart(channel, nick, reason, message),
-                // Handle On Kick
-                kick:
-                    (channel, nick, by, reason, message) => ircWrappers.handleOnKick(channel, nick, by, reason, message),
-                // Handle On Quit
-                quit:
-                    (nick, reason, channels, message) => ircWrappers.handleOnQuit(nick, reason, channels, message),
-                // Handle Topic changes
-                topic:
-                    (channel, topic, nick, message) => ircWrappers.handleOnTopic(channel, topic, nick, message),
-                // Catch Network Errors
-                netError:
-                    (exception) => {
-                        logger.error('Something went wrong in the IRC Client network connection', exception);
-                    },
-                // channel forward
-                channelForward:
-                    (nick, originalChannel, forwardedChannel, dialog) => ircWrappers.handleChannelForward(nick, originalChannel, forwardedChannel, dialog),
-                abort:
-                    (retryCount) => {
-                        logger.error(`Lost Connection to server, retrying (attempt ${retryCount})`);
-                    },
-                // Catch all to prevent drop on error
-                error:
-                    (message) => {
-                        if (message.args.length && message.args[0].startsWith('Closing Link:')) {
-                            logger.info(message.args[0]);
-                            return;
-                        }
-                        logger.error('Uncaught IRC Client error', {
-                            message,
-                        });
-                    },
-            }
+            // channel forward
+            channelForward:
+                (nick, originalChannel, forwardedChannel, dialog) => ircWrappers.handleChannelForward(nick, originalChannel, forwardedChannel, dialog),
+            abort:
+                (retryCount) => {
+                    logger.error(`Lost Connection to server, retrying (attempt ${retryCount})`);
+                },
+            // Catch all to prevent drop on error
+            error:
+                (message) => {
+                    if (message.args.length && message.args[0].startsWith('Closing Link:')) {
+                        logger.info(message.args[0]);
+                        return;
+                    }
+                    logger.error('Uncaught IRC Client error', {
+                        message,
+                    });
+                },
+        }
         ).each((value, key) => this._ircClient.addListener(key, value));
 
         this.OnConnected.forEach(async (x) => {
@@ -384,15 +317,6 @@ class MrNodeBot {
         if (_.isFunction(this._callback)) this._callback(this);
 
         return ircWrappers;
-    }
-
-    /**
-     * Convenience wrapper for running code if there is a MQTT connection established
-     * @param callback
-     * @returns {Promise<*>} | Function | boolean
-     */
-    async hasMqtt(callback) {
-        return !this._MQTTserver ? false : (helpers.isAsync(callback) ? await callback() : callback());
     }
 
     /**
@@ -561,7 +485,7 @@ class MrNodeBot {
      * @private
      */
     _buildCommandMap() {
-        this._commandMap = Array.from(this.Commands.keys()).map(x => ({cmd: x}));
+        this._commandMap = Array.from(this.Commands.keys()).map(x => ({ cmd: x }));
     }
 
     /**
@@ -767,7 +691,7 @@ class MrNodeBot {
         this.Config.irc.autoConnect = false;
     }
 
-// Properties
+    // Properties
 
     /**
      * Bots IRC Nickname

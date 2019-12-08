@@ -111,16 +111,6 @@ module.exports = {
         messageSplit: 512,
         encoding: 'utf8',
     },
-    // Mosca configuration
-    mqtt: {
-        enabled: true,
-        port: 1883,
-        backend: {
-            type: 'mongo',
-            url: 'mongodb://127.0.0.1:27017/mrnodebot',
-            pubsubCollection: 'mrnodebot',
-        }
-    },
     // Knex configuration http://knexjs.org/#Installation-client
     knex: {
         enabled: true,
