@@ -97,7 +97,7 @@
     "ink-docstrap": "^1.3.0",
     "jsdoc": "^3.6.3",
     "mocha": "^6.2.2",
-    "sinon": "^7.5.0",
+    "sinon": "^8.0.2",
     "sinon-chai": "^3.3.0"
   },
   "snyk": true
