@@ -50,7 +50,7 @@
     "express-rate-limit": "^5.0.0",
     "express-vue": "^5.14.1",
     "express-winston": "git+https://github.com/bithavoc/express-winston.git#winston-3",
-    "file-type": "^12.4.2",
+    "file-type": "^13.0.3",
     "freeport": "^1.0.5",
     "funsociety-bookshelf-model-loader": "^0.9.9",
     "funsociety-irc-rss-feed-emitter": "^1.0.12",
