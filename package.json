@@ -80,7 +80,7 @@
     "request-promise-native": "^1.0.8",
     "serve-favicon": "^2.5.0",
     "shelljs": "^0.8.3",
-    "snyk": "^1.280.0",
+    "snyk": "^1.290.1",
     "socket.io": "^2.3.0",
     "textmining": "^1.0.3",
     "twit": "^2.2.11",
