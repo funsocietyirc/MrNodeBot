@@ -28,7 +28,7 @@ module.exports = (app) => {
             .orWhere(field, 'like', '%.gif')
             .orWhere(field, 'like', '%.png');
     };
-    
+
     // Rebuild all images inside the URL table from the Logging table resource
     const buildImages = (to, from, text, message) =>
         Models.Logging.query(qb =>
@@ -56,7 +56,9 @@ module.exports = (app) => {
 
     const destroyImages = async (to, from, text, message) => {
         try {
-            await Models.Url.query(qb => qb.where(whereImages)).destroy();
+            await Models.Url.query(qb => qb.where(whereImages)).destroy({
+                require: false
+            });
             app.say(to, `The images from the URL Database have been purged`);
         }
         catch (err) {
@@ -104,11 +106,15 @@ module.exports = (app) => {
 
                     // Attempt Removal
                     logger.info(`Removing Non Image link ${url}`);
-                    Models.Url.where('url', url).destroy();
+                    Models.Url.where('url', url).destroy({
+                        require: false
+                    });
                 } catch (innerErr) {
                     try {
                         logger.info(`Removing Dead Image link ${url}`);
-                        Models.Url.where('url', url).destroy();
+                        Models.Url.where('url', url).destroy({
+                            require: false
+                        });
                     }
                     catch (innerInnerError) {
                         logger.error(`Something went wrong removing a dead image link`, {

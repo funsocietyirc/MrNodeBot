@@ -79,11 +79,24 @@ module.exports = (app) => {
                 app._ircClient.isOpInChannel(to, from) ||
                 quote.attributes.from === from
             ) {
-                const quoteText = quote.attributes.text;
-                // Delete the quote
-                await quote.destroy();
-                app.say(to, `I have destroyed quote ${normalizedText} (${quoteText}), ${from}`);
-                return;
+                try {
+                    const quoteText = quote.attributes.text;
+                    // Delete the quote
+                    await quote.destroy({
+                        require: false,
+                    });
+
+                    app.say(to, `I have destroyed quote ${normalizedText} (${quoteText}), ${from}`);
+                    return;
+                }
+                catch (err) {
+                    app.say(to, `I was unable to destroy the quote "${normalizedText}", ${from}`);
+                    logger.error('Something went wrong destroying a quote', {
+                        message: err.message || '',
+                        stack: err.stack || '',
+                    });
+                    return;
+                }
             }
 
             app.say(to, `You do not have the permissions to delete this quote, ${from}`);

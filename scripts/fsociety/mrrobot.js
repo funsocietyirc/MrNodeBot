@@ -43,7 +43,9 @@ module.exports = (app) => {
                 const secondLine = await quoteModel.where('id', result.attributes.id + 1).fetch();
                 const saved = await result.set('quote', `${result.get('quote').replace('(1 more message)', '')} ${secondLine.get('quote')}`).save();
                 logger.info(`Cleaned up MrRobot show quotes, merged quote ${result.get('id')} and ${secondLine.get('id')}`);
-                secondLine.destroy();
+                secondLine.destroy({
+                    require: false
+                });
             }
         } catch (err) {
             // Handle exception

@@ -46,7 +46,9 @@ module.exports = (app) => {
 
                     if (!requestResults || _.isEmpty(requestResults.items)) {
                         logger.info(`I am deleting a broken youtube link ${link.get('url')} by ${link.get('from')} to ${link.get('to')} on ${link.get('timestamp')}`);
-                        await link.destroy();
+                        await link.destroy({
+                            required: false,
+                        });
                         count++;
                         continue;
                     }

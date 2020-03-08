@@ -25,12 +25,12 @@ module.exports = (app) => {
 
         try {
             const results = await tokenModel.fetchAll();
-            results.forEach(async (result) => {
+            for (const result of results) {
                 // This is not a very old record, move on
-                if (now.diff(moment(result.attributes.timestamp), 'weeks') < 1) return;
-                const deleted = await result.destroy();
+                if (now.diff(moment(result.attributes.timestamp), 'weeks') < 1) continue;
+                await result.destroy({require: false});
                 logger.info(`User Token for ${result.attributes.user} on ${result.attributes.channel} has been removed`);
-            });
+            }
         } catch (err) {
             logger.error('Error In removing a user token', {
                 message: err.message || '',

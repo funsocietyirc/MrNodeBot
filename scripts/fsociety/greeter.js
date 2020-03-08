@@ -88,23 +88,33 @@ module.exports = (app) => {
     });
 
     // Clear greet cache
-    const cleanGreetDb = (to, from, text, message) => {
+    const cleanGreetDb = async (to, from, text, message) => {
         const textArray = text.split(' ');
+
         if (!textArray.length) {
             app.say(to, 'You must specify a channel when clearing the greeter cache');
             return;
         }
+
         const [channel] = textArray;
-        greetModel
-            .where('channel', 'like', channel)
-            .destroy()
-            .then(() => app.say(to, `Greet cache has been cleared for ${channel}`))
-            .catch((err) => {
-                app.say(to, `Something went wrong clearing the greet cache for ${channel}`);
-                logger.error('Error in greet cache clear command', {
-                    err,
+
+        try {
+            await greetModel
+                .where('channel', 'like', channel)
+                .destroy({
+                    require: false,
                 });
+
+            app.say(to, `Greet cache has been cleared for ${channel}`)
+        }
+        catch (err) {
+            app.say(to, `Something went wrong clearing the greet cache for ${channel}`);
+            logger.error('Error in greet cache clear command', {
+                err,
             });
+        }
+
+
     };
     app.Commands.set('greet-clear-channel', {
         desc: 'greet-clear-channel [channel] - Clear the greet cache for  the specified channel',

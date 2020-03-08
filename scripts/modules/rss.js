@@ -100,7 +100,7 @@ module.exports = (app) => {
 
             const oldFeedSubscription = _.clone(feedSubscription.attributes);
 
-            await feedSubscription.destroy();
+            await feedSubscription.destroy({require: false});
             app.say(to, `I have removed the subscription from ${to}, to ${oldFeedSubscription.name} (${oldFeedSubscription.link}). All is well ${from}`);
         } catch (err) {
             logger.error('Something went wrong in the unsubscribe function inside the RssFeed', {
@@ -321,15 +321,19 @@ module.exports = (app) => {
 
             // Remove Subscriptions
             const subscriptions = feed.related('subscriptions');
+
             if (subscriptions.length) app.say(to, `I am removing ${subscriptions.length} subscriptions for the RSS feed ${feed.attributes.name}, ${from}`);
-            subscriptions.forEach(subscription => subscription.destroy());
+
+            for (let subscription of subscriptions) {
+                subscription.destroy({require: false});
+            }
 
             // Remove from feeder
             feeder.remove(feed.attributes.link);
 
             // Destroy
             const previousAttributes = _.clone(feed.attributes);
-            await feed.destroy();
+            await feed.destroy({require: false});
 
             app.say(to, `The feed ${previousAttributes.name} with the ID ${numericID} has been deleted, ${from}`);
         } catch (err) {
