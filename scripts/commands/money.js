@@ -15,14 +15,15 @@ const fx = require('money');
 const accounting = require('accounting-js');
 // API Information
 const btcApi = 'https://bitpay.com/api/rates'; // API For BTC exchange rates
-const coinMarketCapApi = 'https://api.coinmarketcap.com/v1/ticker';
+const coinMarketCapApi = 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest';
 const fixerApi = `http://data.fixer.io/api/latest`; // API For Country exchange rates
 
 module.exports = (app) => {
     const apiKey = _.get(app.Config, 'features.exchangeRate.apiKey', false);
+    const coinMarketCapApiKey = _.get(app.Config, 'features.exchangeRate.coinMarketCapApiKey', false);
 
-    if (!apiKey) {
-        logger.warn('A API key is required from http://fixer.io for the currency exchange feature to work');
+    if (!apiKey || !coinMarketCapApiKey) {
+        logger.warn('A missing api key is preventing for the currency exchange feature from working');
         return scriptInfo;
     }
 
@@ -93,11 +94,18 @@ module.exports = (app) => {
             const coinMarketCap = await request(coinMarketCapApi, {
                 json: true,
                 method: 'get',
+                qs: {
+                    start: 1,
+                    limit: 1,
+                    convert: baseCur
+                },
+                headers: {
+                    'X-CMC_PRO_API_KEY': coinMarketCapApiKey
+                }
             });
-
-            for (const coin of coinMarketCap) {
-                if (coin.symbol === 'BTC' && !_.isInteger(coin.price_btc)) continue;
-                fx.rates[coin.symbol] = 1 / (btc.rate * coin.price_btc);
+            for (const coin of coinMarketCap.data) {
+                if (coin.symbol === 'BTC' && !_.isInteger(coin.quote[baseCur].price)) continue;
+                fx.rates[coin.symbol] = 1 / (btc.rate * coin.quote[baseCur].price);
             }
         } catch (err) {
             logger.error('Something went wrong getting currency rates', {

@@ -295,6 +295,7 @@ module.exports = {
         },
         exchangeRate: {
             apiKey: '', // obtain a free API key from fixer.io
+            coinMarketCapApiKey: '',
             updateScheduleTime: {
                 hour: [...Array(24).keys()], // Every hour
                 minute: 0, // On the hour

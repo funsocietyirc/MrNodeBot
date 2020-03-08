@@ -25,7 +25,7 @@ const pad = (min, input) => {
 // General Configuration
 const conf = {
     selector: '#full-statement > div > h3 > span',
-    title: /(?:(\d+)|(one|two|three|four|five|six|seven|eight|nine)(.*?half)) minutes to midnight/i,
+    title: /(?:(\d+)|(one|two|three|four|five|six|seven|eight|nine)(.*?half)) seconds to midnight/i,
 };
 
 // Numbers to english string
@@ -91,7 +91,7 @@ module.exports = async () => {
     try {
         const requested = await _request();
         const extracted = await _extract(requested);
-        return dateToString(toTime(extracted));
+        return dateToString(toTime(extracted / 60));
     } catch (err) {
         logger.error('Error in the _doomsday Generator', {
             message: err.message || '',
