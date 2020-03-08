@@ -1,5 +1,5 @@
 // API Endpoint
-const endPoint = 'http://thebulletin.org/timeline';
+const endPoint = 'https://thebulletin.org/doomsday-clock/current-time/';
 
 // Node Modules
 const rp = require('request-promise-native');
@@ -24,7 +24,7 @@ const pad = (min, input) => {
 
 // General Configuration
 const conf = {
-    selector: '.view-content .node-title',
+    selector: '#full-statement > div > h3 > span',
     title: /(?:(\d+)|(one|two|three|four|five|six|seven|eight|nine)(.*?half)) minutes to midnight/i,
 };
 
