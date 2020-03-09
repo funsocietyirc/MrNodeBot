@@ -126,8 +126,9 @@ module.exports = (app) => {
     const links = (req, res, next) => {
         const data = {};
         req.vueOptions = defaultVueOptions;
-        res.renderVue('links.vue', data, req.vueOptions);
+        res.renderVue('coronalinks.vue', data, req.vueOptions);
     };
+
     app.WebRoutes.set('links', {
         handler: links,
         desc: 'Links',
@@ -135,6 +136,13 @@ module.exports = (app) => {
         verb: 'get',
     });
 
-// Return the script info
+    app.WebRoutes.set('coronalinks', {
+        handler: links,
+        desc: 'Corona Virus Links',
+        path: '/coronalinks',
+        verb: 'get',
+    });
+
+    // Return the script info
     return scriptInfo;
 };

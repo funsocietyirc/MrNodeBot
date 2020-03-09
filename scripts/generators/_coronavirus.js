@@ -18,6 +18,11 @@ const getKeyFromObj = (obj, index) => Object.getOwnPropertyNames(obj).slice(inde
  */
 const getValueFromObj = (obj, index) => obj[Object.keys(obj)[Object.keys(obj).length + index]];
 
+/**
+ *
+ * @param city
+ * @returns {string}
+ */
 const formatCity = city => _.startCase(_.toLower(city));
 
 /**
@@ -34,6 +39,7 @@ const formatRegion = region => {
         case 'global':
         case 'earth':
             return 'Global';
+        case 'us':
         case 'usa':
         case 'united states':
         case 'america':
