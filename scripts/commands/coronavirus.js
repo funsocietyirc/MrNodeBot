@@ -51,7 +51,7 @@ module.exports = (app) => {
         });
 
         // Create Output
-        output.appendBold(`${result.location.region} - ${result.lastDate}`);
+        output.appendBold(`${result.location.city ? result.location.city : result.location.region} - ${result.lastDate}`);
 
         if (result.has.confirmed) appendResult(result.confirmed, output, 'Confirmed', 'yellow');
         if (result.has.cured) appendResult(result.cured, output, 'Cured', 'green') ;

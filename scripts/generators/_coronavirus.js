@@ -18,6 +18,8 @@ const getKeyFromObj = (obj, index) => Object.getOwnPropertyNames(obj).slice(inde
  */
 const getValueFromObj = (obj, index) => obj[Object.keys(obj)[Object.keys(obj).length + index]];
 
+const formatCity = city => _.startCase(_.toLower(city));
+
 /**
  * Normalize and Format Region
  * @param region
@@ -79,10 +81,10 @@ const appendStat = (intermResults, output, prop, key) => {
  * Produce Output results
  * @param data
  * @param region
- * @param province
- * @returns {{location: {province: *, region: string}, has: {cured: boolean, dead: boolean, confirmed: boolean}, lastDate: *}|boolean}
+ * @param city
+ * @returns {{location: {city: *, region: string}, has: {cured: boolean, dead: boolean, confirmed: boolean}, lastDate: *}|boolean}
  */
-const produceResults = async (region, province) => {
+const produceResults = async (region, city) => {
     // Gather results
     const data = await rp({uri: endPoint, json: true});
 
@@ -95,23 +97,37 @@ const produceResults = async (region, province) => {
     const formattedRegion = formatRegion(region);
 
     // Normalize Down to Region
-    const intermResults = _.filter(data, x => x.ENGLISH === formattedRegion)[0];
+    let intermResults = _(data).filter(x => x.ENGLISH === formattedRegion);
+
+    // Province provided
+    if (_.isString(city) && !_.isEmpty(city)) {
+        console.dir('HIT');
+        const formattedCity = formatCity(city);
+        intermResults = _
+            .filter(
+                intermResults.omit(['confirmedCount', 'deadCount', 'curedCount']).value()[0],
+                x => x.hasOwnProperty('ENGLISH') && x.ENGLISH.split(',')[0].startsWith(formattedCity)
+            );
+    }
+
+    // Hold on to final results
+    const finalResults = _.isFunction(intermResults.value) ?  intermResults.value()[0] : intermResults[0];
 
     // Post Flight Check
-    if (!_.isObject(intermResults) || _.isEmpty(intermResults)) {
+    if (!_.isObject(finalResults) || _.isEmpty(finalResults)) {
         return false;
     }
 
     // Hold on to the potential result factors
-    const hasCured = intermResults.hasOwnProperty('curedCount');
-    const hasDead = intermResults.hasOwnProperty('deadCount');
-    const hasConfirmed = intermResults.hasOwnProperty('confirmedCount');
+    const hasCured = finalResults.hasOwnProperty('curedCount');
+    const hasDead = finalResults.hasOwnProperty('deadCount');
+    const hasConfirmed = finalResults.hasOwnProperty('confirmedCount');
 
     // Prepare output object
     let output = {
         location: {
             region: formattedRegion,
-            province,
+            city,
         },
         has: {
             cured: hasCured,
@@ -121,9 +137,9 @@ const produceResults = async (region, province) => {
     };
 
     // Append Stats
-    appendStat(intermResults, output, 'confirmedCount', 'confirmed');
-    appendStat(intermResults, output, 'curedCount', 'cured');
-    appendStat(intermResults, output, 'deadCount', 'dead');
+    appendStat(finalResults, output, 'confirmedCount', 'confirmed');
+    appendStat(finalResults, output, 'curedCount', 'cured');
+    appendStat(finalResults, output, 'deadCount', 'dead');
 
     // Append last Date
     output.lastDate =
@@ -147,6 +163,7 @@ const gen = async (region, province) => {
         // Return Results Object
         return await produceResults(region, province);
     } catch (err) {
+        console.dir(err);
         const error = new Error('Something went wrong getting information.');
         error.innerErr = err;
         throw error;
