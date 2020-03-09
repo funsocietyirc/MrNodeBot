@@ -10,16 +10,23 @@ const typo = require('../lib/_ircTypography');
 const helpers = require('../../helpers');
 const c = require('irc-colors');
 
+/**
+ * Helper to append Result
+ * @param obj Object Results Object
+ * @param label string Label
+ * @param color string Display Color
+ */
+const appendResult = (obj, output, label, color) => output
+    .append(c[color](`${helpers.formatNumber(obj.current.value)} ${label}`))
+    .append(c.blue(`${helpers.formatNumber(obj.delta)} +/-`));
+
 module.exports = (app) => {
     const coronavirus = async (to, from, text, message) => {
-
-        if (!text) {
-            app.say(to, `I need a Country to get that data for you, ${from}`);
-            return;
-        }
+        // Split on comma
+        const [region, province] = text.split(',');
 
         // Get Results
-        const result = await gen(text);
+        const result = await gen(region, province);
 
         // No Results
         if (
@@ -30,16 +37,11 @@ module.exports = (app) => {
             app.say(to, `I got nothing, ${from}`);
             return;
         }
-
-        const hasCured = result.hasOwnProperty('cured');
-        const hasDead = result.hasOwnProperty('dead');
-        const hasConfirmed = result.hasOwnProperty('confirmed');
-
         // No Data
         if (
-            !hasCured && !hasDead && !hasConfirmed
+            !result.has.cured && !result.has.dead && !result.has.confirmed
         ) {
-            app.say(to, `I got nothing, ${from}`);
+            app.say(to, `I have no Coronavirus information for ${result.location.region} ${result.location.province ? result.location.province : ''}, ${from}`);
             return;
         }
 
@@ -48,28 +50,20 @@ module.exports = (app) => {
             logo: 'coronavirus',
         });
 
-        // Helper function for output
-        const appendResult = (x, y, z) => output
-            .append(c[z](`${helpers.formatNumber(x.current.value)} ${y}`))
-            .append(c.blue(`${x.delta} +/-`));
-
-        // Normalize Date
-        const date =
-            hasConfirmed ? result.confirmed.current.date : (
-                hasCured ? result.cured.current.date : (
-                    hasDead ? result.dead.current.date : 'No Date Available'
-                )
-            );
-
         // Create Output
-        output.appendBold(`${result.location.region} - ${date}`);
-        if (hasConfirmed) appendResult(result.confirmed, 'Confirmed', 'yellow');
-        if (hasCured) appendResult(result.cured, 'Cured', 'green') ;
-        if (hasDead)  appendResult(result.dead, 'Dead', 'red');
+        output.appendBold(`${result.location.region} - ${result.lastDate}`);
 
+        if (result.has.confirmed) appendResult(result.confirmed, output, 'Confirmed', 'yellow');
+        if (result.has.cured) appendResult(result.cured, output, 'Cured', 'green') ;
+        if (result.has.dead)  appendResult(result.dead, output, 'Dead', 'red');
+
+        // Say Output
         app.say(to, output.text);
     };
 
+    /**
+     * Export Command
+     */
     app.Commands.set('coronavirus', {
         desc: '[Region] [Province?] Coronavirus stats',
         access: app.Config.accessLevels.identified,
