@@ -21,9 +21,12 @@ const produceJohnHopkinsResults = async (region, city) => {
         return false;
     }
 
-    // Flatten
-    let result = _(data.features).map(x => x.attributes);
-
+    // Flatten and filter out mainlan china
+    let result = _(data.features).map(x => x.attributes).reject(
+        x => x
+            .hasOwnProperty('Country_Region') &&
+            x.Country_Region === 'Mainland China'
+    );
     /**
      *
      * @param city
@@ -43,7 +46,7 @@ const produceJohnHopkinsResults = async (region, city) => {
             case '':
             case 'world':
             case 'global':
-                return 'Global';
+                return 'Global (Excluding Main Land China)';
             case 'us':
             case 'usa':
             case 'united states':
@@ -81,7 +84,7 @@ const produceJohnHopkinsResults = async (region, city) => {
                 value: result.sumBy('Deaths')
             }
         },
-        lastDate: moment(result.orderBy(x => new moment(x.Last_Update).format('YYYYMMDD')).reverse().first().Last_Update).fromNow()
+        lastDate: moment(result.orderBy(x => new moment(x.Last_Update).format('YYYYMMDD')).last().Last_Update).fromNow()
     });
 
     // Prepare output object
@@ -91,6 +94,8 @@ const produceJohnHopkinsResults = async (region, city) => {
 
     // Formatted Region
     const formattedRegion = output.location.region = formatRegion(region);
+
+
 
     // We have a region but no city
     if (region && region !== 'Global') {
@@ -114,8 +119,6 @@ const produceJohnHopkinsResults = async (region, city) => {
     }
 
     output = outputHelper(result);
-
-    console.dir(output);
 
     // Final Content Check
     if (
