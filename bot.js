@@ -359,7 +359,7 @@ class MrNodeBot {
      * @param {string} fullPath Path to cached file
      */
     static _clearCache(fullPath) {
-        clearModule(require.resolve(fullPath));
+        clearModule.single(require.resolve(fullPath));
     }
 
     /**
@@ -430,9 +430,16 @@ class MrNodeBot {
                     }
                 }
             } catch (err) {
+
+                logger.error('There was an issue loading a Script', {
+                    message: err.message || '',
+                    stack: err.stack || '',
+                });
+
                 this._errorHandler(t('scripts.error', {
                     path: fullPath,
                 }), err);
+
             }
         };
 

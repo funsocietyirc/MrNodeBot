@@ -52,6 +52,13 @@ module.exports = (app) => {
         appendResult(result.cured, output, 'Cured', 'green') ;
         appendResult(result.dead, output, 'Dead', 'red');
 
+        if(result.hasOwnProperty('actual')) {
+            output.appendBold('With China');
+            appendResult(result.actual.confirmed, output, 'Confirmed', 'yellow');
+            appendResult(result.actual.cured, output, 'Cured', 'green') ;
+            appendResult(result.actual.dead, output, 'Dead', 'red');
+        }
+
         // Say Output
         app.say(to, output.text);
     };

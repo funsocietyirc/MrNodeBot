@@ -2,7 +2,7 @@ const rp = require('request-promise-native');
 const _ = require('lodash');
 const helpers = require('../../helpers');
 const moment = require('moment');
-
+const logger = require('../../lib/logger');
 // End Points
 const covid19HealthEndPoint = 'https://covid19.health/data/all.json';
 const johnHopkinsEndpoint = 'https://services1.arcgis.com/0MSEUqKaxRlEPj5g/arcgis/rest/services/ncov_cases/FeatureServer/1/query?f=json&where=Confirmed%20%3E=%200&returnGeometry=false&&outFields=Province_State,Country_Region,Last_Update,Confirmed,Deaths,Recovered';
@@ -12,7 +12,7 @@ const johnHopkinsEndpoint = 'https://services1.arcgis.com/0MSEUqKaxRlEPj5g/arcgi
  * Produce John Hopkins Results
  * @param region
  * @param city
- * @returns {Promise<({}&{cured: {current: {value: number}}, location: {city: (null|string), region: string}, dead: {current: {value: number}}, confirmed: {current: {value: number}}})|boolean>}
+ * @returns false|{Promise<{}&{location: {}}&{cured: {current: {value: (number|LoDashExplicitWrapper<number>|_.LodashSumBy1x1<any>)}}, dead: {current: {value: (number|LoDashExplicitWrapper<number>|_.LodashSumBy1x1<any>)}}, confirmed: {current: {value: (number|LoDashExplicitWrapper<number>|_.LodashSumBy1x1<any>)}}, lastDate: string}>}
  */
 const produceJohnHopkinsResults = async (region, city) => {
     const data = await rp({uri: johnHopkinsEndpoint, json: true});
@@ -21,12 +21,8 @@ const produceJohnHopkinsResults = async (region, city) => {
         return false;
     }
 
-    // Flatten and filter out mainlan china
-    let result = _(data.features).map(x => x.attributes).reject(
-        x => x
-            .hasOwnProperty('Country_Region') &&
-            x.Country_Region === 'Mainland China'
-    );
+    // Flatten and filter out mainland china
+    let result = _(data.features).map(x => x.attributes);
     /**
      *
      * @param city
@@ -46,7 +42,7 @@ const produceJohnHopkinsResults = async (region, city) => {
             case '':
             case 'world':
             case 'global':
-                return 'Global (Excluding Main Land China)';
+                return 'Global without China';
             case 'us':
             case 'usa':
             case 'united states':
@@ -66,9 +62,9 @@ const produceJohnHopkinsResults = async (region, city) => {
     /**
      * Output Helper
      * @param result
-     * @returns {{} & {cured: {current: {value: number}}, location: {city: null|string, region: string}, dead: {current: {value: number}}, confirmed: {current: {value: number}}}}
+     * @returns {{} & {location: {}} & {cured: {current: {value: (number|LoDashExplicitWrapper<number>|_.LodashSumBy1x1<any>)}}, dead: {current: {value: (number|LoDashExplicitWrapper<number>|_.LodashSumBy1x1<any>)}}, confirmed: {current: {value: (number|LoDashExplicitWrapper<number>|_.LodashSumBy1x1<any>)}}, lastDate: string}}
      */
-    const outputHelper = (result) => output = Object.assign({}, output, {
+    const outputHelper = (result) => Object.assign({}, output, {
         confirmed: {
             current: {
                 value: result.sumBy('Confirmed')
@@ -84,7 +80,12 @@ const produceJohnHopkinsResults = async (region, city) => {
                 value: result.sumBy('Deaths')
             }
         },
-        lastDate: moment(result.orderBy(x => new moment(x.Last_Update).format('YYYYMMDD')).last().Last_Update).fromNow()
+        lastDate: moment(
+            result
+                .orderBy(x => new moment(x.Last_Update).format('YYYYMMDD'))
+                .last()
+                .Last_Update
+        ).fromNow()
     });
 
     // Prepare output object
@@ -95,16 +96,32 @@ const produceJohnHopkinsResults = async (region, city) => {
     // Formatted Region
     const formattedRegion = output.location.region = formatRegion(region);
 
-
-
     // We have a region but no city
     if (region && region !== 'Global') {
         result = result
             .filter(
-                x => x
-                    .hasOwnProperty('Country_Region') &&
+                x =>
+                    x.hasOwnProperty('Country_Region') &&
                     x.Country_Region.startsWith(formattedRegion)
             );
+
+
+        // Post Filter Check
+        if (_.isEmpty(result.value())) {
+            return false;
+        }
+
+    } else {
+
+        // Apply Actual Stats
+        output.actual = outputHelper(result);
+
+
+        result = result.reject(
+            x =>
+                x.hasOwnProperty('Country_Region') &&
+                x.Country_Region === 'Mainland China'
+        )
     }
 
     if (city) {
@@ -118,9 +135,14 @@ const produceJohnHopkinsResults = async (region, city) => {
             );
     }
 
+    // Preflight
+    if (!result || _.isEmpty(result)) {
+        return false;
+    }
+
     output = outputHelper(result);
 
-    // Final Content Check
+    // Post flight
     if (
         output.confirmed.current.value === 0
     ) {
@@ -271,6 +293,7 @@ const produceCovid19HealthResults = async (region, city) => {
 
 /**
  * Generate output
+ * SARS-CoV-2 Global (Excluding Main Land China) - 5 hours ago → 30,628 Confirmed → 3,664 Cured → 772 Dead
  * @param region
  * @param city
  * @returns {Promise<boolean|{location: {province: *, region: string}, has: {cured: boolean, dead: boolean, confirmed: boolean}, lastDate: *}>}
@@ -279,9 +302,15 @@ const genRealtime = async (region, city) => {
     try {
         return await produceJohnHopkinsResults(region, city);
     } catch (err) {
-        console.dir(err);
+        logger.error('Something went wrong getting information from John Hopkins', {
+            message: err.message || '',
+            stack: err.stack || ''
+        });
+
         const error = new Error('Something went wrong getting information from John Hopkins.');
+
         error.innerErr = err;
+
         throw error;
     }
 };
@@ -295,6 +324,11 @@ const gen = async (region, city) => {
     try {
          return await produceCovid19HealthResults(region, city);
     } catch (err) {
+        logger.error('Something went wrong getting information from Covid19.health', {
+            message: err.message || '',
+            stack: err.stack || ''
+        });
+
         const error = new Error('Something went wrong getting information from Covid19Health.');
         error.innerErr = err;
         throw error;
