@@ -1,98 +1,207 @@
 const rp = require('request-promise-native');
-const endPoint = 'https://covid19.health/data/all.json';
 const _ = require('lodash');
+const helpers = require('../../helpers');
+const moment = require('moment');
+
+// End Points
+const covid19HealthEndPoint = 'https://covid19.health/data/all.json';
+const johnHopkinsEndpoint = 'https://services1.arcgis.com/0MSEUqKaxRlEPj5g/arcgis/rest/services/ncov_cases/FeatureServer/1/query?f=json&where=Confirmed%20%3E=%200&returnGeometry=false&&outFields=Province_State,Country_Region,Last_Update,Confirmed,Deaths,Recovered';
+
 
 /**
- * Get Key From Object
- * @param obj
- * @param index
- * @returns {string}
- */
-const getKeyFromObj = (obj, index) => Object.getOwnPropertyNames(obj).slice(index)[0];
-
-/**
- * Get Value From Object
- * @param obj
- * @param index
- * @returns {*}
- */
-const getValueFromObj = (obj, index) => obj[Object.keys(obj)[Object.keys(obj).length + index]];
-
-/**
- *
- * @param city
- * @returns {string}
- */
-const formatCity = city => _.startCase(_.toLower(city));
-
-/**
- * Normalize and Format Region
+ * Produce John Hopkins Results
  * @param region
- * @returns {string}
+ * @param city
+ * @returns {Promise<({}&{cured: {current: {value: number}}, location: {city: (null|string), region: string}, dead: {current: {value: number}}, confirmed: {current: {value: number}}})|boolean>}
  */
-const formatRegion = region => {
-    const lower = _.toLower(region);
-    switch (lower) {
-        case null:
-        case '':
-        case 'world':
-        case 'global':
-        case 'earth':
-            return 'Global';
-        case 'us':
-        case 'usa':
-        case 'united states':
-        case 'america':
-        case 'united states of america':
-            return 'United States of America';
-        case 'uk':
-        case 'united kingdom':
-        case 'britain':
-            return 'United Kingdom';
-        default:
-            return _.startCase(lower);
-    }
-};
+const produceJohnHopkinsResults = async (region, city) => {
+    const data = await rp({uri: johnHopkinsEndpoint, json: true});
 
-/**
- * Append Stat Object (Mutating)
- * @param intermResults
- * @param output
- * @param prop
- * @param key
- */
-const appendStat = (intermResults, output, prop, key) => {
-    if (
-        intermResults.hasOwnProperty(prop) &&
-        _.isObject(intermResults[prop]) &&
-        !_.isEmpty(intermResults[prop])
-    ) {
-        const innerData = intermResults[prop];
-        output[key] = {
-            current: {
-                value: getValueFromObj(innerData, -1),
-                date: getKeyFromObj(innerData, -1)
-            },
-            previous: {
-                value: getValueFromObj(innerData, -2),
-                date: getKeyFromObj(innerData, -2)
-            },
-        };
-        // Append computed props
-        output[key].delta = output[key].current.value - output[key].previous.value;
+    if (!data || !_.isObject(data) || !data.hasOwnProperty('features')) {
+        return false;
     }
+
+    // Flatten
+    let result = _(data.features).map(x => x.attributes);
+
+    /**
+     *
+     * @param city
+     * @returns {string}
+     */
+    const formatCity = city => _.trim(_.startCase(_.toLower(city)));
+
+    /**
+     * Normalize and Format Region
+     * @param region
+     * @returns {string}
+     */
+    const formatRegion = region => {
+        const lower = _.trim(_.toLower(region));
+        switch (lower) {
+            case null:
+            case '':
+            case 'world':
+            case 'global':
+                return 'Global';
+            case 'us':
+            case 'usa':
+            case 'united states':
+            case 'america':
+            case 'united states of america':
+                return 'US';
+            case 'uk':
+            case 'UK':
+            case 'united kingdom':
+            case 'United Kingdom':
+                return 'Uk';
+            default:
+                return _.startCase(lower);
+        }
+    };
+
+    /**
+     * Output Helper
+     * @param result
+     * @returns {{} & {cured: {current: {value: number}}, location: {city: null|string, region: string}, dead: {current: {value: number}}, confirmed: {current: {value: number}}}}
+     */
+    const outputHelper = (result) => output = Object.assign({}, output, {
+        confirmed: {
+            current: {
+                value: result.sumBy('Confirmed')
+            }
+        },
+        cured: {
+            current: {
+                value: result.sumBy('Recovered')
+            }
+        },
+        dead: {
+            current: {
+                value: result.sumBy('Deaths')
+            }
+        },
+        lastDate: moment(result.orderBy(x => new moment(x.Last_Update).format('YYYYMMDD')).reverse().first().Last_Update).fromNow()
+    });
+
+    // Prepare output object
+    let output = {
+        location: {}
+    };
+
+    // Formatted Region
+    const formattedRegion = output.location.region = formatRegion(region);
+
+    // We have a region but no city
+    if (region && region !== 'Global') {
+        result = result
+            .filter(
+                x => x
+                    .hasOwnProperty('Country_Region') &&
+                    x.Country_Region.startsWith(formattedRegion)
+            );
+    }
+
+    if (city) {
+        const formattedCity =  output.location.city = formatCity(city);
+        result = result
+            .filter(
+                x => x
+                    .hasOwnProperty('Province_State') &&
+                    !_.isNil(x.Province_State) &&
+                    x.Province_State.split(',')[0].startsWith(formattedCity)
+            );
+    }
+
+    output = outputHelper(result);
+
+    console.dir(output);
+
+    // Final Content Check
+    if (
+        output.confirmed.current.value === 0
+    ) {
+        return false;
+    }
+
+    return output;
 };
 
 /**
  * Produce Output results
- * @param data
  * @param region
  * @param city
  * @returns {{location: {city: *, region: string}, has: {cured: boolean, dead: boolean, confirmed: boolean}, lastDate: *}|boolean}
  */
-const produceResults = async (region, city) => {
+const produceCovid19HealthResults = async (region, city) => {
+
+    /**
+     * Append Stat Object (Mutating)
+     * @param intermResults
+     * @param output
+     * @param prop
+     * @param key
+     */
+    const appendStat = (intermResults, output, prop, key) => {
+        if (
+            intermResults.hasOwnProperty(prop) &&
+            _.isObject(intermResults[prop]) &&
+            !_.isEmpty(intermResults[prop])
+        ) {
+            const innerData = intermResults[prop];
+            output[key] = {
+                current: {
+                    value: helpers.getValueFromObj(innerData, -1),
+                    date: helpers.getKeyFromObj(innerData, -1)
+                },
+                previous: {
+                    value: helpers.getValueFromObj(innerData, -2),
+                    date: helpers.getKeyFromObj(innerData, -2)
+                },
+            };
+            // Append computed props
+            output[key].delta = output[key].current.value - output[key].previous.value;
+        }
+    };
+
+    /**
+     *
+     * @param city
+     * @returns {string}
+     */
+    const formatCity = city => _.trim(_.startCase(_.toLower(city)));
+
+    /**
+     * Normalize and Format Region
+     * @param region
+     * @returns {string}
+     */
+    const formatRegion = region => {
+        const lower = _.trim(_.toLower(region));
+        switch (lower) {
+            case null:
+            case '':
+            case 'world':
+            case 'global':
+            case 'earth':
+                return 'Global';
+            case 'us':
+            case 'usa':
+            case 'united states':
+            case 'america':
+            case 'united states of america':
+                return 'United States of America';
+            case 'uk':
+            case 'united kingdom':
+            case 'britain':
+                return 'United Kingdom';
+            default:
+                return _.startCase(lower);
+        }
+    };
+
     // Gather results
-    const data = await rp({uri: endPoint, json: true});
+    const data = await rp({uri: covid19HealthEndPoint, json: true});
 
     // Pre Flight Check
     if (!_.isObject(data) || _.isEmpty(data)) {
@@ -107,7 +216,6 @@ const produceResults = async (region, city) => {
 
     // Province provided
     if (_.isString(city) && !_.isEmpty(city)) {
-        console.dir('HIT');
         const formattedCity = formatCity(city);
         intermResults = _
             .filter(
@@ -161,19 +269,36 @@ const produceResults = async (region, city) => {
 /**
  * Generate output
  * @param region
- * @param province
+ * @param city
  * @returns {Promise<boolean|{location: {province: *, region: string}, has: {cured: boolean, dead: boolean, confirmed: boolean}, lastDate: *}>}
  */
-const gen = async (region, province) => {
+const genRealtime = async (region, city) => {
     try {
-        // Return Results Object
-        return await produceResults(region, province);
+        return await produceJohnHopkinsResults(region, city);
     } catch (err) {
         console.dir(err);
-        const error = new Error('Something went wrong getting information.');
+        const error = new Error('Something went wrong getting information from John Hopkins.');
+        error.innerErr = err;
+        throw error;
+    }
+};
+/**
+ * Gen
+ * @param region
+ * @param city
+ * @returns {Promise<*>}
+ */
+const gen = async (region, city) => {
+    try {
+         return await produceCovid19HealthResults(region, city);
+    } catch (err) {
+        const error = new Error('Something went wrong getting information from Covid19Health.');
         error.innerErr = err;
         throw error;
     }
 };
 
-module.exports = gen;
+module.exports = {
+    genRealtime,
+    gen,
+};
