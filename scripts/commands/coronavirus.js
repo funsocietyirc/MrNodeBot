@@ -13,6 +13,7 @@ const c = require('irc-colors');
 /**
  * Helper to append Result
  * @param obj Object Results Object
+ * @param output
  * @param label string Label
  * @param color string Display Color
  */
@@ -40,23 +41,35 @@ module.exports = (app) => {
             return;
         }
 
+        /**
+         * Stats Helper
+         * @param obj
+         */
+        const appendStats = (obj) => {
+            output.appendBold(`Mortality: ${c.red(obj.mortalityRate)}`);
+            output.appendBold(`Recovery: ${c.green(obj.recoveryRate)}`);
+            output.appendBold(`Active: ${c.blue(helpers.formatNumber(obj.activeRate))}`);
+        };
+
         // Output to IRC
         const output = new typo.StringBuilder({
             logo: 'coronavirus',
         });
 
         // Create Output
-        output.appendBold(`${result.location.city ? result.location.city : result.location.region} - ${result.lastDate}`);
+        output.appendBold(`${result.location.city ? result.location.city : result.location.region ? result.location.region : 'Global Without Mainland China'} - ${result.lastDate}`);
 
         appendResult(result.confirmed, output, 'Confirmed', 'yellow');
         appendResult(result.cured, output, 'Cured', 'green') ;
         appendResult(result.dead, output, 'Dead', 'red');
+        appendStats(result.stats);
 
         if(result.hasOwnProperty('actual')) {
             output.appendBold('With China');
             appendResult(result.actual.confirmed, output, 'Confirmed', 'yellow');
             appendResult(result.actual.cured, output, 'Cured', 'green') ;
             appendResult(result.actual.dead, output, 'Dead', 'red');
+            appendStats(result.actual.stats);
         }
 
         // Say Output

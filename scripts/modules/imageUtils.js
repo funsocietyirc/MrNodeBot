@@ -37,7 +37,7 @@ module.exports = (app) => {
                     .orderBy('timestamp', 'desc'))
                 .fetchAll();
 
-            for (let logResult of logResults) {
+            for (const logResult of logResults) {
                 const url = _(
                     extractUrls(logResult.get('text'))
                 ).filter(url => (_.isString(url) ? url : '').match(/^http[s]?:\/\/.+\.(jpg|gif|jpeg|png)$/i)).value();

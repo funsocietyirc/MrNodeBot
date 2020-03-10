@@ -9,6 +9,15 @@ const covid19HealthEndPoint = 'https://covid19.health/data/all.json';
 const johnHopkinsEndpoint = 'https://services1.arcgis.com/0MSEUqKaxRlEPj5g/arcgis/rest/services/ncov_cases/FeatureServer/1/query?f=json&where=Confirmed%20%3E=%200&returnGeometry=false&&outFields=Province_State,Country_Region,Last_Update,Confirmed,Deaths,Recovered';
 
 /**
+ * Helper to check zero
+ * @param val1
+ * @param val2
+ * @returns {string}
+ */
+const percentileOrNa = (val1, val2) => `${(val1 === 0 || val2 === 0) ? 'N/A' : _.round(_.multiply(_.divide(val1, val2),100),2)}%`;
+
+
+/**
  * Produce John Hopkins Results
  * @param region
  * @param city
@@ -127,8 +136,15 @@ const produceJohnHopkinsResults = async (region, city) => {
 
         // Apply Actual Stats
         output.actual = outputHelper(result);
-
-
+        console.dir(output.actual);
+        // Add Stats
+        Object.assign(output.actual, {
+            stats: {
+                mortalityRate: percentileOrNa(output.actual.dead.current.value, output.actual.confirmed.current.value),
+                recoveryRate: percentileOrNa(output.actual.cured.current.value, output.actual.confirmed.current.value),
+                activeRate: output.actual.confirmed.current.value - output.actual.dead.current.value - output.actual.cured.current.value,
+            }
+        });
         result = result.reject(
             x =>
                 x.hasOwnProperty('Country_Region') &&
@@ -160,6 +176,15 @@ const produceJohnHopkinsResults = async (region, city) => {
     ) {
         return false;
     }
+
+    // Add Stats
+    Object.assign(output, {
+        stats: {
+            mortalityRate: percentileOrNa(output.dead.current.value, output.confirmed.current.value),
+            recoveryRate: percentileOrNa(output.cured.current.value, output.confirmed.current.value),
+            activeRate: output.confirmed.current.value - output.dead.current.value - output.cured.current.value,
+        }
+    });
 
     return output;
 };
@@ -318,7 +343,7 @@ const genRealtime = async (region, city) => {
             message: err.message || '',
             stack: err.stack || ''
         });
-
+        console.dir(err.stack);
         const error = new Error('Something went wrong getting information from John Hopkins.');
 
         error.innerErr = err;
