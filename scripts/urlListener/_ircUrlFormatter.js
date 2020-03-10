@@ -70,10 +70,6 @@ formattingHelper = (results, app) => {
             if (!_.isEmpty(yr.channelTitle)) append(yr.channelTitle);
             append(yr.videoTitle)(`${icons.views} ${c.navy(helpers.formatNumber(yr.viewCount))} ${icons.upArrow} ${c.green(helpers.formatNumber(yr.likeCount))} ${icons.downArrow} ${c.red(helpers.formatNumber(yr.dislikeCount))} ${icons.comments} ${c.blue(helpers.formatNumber(yr.commentCount))}`);
 
-            if (yr.hasOwnProperty('channelTitle')) {
-                append(yr.channelTitle);
-            }
-
             if (yr.hasOwnProperty('publishedAt')) {
                 append(moment(yr.publishedAt).fromNow());
             }
