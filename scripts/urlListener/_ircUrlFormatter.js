@@ -70,11 +70,20 @@ formattingHelper = (results, app) => {
             if (!_.isEmpty(yr.channelTitle)) append(yr.channelTitle);
             append(yr.videoTitle)(`${icons.views} ${c.navy(helpers.formatNumber(yr.viewCount))} ${icons.upArrow} ${c.green(helpers.formatNumber(yr.likeCount))} ${icons.downArrow} ${c.red(helpers.formatNumber(yr.dislikeCount))} ${icons.comments} ${c.blue(helpers.formatNumber(yr.commentCount))}`);
 
+            if (yr.hasOwnProperty('channelTitle')) {
+                append(yr.channelTitle);
+            }
+
+            if (yr.hasOwnProperty('publishedAt')) {
+                append(moment(yr.publishedAt).fromNow());
+            }
+
             // Video is non embeddable
             if (!results.youTube.video.embeddable) append(`${c.red('*')} Non-embeddable`);
             // Video has content restrictions
             if (results.youTube.video.restrictions) append(`${c.red('*')} Content Restrictions`);
         }
+
     }
 
     // We have IMDB data

@@ -6,7 +6,7 @@ const rp = require('request-promise-native');
 // Playlist Only
 const playlist = (apiKey, list) => {
     const base = {
-        fields: 'items(id,snippet(channelId,title,channelTitle),contentDetails)',
+        fields: 'items(id,snippet(channelId,title,publishedAt),contentDetails)',
         part: 'snippet,contentDetails',
     };
 
@@ -23,7 +23,7 @@ const playlist = (apiKey, list) => {
 // Track only
 const video = (apiKey, key) => {
     const base = {
-        fields: 'items(id,snippet(channelId,title,categoryId),statistics,contentDetails,status)',
+        fields: 'items(id,snippet(channelId,title,categoryId,channelTitle,publishedAt),statistics,contentDetails,status)',
         part: 'snippet,statistics,contentDetails,status',
     };
 
@@ -42,6 +42,7 @@ module.exports = (apiKey, key, list) => {
     if (list !== null && key === null) {
         return new Promise((res, rej) => playlist(apiKey, list)
             .then(playlistResults => res({
+                playlist: _.omit(playlistResults, ['items']),
                 playlistResults: playlistResults.items,
             }))
             .catch(rej));

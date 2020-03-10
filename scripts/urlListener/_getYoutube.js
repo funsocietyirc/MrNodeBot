@@ -39,6 +39,7 @@ const getYoutube = async (key, list, index, seekTime, results) => {
                 dislikeCount: numberOrZero(videoResults.statistics.dislikeCount),
                 commentCount: numberOrZero(videoResults.statistics.commentCount),
                 channelTitle: videoResults.snippet.channelTitle || '',
+                publishedAt: videoResults.snippet.publishedAt || null,
                 restrictions: _.isObject(videoResults.contentDetails.regionRestriction),
                 embeddable: _.isObject(videoResults.status) && videoResults.status.embeddable,
             };
