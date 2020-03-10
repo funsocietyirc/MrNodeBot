@@ -29,30 +29,37 @@ module.exports = (app) => {
             .orWhere(field, 'like', '%.png');
     };
 
-    // Rebuild all images inside the URL table from the Logging table resource
-    const buildImages = (to, from, text, message) =>
-        Models.Logging.query(qb =>
-            qb
-                .where(clause =>
-                    whereImages(clause, 'text'))
-                .orderBy('timestamp', 'desc'))
-            .fetchAll()
-            .then(logResults =>
-                logResults
-                    .forEach(logResult =>
-                        _(extractUrls(logResult.get('text'))).filter(url => (_.isString(url) ? url : '').match(/^http[s]?:\/\/.+\.(jpg|gif|jpeg|png)$/i))
-                            .each(url =>
-                                Models.Url.create({
-                                    url,
-                                    to: logResult.get('to'),
-                                    from: logResult.get('from'),
-                                    timestamp: logResult.get('timestamp'),
-                                }))))
-            .then(() => {
-                // Clean up when done
-                cleanImages(false);
-                app.say(to, 'The Image URL entries have been successfully rebuilt');
-            });
+    const buildImages = async (to, from, text, message) => {
+        try {
+            const logResults = await Models.Logging.query(qb =>
+                qb
+                    .where(clause => whereImages(clause, 'text'))
+                    .orderBy('timestamp', 'desc'))
+                .fetchAll();
+
+            for (let logResult of logResults) {
+                const url = _(
+                    extractUrls(logResult.get('text'))
+                ).filter(url => (_.isString(url) ? url : '').match(/^http[s]?:\/\/.+\.(jpg|gif|jpeg|png)$/i)).value();
+                await Models.Url.create({
+                    url,
+                    to: logResult.get('to'),
+                    from: logResult.get('from'),
+                    timestamp: logResult.get('timestamp'),
+                });
+            }
+
+            await cleanImages(false);
+
+            app.say(to, 'The Image URL entries have been successfully rebuilt');
+
+        } catch (err) {
+            logger.error('Something went wrong building images', {
+                message: err.message || '',
+                stack: err.stack || '',
+            })
+        }
+    };
 
     const destroyImages = async (to, from, text, message) => {
         try {

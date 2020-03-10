@@ -3,10 +3,10 @@ const _ = require('lodash');
 const helpers = require('../../helpers');
 const moment = require('moment');
 const logger = require('../../lib/logger');
+
 // End Points
 const covid19HealthEndPoint = 'https://covid19.health/data/all.json';
 const johnHopkinsEndpoint = 'https://services1.arcgis.com/0MSEUqKaxRlEPj5g/arcgis/rest/services/ncov_cases/FeatureServer/1/query?f=json&where=Confirmed%20%3E=%200&returnGeometry=false&&outFields=Province_State,Country_Region,Last_Update,Confirmed,Deaths,Recovered';
-
 
 /**
  * Produce John Hopkins Results
@@ -80,13 +80,25 @@ const produceJohnHopkinsResults = async (region, city) => {
                 value: result.sumBy('Deaths')
             }
         },
-        lastDate: moment(
-            result
-                .orderBy(x => new moment(x.Last_Update).format('YYYYMMDD'))
-                .last()
-                .Last_Update
-        ).fromNow()
+        lastDate: dateHelper(result)
     });
+
+    /**
+     * Help Construct human readable date / default
+     * @param result
+     * @returns {string}
+     */
+    const dateHelper = (result) => {
+        const x = result
+            .orderBy(x => new moment(x.Last_Update).format('YYYYMMDD'))
+            .last();
+
+        if (_.isObject(x) &&  x.hasOwnProperty('Last_Update')) {
+            return moment(x.Last_Update).fromNow();
+        }
+
+        return 'No Date Available';
+    };
 
     // Prepare output object
     let output = {
