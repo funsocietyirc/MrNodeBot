@@ -47,7 +47,7 @@ formattingHelper = (results, app) => {
     else if (results.realUrl && results.url !== results.realUrl) append(`${icons.anchor}  ${c.red('URL Redirected')}`);
 
     // We have a Short URL
-    if (!_.isEmpty(results.shortUrl) && !_.isEmpty(results.shortUrl) && results.url.length > config.features.urls.titleMin) { append(`${icons.anchor}  ${c.navy(results.shortUrl)}`); }
+    if (!_.isEmpty(results.shortUrl) && !_.isEmpty(results.shortUrl) && results.url.length > config.features.urls.titleMin && _.isEmpty(results.twitter)) { append(`${icons.anchor}  ${c.navy(results.shortUrl)}`); }
 
     // We have a YouTube video response
     if (!_.isEmpty(results.youTube)) {
@@ -70,6 +70,7 @@ formattingHelper = (results, app) => {
             if (!_.isEmpty(yr.channelTitle)) append(yr.channelTitle);
             append(yr.videoTitle)(`${icons.views} ${c.navy(helpers.formatNumber(yr.viewCount))} ${icons.upArrow} ${c.green(helpers.formatNumber(yr.likeCount))} ${icons.downArrow} ${c.red(helpers.formatNumber(yr.dislikeCount))} ${icons.comments} ${c.blue(helpers.formatNumber(yr.commentCount))}`);
 
+            // Append Published At Date
             if (yr.hasOwnProperty('publishedAt')) {
                 append(moment(yr.publishedAt).fromNow());
             }
@@ -80,6 +81,38 @@ formattingHelper = (results, app) => {
             if (results.youTube.video.restrictions) append(`${c.red('*')} Content Restrictions`);
         }
 
+    }
+
+    // We Have Twitter Data
+    else if (!_.isEmpty(results.twitter)) {
+        const twitter = results.twitter;
+        append(logos.twitter);
+        append(twitter.user.name);
+        append(`@${twitter.user.screenName}`);
+        append(`${helpers.formatNumber(twitter.user.followers)} Followers`);
+        append(twitter.text);
+        append(`${helpers.formatNumber(twitter.retweetCount)} Re-Tweets`);
+        append(moment(twitter.createdAt, 'dd MMM DD HH:mm:ss ZZ YYYY').fromNow());
+        // if (imdb.seasons) append(`${c.bold('Seasons:')} ${imdb.seasons}`);
+
+        // {
+        //     text: data.truncated ? data.text : data.full_text,
+        //     truncated: data.truncated,
+        //     createdAt: data.created_at,
+        //     retweetCount: data.retweet_count,
+        //     favouriteCount: data.favourite_count,
+        //     lang: data.lang,
+        //     user: {
+        //         screenName: data.user.screen_name,
+        //         name: data.user.name,
+        //         location: data.user.location,
+        //         description: data.user.description,
+        //         url: data.user.url,
+        //         followers: data.user.followers_count,
+        //         friends: data.user.friends_count,
+        //         createdAt: data.user.created_at,
+        //     }
+        // }
     }
 
     // We have IMDB data

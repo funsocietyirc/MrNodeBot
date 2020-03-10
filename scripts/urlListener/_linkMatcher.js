@@ -7,8 +7,15 @@ const getImdb = require('./_getImdb.js'); // Get IMDB Data
 const getGitHub = require('./_getGithub'); // Get GitHub Information
 const getBitBucket = require('./_getBitBucket'); // Get BitBucket Information
 const getImgur = require('./_getImgurImage'); // Get Imgur data
+const getTwitter = require('./_getTwitter'); // Get Twitter Data
 
-const linkMatcher = async (results) => {
+/**
+ *
+ * @param results
+ * @param app
+ * @returns {Promise<*|{gitHub: {owner: *, forks: *, lastPush: *, name: *, watchers: *, fullName: *, language: *, stars: *, issues: *, isFork: *, desc: *}}|undefined|{bitBucket: {lastPush: *, ownerDisplayName: *, privateRepo: boolean, name: *, ownerUserName: *, fullName: *, language: *, hasIssues: *, desc: *}}|{bitBucket: {privateRepo: boolean}}>}
+ */
+const linkMatcher = async (results, app) => {
     // Use the realUrl if available when doing matches
     // This allows shortened urls to still hit
     const current = results.realUrl ? results.realUrl : results.url;
@@ -139,6 +146,13 @@ const linkMatcher = async (results) => {
         case 'bitbucket.org': // BitBucket
         case 'www.butbucket.com':
             if (results.uri.segment().length >= 2) return getBitBucket(results.uri.segmentCoded(0), results.uri.segmentCoded(1), results); // 2: User, 3: Repo
+            break;
+        case 't.co':
+        case 'www.t.co':
+            break;
+        case 'twitter.com':
+        case 'www.twitter.com':
+            if (results.uri.segment().length >= 3 && results.uri.segmentCoded(1).toLowerCase() === 'status') return getTwitter(results.uri.segmentCoded(2), results.uri.segmentCoded(0), results, app);
             break;
     }
 

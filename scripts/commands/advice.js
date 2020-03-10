@@ -20,7 +20,6 @@ module.exports = (app) => {
                 message: err.message || '',
                 stack: err.stack || '',
             });
-            console.dir(err);
             app.say(to, `I am sorry ${from}, the computer I go to for advice is sleeping`);
         }
     };

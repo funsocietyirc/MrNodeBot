@@ -136,7 +136,7 @@ const produceJohnHopkinsResults = async (region, city) => {
 
         // Apply Actual Stats
         output.actual = outputHelper(result);
-        console.dir(output.actual);
+
         // Add Stats
         Object.assign(output.actual, {
             stats: {
@@ -343,11 +343,9 @@ const genRealtime = async (region, city) => {
             message: err.message || '',
             stack: err.stack || ''
         });
-        console.dir(err.stack);
+
         const error = new Error('Something went wrong getting information from John Hopkins.');
-
         error.innerErr = err;
-
         throw error;
     }
 };

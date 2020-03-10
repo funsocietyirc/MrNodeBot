@@ -70,7 +70,7 @@ module.exports = (app) => {
                     .then(safeCheck)
                     .then(results => (results.unreachable ? results : // If the site is not up, continue the chain
                         getShorten(results) // Otherwise grab the google SHORT Url
-                            .then(matcher)), // Then send it to the regex matcher
+                            .then(() => matcher(results, app))), // Then send it to the regex matcher
                     )))
             .then((results) => {
                 // Check to see if there is a re-post limit
@@ -95,11 +95,12 @@ module.exports = (app) => {
             .catch(err => {
                 //
                 if (err instanceof statusCodeErrors.StatusCodeError) {
-                    app.say(to, `Improperly configured Web Server (${url}), ${from}`);
+                    if (!_.includes(announceIgnore, results.to)) {
+                        app.say(to, `Improperly configured Web Server (${url}), ${from}`);
+                    }
                     return;
                 }
                 // Something went wrong
-                    console.dir(err)
                 logger.warn('Error in URL Listener chain', {
                     err: err.message || '',
                     stack: err.stack || '',
