@@ -1,5 +1,5 @@
 # Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
-version: v1.13.5
+version: v1.14.1
 # ignores vulnerabilities until expiry date; change duration by modifying expiry date
 ignore:
   SNYK-JS-JSYAML-173999:
@@ -14,4 +14,38 @@ ignore:
     - express-vue > vue-pronto > js-to-string > serialize-javascript:
         reason: None given
         expires: '2020-01-15T00:06:00.578Z'
-patch: {}
+# patches apply the minimum changes required to fix a vulnerability
+patch:
+  'npm:bl:20160119':
+    - table-scraper > tabletojson > request > bl:
+        patched: '2020-03-11T03:22:32.757Z'
+  'npm:extend:20180424':
+    - table-scraper > tabletojson > request > extend:
+        patched: '2020-03-11T03:22:32.757Z'
+  'npm:hawk:20160119':
+    - table-scraper > tabletojson > request > hawk:
+        patched: '2020-03-11T03:22:32.757Z'
+  'npm:hoek:20180212':
+    - table-scraper > tabletojson > request > hawk > hoek:
+        patched: '2020-03-11T03:22:32.757Z'
+    - table-scraper > tabletojson > request > hawk > boom > hoek:
+        patched: '2020-03-11T03:22:32.757Z'
+    - table-scraper > tabletojson > request > hawk > sntp > hoek:
+        patched: '2020-03-11T03:22:32.757Z'
+    - table-scraper > tabletojson > request > hawk > cryptiles > boom > hoek:
+        patched: '2020-03-11T03:22:32.757Z'
+  'npm:is-my-json-valid:20160118':
+    - table-scraper > tabletojson > request > har-validator > is-my-json-valid:
+        patched: '2020-03-11T03:22:32.757Z'
+  'npm:lodash:20180130':
+    - table-scraper > tabletojson > cheerio > lodash:
+        patched: '2020-03-11T03:22:32.757Z'
+  'npm:request:20160119':
+    - table-scraper > tabletojson > request:
+        patched: '2020-03-11T03:22:32.757Z'
+  'npm:stringstream:20180511':
+    - table-scraper > tabletojson > request > stringstream:
+        patched: '2020-03-11T03:22:32.757Z'
+  'npm:tough-cookie:20170905':
+    - table-scraper > tabletojson > request > tough-cookie:
+        patched: '2020-03-11T03:22:32.757Z'
