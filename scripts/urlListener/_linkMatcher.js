@@ -1,5 +1,6 @@
 const _ = require('lodash');
 const URL = require('url').URL; // TODO Here until we can figure why URI is not parsing the whole query string
+const URI = require('urijs');
 
 const config = require('../../config');
 const getYoutube = require('./_getYoutube.js'); // Get the youtube key from link
@@ -149,10 +150,26 @@ const linkMatcher = async (results, app) => {
             break;
         case 't.co':
         case 'www.t.co':
+            if (
+                _.isString(results.uri.segment(0)) &&
+                !_.isEmpty(results.uri.segment(0)) &&
+                _.isString(results.title) &&
+                !_.isEmpty(results.title)
+            )  {
+                const uri = (new URI(results.title)).segmentCoded(3);
+                return getTwitter(uri, null, results, app);
+            }
             break;
         case 'twitter.com':
         case 'www.twitter.com':
-            if (results.uri.segment().length >= 3 && results.uri.segmentCoded(1).toLowerCase() === 'status') return getTwitter(results.uri.segmentCoded(2), results.uri.segmentCoded(0), results, app);
+            if (results.uri.segment().length < 3) break;
+            if (
+                results.uri.segmentCoded(1).toLowerCase() === 'status'
+            ) return getTwitter(results.uri.segmentCoded(2), results.uri.segmentCoded(0), results, app);
+            else if (
+                results.uri.segmentCoded(2).toLowerCase() === 'status'
+            ) return getTwitter(results.uri.segmentCoded(3), results.uri.segmentCoded(0), results, app);
+
             break;
     }
 
