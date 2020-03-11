@@ -5,10 +5,12 @@
   "main": "index.js",
   "scripts": {
     "start": "node ./index.js",
-    "test": "node_modules/mocha/bin/mocha test/**/*.js --reporter spec",
+    "test": "snyk test && node_modules/mocha/bin/mocha test/**/*.js --reporter spec",
     "test-watch": "./node_modules/mocha/bin/mocha test/**/*.js --reporter spec -w",
     "generate-docs": "node_modules/.bin/jsdoc -c jsdoc.json",
-    "snyk-protect": "./node_modules/.bin/snyk protect"
+    "prepublish": "snyk protect",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "author": "Dave Richer <davericher@gmail.com>",
   "license": "MIT",

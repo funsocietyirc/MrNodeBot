@@ -3,6 +3,8 @@ language: node_js
 node_js:
   - 'stable'
 install: npm install
+before_install:
+  - npm install -g snyk
 before_script:
   - cp config.sample.js config.js
 script: npm test
