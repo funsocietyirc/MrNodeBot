@@ -34,6 +34,8 @@ module.exports = {
             // '/scripts/fsociety',
             // URL Listener feature
             '/scripts/urlListener',
+            // Covid19
+            '/scripts/covid19',
             // Only load in development
             // '/scripts/beta',
         ],

@@ -4,7 +4,7 @@ const scriptInfo = {
     createdBy: 'IronY',
 };
 
-const corona = require('../generators/_coronavirus');
+const corona = require('./_coronavirus');
 const _ = require('lodash');
 const typo = require('../lib/_ircTypography');
 const helpers = require('../../helpers');
@@ -26,11 +26,46 @@ const appendResult = (obj, output, label, color) => {
 };
 
 module.exports = (app) => {
-    const coronavirusRT = async(to, from, text, message) => {
+    const covid19Canada = async (to, from, text, message) => {
+        try {
+            const results = await corona.covidCanadaResults();
+
+            if(!results || !_.isObject(results) || _.isEmpty(results)) {
+                app.say(to, `There seems to be no Canadian information available, ${from}`);
+                return;
+            }
+
+            // Output to IRC
+            const output = new typo.StringBuilder({
+                logo: 'coronavirus',
+            });
+
+            output.appendBold('Confirmed');
+
+            _.forEach(results, (value, region) => {
+                output.appendBold(_.startCase(region));
+                output.append(helpers.formatNumber(value));
+            });
+
+            app.say(to, output.text);
+        }
+        catch (err) {
+            console.dir(err);
+            app.say(to, `Something went wrong fetching the Canadian information, ${from}`);
+        }
+    };
+    app.Commands.set('covid19-canada', {
+        desc: 'COVID-19 Numbers Provided By Canadian Government',
+        access: app.Config.accessLevels.identified,
+        call: covid19Canada,
+    });
+
+    const covid19 = async(to, from, text, message) => {
         // Split on comma
         const [region, city] = text.split(',');
+
         // Get Results
-        const result = await corona.genRealtime(region, city);
+        const result = await corona.covid19Results(region, city);
         // No Results
         if (
             !result ||
@@ -76,6 +111,13 @@ module.exports = (app) => {
         app.say(to, output.text);
     };
 
+    app.Commands.set('covid19', {
+        desc: '[Region]?, [City/Province]? - COVID-19 Facts Provided By John Hopkins',
+        access: app.Config.accessLevels.identified,
+        call: covid19,
+    });
+
+
     /**
      * Coronavirus command handler
      * @param to
@@ -84,11 +126,11 @@ module.exports = (app) => {
      * @param message
      * @returns {Promise<void>}
      */
-    const coronavirus = async (to, from, text, message) => {
+    const covid19Stats = async (to, from, text, message) => {
         // Split on comma
         const [region, province] = text.split(',');
         // Get Results
-        const result = await corona.gen(region, province);
+        const result = await corona.covid19StatsResults(region, province);
         // No Results
         if (
             !result ||
@@ -126,17 +168,12 @@ module.exports = (app) => {
     /**
      * Export Command
      */
-    app.Commands.set('coronavirus', {
-        desc: '[Region] [Province?] Coronavirus stats (Compiled Daily)',
+    app.Commands.set('covid19-stats', {
+        desc: '[Region]?, [City]?  - COVID-19 Stats Compiled daily by https://covid19.health',
         access: app.Config.accessLevels.identified,
-        call: coronavirus,
+        call: covid19Stats,
     });
 
-    app.Commands.set('coronavirus-rt', {
-        desc: '[Region] [Province?] Coronavirus stats (Real Time)',
-        access: app.Config.accessLevels.identified,
-        call: coronavirusRT,
-    });
     // Return the script info
     return scriptInfo;
 };
