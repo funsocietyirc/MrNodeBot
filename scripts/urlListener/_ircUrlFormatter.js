@@ -69,7 +69,7 @@ formattingHelper = (results, app) => {
     else if (results.realUrl && results.url !== results.realUrl) append(`${icons.anchor}  ${c.red('URL Redirected')}`);
 
     // We have a Short URL
-    if (!_.isEmpty(results.shortUrl) && !_.isEmpty(results.shortUrl) && results.url.length > config.features.urls.titleMin && _.isEmpty(results.twitter)) { append(`${icons.anchor}  ${c.navy(results.shortUrl)}`); }
+    if (!_.isEmpty(results.shortUrl) && !_.isEmpty(results.shortUrl) && (  hasDiversion || (results.url.length > config.features.urls.titleMin)) && _.isEmpty(results.twitter)) { append(`${icons.anchor}  ${c.navy(results.shortUrl)}`); }
 
     // We have a YouTube video response
     if (!_.isEmpty(results.youTube)) {
