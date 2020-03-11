@@ -71,31 +71,6 @@ const formatRegion = region => {
 };
 
 /**
- * Output Helper
- * @param result
- * @param output
- * @returns {{} & {location: {}} & {cured: {current: {value: (number|LoDashExplicitWrapper<number>|_.LodashSumBy1x1<any>)}}, dead: {current: {value: (number|LoDashExplicitWrapper<number>|_.LodashSumBy1x1<any>)}}, confirmed: {current: {value: (number|LoDashExplicitWrapper<number>|_.LodashSumBy1x1<any>)}}, lastDate: string}}
- */
-const outputHelper = (result, output) => Object.assign(output, {
-    confirmed: {
-        current: {
-            value: result.sumBy('Confirmed')
-        }
-    },
-    cured: {
-        current: {
-            value: result.sumBy('Recovered')
-        }
-    },
-    dead: {
-        current: {
-            value: result.sumBy('Deaths')
-        }
-    },
-    lastDate: dateHelper(result)
-});
-
-/**
  * Produce John Hopkins Results
  * @param region
  * @param city
@@ -114,7 +89,6 @@ const covid19Results = async (region, city) => {
     // Prepare output object
     let output = {
         location: {},
-        actual: {},
     };
 
     // Formatted Region
@@ -135,17 +109,31 @@ const covid19Results = async (region, city) => {
         }
 
     } else {
-        // Apply Actual Stats
-        outputHelper(result, output.actual);
+        output.actual = {
+            confirmed: {
+                current: {
+                    value: result.sumBy('Confirmed')
+                }
+            },
+            cured: {
+                current: {
+                    value: result.sumBy('Recovered')
+                }
+            },
+            dead: {
+                current: {
+                    value: result.sumBy('Deaths')
+                }
+            },
+            lastDate: dateHelper(result)
+        };
 
-        // Add Stats
-        output.actual = Object.assign({}, output.actual, {
-            stats: {
-                mortalityRate: percentileOrNa(output.actual.dead.current.value, output.actual.confirmed.current.value),
-                recoveryRate: percentileOrNa(output.actual.cured.current.value, output.actual.confirmed.current.value),
-                activeRate: output.actual.confirmed.current.value - output.actual.dead.current.value - output.actual.cured.current.value,
-            }
-        });
+        output.actual.stats = {
+            mortalityRate: percentileOrNa(output.actual.dead.current.value, output.actual.confirmed.current.value),
+            recoveryRate: percentileOrNa(output.actual.cured.current.value, output.actual.confirmed.current.value),
+            activeRate: output.actual.confirmed.current.value - output.actual.dead.current.value - output.actual.cured.current.value,
+        };
+
         result = result.reject(
             x =>
                 x.hasOwnProperty('Country_Region') &&
@@ -169,7 +157,24 @@ const covid19Results = async (region, city) => {
         return false;
     }
 
-   outputHelper(result, output);
+    _.merge(output, {
+        confirmed: {
+            current: {
+                value: result.sumBy('Confirmed')
+            }
+        },
+        cured: {
+            current: {
+                value: result.sumBy('Recovered')
+            }
+        },
+        dead: {
+            current: {
+                value: result.sumBy('Deaths')
+            }
+        },
+        lastDate: dateHelper(result)
+    });
 
     // Post flight
     if (
@@ -179,13 +184,11 @@ const covid19Results = async (region, city) => {
     }
 
     // Add Stats
-    output = Object.assign({}, output, {
-        stats: {
-            mortalityRate: percentileOrNa(output.dead.current.value, output.confirmed.current.value),
-            recoveryRate: percentileOrNa(output.cured.current.value, output.confirmed.current.value),
-            activeRate: output.confirmed.current.value - output.dead.current.value - output.cured.current.value,
-        }
-    });
+    output.stats = {
+        mortalityRate: percentileOrNa(output.dead.current.value, output.confirmed.current.value),
+        recoveryRate: percentileOrNa(output.cured.current.value, output.confirmed.current.value),
+        activeRate: output.confirmed.current.value - output.dead.current.value - output.cured.current.value,
+    };
 
     return output;
 };
