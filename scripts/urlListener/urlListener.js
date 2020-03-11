@@ -13,6 +13,7 @@ const scriptInfo = {
     desc: 'Listen for URLS, append them to a DB table, clean them if they expire, and other stuff including pulling proper meta data',
     createdBy: 'IronY',
 };
+
 const _ = require('lodash');
 const logger = require('../../lib/logger');
 const extractUrls = require('../../lib/extractUrls');
@@ -39,14 +40,26 @@ const scheduler = require('../../lib/scheduler');
 const resultsCache = require('../../lib/hashedCacheStore');
 
 module.exports = (app) => {
+    // No Configuration available, bail
+    if (!app.Config.hasOwnProperty('features') || !app.Config.features.hasOwnProperty('urls')) {
+        logger.info('URL Listener loaded due to lack of configuration, please make sure you have config.features.urls available and correct');
+        return scriptInfo;
+    }
+
     // Libs
-    const announceIgnore = app.Config.features.urls.announceIgnore || [];
+    const announceIgnore = app.Config.features.urls.hasOwnProperty('announceIgnore') && _.isArray(app.Config.features.urls.announceIgnore) ? app.Config.features.urls.announceIgnore : [];
 
     // Fetch the ignore list
-    const userIgnore = app.Config.features.urls.userIgnore || [];
+    const userIgnore =  app.Config.features.urls.hasOwnProperty('userIgnore') && _.isArray(app.Config.features.urls.userIgnore) ? app.Config.features.urls.userIgnore : [];
 
-    const maxLength = app.Config.features.urls.maxLength || 10485760;
-    const userAgent = app.Config.features.urls.userAgent || 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36';
+    // Fetch Max Length
+    const maxLength = app.Config.features.urls.hasOwnProperty('maxLength') && _.isNumber(app.Config.features.urls.maxLength) ? app.Config.features.urls.maxLength : 10485760;
+
+    // Fetch User Agent
+    const userAgent = app.Config.features.urls.hasOwnProperty('userAgent') && _.isString(app.Config.features.urls.userAgent) ? app.Config.features.urls.userAgent : 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36';
+
+    // Fetch Diversions
+    const diversions = app.Config.features.urls.hasOwnProperty('diversions') && _.isArray(app.Config.features.urls.diversions) ? app.Config.features.urls.diversions : [];
 
     // Send Response to IRC
     const sendToIrc = (results) => {
@@ -57,6 +70,24 @@ module.exports = (app) => {
                 on: Date.now(),
             });
         }
+
+        for (let diversion of diversions) {
+            // Match Conditions
+            if(
+                !diversion.hasOwnProperty('source') ||
+                !diversion.hasOwnProperty('dest') ||
+                _.includes(announceIgnore, diversion.dest) ||
+                !app._ircClient.isInChannel(diversion.dest)
+            ) continue;
+            // Add Diversion Tag and process
+            results.diversion = diversion.dest;
+            ircUrlFormatter(results, app);
+            results.delivered.push({
+                protocol: 'irc',
+                on: Date.now(),
+            });
+        }
+
         return results;
     };
 

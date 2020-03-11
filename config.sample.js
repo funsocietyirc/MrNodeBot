@@ -270,6 +270,13 @@ module.exports = {
             titleMaxLimit: {
                 '#mrnodebot3': 255,
             },
+            // Channel Diversions
+            diversions: [
+                // {
+                //     source: '#coronavirus',
+                //     dest: '#coronavirus-links'
+                // }
+            ]
         },
         fsociety: {
             mainChannel: '#MrNodeBot',

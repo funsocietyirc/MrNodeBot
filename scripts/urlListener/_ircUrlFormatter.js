@@ -10,18 +10,35 @@ const icons = ircTypography.icons;
 
 // Formatting Helper
 formattingHelper = (results, app) => {
+    const hasDiversion = _.isString(results.diversion) && !_.isEmpty(results.diversion);
+    const to = hasDiversion ? results.diversion : results.to;
+
     // Site is not live
     if (results.unreachable) {
         // Do not post unverified links
         if (_.isArray(app.Config.features.urls.unverifiedIgnore) && app.Config.features.urls.unverifiedIgnore.includes(results.from)) return;
 
-        app.say(results.to, `${c[results.cached ? 'green' : 'red']('*')} ${results.from} ${icons.sideArrow} ${c.blue(results.url)} ${icons.sideArrow} ${c.red.bold('Unverifiable Link')} Code: ${results.statusCode || 'None'}`);
+        if (!hasDiversion) {
+            app.say(results.to, `${c[results.cached ? 'green' : 'red']('*')} ${results.from} ${icons.sideArrow} ${c.blue(results.url)} ${icons.sideArrow} ${c.red.bold('Unverifiable Link')} Code: ${results.statusCode || 'None'}`);
+        }
+
         return;
     }
 
     // Output chain helper functions
     let output = '';
+
+    /**
+     * Space Helper
+     * @returns {string}
+     */
     const space = () => (output !== '' ? ` ${icons.sideArrow} ` : ' ');
+
+    /**
+     * Append Helper
+     * @param text
+     * @returns {any}
+     */
     const append = (text) => {
         output = output + space() + text;
         return append;
@@ -222,15 +239,14 @@ formattingHelper = (results, app) => {
 
     if (_.isEmpty(finalOutput)) return;
 
-
     // Report back to IRC
-    app.say(results.to, finalOutput);
+    app.say(to, finalOutput);
 
     // Threats detected Report back First
     if (results.threats.length) {
         _.each(results.threats, threat =>
             app.say(
-                results.to,
+                to,
                 c.red(`| Warning ${_.startCase(threat.type).toLowerCase()} threat detected on ${results.url} for ${_.startCase(threat.platform).toLowerCase()}`),
             ));
     }
