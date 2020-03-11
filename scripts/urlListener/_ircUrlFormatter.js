@@ -44,6 +44,11 @@ formattingHelper = (results, app) => {
         return append;
     };
 
+    // if we have diversions, append
+    if(hasDiversion) {
+        append(results.to);
+    }
+
     // This is a re post
     if (results.history.length) {
         const history = _.first(results.history);
