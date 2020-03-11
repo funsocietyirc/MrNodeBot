@@ -127,7 +127,7 @@ module.exports = (app) => {
                 //
                 if (err instanceof statusCodeErrors.StatusCodeError) {
                     if (!_.includes(announceIgnore, results.to)) {
-                        app.say(to, `Improperly configured Web Server (${url}), ${from}`);
+                        app.say(results.to, `Improperly configured Web Server (${url}), ${from}`);
                     }
                     return;
                 }
