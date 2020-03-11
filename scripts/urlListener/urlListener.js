@@ -74,10 +74,13 @@ module.exports = (app) => {
         for (let diversion of diversions) {
             // Match Conditions
             if(
-                !diversion.hasOwnProperty('source') ||
-                !diversion.hasOwnProperty('dest') ||
-                _.includes(announceIgnore, diversion.dest) ||
-                !app._ircClient.isInChannel(diversion.dest)
+                (
+                    !diversion.hasOwnProperty('source') ||
+                    !diversion.hasOwnProperty('dest') ||
+                    _.includes(announceIgnore, diversion.dest) ||
+                    !app._ircClient.isInChannel(diversion.dest)
+                ) && results.to === diversion.source
+
             ) continue;
             // Add Diversion Tag and process
             results.diversion = diversion.dest;
