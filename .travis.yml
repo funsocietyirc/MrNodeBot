@@ -1,34 +1,13 @@
-dist: trusty
-sudo: false
+dist: bionic
 language: node_js
 node_js:
-  - "12"
-    "11"
-  - "10"
-compiler:
-  - gcc
-  - clang
-env:
-  - CXX=g++-4.8
-before_install:
-#  - wget -qO - https://raw.githubusercontent.com/yarnpkg/releases/gh-pages/debian/pubkey.gpg | sudo apt-key add
-#  - echo "deb http://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
-#  - sudo apt-get update -qq
-#  - sudo apt-get install -y -qq yarn
-  - npm install -g npm
+  - 'stable'
+install: npm install
+before_script:
   - cp config.sample.js config.js
+script: npm test
 cache:
   directories:
     - node_modules
-script:
-  - "npm test"
 notifications:
   irc: "chat.freenode.net#mrnodebot"
-addons:
-  apt:
-    sources:
-    - ubuntu-toolchain-r-test
-    packages:
-    - gcc-4.8
-    - g++-4.8
-    - clang
