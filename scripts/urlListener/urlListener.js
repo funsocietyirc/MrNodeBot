@@ -71,24 +71,25 @@ module.exports = (app) => {
             });
         }
 
-        for (let diversion of diversions) {
+        for (const diversion of diversions) {
             // Match Conditions
-            if(
+            if (
                 (
-                    !diversion.hasOwnProperty('source') ||
-                    !diversion.hasOwnProperty('dest') ||
-                    _.includes(announceIgnore, diversion.dest) ||
-                    !app._ircClient.isInChannel(diversion.dest)
-                ) && results.to !== diversion.source
+                    diversion.hasOwnProperty('source') &&
+                    diversion.hasOwnProperty('dest') &&
+                    !_.includes(announceIgnore, diversion.dest) &&
+                    app._ircClient.isInChannel(diversion.dest)
+                ) && results.to === diversion.source
+            ) {
+                // Add Diversion Tag and process
+                results.diversion = diversion.dest;
 
-            ) continue;
-            // Add Diversion Tag and process
-            results.diversion = diversion.dest;
-            ircUrlFormatter(results, app);
-            results.delivered.push({
-                protocol: 'irc',
-                on: Date.now(),
-            });
+                ircUrlFormatter(results, app);
+                results.delivered.push({
+                    protocol: 'irc',
+                    on: Date.now(),
+                });
+            }
         }
 
         return results;
