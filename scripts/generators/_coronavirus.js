@@ -60,9 +60,12 @@ const produceJohnHopkinsResults = async (region, city) => {
                 return 'US';
             case 'uk':
             case 'UK':
+            case 'Uk':
             case 'united kingdom':
             case 'United Kingdom':
-                return 'Uk';
+            case 'u.k':
+            case 'U.K':
+                return 'UK';
             default:
                 return _.startCase(lower);
         }
@@ -282,7 +285,7 @@ const produceCovid19HealthResults = async (region, city) => {
         intermResults = _
             .filter(
                 intermResults.omit(['confirmedCount', 'deadCount', 'curedCount']).value()[0],
-                x => x.hasOwnProperty('ENGLISH') && x.ENGLISH.split(',')[0].startsWith(formattedCity)
+                x => x.hasOwnProperty('ENGLISH') && x.ENGLISH.split(',')[0] === formattedCity
             );
     }
 
