@@ -21,10 +21,11 @@ const percentileOrNa = (val1, val2) => `${(val1 === 0 || val2 === 0) ? 'N/A' : _
  */
 const dateHelper = (result) => {
     const x = result
+        .reject(x => x.hasOwnProperty('Last_update'))
         .orderBy(x => x.Last_Update)
         .last();
 
-    if (_.isObject(x) &&  x.hasOwnProperty('Last_Update')) {
+    if (_.isObject(x)) {
         return moment(x.Last_Update).fromNow();
     }
 
@@ -134,12 +135,14 @@ const covid19Results = async (region, city) => {
             activeRate: output.actual.confirmed.current.value - output.actual.dead.current.value - output.actual.cured.current.value,
         };
 
+        // Filter out Mainland China
         result = result.reject(
             x =>
                 x.hasOwnProperty('Country_Region') &&
                 x.Country_Region === 'Mainland China'
         )
     }
+
 
     if (city) {
         const formattedCity =  output.location.city = formatCity(city);

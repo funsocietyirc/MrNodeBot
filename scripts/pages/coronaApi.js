@@ -10,18 +10,41 @@ const gen = require('../covid19/_coronavirus');
 module.exports = (app) => {
 
     /**
+     * Covid19 Canada Numbers
+     * @param req
+     * @param res
+     * @returns {Promise<*>}
+     */
+    const covid19Canada = async (req, res) => {
+        try {
+            const results = await gen.covidCanadaResults();
+
+            return res.json({
+                status: 'success',
+                data: results,
+            })
+        }
+        catch (err) {
+            return res.json({
+                status: 'error',
+                message: err.message || '',
+            });
+        }
+    };
+
+    /**
      * CoronaVirus API Handler
      * @param req
      * @param res
      * @returns {Promise<*>}
      */
-    const coronavirus = async (req, res) => {
+    const covid19Stats = async (req, res) => {
         try {
             // Query Params
             const country = req.query.hasOwnProperty('country') ? req.query.country : null;
             const city = req.query.hasOwnProperty('city') ? req.query.city : null;
 
-            const results = await gen.gen(country, city);
+            const results = await gen.covid19StatsResults(country, city);
 
             if (!results || _.isEmpty(results)) {
                 return res.json(({
@@ -42,8 +65,8 @@ module.exports = (app) => {
             });
         }
     };
-    app.WebRoutes.set('api.coronavirus', {
-        handler: coronavirus,
+    app.WebRoutes.set('api.covid19Stats', {
+        handler: covid19Stats,
         desc: 'Coronavirus API',
         path: '/api/coronavirus',
         verb: 'get',
@@ -55,13 +78,13 @@ module.exports = (app) => {
      * @param res
      * @returns {Promise<*>}
      */
-    const coronavirusRT = async (req, res) => {
+    const covid19 = async (req, res) => {
         try {
             // Query Params
             const country = req.query.hasOwnProperty('country') ? req.query.country : null;
             const city = req.query.hasOwnProperty('city') ? req.query.city : null;
 
-            const results = await gen.genRealtime(country, city);
+            const results = await gen.covid19Results(country, city);
 
             if (!results || _.isEmpty(results)) {
                 return res.json(({
@@ -82,10 +105,18 @@ module.exports = (app) => {
         }
     };
 
+    // Remains for legacies purposes
     app.WebRoutes.set('api.coronavirus-rt', {
-        handler: coronavirusRT,
+        handler: covid19,
         desc: 'Coronavirus Realtime API',
         path: '/api/coronavirus-rt',
+        verb: 'get',
+    });
+
+    app.WebRoutes.set('api.covid19', {
+        handler: covid19,
+        desc: 'Coronavirus Realtime API',
+        path: '/api/covid19',
         verb: 'get',
     });
 
