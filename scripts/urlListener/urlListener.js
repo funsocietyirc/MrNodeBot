@@ -79,7 +79,7 @@ module.exports = (app) => {
                     !diversion.hasOwnProperty('dest') ||
                     _.includes(announceIgnore, diversion.dest) ||
                     !app._ircClient.isInChannel(diversion.dest)
-                ) && results.to === diversion.source
+                ) && results.to !== diversion.source
 
             ) continue;
             // Add Diversion Tag and process
