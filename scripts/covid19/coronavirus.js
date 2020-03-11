@@ -50,7 +50,6 @@ module.exports = (app) => {
             app.say(to, output.text);
         }
         catch (err) {
-            console.dir(err);
             app.say(to, `Something went wrong fetching the Canadian information, ${from}`);
         }
     };

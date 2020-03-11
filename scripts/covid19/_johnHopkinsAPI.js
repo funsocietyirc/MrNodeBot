@@ -21,7 +21,7 @@ const percentileOrNa = (val1, val2) => `${(val1 === 0 || val2 === 0) ? 'N/A' : _
  */
 const dateHelper = (result) => {
     const x = result
-        .orderBy(x => new moment(x.Last_Update).format('YYYYMMDD'))
+        .orderBy(x => x.Last_Update)
         .last();
 
     if (_.isObject(x) &&  x.hasOwnProperty('Last_Update')) {
