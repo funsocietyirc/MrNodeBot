@@ -5,13 +5,78 @@ ignore:
   SNYK-JS-JSYAML-173999:
     - express-vue > vue-pronto > vueify > cssnano > postcss-svgo > svgo > js-yaml:
         reason: None given
-        expires: '2020-01-15T00:06:00.578Z'
+        expires: '2020-04-10T07:13:12.668Z'
   SNYK-JS-JSYAML-174129:
     - express-vue > vue-pronto > vueify > cssnano > postcss-svgo > svgo > js-yaml:
         reason: None given
-        expires: '2020-01-15T00:06:00.578Z'
+        expires: '2020-04-10T07:13:12.668Z'
   SNYK-JS-SERIALIZEJAVASCRIPT-536840:
     - express-vue > vue-pronto > js-to-string > serialize-javascript:
         reason: None given
-        expires: '2020-01-15T00:06:00.578Z'
-patch: {}
+        expires: '2020-04-10T07:13:12.668Z'
+  SNYK-JS-LODASH-450202:
+    - table-scraper > tabletojson > cheerio > lodash:
+        reason: None given
+        expires: '2020-04-10T07:13:12.668Z'
+  SNYK-JS-LODASH-73638:
+    - table-scraper > tabletojson > cheerio > lodash:
+        reason: None given
+        expires: '2020-04-10T07:13:12.668Z'
+  SNYK-JS-LODASH-73639:
+    - table-scraper > tabletojson > cheerio > lodash:
+        reason: None given
+        expires: '2020-04-10T07:13:12.668Z'
+  'npm:is-my-json-valid:20180214':
+    - table-scraper > tabletojson > request > har-validator > is-my-json-valid:
+        reason: None given
+        expires: '2020-04-10T07:13:12.668Z'
+  'npm:qs:20170213':
+    - table-scraper > tabletojson > request > qs:
+        reason: None given
+        expires: '2020-04-10T07:13:12.668Z'
+  'npm:sshpk:20180409':
+    - table-scraper > tabletojson > request > http-signature > sshpk:
+        reason: None given
+        expires: '2020-04-10T07:13:12.668Z'
+  'npm:tunnel-agent:20170305':
+    - table-scraper > tabletojson > request > tunnel-agent:
+        reason: None given
+        expires: '2020-04-10T07:13:12.668Z'
+# patches apply the minimum changes required to fix a vulnerability
+patch:
+  'npm:bl:20160119':
+    - table-scraper > tabletojson > request > bl:
+        patched: '2020-03-11T07:11:42.125Z'
+  'npm:extend:20180424':
+    - table-scraper > tabletojson > request > extend:
+        patched: '2020-03-11T07:11:42.125Z'
+  'npm:hawk:20160119':
+    - table-scraper > tabletojson > request > hawk:
+        patched: '2020-03-11T07:11:42.125Z'
+  'npm:hoek:20180212':
+    - table-scraper > tabletojson > request > hawk > boom > hoek:
+        patched: '2020-03-11T07:11:42.125Z'
+    - table-scraper > tabletojson > request > hawk > sntp > hoek:
+        patched: '2020-03-11T07:11:42.125Z'
+    - table-scraper > tabletojson > request > hawk > cryptiles > boom > hoek:
+        patched: '2020-03-11T07:11:42.125Z'
+    - table-scraper > tabletojson > request > hawk > hoek:
+        patched: '2020-03-11T07:11:42.125Z'
+  'npm:is-my-json-valid:20160118':
+    - table-scraper > tabletojson > request > har-validator > is-my-json-valid:
+        patched: '2020-03-11T07:11:42.125Z'
+  'npm:lodash:20180130':
+    - table-scraper > tabletojson > cheerio > lodash:
+        patched: '2020-03-11T07:11:42.125Z'
+  'npm:request:20160119':
+    - table-scraper > tabletojson > request:
+        patched: '2020-03-11T07:11:42.125Z'
+  'npm:stringstream:20180511':
+    - table-scraper > tabletojson > request > stringstream:
+        patched: '2020-03-11T07:11:42.125Z'
+  'npm:tough-cookie:20160722':
+    - table-scraper > tabletojson > request > tough-cookie:
+        patched: '2020-03-11T07:11:42.125Z'
+  'npm:tough-cookie:20170905':
+    - table-scraper > tabletojson > request > tough-cookie:
+        patched: '2020-03-11T07:11:42.125Z'

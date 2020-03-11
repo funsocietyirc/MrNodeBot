@@ -9,7 +9,8 @@
     "test-watch": "./node_modules/mocha/bin/mocha test/**/*.js --reporter spec -w",
     "generate-docs": "node_modules/.bin/jsdoc -c jsdoc.json",
     "prepublish": "snyk protect",
-    "snyk-protect": "snyk protect"
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "author": "Dave Richer <davericher@gmail.com>",
   "license": "MIT",
