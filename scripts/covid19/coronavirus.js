@@ -45,11 +45,10 @@ module.exports = (app) => {
                 logo: 'coronavirus',
             });
 
-            output.appendBold('Confirmed');
+            output.appendBold('Canada');
 
             _.forEach(results, (value, region) => {
-                output.appendBold(_.startCase(region));
-                output.append(helpers.formatNumber(value));
+                output.insert(`[${_.startCase(region)}] ${helpers.formatNumber(value.confirmed)} Con${value.probable > 0 ? ' ' + helpers.formatNumber(value.probable) + ' Prob' : ''}`);
             });
 
             app.say(to, output.text);

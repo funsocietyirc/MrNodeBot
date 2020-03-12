@@ -6,7 +6,9 @@ const logger = require('../../lib/logger');
 const endPoint = 'https://www.canada.ca/en/public-health/services/diseases/2019-novel-coronavirus-infection.html';
 
 const provinceTerritoryKey = 'Province, territory or other';
-const confirmedCasesKey = 'Confirmed cases';
+const probableCasesKey = 'Number of probable cases';
+const confirmedCasesKey = "Number of confirmed cases";
+const totalCasesKey = "Total cases";
 
 const getOfficialCanadianData = async () => {
     try {
@@ -20,14 +22,16 @@ const getOfficialCanadianData = async () => {
 
         // Build output
        _.forEach(results[0], x => {
-           if(x[provinceTerritoryKey] === 'Total cases:') {
-               output.total = _.toNumber(x[confirmedCasesKey]);
-           }
-           else {
-               output[_.toLower(x[provinceTerritoryKey])] = _.toNumber(x[confirmedCasesKey]);
+           if (x[provinceTerritoryKey] === totalCasesKey) {
+               output.total = { confirmed: _.toNumber(x[confirmedCasesKey]) };
+           } else {
+               output[_.toLower(x[provinceTerritoryKey])] = {
+                   confirmed: _.toNumber(x[confirmedCasesKey]),
+                   probable: _.toNumber(x[probableCasesKey]),
+               };
            }
        });
-
+        output.total.probable = _.sum(_.map(output, 'probable'));
         return output;
     }
     catch (err) {
