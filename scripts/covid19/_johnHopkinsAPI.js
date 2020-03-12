@@ -2,9 +2,9 @@ const rp = require('request-promise-native');
 const _ = require('lodash');
 const moment = require('moment');
 
-const canadaInfoAPI = require('./_getCanadaOfficialScraper');
 
 const johnHopkinsEndpoint = 'https://services1.arcgis.com/0MSEUqKaxRlEPj5g/arcgis/rest/services/ncov_cases/FeatureServer/1/query?f=json&where=Confirmed%20%3E=%200&returnGeometry=false&&outFields=Province_State,Country_Region,Last_Update,Confirmed,Deaths,Recovered';
+const  globalWithoutChinaString = 'Global without China';
 
 /**
  * Helper to check zero
@@ -51,7 +51,7 @@ const formatRegion = region => {
         case '':
         case 'world':
         case 'global':
-            return 'Global without China';
+            return globalWithoutChinaString;
         case 'us':
         case 'usa':
         case 'united states':
@@ -95,8 +95,10 @@ const covid19Results = async (region, city) => {
     // Formatted Region
     const formattedRegion = output.location.region = formatRegion(region);
 
+console.dir(formattedRegion);
     // We have a region but no city
-    if (region && region !== 'Global') {
+    if (formattedRegion && formattedRegion !== globalWithoutChinaString) {
+        // Filter By Country/Region
         result = result
             .filter(
                 x =>
@@ -135,13 +137,10 @@ const covid19Results = async (region, city) => {
             recoveryRate: percentileOrNa(output.actual.cured.current.value, output.actual.confirmed.current.value),
             activeRate: output.actual.confirmed.current.value - output.actual.dead.current.value - output.actual.cured.current.value,
         };
-
         // Filter out Mainland China
         result = result.reject(
-            x =>
-                x.hasOwnProperty('Country_Region') &&
-                x.Country_Region === 'Mainland China'
-        )
+            x => x.hasOwnProperty('Country_Region') && ( x.Country_Region === 'Mainland China' || x.Country_Region !== 'China')
+        );
     }
 
 
@@ -161,24 +160,27 @@ const covid19Results = async (region, city) => {
         return false;
     }
 
-    _.merge(output, {
-        confirmed: {
-            current: {
-                value: result.sumBy('Confirmed')
-            }
-        },
-        cured: {
-            current: {
-                value: result.sumBy('Recovered')
-            }
-        },
-        dead: {
-            current: {
-                value: result.sumBy('Deaths')
-            }
-        },
-        lastDate: dateHelper(result)
-    });
+    // Set Confirmed
+    output.confirmed = {
+        current: {
+            value: result.sumBy('Confirmed')
+        }
+    };
+    // Set Cured
+    output.cured = {
+        current: {
+            value: result.sumBy('Recovered')
+        }
+    };
+    // Set Dead
+    output.dead = {
+        current: {
+            value: result.sumBy('Deaths')
+        }
+    };
+    // Set Last Date
+    output.lastDate = dateHelper(result);
+
 
     // Post flight
     if (
