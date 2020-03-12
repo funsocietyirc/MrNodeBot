@@ -155,8 +155,8 @@ module.exports = (app) => {
 
             // Get best guess nick
             const bestGuess = await getBestGuess(initialNick);
-
-            const result = await gen(bestGuess.nearestNeighbor.from, {descending});
+            const finalNick = bestGuess && bestGuess.hasOwnProperty('nearestNeighbor') && bestGuess.nearestNeighbor.hasOwnProperty('from') ? bestGuess.nearestNeighbor.from : initialNick;
+            const result = await gen(finalNick, {descending});
 
             if (initialNick !== bestGuess) {
                 result.originalNick = initialNick;

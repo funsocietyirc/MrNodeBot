@@ -101,6 +101,7 @@ const covid19Results = async (region, city) => {
             .filter(
                 x =>
                     x.hasOwnProperty('Country_Region') &&
+                    _.isString(x.Country_Region) &&
                     x.Country_Region.startsWith(formattedRegion)
             );
 
