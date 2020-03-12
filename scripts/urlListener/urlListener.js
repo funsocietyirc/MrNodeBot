@@ -64,13 +64,14 @@ module.exports = (app) => {
 
     // Send Response to IRC
     const sendToIrc = (results) => {
-        if (!_.includes(announceIgnore, results.to)) {
-            ircUrlFormatter(results, app);
-            results.delivered.push({
-                protocol: 'irc',
-                on: Date.now(),
-            });
-        }
+        ircUrlFormatter(results, app, {
+            ignored: _.includes(announceIgnore, results.to)
+        });
+
+        results.delivered.push({
+            protocol: 'irc',
+            on: Date.now(),
+        });
 
         for (const diversion of diversions) {
             // Match Conditions
@@ -85,7 +86,9 @@ module.exports = (app) => {
                 // Add Diversion Tag and process
                 results.diversion = diversion.dest;
                 // Send to irc
-                ircUrlFormatter(results, app);
+                ircUrlFormatter(results, app, {
+                    ignored: _.includes(announceIgnore, results.to)
+                });
                 // Chain delivery
                 results.delivered.push({
                     protocol: 'irc',

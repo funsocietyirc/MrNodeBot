@@ -8,8 +8,13 @@ const ircTypography = require('../lib/_ircTypography');
 const logos = ircTypography.logos;
 const icons = ircTypography.icons;
 
-// Formatting Helper
-formattingHelper = (results, app) => {
+/**
+ * IRC Formatting Helper
+ * @param results
+ * @param app
+ * @param options
+ */
+formattingHelper = (results, app, options = {}) => {
     const hasDiversion = _.isString(results.diversion) && !_.isEmpty(results.diversion);
     const to = hasDiversion ? results.diversion : results.to;
 
@@ -250,12 +255,13 @@ formattingHelper = (results, app) => {
     // record final output
     results.finalOutput = finalOutput;
     results.cleanOutput =  c.stripColorsAndStyle(finalOutput);
+
     if (_.isEmpty(finalOutput)) return;
 
-    // Report back to IRC
-    app.say(to, finalOutput);
-
-
+    if(!options.ignored) {
+        // Report back to IRC
+        app.say(to, finalOutput);
+    }
 
     // Threats detected Report back First
     if (results.threats.length) {
