@@ -12,7 +12,7 @@ module.exports = async (app, results) => {
     for (const record of app.Config.features.urls.twitter) {
         try {
             const text = `${results.cleanOutput} - ${record.hashtags.join(', ')}`.replace(`${results.from} ${t.icons.sideArrow} `, '');
-            const isRetweet = _.isEmpty(results.twitter) && results.twitter.hasOwnProperty('key');
+            const isRetweet = !_.isEmpty(results.twitter) && results.twitter.hasOwnProperty('key');
             if(!isRetweet) {
                 await app._twitterClient.post('statuses/update', {
                     status: text,
