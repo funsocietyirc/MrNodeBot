@@ -31,6 +31,7 @@ const endChain = require('./_endChain'); // Finish the chain
 // Report
 const sendToDb = require('./_sendToDb'); // Log Urls to the Database
 const sendToSocket = require('./_sendToSocket'); // Send To Socketio
+const sendToTwitter = require('./_sendToTwitter'); // Send to Twitter
 
 // Libs
 const ircUrlFormatter = require('./_ircUrlFormatter'); // IRC Formatter
@@ -83,8 +84,9 @@ module.exports = (app) => {
             ) {
                 // Add Diversion Tag and process
                 results.diversion = diversion.dest;
-
+                // Send to irc
                 ircUrlFormatter(results, app);
+                // Chain delivery
                 results.delivered.push({
                     protocol: 'irc',
                     on: Date.now(),
@@ -124,7 +126,8 @@ module.exports = (app) => {
             }) // Send Results to IRC
             .then(results => (results.unreachable ? results : // If the site is unreachable, carry on in chain
                 sendToDb(results) // Otherwise Log To Database
-                    .then(results => sendToSocket(app, results))), // Then broadcast to socketio
+                    .then(results => sendToSocket(app, results)) // Then broadcast to socketio
+                    .then(results => sendToTwitter(app, results)))
             )
             .then(endChain) // End the chain, cache results
             .catch(err => {

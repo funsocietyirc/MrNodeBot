@@ -276,7 +276,13 @@ module.exports = {
                 //     source: '#coronavirus',
                 //     dest: '#coronavirus-links'
                 // }
-            ]
+            ],
+            twitter: [
+                // {
+                //     channel: '#mrnodebot2',
+                //     hashtags: ['#test'],
+                // }
+            ],
         },
         fsociety: {
             mainChannel: '#MrNodeBot',

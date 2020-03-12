@@ -22,6 +22,7 @@ const getTwitter = async (key, user, results, app) => {
 
         // Append Results
         results.twitter = {
+            key,
             text: helpers.StripNewLine( data.truncated ? data.text : data.full_text),
             truncated: data.truncated,
             createdAt: data.created_at,

@@ -247,10 +247,15 @@ formattingHelper = (results, app) => {
     // Finished
     const finalOutput = output ? `${c[results.cached ? 'green' : 'red']('*')} ${results.from} ${icons.sideArrow} ${output}` : '';
 
+    // record final output
+    results.finalOutput = finalOutput;
+    results.cleanOutput =  c.stripColorsAndStyle(finalOutput);
     if (_.isEmpty(finalOutput)) return;
 
     // Report back to IRC
     app.say(to, finalOutput);
+
+
 
     // Threats detected Report back First
     if (results.threats.length) {
