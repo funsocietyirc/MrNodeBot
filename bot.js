@@ -94,6 +94,8 @@ class MrNodeBot {
             await this._initStorageSubSystem();
             /** Loaded Scripts */
             this.LoadedScripts = [];
+            /** Loaded Libraries */
+            this.LoadedLibraries = [];
             /** Application Root Path */
             this.AppRoot = require('app-root-path').toString();
             /** Database Instance */
@@ -388,8 +390,13 @@ class MrNodeBot {
                 if (clearCache === true && !_.endsWith(file, 'Store.js')) {
                     MrNodeBot._clearCache(fullPath);
                 }
+
+                // We have a lib
+                if (file[0] === '_' && _.endsWith(file, '.js')) {
+                    this.LoadedLibraries.push(fullPath);
+                }
                 // If we are not dealing with a partial file _something.js
-                if (file[0] !== '_' && _.endsWith(file, '.js')) {
+                else if (file[0] !== '_' && _.endsWith(file, '.js')) {
                     logger.info(t('scripts.loaded', {
                         file,
                     }));
@@ -442,6 +449,9 @@ class MrNodeBot {
 
             }
         };
+
+        // Unload Libs
+        _.each(this.LoadedLibraries, lib => MrNodeBot._clearCache(lib));
 
         // Load all files with .js extension
         _(fs.readdirSync(normalizedPath)).each(requireScript);
@@ -548,6 +558,9 @@ class MrNodeBot {
 
             // Clear Loaded Scripts
             this.LoadedScripts = [];
+
+            // Clear Loaded Libraries
+            this.LoadedLibraries = [];
         }
 
         // Load in the Scripts
