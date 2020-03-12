@@ -258,7 +258,7 @@ formattingHelper = (results, app, options = {}) => {
 
     if (_.isEmpty(finalOutput)) return;
 
-    if(!options.ignored) {
+    if(!options.ignored ) {
         // Report back to IRC
         app.say(to, finalOutput);
     }

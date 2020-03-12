@@ -79,7 +79,6 @@ module.exports = (app) => {
                 (
                     diversion.hasOwnProperty('source') &&
                     diversion.hasOwnProperty('dest') &&
-                    !_.includes(announceIgnore, diversion.dest) &&
                     app._ircClient.isInChannel(diversion.dest)
                 ) && results.to === diversion.source
             ) {
@@ -87,7 +86,7 @@ module.exports = (app) => {
                 results.diversion = diversion.dest;
                 // Send to irc
                 ircUrlFormatter(results, app, {
-                    ignored: _.includes(announceIgnore, results.to)
+                    ignored: _.includes(announceIgnore, diversion.dest)
                 });
                 // Chain delivery
                 results.delivered.push({
