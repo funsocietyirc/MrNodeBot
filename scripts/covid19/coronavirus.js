@@ -13,12 +13,16 @@ const c = require('irc-colors');
 /**
  * Helper to append Result
  * @param obj Object Results Object
- * @param output
+ * @param output function Output Helper
  * @param label string Label
  * @param color string Display Color
+ * @param diff? Object Diff Object
  */
-const appendResult = (obj, output, label, color) => {
-    output = output.append(c[color](`${helpers.formatNumber(obj.current.value)} ${label}`));
+const appendResult = (obj, output, label, color, diff) => {
+    output = output
+        .append(
+    `${c[color](helpers.formatNumber(obj.current.value))}${_.isObject(diff) ? '(' + c[color](helpers.formatNumber(obj.current.value - diff.current.value)) + ')' : ''} ${label}`
+        );
     if (obj.hasOwnProperty('delta')) {
         output =  output.append(c.blue(`${helpers.formatNumber(obj.delta)} +/-`));
     }
@@ -43,7 +47,7 @@ module.exports = (app) => {
             output.appendBold('Confirmed');
 
             _.forEach(results, (value, region) => {
-                output.appendBold(_.startCase(region));
+                output.appendBold(c._.startCase(region));
                 output.append(helpers.formatNumber(value));
             });
 
@@ -77,12 +81,17 @@ module.exports = (app) => {
 
         /**
          * Stats Helper
-         * @param obj
+         * @param obj Object Results object
+         * @param diff? Object Diff Results object
          */
-        const appendStats = (obj) => {
+        const appendStats = (obj,diff) => {
             output.appendBold(`Mortality: ${c.red(obj.mortalityRate)}`);
             output.appendBold(`Recovery: ${c.green(obj.recoveryRate)}`);
-            output.appendBold(`Active: ${c.blue(helpers.formatNumber(obj.activeRate))}`);
+
+            output
+                .appendBold(
+                    `Active: ${c.blue(helpers.formatNumber(obj.activeRate))}${_.isObject(diff) ? '(' + c.blue(helpers.formatNumber(obj.activeRate - diff.activeRate)) + ')' : ''}`
+                );
         };
 
         // Output to IRC
@@ -91,19 +100,57 @@ module.exports = (app) => {
         });
 
         // Create Output
-        output.appendBold(`${result.location.city ? result.location.city : result.location.region ? result.location.region : 'Global Without Mainland China'} - ${result.lastDate}`);
+        output.appendBold(`${result.location.city ? result.location.city : result.location.region ? result.location.region : 'Global Without Mainland China'} ${c.lightgreen(result.lastDate)}`);
 
-        appendResult(result.confirmed, output, 'Confirmed', 'yellow');
-        appendResult(result.cured, output, 'Cured', 'green') ;
-        appendResult(result.dead, output, 'Dead', 'red');
+        // Append Confirmed
+        appendResult(
+            result.confirmed,
+            output,
+            'Confirmed',
+            'yellow'
+        );
+        // Append Cured
+        appendResult(result.cured,
+            output,
+            'Cured',
+            'green') ;
+        // Append Dead
+        appendResult(result.dead,
+            output,
+            'Dead',
+            'red'
+        );
+        // Append stats
         appendStats(result.stats);
 
         if(result.hasOwnProperty('actual')) {
-            output.appendBold('With China');
-            appendResult(result.actual.confirmed, output, 'Confirmed', 'yellow');
-            appendResult(result.actual.cured, output, 'Cured', 'green') ;
-            appendResult(result.actual.dead, output, 'Dead', 'red');
-            appendStats(result.actual.stats);
+            output.appendBold(c.lightgreen(`With China`));
+            // Append Confirmed
+            appendResult(
+                result.actual.confirmed,
+                output,
+                'Confirmed',
+                'yellow',
+                result.confirmed,
+            );
+            // Append Cured
+            appendResult(
+                result.actual.cured,
+                output,
+                'Cured',
+                'green',
+                result.cured,
+            );
+            // Append Result
+            appendResult(
+                result.actual.dead,
+                output,
+                'Dead',
+                'red',
+                result.dead
+            );
+            // Append Stats
+            appendStats(result.actual.stats, result.stats);
         }
 
         // Say Output

@@ -41,7 +41,7 @@ const logos = {
     rss: c.blue.bold('RSS'),
     dictionary: c.white.bold('DICT'),
     quotes: c.white.bold('QUOTES'),
-    coronavirus: c.white.bold('SARS-CoV-2'),
+    coronavirus: c.white.bold('😷'),
 };
 
 // Return Green color number for numbers less then 50

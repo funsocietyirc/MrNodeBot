@@ -4,7 +4,7 @@ const moment = require('moment');
 
 
 const johnHopkinsEndpoint = 'https://services1.arcgis.com/0MSEUqKaxRlEPj5g/arcgis/rest/services/ncov_cases/FeatureServer/1/query?f=json&where=Confirmed%20%3E=%200&returnGeometry=false&&outFields=Province_State,Country_Region,Last_Update,Confirmed,Deaths,Recovered';
-const  globalWithoutChinaString = 'Global without China';
+const  globalWithoutChinaString = 'W/O China';
 
 /**
  * Helper to check zero
@@ -95,7 +95,6 @@ const covid19Results = async (region, city) => {
     // Formatted Region
     const formattedRegion = output.location.region = formatRegion(region);
 
-console.dir(formattedRegion);
     // We have a region but no city
     if (formattedRegion && formattedRegion !== globalWithoutChinaString) {
         // Filter By Country/Region
@@ -138,7 +137,7 @@ console.dir(formattedRegion);
             activeRate: output.actual.confirmed.current.value - output.actual.dead.current.value - output.actual.cured.current.value,
         };
         // Filter out Mainland China
-        result = result.reject(
+        result = result.filter(
             x => x.hasOwnProperty('Country_Region') && ( x.Country_Region === 'Mainland China' || x.Country_Region !== 'China')
         );
     }
