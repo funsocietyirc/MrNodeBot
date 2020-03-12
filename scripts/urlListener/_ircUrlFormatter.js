@@ -76,6 +76,14 @@ formattingHelper = (results, app, options = {}) => {
     // We have a Short URL
     if(hasDiversion) {
         append(`${icons.anchor}  ${c.navy(results.realUrl)}`);
+        if (
+            !_.isEmpty(results.shortUrl) &&
+            !_.isEmpty(results.shortUrl) &&
+            results.url.length > config.features.urls.titleMin &&
+            _.isEmpty(results.twitter)
+        ) {
+            append(`(${c.navy(results.shortUrl)})`);
+        }
     } else
     {
         if (!_.isEmpty(results.shortUrl) && !_.isEmpty(results.shortUrl) && ( results.url.length > config.features.urls.titleMin) && _.isEmpty(results.twitter)) { append(`${icons.anchor}  ${c.navy(results.shortUrl)}`); }
