@@ -9,6 +9,7 @@ const _ = require('lodash');
 const typo = require('../lib/_ircTypography');
 const helpers = require('../../helpers');
 const c = require('irc-colors');
+const logger = require('../../lib/logger');
 
 /**
  * Helper to append Result
@@ -47,13 +48,18 @@ module.exports = (app) => {
             output.appendBold('Confirmed');
 
             _.forEach(results, (value, region) => {
-                output.appendBold(c._.startCase(region));
+                output.appendBold(_.startCase(region));
                 output.append(helpers.formatNumber(value));
             });
 
             app.say(to, output.text);
         }
         catch (err) {
+            logger.error('Something went wrong with the Canadian Information', {
+                message: err.message || '',
+                stack: err.stack || '',
+                to, from
+            });
             app.say(to, `Something went wrong fetching the Canadian information, ${from}`);
         }
     };

@@ -5,6 +5,9 @@ const logger = require('../../lib/logger');
 // End Points
 const endPoint = 'https://www.canada.ca/en/public-health/services/diseases/2019-novel-coronavirus-infection.html';
 
+const provinceTerritoryKey = 'Province, territory or other';
+const confirmedCasesKey = 'Confirmed cases';
+
 const getOfficialCanadianData = async () => {
     try {
         const results = await scraper.get(endPoint);
@@ -17,18 +20,18 @@ const getOfficialCanadianData = async () => {
 
         // Build output
        _.forEach(results[0], x => {
-           if(x['Province or territory'] === 'Total cases:') {
-               output.total = _.toNumber(x['Confirmed cases']);
+           if(x[provinceTerritoryKey] === 'Total cases:') {
+               output.total = _.toNumber(x[confirmedCasesKey]);
            }
            else {
-               output[_.toLower(x['Province or territory'])] = _.toNumber(x['Confirmed cases']);
+               output[_.toLower(x[provinceTerritoryKey])] = _.toNumber(x[confirmedCasesKey]);
            }
        });
 
         return output;
     }
     catch (err) {
-        logger.info('Something went wrong fetching official Canadian Information for COVID19', {
+        logger.error('Something went wrong fetching official Canadian Information for COVID19', {
             message: err.message || '',
             stack: err.stack || '',
         });
