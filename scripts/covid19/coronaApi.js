@@ -5,7 +5,7 @@ const scriptInfo = {
 };
 
 const _ = require('lodash');
-const gen = require('../covid19/_coronavirus');
+const gen = require('./_coronavirus');
 
 module.exports = (app) => {
 

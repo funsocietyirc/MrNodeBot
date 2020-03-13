@@ -31,6 +31,14 @@ const appendResult = (obj, output, label, color, diff) => {
 };
 
 module.exports = (app) => {
+    /**
+     * Covid19 Canada Data - Fed By Web Scraping official Canadian Government Information website
+     * @param to
+     * @param from
+     * @param text
+     * @param message
+     * @returns {Promise<void>}
+     */
     const covid19Canada = async (to, from, text, message) => {
         try {
             const results = await corona.covidCanadaResults();
@@ -224,6 +232,8 @@ module.exports = (app) => {
         access: app.Config.accessLevels.identified,
         call: covid19Stats,
     });
+
+
 
     // Return the script info
     return scriptInfo;
