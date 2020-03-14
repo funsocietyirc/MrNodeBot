@@ -198,7 +198,9 @@ formattingHelper = (results, app, options = {}) => {
         if (imgur.title && imgur.title !== 'null') append(imgur.title);
         append(_.capitalize(imgur.type))(moment.unix(imgur.datetime).fromNow());
         if (imgur.section && imgur.section !== 'null') append(imgur.section);
-        if (imgur.description && imgur.description !== 'null') append(_.truncate(imgur.description));
+        if (imgur.description && imgur.description !== 'null') append(_.truncate(imgur.description, {
+            length: 255,
+        }));
         append(`${imgur.width}x${imgur.height}`);
         if (imgur.animated) append('Animated');
         if (imgur.nswf) append(c.red('NSFW'));
@@ -210,7 +212,9 @@ formattingHelper = (results, app, options = {}) => {
         append(`${logos.imgur} Gallery`)(imgur.account_url);
         if (imgur.title && imgur.title !== 'null') append(imgur.title);
         append(moment.unix(imgur.datetime).fromNow());
-        if (imgur.description && imgur.description !== null) append(_.truncate(imgur.description));
+        if (imgur.description && imgur.description !== null) append(_.truncate(imgur.description, {
+            length: 255,
+        }));
         if (imgur.topic && imgur.topic !== 'null') append(imgur.topic);
         if (imgur.section && imgur.section !== 'null') append(imgur.section);
 
@@ -230,7 +234,9 @@ formattingHelper = (results, app, options = {}) => {
             if (imgur.account_url && imgur.account_url !== 'null') append(imgur.account_url);
             if (imgur.title && imgur.title !== 'null') append(imgur.title);
             append(moment.unix(imgur.datetime).fromNow());
-            if (imgur.description && imgur.description !== null) append(_.truncate(imgur.description));
+            if (imgur.description && imgur.description !== null) append(_.truncate(imgur.description, {
+                length: 255,
+            }));
             if (imgur.section && imgur.section !== 'null') append(imgur.section);
             append(`${imgur.images_count} ${imgur.images_count > 1 ? 'Images' : 'Image'}`);
             append(`${icons.views} ${c.navy(helpers.formatNumber(imgur.views))}`);
