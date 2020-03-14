@@ -133,24 +133,16 @@ module.exports = (app) => {
             )
             .then(endChain) // End the chain, cache results
             .catch(err => {
-                logger.error('Something went wrong with an improperly configured web server', {
-                    message: err.message || '',
-                    stack: err.stack || '',
-                    full: err,
-                });
-
                 if (err instanceof statusCodeErrors.StatusCodeError) {
-                    if (results && results.hasOwnProperty('to') && from && url && !_.includes(announceIgnore, results.to)) {
+                    if ((typeof results !== 'undefined') &&  results && results.hasOwnProperty('to') && from && url && !_.includes(announceIgnore, results.to)) {
                         app.say(results.to, `Improperly configured Web Server (${url}), ${from}`);
                     }
-                    return;
+                    // Something went wrong
+                    logger.warn('Error in URL Listener chain', {
+                        err: err.message || '',
+                        stack: err.stack || '',
+                    });
                 }
-                // Something went wrong
-                logger.warn('Error in URL Listener chain', {
-                    err: err.message || '',
-                    stack: err.stack || '',
-                });
-
             });
     };
 
