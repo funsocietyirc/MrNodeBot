@@ -72,7 +72,7 @@ module.exports = (app) => {
     };
     app.Commands.set('covid19-canada', {
         desc: 'COVID-19 Numbers Provided By Canadian Government',
-        access: app.Config.accessLevels.identified,
+        access: app.Config.accessLevels.guest,
         call: covid19Canada,
     });
 
@@ -172,7 +172,7 @@ module.exports = (app) => {
 
     app.Commands.set('covid19', {
         desc: '[Region]?, [City/Province]? - COVID-19 Facts Provided By John Hopkins',
-        access: app.Config.accessLevels.identified,
+        access: app.Config.accessLevels.guest,
         call: covid19,
     });
 
@@ -229,7 +229,7 @@ module.exports = (app) => {
      */
     app.Commands.set('covid19-stats', {
         desc: '[Region]?, [City]?  - COVID-19 Stats Compiled daily by https://covid19.health',
-        access: app.Config.accessLevels.identified,
+        access: app.Config.accessLevels.guest,
         call: covid19Stats,
     });
 
