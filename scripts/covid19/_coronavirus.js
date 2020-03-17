@@ -2,14 +2,13 @@ const logger = require('../../lib/logger');
 
 const johnHopkinsAPI = require('./_johnHopkinsAPI');
 const covid19HealthAPI = require('./_covid19HealthAPI');
-const covidCanadaResults = require('./_getCanadaOfficialScraper');
+const covid19Canada = require('./_getCanadaOfficialScraper');
 
-
-const covid19Canada = async () => {
+const covid19CanadaResults = async () => {
     const errorMessage = 'Something went wrong trying to fetch the official Canadian numbers';
 
     try {
-        return await covidCanadaResults();
+        return await covid19Canada();
     }
     catch (err) {
         logger.error(errorMessage, {
@@ -70,5 +69,5 @@ const covid19StatsResults = async (region, city) => {
 module.exports = {
     covid19Results: covid19Results,
     covid19StatsResults: covid19StatsResults,
-    covidCanadaResults: covidCanadaResults,
+    covidCanadaResults: covid19CanadaResults,
 };

@@ -43,7 +43,7 @@ module.exports = (app) => {
         try {
             const results = await corona.covidCanadaResults();
 
-            if(!results || !_.isObject(results) || _.isEmpty(results)) {
+            if(!results || !_.isObject(results) || _.isEmpty(results) || _.isEmpty(results.numbers)) {
                 app.say(to, `There seems to be no Canadian information available, ${from}`);
                 return;
             }
@@ -53,9 +53,9 @@ module.exports = (app) => {
                 logo: 'coronavirus',
             });
 
-            output.appendBold('Canada');
+            output.appendBold(`Canada - ${results.lastUpdate}`);
 
-            _.forEach(results, (value, region) => {
+            _.forEach(results.numbers, (value, region) => {
                 output.insert(`[${_.startCase(region)}] ${helpers.formatNumber(value.confirmed)} Con${value.probable > 0 ? ' ' + helpers.formatNumber(value.probable) + ' Prob' : ''}`);
             });
 
@@ -232,8 +232,6 @@ module.exports = (app) => {
         access: app.Config.accessLevels.guest,
         call: covid19Stats,
     });
-
-
 
     // Return the script info
     return scriptInfo;

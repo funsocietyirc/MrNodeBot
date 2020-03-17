@@ -56,7 +56,7 @@ const numberStringToInt = (value) => {
 // Request the current minutes to midnight feed.
 const _request = async () => {
     try {
-        return await rp({ uri: endPoint, json: true });
+        return await rp({ uri: endPoint});
     } catch (err) {
         throw new Error('Unexpected Status Code');
     }

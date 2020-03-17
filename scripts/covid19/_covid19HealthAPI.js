@@ -33,7 +33,6 @@ const appendStat = (intermResults, output, prop, key) => {
     }
 };
 
-
 /**
  * @param city
  * @returns {string}

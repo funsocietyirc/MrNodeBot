@@ -65,7 +65,7 @@ const formatRegion = region => {
         case 'United Kingdom':
         case 'u.k':
         case 'U.K':
-            return 'UK';
+            return 'United Kingdom';
         default:
             return _.startCase(lower);
     }
