@@ -63,6 +63,35 @@ module.exports = (app) => {
         },
     });
 
+    // Repost topic to channel
+    app.Commands.set('topic', {
+        desc: 'Repost the current topic to a channel',
+        access: app.Config.accessLevels.identified,
+        call: async (to, from, text, message) => {
+            if (!app._ircClient.isChannel(to)) {
+                app.say(to, 'I am sorry but you are not a channel, so I assume the topic is you?');
+                return;
+            }
+
+            const results = await getTopics(to, 1);
+
+            // No Results available
+            if (_.isEmpty(results)) {
+                app.say(to, `There is no topics available for ${to}, ${from}`);
+                return;
+            }
+
+            const topic = results.pluck('topic')[0];
+
+            if (_.isEmpty(topic)) {
+                app.say(to, `It seems the topic is empty for ${to}, ${from}`);
+                return;
+            }
+
+            app.say(to, topic);
+        }
+    });
+
     // Revert to the last known topic
     app.Commands.set('topic-revert', {
         desc: 'Restore the topic in the active channel to its previous state',
