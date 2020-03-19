@@ -47,8 +47,11 @@ const _extract = async (data) => {
         });
         // Append Total
         output.numbers.total.probable = _.sum(_.map(output.numbers, 'probable'));
-
-        const updatedAt = moment($(xpaths.updatedAtString).text().replace('Areas in Canada with cases of COVID-19 as of ','').trim());
+        // 'March 18, 2020, 5:20 pm EDT'
+        const updatedAt = moment(
+            $(xpaths.updatedAtString).text().replace('Areas in Canada with cases of COVID-19 as of ','').trim().replace(/\s\s+/g, ' '),
+            "MMMM DD, YYYY, HH:mm A zz"
+        );
         output.lastUpdate = updatedAt.fromNow();
         output.lastUpdateRaw = updatedAt.toDate();
 
