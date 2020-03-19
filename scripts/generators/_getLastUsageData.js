@@ -24,17 +24,19 @@ module.exports = (input, options) => new Promise((res, rej) => {
     // By default sort descending for the last result
     if (_.isUndefined(options.descending) || !_.isBoolean(options.descending)) { options.descending = true; }
 
+    // We have no user
+    if (!args || !args.hasOwnProperty('nick') && !args.hasOwnProperty('user') && !args.hasOwnProperty('host')) { return rej({ args, inner: new Error('no results') }); }
+
+
     // Grab user
-    const nick = args.nick;
+    const nick = args.nick.replace('%', '');
     const user = args.user;
     const host = args.host;
     const channel = args.channel;
 
+
     // Reject if we do not have a full set of database information
     if (!Models.Logging || !Models.Topics || !Models.NoticeLogging || !Models.ActionLogging || !Models.JoinLogging || !Models.PartLogging || !Models.QuitLogging || !Models.KickLogging || !Models.Alias) { return rej({ args, inner: new Error('no database available') }); }
-
-    // We have no user
-    if (!nick && !user && !host) { return rej({ args, inner: new Error('no results') }); }
 
     // Query filter
     const filter = (qb, nickField = 'nick', userField = 'user', channelField = 'channel') => {
