@@ -30,10 +30,11 @@ module.exports = (input, options) => new Promise((res, rej) => {
 
     // Grab user
     const nick = args.nick.replace('%', '');
-    const user = args.user;
-    const host = args.host;
-    const channel = args.channel;
+    const user = args.user.replace('%', '');
+    const host = args.host.replace('%', '');
+    const channel = _.isString(args.channel) ? args.channel.replace('%') : args.channel;
 
+    if (!nick && !user && !host) { return rej({ args, inner: new Error('no results') }); }
 
     // Reject if we do not have a full set of database information
     if (!Models.Logging || !Models.Topics || !Models.NoticeLogging || !Models.ActionLogging || !Models.JoinLogging || !Models.PartLogging || !Models.QuitLogging || !Models.KickLogging || !Models.Alias) { return rej({ args, inner: new Error('no database available') }); }
