@@ -168,7 +168,7 @@ module.exports = (app) => {
                 message: err.message || '',
                 stack: err.stack || '',
             });
-            app.say(to, `Something went wrong finding the active state for ${text}, ${from} [${err.inner.message || ''}]`);
+            app.say(to, `Something went wrong finding the active state for ${text}, ${from}`);
         }
     };
 
