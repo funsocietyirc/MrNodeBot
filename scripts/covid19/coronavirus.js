@@ -56,7 +56,7 @@ module.exports = (app) => {
             output.appendBold(`Canada - ${results.lastUpdate}`);
 
             _.forEach(results.numbers, (value, region) => {
-                output.insert(`[${_.startCase(region)}] ${helpers.formatNumber(value.confirmed)} Con${value.probable > 0 ? ' ' + helpers.formatNumber(value.probable) + ' Prob' : ''}`);
+                output.insert(`[${_.startCase(region)}] ${helpers.formatNumber(value.confirmed)} Con${value.probable > 0 ? ' ' + helpers.formatNumber(value.probable) + ' Prob' : ''}${value.dead > 0 ? ' ' + helpers.formatNumber(value.dead) + ' Dead' : ''}`);
             });
 
             app.say(to, output.text);
