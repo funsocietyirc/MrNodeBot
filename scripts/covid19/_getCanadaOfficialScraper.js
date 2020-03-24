@@ -12,7 +12,6 @@ const totalCasesKey = "Total";
 const xpaths = {
     resultsTable: 'body > main > div:nth-child(4) > table > tbody > tr',
     updatedAtString: 'body > main > div:nth-child(4) > table > caption',
-    statesList: '/html/body/main/div[3]/ul[2]',
 };
 
 // Request the current minutes to midnight feed.
@@ -24,13 +23,63 @@ const _request = async () => {
     }
 };
 
+/**
+ * Format Names
+ * @param name
+ * @returns {string}
+ */
+const formatNames = (name) => {
+    switch (name) {
+        case 'British Columbia':
+            return 'BC';
+        case 'Alberta':
+            return 'AB';
+        case 'Saskatchewan':
+            return 'SK';
+        case 'Manitoba':
+            return 'MB';
+        case 'Ontario':
+            return 'ON';
+        case 'New Brunswick':
+            return 'NB';
+        case 'Nova Scotia':
+            return 'NS';
+        case 'Prince Edward Island':
+            return 'PEI';
+        case 'Newfoundland and Labrador':
+            return 'NL';
+        case 'Yukon':
+            return 'YK';
+        case 'Northwest Territories':
+            return 'NT';
+        case 'Nunavut':
+            return 'NU';
+        case 'Repatriated travellers':
+            return 'Repatriated';
+        default:
+            return 'N/A';
+    }
+};
+
+/**
+ * Format / Parse numbers
+ * @param number
+ * @returns {number}
+ */
+const formatNumbers = number => _.toNumber(number.replace(',', ''));
+
+/**
+ * Extract Data from HTML
+ * @param data
+ * @returns {Promise<{numbers: {}}>}
+ * @private
+ */
 const _extract = async (data) => {
     try {
 
         const $ = cheerio.load(data);
         const output = {
-            numbers: {
-            }
+            numbers: {}
         };
 
         // Build Result Numbers
@@ -38,12 +87,12 @@ const _extract = async (data) => {
             const [location, confirmed, probable, dead] = $(y).text().trim().split('\n');
 
             if (location === totalCasesKey) {
-                output.numbers.total = { confirmed: _.toNumber(confirmed.replace(',','')) };
+                output.numbers.total = {confirmed: formatNumbers(confirmed)};
             } if (location !== totalCasesKey) {
-                output.numbers[_.toLower(location.replace(',',''))] = {
-                    confirmed: _.toNumber(confirmed.replace(',','')),
-                    probable: _.toNumber(probable.replace(',','')),
-                    dead: _.toNumber(dead.replace(',','')),
+                output.numbers[formatNames(location)] = {
+                    confirmed: formatNumbers(confirmed),
+                    probable: formatNumbers(probable),
+                    dead: formatNumbers(dead),
                 };
             }
         });
@@ -63,12 +112,14 @@ const _extract = async (data) => {
 
         return output;
     } catch (err) {
-        console.dir(err);
         throw new Error('No result found');
     }
-
 };
 
+/**
+ * Get Data from server
+ * @returns {Promise<{numbers: {}}>}
+ */
 const newVersion = async () => {
     try {
         const requested = await _request();
