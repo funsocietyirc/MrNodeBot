@@ -56,7 +56,7 @@ module.exports = (app) => {
             output.appendBold(`Canada - ${results.lastUpdate}`);
 
             _.forEach(results.numbers, (value, region) => {
-                output.insert(`[${_.startCase(region)}] ${helpers.formatNumber(value.confirmed)} Con${value.probable > 0 ? ' ' + helpers.formatNumber(value.probable) + ' Prob' : ''}${value.dead > 0 ? ' ' + helpers.formatNumber(value.dead) + ' Dead' : ''}`);
+                output.insert(`[${_.startCase(region)}] ${helpers.formatNumber(value.confirmed)} Con${value.today > 0 ? ' (+' + helpers.formatNumber(value.today) + ')' : ''}${value.probable > 0 ? ' ' + helpers.formatNumber(value.probable) + ' Prob' : ''}${value.dead > 0 ? ' ' + helpers.formatNumber(value.dead) + ' Dead' : ''}`);
             });
 
             app.say(to, output.text);
@@ -154,7 +154,7 @@ module.exports = (app) => {
                 'green',
                 result.cured,
             );
-            // Append Result
+            // Append Dead
             appendResult(
                 result.actual.dead,
                 output,
@@ -176,7 +176,6 @@ module.exports = (app) => {
         call: covid19,
     });
 
-
     /**
      * Coronavirus command handler
      * @param to
@@ -188,8 +187,10 @@ module.exports = (app) => {
     const covid19Stats = async (to, from, text, message) => {
         // Split on comma
         const [region, province] = text.split(',');
+
         // Get Results
         const result = await corona.covid19StatsResults(region, province);
+
         // No Results
         if (
             !result ||
