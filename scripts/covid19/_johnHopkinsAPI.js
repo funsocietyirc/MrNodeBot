@@ -2,7 +2,6 @@ const rp = require('request-promise-native');
 const _ = require('lodash');
 const moment = require('moment');
 
-
 const johnHopkinsEndpoint = 'https://services1.arcgis.com/0MSEUqKaxRlEPj5g/arcgis/rest/services/ncov_cases/FeatureServer/1/query?f=json&where=Confirmed%20%3E=%200&returnGeometry=false&&outFields=Province_State,Country_Region,Last_Update,Confirmed,Deaths,Recovered';
 const  globalWithoutChinaString = 'W/O China';
 

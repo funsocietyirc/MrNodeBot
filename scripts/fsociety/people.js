@@ -5,28 +5,10 @@ const scriptInfo = {
 };
 const _ = require('lodash');
 const c = require('irc-colors');
-const xray = require('x-ray')();
 const Models = require('funsociety-bookshelf-model-loader');
 const excuse = require('../generators/_simpleExcuse');
 
 module.exports = (app) => {
-    // Check Jeeks Website to make sure he is still alive
-    app.Commands.set('jeek', {
-        desc: 'Is Jeek Alive?',
-        access: app.Config.accessLevels.identified,
-        call: (to, from, text, message) =>
-            // Get an array of H1 Elements from jeeks alive site
-            xray('http://ishealive.jeek.net', ['h1'])((err, results) => {
-                if (err || !results || !results[1]) {
-                    app.say(to, 'Something went wrong finding out if jeek is alive');
-                    return;
-                }
-                // If he is in the channel
-                if (app._ircClient.isInChannel(to, 'jeek')) app.action(to, 'points to jeek');
-                app.say(to, `Is Jeek Alive? ${results[1]}`);
-            }),
-    });
-
     // Report an image of our lord and savour, RaptorJesus
     app.Commands.set('RaptorJesus', {
         desc: 'Get a pic of RaptorJesus',

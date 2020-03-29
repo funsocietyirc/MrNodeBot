@@ -248,6 +248,55 @@ module.exports = (app) => {
         call: covid19Stats,
     });
 
+    /**
+     * Covid 19 Command, inspired by https://github.com/pwr22/covbot/blob/master/covbot.py
+     * @param to
+     * @param from
+     * @param text
+     * @param message
+     * @returns {Promise<void>}
+     */
+    const covidRisk = async (to, from, text, message) => {
+        try {
+            const age = _.parseInt(text);
+            if (!_.isNumber(age) || age > 110 || age < 0) {
+                app.say(to, `I am sorry ${from}, the risk model only handles ages between 0 and 110 (inclusive)`);
+                return;
+            }
+
+            const deathRate = _.round(Math.max(0, -0.00186807 + 0.00000351867 * age ** 2 + (2.7595 * 10 ** -15) * age ** 7),4);
+            const icRate =_.round(Math.max(0, -0.0572602 - -0.0027617 * age),4);
+            const hRate = _.round(Math.max(0, -0.0730827 - age * -0.00628289),4);
+            const survivalRate = _.round(1 - deathRate,3);
+
+            // Output to IRC
+            const output = new typo.StringBuilder({
+                logo: 'coronavirus',
+            });
+
+            output
+                .appendBold('Covid-19 Risks')
+                .append(`Age: ${age}`)
+                .append(`Survival: ${c.green(survivalRate)}%`)
+                .append(`Hospitalization: ${c.blue(hRate)}%`)
+                .append(`ICU: ${c.yellow(icRate)}%`)
+                .append(`Death ${c.red(deathRate)}%`);
+
+            // Say Output
+            app.say(to, output.text);
+        }
+        catch (err) {
+            logger.error('Something went wrong in the covid risk command', {
+                message: err.message || '',
+                stack: err.stack || '',
+            });
+        }
+    };
+    app.Commands.set('covid19-risk', {
+        desc: '[age] - COVID-19 Risk by age based on computer model provided by https://www.desmos.com/calculator/v0zif7tflm',
+        access: app.Config.accessLevels.guest,
+        call: covidRisk,
+    });
     // Return the script info
     return scriptInfo;
 };
