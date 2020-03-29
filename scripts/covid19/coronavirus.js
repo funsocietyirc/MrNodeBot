@@ -277,10 +277,18 @@ module.exports = (app) => {
             output
                 .appendBold('Covid-19 Risks')
                 .append(`Age: ${age}`)
-                .append(`Survival: ${c.green(_.round(survivalRate,5) * 100)}%`)
-                .append(`Hospitalization: ${c.blue(_.round(hRate,5) * 100)}%`)
-                .append(`ICU: ${c.yellow(_.round(icRate,5) * 100)}%`)
-                .append(`Death ${c.red(_.round(deathRate,5) * 100)}%`);
+                .append(`Survival: ${c.green(
+                    _.round(survivalRate * 100,4)
+                )}%`)
+                .append(`Hospitalization: ${c.blue(
+                    _.round(hRate * 100,4)
+                )}%`)
+                .append(`ICU: ${c.yellow(
+                    _.round(icRate * 100,4)
+                )}%`)
+                .append(`Death ${c.red(
+                    _.round(deathRate * 100, 4)
+                )}%`);
 
             // Say Output
             app.say(to, output.text);
