@@ -264,9 +264,9 @@ module.exports = (app) => {
                 return;
             }
 
-            const deathRate = _.round(Math.max(0, -0.00186807 + 0.00000351867 * age ** 2 + (2.7595 * 10 ** -15) * age ** 7) * 100,4);
-            const icRate =_.round(Math.max(0, -0.0572602 - -0.0027617 * age) * 100,4);
-            const hRate = _.round(Math.max(0, -0.0730827 - age * -0.00628289) * 100,4);
+            const deathRate = _.round(Math.max(0, -0.00186807 + 0.00000351867 * age ** 2 + (2.7595 * 10 ** -15) * age ** 7),4) * 100;
+            const icRate =_.round(Math.max(0, -0.0572602 - -0.0027617 * age),4) * 100;
+            const hRate = _.round(Math.max(0, -0.0730827 - age * -0.00628289),4) * 100;
             const survivalRate = _.round(1 - deathRate,3) * 100;
 
             // Output to IRC
