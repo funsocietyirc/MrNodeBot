@@ -211,6 +211,9 @@ module.exports = {
     },
     // Feature Configuration
     features: {
+        webLogs: [
+            // '#mrnodebot'
+        ],
         seen: {
             recursionLimit: 5,
             allowRecursion: true,

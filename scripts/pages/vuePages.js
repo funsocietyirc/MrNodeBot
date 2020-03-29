@@ -143,6 +143,27 @@ module.exports = (app) => {
         verb: 'get',
     });
 
+    /**
+     * Provide link information
+     * @param req
+     * @param res
+     * @param next
+     */
+    const logs = (req, res, next) => {
+        const data = {
+            params: req.params,
+        };
+        req.vueOptions = defaultVueOptions;
+        res.renderVue('log.vue', data, req.vueOptions);
+    };
+
+    app.WebRoutes.set('logs', {
+        handler: logs,
+        desc: 'Logs',
+        path: '/logs/:channel/:date/:page?',
+        verb: 'get',
+    });
+
     // Return the script info
     return scriptInfo;
 };
