@@ -181,8 +181,14 @@
             socketHandler: function (data) {
                 let self = this;
                 self.results.unshift(data);
+
+                // Filter out inappropriate messages
+                if ( !(data.to in ['##coronavirus', '##covid-19', '#coronavirus'])) {
+                    return;
+                }
+
                 self.$nextTick(function () {
-                    let element = $('#linkTable').find("[data-timestamp='" + data.timestamp + "']");
+                    let element = $('#linkTable').find("[data-timestamp='" + moment(data.timestamp).format("YYYY-MM-DD HH:mm:ss") + "']");
                     let navBar = $('#navBar');
                     let to = navBar.find("[data-to='" + data.to + "']");
                     let from = navBar.find("[data-from='" + data.from + "']");
