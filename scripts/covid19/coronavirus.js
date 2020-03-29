@@ -11,6 +11,7 @@ const helpers = require('../../helpers');
 const c = require('irc-colors');
 const logger = require('../../lib/logger');
 
+const chunkObj = (input, size) =>  _.chain(input).toPairs().chunk(size).map(_.fromPairs).value();
 /**
  * Helper to append Result
  * @param obj Object Results Object
@@ -49,17 +50,30 @@ module.exports = (app) => {
             }
 
             // Output to IRC
-            const output = new typo.StringBuilder({
+            const outputOptions = {
                 logo: 'coronavirus',
+            };
+
+            const resultsChunked = chunkObj(results.numbers, Object.keys(results.numbers).length / 4);
+            let first = true;
+            _.forEach(resultsChunked, chunk => {
+                const output = new typo.StringBuilder(first ? outputOptions : {});
+                output.appendBold(first ? `Canada - ${results.lastUpdate}` : '');
+                first = first ? !first : first;
+                _.forEach(chunk, (value, region) => {
+                    const formattedRegion = c.blue(_.startCase(region));
+                    const formattedConfirmed = ' ' + c.green(helpers.formatNumber(value.confirmed)) + ' Conf';
+                    const formattedToday = value.today > 0 ? ' (+' + c.yellow(helpers.formatNumber(value.today)) + ')' : '';
+                    const formattedProbable = value.probable > 0 ? ' ' + c.cyan(helpers.formatNumber(value.probable)) + ' Prob' : '';
+                    const formattedTotal = value.total !== value.confirmed ? ' ' + c.navy(helpers.formatNumber(value.total)) + ' Total' : '';
+                    const formattedDead = value.dead > 0 ? ' ' + c.red(helpers.formatNumber(value.dead)) + ' Dead' : '';
+                    const formattedFatality = value.caseFatality ? ' (' + c.red(_.round(value.caseFatality,2)) + '%)' : '';
+
+                    output.insert(`[${formattedRegion}]${formattedConfirmed}${formattedToday}${formattedProbable}${formattedTotal}${formattedDead}${formattedFatality}`);
+                });
+                app.say(to, output.text.replace(/\s\s+/g, ' '));
             });
 
-            output.appendBold(`Canada - ${results.lastUpdate}`);
-
-            _.forEach(results.numbers, (value, region) => {
-                output.insert(`[${_.startCase(region)}] ${helpers.formatNumber(value.confirmed)} Con${value.today > 0 ? ' (+' + helpers.formatNumber(value.today) + ')' : ''}${value.probable > 0 ? ' ' + helpers.formatNumber(value.probable) + ' Prob' : ''}${value.dead > 0 ? ' ' + helpers.formatNumber(value.dead) + ' Dead' : ''}`);
-            });
-
-            app.say(to, output.text);
         }
         catch (err) {
             logger.error('Something went wrong with the Canadian Information', {

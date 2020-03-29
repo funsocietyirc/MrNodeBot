@@ -48,7 +48,7 @@ const formatNames = (name) => {
             return 'NU';
         case 'Repatriated travellers':
             return 'Repatriated';
-        case 'Qubec':
+        case 'Quebec':
             return 'QC';
         case 'Canada':
             return 'total';
@@ -87,7 +87,7 @@ const _extractCsv = async (data) => {
     return _(rows).drop(1).map(x => {
         // pruid,prname,prnameFR,date,numconf,numprob,numdeaths,numtotal,numtoday
         [id, location, locationFR, sdate, confirmed, probable, deaths, total, today] = x.split(',');
-        return {
+        const out =  {
             id, location, locationFR,
             date: moment(sdate, 'DD-MM-YYYY'),
             confirmed: _.parseInt(confirmed),
@@ -96,6 +96,9 @@ const _extractCsv = async (data) => {
             total: _.parseInt(total),
             today: _.parseInt(today),
         };
+
+        out.caseFatality = (out.dead / out.total) * 100;
+        return out;
     });
 };
 
@@ -121,7 +124,9 @@ const _todaysData = async (results) => {
             probable: formatNumbers(x.probable),
             dead: formatNumbers(x.dead),
             today: formatNumbers(x.today),
+            total: formatNumbers(x.total),
             date: x.date,
+            caseFatality: x.caseFatality,
         };
     }
 
