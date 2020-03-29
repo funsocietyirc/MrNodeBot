@@ -264,10 +264,10 @@ module.exports = (app) => {
                 return;
             }
 
-            const deathRate = _.round(Math.max(0, -0.00186807 + 0.00000351867 * age ** 2 + (2.7595 * 10 ** -15) * age ** 7),4) * 100;
-            const icRate =_.round(Math.max(0, -0.0572602 - -0.0027617 * age),4) * 100;
-            const hRate = _.round(Math.max(0, -0.0730827 - age * -0.00628289),4) * 100;
-            const survivalRate = _.round(1 - deathRate,3) * 100;
+            const deathRate = Math.max(0, -0.00186807 + 0.00000351867 * age ** 2 + (2.7595 * 10 ** -15) * age ** 7);
+            const icRate = Math.max(0, -0.0572602 - -0.0027617 * age);
+            const hRate = Math.max(0, -0.0730827 - age * -0.00628289);
+            const survivalRate = 1 - deathRate;
 
             // Output to IRC
             const output = new typo.StringBuilder({
@@ -277,10 +277,10 @@ module.exports = (app) => {
             output
                 .appendBold('Covid-19 Risks')
                 .append(`Age: ${age}`)
-                .append(`Survival: ${c.green(survivalRate)}%`)
-                .append(`Hospitalization: ${c.blue(hRate)}%`)
-                .append(`ICU: ${c.yellow(icRate)}%`)
-                .append(`Death ${c.red(deathRate)}%`);
+                .append(`Survival: ${c.green(_.round(survivalRate,5) * 100)}%`)
+                .append(`Hospitalization: ${c.blue(_.round(hRate,5) * 100)}%`)
+                .append(`ICU: ${c.yellow(_.round(icRate,5) * 100)}%`)
+                .append(`Death ${c.red(_.round(deathRate,5) * 100)}%`);
 
             // Say Output
             app.say(to, output.text);
