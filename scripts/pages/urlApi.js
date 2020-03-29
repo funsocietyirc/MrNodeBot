@@ -74,6 +74,14 @@ module.exports = (app) => {
                         init = true;
                     }
 
+                    if (req.query.channels) {
+                        const channels = req.query.channels.split(',');
+                        qb.orWhere(function () {
+                            _.each(channels, channel => {
+                                this.where('to', channel.replace(hashPattern,'#'));
+                            })
+                        });                    }
+
                     // If there is a from in the query string
                     if (req.query.user) {
                         qb[getWhere()]('from', req.query.user);

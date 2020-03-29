@@ -171,7 +171,7 @@
             },
             fetchData: function () {
                 let vm = this;
-                fetch('/api/urls?channel=%23%23coronavirus&pageSize=100').then(response => response.json()).then( (data) => {
+                fetch('/api/urls?channels=%23%23coronavirus,%23coronavirus,%23%23covid-19&pageSize=100').then(response => response.json()).then( (data) => {
                     vm.results = data.results;
                 }).catch(e => {
                     // TODO handle this
