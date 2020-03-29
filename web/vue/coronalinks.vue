@@ -183,7 +183,7 @@
                 self.results.unshift(data);
 
                 // Filter out inappropriate messages
-                if ( !(data.to in ['##coronavirus', '##covid-19', '#coronavirus'])) {
+                if (!_.includes(['##coronavirus', '##covid-19', '#coronavirus'], data.to)) {
                     return;
                 }
 
