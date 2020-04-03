@@ -141,13 +141,12 @@ const covid19Results = async (region, city) => {
         );
     }
 
-
     if (city) {
         const formattedCity =  output.location.city = formatCity(city);
         result = result
             .filter(
                 x => x
-                        .hasOwnProperty('Province_State') &&
+                    .hasOwnProperty('Province_State') &&
                     !_.isNil(x.Province_State) &&
                     x.Province_State.split(',')[0].startsWith(formattedCity)
             );

@@ -1,7 +1,9 @@
 const _ = require('lodash');
-const logger = require('../../lib/logger');
 const moment = require('moment');
 const rp = require('request-promise-native');
+
+const logger = require('../../lib/logger');
+const formatCanadianProvinces = require('./_formatCanadianProvinces');
 
 // End Points
 const csvEndPoint = 'https://health-infobase.canada.ca/src/data/covidLive/covid19.csv';
@@ -15,47 +17,6 @@ const _request = async () => {
     }
 };
 
-/**
- * Format Names
- * @param name
- * @returns {string}
- */
-const formatNames = (name) => {
-    switch (name) {
-        case 'British Columbia':
-            return 'BC';
-        case 'Alberta':
-            return 'AB';
-        case 'Saskatchewan':
-            return 'SK';
-        case 'Manitoba':
-            return 'MB';
-        case 'Ontario':
-            return 'ON';
-        case 'New Brunswick':
-            return 'NB';
-        case 'Nova Scotia':
-            return 'NS';
-        case 'Prince Edward Island':
-            return 'PEI';
-        case 'Newfoundland and Labrador':
-            return 'NL';
-        case 'Yukon':
-            return 'YK';
-        case 'Northwest Territories':
-            return 'NT';
-        case 'Nunavut':
-            return 'NU';
-        case 'Repatriated travellers':
-            return 'Repatriated';
-        case 'Quebec':
-            return 'QC';
-        case 'Canada':
-            return 'total';
-        default:
-            return name;
-    }
-};
 
 /**
  * Format / Parse numbers
@@ -102,6 +63,12 @@ const _extractCsv = async (data) => {
     });
 };
 
+/**
+ * Extract One days Data
+ * @param results
+ * @returns {Promise<{numbers: {total: {}}}>}
+ * @private
+ */
 const _todaysData = async (results) => {
     if (!results) {
         throw new Error('There are no results provided from the Canadian CSV Parser')
@@ -119,7 +86,7 @@ const _todaysData = async (results) => {
 
     // Build results Object
     for (let x of finalFiltered) {
-        output.numbers[formatNames(x.location)] = {
+        output.numbers[formatCanadianProvinces(x.location)] = {
             confirmed: formatNumbers(x.confirmed),
             probable: formatNumbers(x.probable),
             dead: formatNumbers(x.dead),
@@ -130,11 +97,17 @@ const _todaysData = async (results) => {
         };
     }
 
-    output.lastUpdate = output.numbers.total.date.fromNow();
+    console.dir(output);
+
+    output.lastUpdate = output.numbers.Canada.date.fromNow();
 
     return output;
 };
 
+/**
+ * Parser
+ * @returns {Promise<{numbers: {total: {}}}>}
+ */
 const newVersionCSV = async () => {
     try {
         const requested = await _request();

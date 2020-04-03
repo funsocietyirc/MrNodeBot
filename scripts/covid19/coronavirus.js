@@ -54,7 +54,7 @@ module.exports = (app) => {
                 logo: 'coronavirus',
             };
 
-            const resultsChunked = chunkObj(results.numbers, Object.keys(results.numbers).length / 4);
+            const resultsChunked = chunkObj(results.numbers, 6);
             let first = true;
             _.forEach(resultsChunked, chunk => {
                 const output = new typo.StringBuilder(first ? outputOptions : {});
@@ -139,7 +139,7 @@ module.exports = (app) => {
         // Append Cured
         appendResult(result.cured,
             output,
-            'Cured',
+            'Recovered',
             'green') ;
         // Append Dead
         appendResult(result.dead,
@@ -164,7 +164,7 @@ module.exports = (app) => {
             appendResult(
                 result.actual.cured,
                 output,
-                'Cured',
+                'Recovered',
                 'green',
                 result.cured,
             );
@@ -232,7 +232,7 @@ module.exports = (app) => {
         output.appendBold(`${result.location.city ? result.location.city : result.location.region} - ${result.lastDate}`);
 
         if (result.has.confirmed) appendResult(result.confirmed, output, 'Confirmed', 'yellow');
-        if (result.has.cured) appendResult(result.cured, output, 'Cured', 'green') ;
+        if (result.has.recovered) appendResult(result.recovered, output, 'Recovered', 'green') ;
         if (result.has.dead)  appendResult(result.dead, output, 'Dead', 'red');
 
         // Say Output
@@ -256,7 +256,7 @@ module.exports = (app) => {
      * @param message
      * @returns {Promise<void>}
      */
-    const covidRisk = async (to, from, text, message) => {
+    const covidRisk = async (to, from, text) => {
         try {
             const age = _.parseInt(text);
             if (!_.isNumber(age) || age > 110 || age < 0) {
@@ -264,10 +264,7 @@ module.exports = (app) => {
                 return;
             }
 
-            const deathRate = Math.max(0, -0.00186807 + 0.00000351867 * age ** 2 + (2.7595 * 10 ** -15) * age ** 7);
-            const icRate = Math.max(0, -0.0572602 - -0.0027617 * age);
-            const hRate = Math.max(0, -0.0730827 - age * -0.00628289);
-            const survivalRate = 1 - deathRate;
+            const risk = corona.covid19Risk(age);
 
             // Output to IRC
             const output = new typo.StringBuilder({
@@ -278,16 +275,16 @@ module.exports = (app) => {
                 .appendBold('Covid-19 Risks')
                 .append(`Age: ${age}`)
                 .append(`Survival: ${c.green(
-                    _.round(survivalRate * 100,4)
+                    _.round(risk.survivalRate * 100,4)
                 )}%`)
                 .append(`Hospitalization: ${c.blue(
-                    _.round(hRate * 100,4)
+                    _.round(risk.hRate * 100,4)
                 )}%`)
                 .append(`ICU: ${c.yellow(
-                    _.round(icRate * 100,4)
+                    _.round(risk.icRate * 100,4)
                 )}%`)
                 .append(`Death ${c.red(
-                    _.round(deathRate * 100, 4)
+                    _.round(risk.deathRate * 100, 4)
                 )}%`);
 
             // Say Output

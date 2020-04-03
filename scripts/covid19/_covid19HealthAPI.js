@@ -1,7 +1,6 @@
 const rp = require('request-promise-native');
 const _ = require('lodash');
 const helpers = require('../../helpers');
-
 const covid19HealthEndPoint = 'https://covid19.health/data/all.json';
 
 /**
@@ -68,7 +67,6 @@ const formatRegion = region => {
     }
 };
 
-
 /**
  * Produce Output results
  * @param region
@@ -121,7 +119,7 @@ const covid19HealthResults = async (region, city) => {
             city,
         },
         has: {
-            cured: hasCured,
+            recovered: hasCured,
             confirmed: hasConfirmed,
             dead: hasDead,
         },
@@ -129,7 +127,7 @@ const covid19HealthResults = async (region, city) => {
 
     // Append Stats
     appendStat(finalResults, output, 'confirmedCount', 'confirmed');
-    appendStat(finalResults, output, 'curedCount', 'cured');
+    appendStat(finalResults, output, 'curedCount', 'recovered');
     appendStat(finalResults, output, 'deadCount', 'dead');
 
     // Append last Date
