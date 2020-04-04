@@ -67,13 +67,14 @@ module.exports = (app) => {
                     const formattedPercentToday = value.percentToday !== ''  ? ' (+' + c.yellow(value.percentToday) + ')' : '';
                     const formattedProbable = value.probable > 0 ? ' ' + c.cyan(helpers.formatNumber(value.probable)) + ' Prob' : '';
                     const formattedTotal = value.total !== value.confirmed ? ' ' + c.navy(helpers.formatNumber(value.total)) + ' Total' : '';
-                    const formattedTested = value.tested > 0 ? ' ' + c.navy(helpers.formatNumber(value.tested)) + ' Tested' : '';
+                    const formattedTested = value.tested > 0 ? ' ' + c.teal(helpers.formatNumber(value.tested)) + ' Tested' : '';
                     const formattedDead = value.dead > 0 ? ' ' + c.red(helpers.formatNumber(value.dead)) + ' Dead' : '';
-                    const formattedFatality = value.caseFatality ? ' (' + c.red(_.round(value.caseFatality,2)) + '%)' : '';
+                    const formattedFatality = value.caseFatality ? ' (' + c.red(_.round(value.caseFatality,3)) + '%)' : '';
+                    const formattedPercentPositive = value.percentPositive ? ' (' + c.teal(_.round(value.percentPositive,3)) + '%)' : '';
 
                     // Output to IRC
                     output.insert(
-                        `[${formattedRegion}]${formattedConfirmed}${formattedToday}${formattedPercentToday}${formattedProbable}${formattedTotal}${formattedTested}${formattedDead}${formattedFatality}`
+                        `[${formattedRegion}]${formattedConfirmed}${formattedToday}${formattedPercentToday}${formattedProbable}${formattedTotal}${formattedTested}${formattedPercentPositive}${formattedDead}${formattedFatality}`
                     );
                 });
                 app.say(to, output.text.replace(/\s\s+/g, ' '));

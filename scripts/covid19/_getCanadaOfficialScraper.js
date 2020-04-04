@@ -62,6 +62,7 @@ const _extractCsv = async (data, province = false) => {
             today: _.parseInt(today),
         };
         out.caseFatality = (out.dead / out.total) * 100;
+        out.percentPositive = out.total && out.tested ? (out.total / out.tested) * 100 : 0;
         return out;
     }).reject(x => _.isNull(x) || _.isUndefined(x));
 };
@@ -95,6 +96,7 @@ const _todaysData = async (results) => {
             total: formatNumbers(x.total),
             tested: formatNumbers(x.tested),
             percentToday: x.percentToday,
+            percentPositive: x.percentPositive,
             date: x.date,
             caseFatality: x.caseFatality,
         };
