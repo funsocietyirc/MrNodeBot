@@ -42,7 +42,7 @@ module.exports = (app) => {
      */
     const covid19Canada = async (to, from, text, message) => {
         try {
-            const results = await corona.covidCanadaResults();
+            const results = await corona.covidCanadaResults(text);
 
             if(!results || !_.isObject(results) || _.isEmpty(results) || _.isEmpty(results.numbers)) {
                 app.say(to, `There seems to be no Canadian information available, ${from}`);
@@ -54,7 +54,7 @@ module.exports = (app) => {
                 logo: 'coronavirus',
             };
 
-            const resultsChunked = chunkObj(results.numbers, 6);
+            const resultsChunked = chunkObj(results.numbers, 4);
             let first = true;
             _.forEach(resultsChunked, chunk => {
                 const output = new typo.StringBuilder(first ? outputOptions : {});
@@ -64,12 +64,17 @@ module.exports = (app) => {
                     const formattedRegion = c.blue(_.startCase(region));
                     const formattedConfirmed = ' ' + c.green(helpers.formatNumber(value.confirmed)) + ' Conf';
                     const formattedToday = value.today > 0 ? ' (+' + c.yellow(helpers.formatNumber(value.today)) + ')' : '';
+                    const formattedPercentToday = value.percentToday !== ''  ? ' (+' + c.yellow(value.percentToday) + ')' : '';
                     const formattedProbable = value.probable > 0 ? ' ' + c.cyan(helpers.formatNumber(value.probable)) + ' Prob' : '';
                     const formattedTotal = value.total !== value.confirmed ? ' ' + c.navy(helpers.formatNumber(value.total)) + ' Total' : '';
+                    const formattedTested = value.tested > 0 ? ' ' + c.navy(helpers.formatNumber(value.tested)) + ' Tested' : '';
                     const formattedDead = value.dead > 0 ? ' ' + c.red(helpers.formatNumber(value.dead)) + ' Dead' : '';
                     const formattedFatality = value.caseFatality ? ' (' + c.red(_.round(value.caseFatality,2)) + '%)' : '';
 
-                    output.insert(`[${formattedRegion}]${formattedConfirmed}${formattedToday}${formattedProbable}${formattedTotal}${formattedDead}${formattedFatality}`);
+                    // Output to IRC
+                    output.insert(
+                        `[${formattedRegion}]${formattedConfirmed}${formattedToday}${formattedPercentToday}${formattedProbable}${formattedTotal}${formattedTested}${formattedDead}${formattedFatality}`
+                    );
                 });
                 app.say(to, output.text.replace(/\s\s+/g, ' '));
             });

@@ -3,7 +3,7 @@ const moment = require('moment');
 const rp = require('request-promise-native');
 
 const logger = require('../../lib/logger');
-const formatCanadianProvinces = require('./_formatCanadianProvinces');
+const provinces = require('./_formatCanadianProvinces');
 
 // End Points
 const csvEndPoint = 'https://health-infobase.canada.ca/src/data/covidLive/covid19.csv';
@@ -17,7 +17,6 @@ const _request = async () => {
     }
 };
 
-
 /**
  * Format / Parse numbers
  * @param number
@@ -28,10 +27,11 @@ const formatNumbers = number => _.toNumber(number);
 /**
  * Extract Canadian CSV Results into Normalized Object format
  * @param data
+ * @param province
  * @returns {Promise<{date: (*|moment.Moment), total: number, locationFR: *, today: number, probable: number, location: Location | WorkerLocation, dead: number, id: *, confirmed: number}[]>}
  * @private
  */
-const _extractCsv = async (data) => {
+const _extractCsv = async (data, province = false) => {
     // No / Invalid data
     if (_.isNil(data) || !_.isString(data)) {
         throw new Error('Invalid return data from Canadian CSV Source');
@@ -47,26 +47,29 @@ const _extractCsv = async (data) => {
     // Build Results Object
     return _(rows).drop(1).map(x => {
         // pruid,prname,prnameFR,date,numconf,numprob,numdeaths,numtotal,numtoday
-        [id, location, locationFR, sdate, confirmed, probable, deaths, total, today] = x.split(',');
+        // pruid,prname,prnameFR,date,numconf,numprob,numdeaths,numtotal,numtested,numtoday,percentoday
+        [id, location, locationFR, sdate, confirmed, probable, deaths, total, tested, today, percentToday] = x.split(',');
+        if (province && _.isString(location) && location.toLowerCase() !== province) return;
         const out =  {
             id, location, locationFR,
             date: moment(sdate, 'DD-MM-YYYY'),
             confirmed: _.parseInt(confirmed),
             probable: _.parseInt(probable),
+            tested: _.parseInt(tested),
+            percentToday: percentToday,
             dead: _.parseInt(deaths),
             total: _.parseInt(total),
             today: _.parseInt(today),
         };
-
         out.caseFatality = (out.dead / out.total) * 100;
         return out;
-    });
+    }).reject(x => _.isNull(x) || _.isUndefined(x));
 };
 
 /**
  * Extract One days Data
  * @param results
- * @returns {Promise<{numbers: {total: {}}}>}
+ * @returns {Promise<{numbers: {}}>}
  * @private
  */
 const _todaysData = async (results) => {
@@ -75,9 +78,7 @@ const _todaysData = async (results) => {
     }
     // Output Object
     const output = {
-        numbers: {
-            total: {}
-        }
+        numbers: {}
     };
 
     // Filter On Todays date when available, or yesterdays when now,
@@ -86,32 +87,50 @@ const _todaysData = async (results) => {
 
     // Build results Object
     for (let x of finalFiltered) {
-        output.numbers[formatCanadianProvinces(x.location)] = {
+        output.numbers[provinces.formatCanadianProvinces(x.location)] = {
             confirmed: formatNumbers(x.confirmed),
             probable: formatNumbers(x.probable),
             dead: formatNumbers(x.dead),
             today: formatNumbers(x.today),
             total: formatNumbers(x.total),
+            tested: formatNumbers(x.tested),
+            percentToday: x.percentToday,
             date: x.date,
             caseFatality: x.caseFatality,
         };
     }
-
-    console.dir(output);
-
-    output.lastUpdate = output.numbers.Canada.date.fromNow();
+    output.lastUpdate = !_.isEmpty(Object.keys(output.numbers)) ?  output.numbers[Object.keys(output.numbers)[0]].date.fromNow() : 'No Date';
 
     return output;
 };
 
 /**
- * Parser
- * @returns {Promise<{numbers: {total: {}}}>}
+ * Normalized Province Name
+ * @param province
+ * @returns {string|boolean|*}
+ * @private
  */
-const newVersionCSV = async () => {
+const _normalizeProvince = (province) => {
+    if (!_.isString(province) || _.isEmpty(province)) {
+        return false;
+    }
+
+    // It exists in the valid long names, use it
+    if (_.includes(provinces.validShortNames, province)) return provinces.reverseFormatCanadianProvinces(province);
+    if (_.includes(provinces.validLongNames, province)) return province;
+
+    return false;
+};
+
+/**
+ * Parser
+ * @returns {Promise<{numbers: {}}>}
+ */
+const newVersionCSV = async (province) => {
     try {
+        const normalizedProvince = _normalizeProvince(province);
         const requested = await _request();
-        const results = await _extractCsv(requested);
+        const results = await _extractCsv(requested, normalizedProvince);
         return await _todaysData(results);
     } catch (err) {
         logger.error('Error in the _getCanadaOfficialScraper Generator', {

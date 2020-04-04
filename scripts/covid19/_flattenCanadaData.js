@@ -1,6 +1,6 @@
 const rp = require('request-promise-native');
 
-const formatCanadianProvinces = require('./_formatCanadianProvinces');
+const provinces = require('./_formatCanadianProvinces');
 
 const endPoint = 'https://firebasestorage.googleapis.com/v0/b/flatten-271620.appspot.com/o/confirmed_data.json?alt=media';
 
@@ -32,7 +32,7 @@ const _extract = data => {
     // Normalize via Province Name
     _.each(data.confirmed_cases, confirmedCase, confirmedCase => {
         const [city, province] = confirmedCase.name.trim().split(',');
-        output.confirmedCases[formatCanadianProvinces(province)] = {
+        output.confirmedCases[provinces.formatCanadianProvinces(province)] = {
             name: city,
             cases: confirmedCase.cases,
             coords: confirmedCase.coords,

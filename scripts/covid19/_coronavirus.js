@@ -9,11 +9,10 @@ const covid19Risk = require('./_covidRisk');
  * Covid 19 Canada Results
  * @returns {Promise<*>}
  */
-const covid19CanadaResults = async () => {
+const covid19CanadaResults = async (province) => {
     const errorMessage = 'Something went wrong trying to fetch the official Canadian numbers';
-
     try {
-        return await covid19Canada();
+        return await covid19Canada(province);
     }
     catch (err) {
         logger.error(errorMessage, {
