@@ -1,3 +1,4 @@
+const _ = require('lodash');
 /**
  * Valid Short Names
  * @type {string[]}
@@ -11,6 +12,7 @@ const validShortNames = [
  * @returns {string}
  */
 const reverseFormatCanadianProvinces = (name) => {
+    if(!_.isString(name)) return name;
     switch (name.toLowerCase()) {
         case 'bc':
             return 'british columbia';
@@ -54,6 +56,7 @@ const reverseFormatCanadianProvinces = (name) => {
 const validLongNames = ['british columbia', 'alberta', 'saskatchewan', 'manitoba', 'ontario', 'new brunswick', 'nova scotia', 'prince edward island', 'pei', 'newfoundland and labrador', 'yukon', 'northwest territories', 'nunavut', 'repatriated', 'repatriated travellers', 'quebec'];
 
 const formatCanadianProvinces = (name) => {
+    if(!_.isString(name)) return name;
     switch (name.toLowerCase()) {
         case 'british columbia':
             return 'BC';
@@ -90,5 +93,22 @@ const formatCanadianProvinces = (name) => {
     }
 };
 
-module.exports = { formatCanadianProvinces, reverseFormatCanadianProvinces, validShortNames, validLongNames };
+/**
+ * Normalized Province Name
+ * @param province
+ * @returns {string|boolean|*}
+ * @private
+ */
+const normalizeProvince = (province = '') => {
+    if (!_.isString(province) || _.isEmpty(province)) {
+        return province;
+    }
 
+    // It exists in the valid long names, use it
+    if (_.includes(validShortNames, province)) return reverseFormatCanadianProvinces(province);
+    if (_.includes(validLongNames, province)) return province;
+
+    return false;
+};
+
+module.exports = { formatCanadianProvinces, reverseFormatCanadianProvinces, validShortNames, validLongNames, normalizeProvince };

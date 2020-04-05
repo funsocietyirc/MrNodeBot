@@ -42,7 +42,7 @@ module.exports = (app) => {
      */
     const covid19Canada = async (to, from, text, message) => {
         try {
-            const results = await corona.covidCanadaResults(text);
+            const results = await corona.covid19CanadaResults(text);
 
             if(!results || !_.isObject(results) || _.isEmpty(results) || _.isEmpty(results.numbers)) {
                 app.say(to, `There seems to be no Canadian information available, ${from}`);
@@ -54,32 +54,41 @@ module.exports = (app) => {
                 logo: 'coronavirus',
             };
 
-            const resultsChunked = chunkObj(results.numbers, 4);
             let first = true;
-            _.forEach(resultsChunked, chunk => {
-                const output = new typo.StringBuilder(first ? outputOptions : {});
-                output.appendBold(first ? `Canada - ${results.lastUpdate}` : '');
-                first = first ? !first : first;
-                _.forEach(chunk, (value, region) => {
-                    const formattedRegion = c.blue(_.startCase(region));
-                    const formattedConfirmed = ' ' + c.green(helpers.formatNumber(value.confirmed)) + ' Conf';
-                    const formattedToday = value.today > 0 ? ' (+' + c.yellow(helpers.formatNumber(value.today)) + ')' : '';
-                    const formattedPercentToday = value.percentToday !== ''  ? ' (+' + c.yellow(value.percentToday) + ')' : '';
-                    const formattedProbable = value.probable > 0 ? ' ' + c.cyan(helpers.formatNumber(value.probable)) + ' Prob' : '';
-                    const formattedTotal = value.total !== value.confirmed ? ' ' + c.navy(helpers.formatNumber(value.total)) + ' Total' : '';
-                    const formattedTested = value.tested > 0 ? ' ' + c.teal(helpers.formatNumber(value.tested)) + ' Tested' : '';
-                    const formattedDead = value.dead > 0 ? ' ' + c.red(helpers.formatNumber(value.dead)) + ' Dead' : '';
-                    const formattedFatality = value.caseFatality ? ' (' + c.red(_.round(value.caseFatality,3)) + '%)' : '';
-                    const formattedPercentPositive = value.percentPositive ? ' (' + c.teal(_.round(value.percentPositive,3)) + '%)' : '';
+            const output = new typo.StringBuilder(outputOptions);
+            output.appendBold(first ? `Canada - ${results.lastUpdate}` : '');
+            first = first ? !first : first;
+            _.forEach(results.numbers, (value, region) => {
+                const formattedRegion = c.blue(_.startCase(region));
+                const formattedConfirmed = ' ' + c.green(helpers.formatNumber(value.confirmed)) + ' Conf';
+                const formattedToday = value.today > 0 ? ' (+' + c.yellow(helpers.formatNumber(value.today)) + ')' : '';
+                const formattedPercentToday = value.percentToday !== ''  ? ' (+' + c.yellow(value.percentToday) + ')' : '';
+                const formattedProbable = value.probable > 0 ? ' ' + c.cyan(helpers.formatNumber(value.probable)) + ' Prob' : '';
+                const formattedTotal = value.total !== value.confirmed ? ' ' + c.navy(helpers.formatNumber(value.total)) + ' Total' : '';
+                const formattedTested = value.tested > 0 ? ' ' + c.teal(helpers.formatNumber(value.tested)) + ' Tested' : '';
+                const formattedDead = value.dead > 0 ? ' ' + c.red(helpers.formatNumber(value.dead)) + ' Dead' : '';
+                const formattedFatality = value.caseFatality ? ' (' + c.red(_.round(value.caseFatality,3)) + '%)' : '';
+                const formattedPercentPositive = value.percentPositive ? ' (' + c.teal(_.round(value.percentPositive,3)) + '%)' : '';
 
-                    // Output to IRC
-                    output.insert(
-                        `[${formattedRegion}]${formattedConfirmed}${formattedToday}${formattedPercentToday}${formattedProbable}${formattedTotal}${formattedTested}${formattedPercentPositive}${formattedDead}${formattedFatality}`
-                    );
-                });
-                app.say(to, output.text.replace(/\s\s+/g, ' '));
+                // Output to IRC
+                output.insert(
+                    `[${formattedRegion}]${formattedConfirmed}${formattedToday}${formattedPercentToday}${formattedProbable}${formattedTotal}${formattedTested}${formattedPercentPositive}${formattedDead}${formattedFatality}\n`
+                );
             });
 
+            // Flatten Data Provided
+            if (results.flattenDataProvided) {
+                output.insertDivider();
+                output.appendBold(results.flattenData.lastUpdated.fromNow());
+                _.each(results.flattenData.confirmedCases, (v, k) => {
+                    _.each(v, city => {
+                        output.appendBold(`${city.city}, ${city.province}`);
+                        output.append(`${helpers.formatNumber(city.cases)} confirmed`);
+                    });
+                })
+            }
+
+            app.say(to, output.text.replace(/\s\s+/g, ' '));
         }
         catch (err) {
             logger.error('Something went wrong with the Canadian Information', {
@@ -297,6 +306,7 @@ module.exports = (app) => {
             app.say(to, output.text);
         }
         catch (err) {
+            app.say(to, `Something went wrong processing your COVID19-Risk, ${from}`);
             logger.error('Something went wrong in the covid risk command', {
                 message: err.message || '',
                 stack: err.stack || '',
@@ -308,6 +318,7 @@ module.exports = (app) => {
         access: app.Config.accessLevels.guest,
         call: covidRisk,
     });
+
     // Return the script info
     return scriptInfo;
 };

@@ -4,6 +4,7 @@ const rp = require('request-promise-native');
 
 const logger = require('../../lib/logger');
 const provinces = require('./_formatCanadianProvinces');
+const flattenData = require('./_flattenCanadaData');
 
 // End Points
 const csvEndPoint = 'https://health-infobase.canada.ca/src/data/covidLive/covid19.csv';
@@ -69,24 +70,27 @@ const _extractCsv = async (data, province = false) => {
 
 /**
  * Extract One days Data
- * @param results
+ * @param csvResults
+ * @param flattenResults
  * @returns {Promise<{numbers: {}}>}
  * @private
  */
-const _todaysData = async (results) => {
-    if (!results) {
-        throw new Error('There are no results provided from the Canadian CSV Parser')
+
+const _todaysData = async (csvResults, flattenResults) => {
+    if (!csvResults) {
+        throw new Error('There are no csvResults provided from the Canadian CSV Parser')
     }
+
     // Output Object
     const output = {
         numbers: {}
     };
 
     // Filter On Todays date when available, or yesterdays when now,
-    const filtered = results.filter(x => x.date.format('DD-MM-YYYY') === moment().format('DD-MM-YYYY')).value();
-    const finalFiltered = !_.isEmpty(filtered) ? filtered : results.filter(x => x.date.format('DD-MM-YYYY') === moment().subtract(1, 'days').format('DD-MM-YYYY')).value();
+    const filtered = csvResults.filter(x => x.date.format('DD-MM-YYYY') === moment().format('DD-MM-YYYY')).value();
+    const finalFiltered = !_.isEmpty(filtered) ? filtered : csvResults.filter(x => x.date.format('DD-MM-YYYY') === moment().subtract(1, 'days').format('DD-MM-YYYY')).value();
 
-    // Build results Object
+    // Build csvResults Object
     for (let x of finalFiltered) {
         output.numbers[provinces.formatCanadianProvinces(x.location)] = {
             confirmed: formatNumbers(x.confirmed),
@@ -103,37 +107,36 @@ const _todaysData = async (results) => {
     }
     output.lastUpdate = !_.isEmpty(Object.keys(output.numbers)) ?  output.numbers[Object.keys(output.numbers)[0]].date.fromNow() : 'No Date';
 
-    return output;
-};
-
-/**
- * Normalized Province Name
- * @param province
- * @returns {string|boolean|*}
- * @private
- */
-const _normalizeProvince = (province) => {
-    if (!_.isString(province) || _.isEmpty(province)) {
-        return false;
+    // No Flatten Results provided, short circuit
+    if (
+        !_.isObject(flattenResults) ||
+        !flattenResults.hasOwnProperty('confirmedCases') ||
+        !_.isObject(flattenResults.confirmedCases) ||
+        _.isEmpty(flattenResults.confirmedCases) ||
+        !flattenResults.hasOwnProperty('lastUpdated')
+    ) {
+        output.flattenDataProvided = false;
+        return output;
     }
 
-    // It exists in the valid long names, use it
-    if (_.includes(provinces.validShortNames, province)) return provinces.reverseFormatCanadianProvinces(province);
-    if (_.includes(provinces.validLongNames, province)) return province;
+    // Associate Flatten Data
+    output.flattenDataProvided = true;
+    output.flattenData = flattenResults;
 
-    return false;
+    return output;
 };
 
 /**
  * Parser
  * @returns {Promise<{numbers: {}}>}
  */
-const newVersionCSV = async (province) => {
+const newVersionCSV = async (province = '', city = '') => {
     try {
-        const normalizedProvince = _normalizeProvince(province);
+        const normalizedProvince = provinces.normalizeProvince(province);
         const requested = await _request();
-        const results = await _extractCsv(requested, normalizedProvince);
-        return await _todaysData(results);
+        const csvResults = await _extractCsv(requested, normalizedProvince);
+        const flattenResults = _.isEmpty(city) ? null : await flattenData(city);
+        return await _todaysData(csvResults, flattenResults);
     } catch (err) {
         logger.error('Error in the _getCanadaOfficialScraper Generator', {
             message: err.message || '',

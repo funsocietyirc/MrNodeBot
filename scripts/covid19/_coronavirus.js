@@ -4,15 +4,16 @@ const johnHopkinsAPI = require('./_johnHopkinsAPI');
 const covid19HealthAPI = require('./_covid19HealthAPI');
 const covid19Canada = require('./_getCanadaOfficialScraper');
 const covid19Risk = require('./_covidRisk');
-
+const covid19FlattenCanada = require('./_flattenCanadaData');
 /**
  * Covid 19 Canada Results
  * @returns {Promise<*>}
  */
-const covid19CanadaResults = async (province) => {
+const covid19CanadaResults = async (input = '') => {
     const errorMessage = 'Something went wrong trying to fetch the official Canadian numbers';
     try {
-        return await covid19Canada(province);
+        const [province, city] = input.split(',');
+        return await covid19Canada(province, city);
     }
     catch (err) {
         logger.error(errorMessage, {
@@ -75,8 +76,8 @@ const covid19StatsResults = async (region, city) => {
  * @type {{covidCanadaResults: covid19CanadaResults, covid19StatsResults: covid19StatsResults, covid19Risk: (function(*): {deathRate: number, survivalRate: number, hRate: number, icRate: number}), covid19Results: covid19Results}}
  */
 module.exports = {
-    covid19Results: covid19Results,
-    covid19StatsResults: covid19StatsResults,
-    covid19Risk: covid19Risk,
-    covidCanadaResults: covid19CanadaResults,
+    covid19Results,
+    covid19StatsResults,
+    covid19Risk,
+    covid19CanadaResults,
 };
