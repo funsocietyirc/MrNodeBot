@@ -4,6 +4,21 @@
             <h1 class="uk-text-medium uk-text-center uk-margin-top uk-text-truncate">{{searchText || 'Links' | uppercase}}</h1>
             <div class="innerNavBar">
                 <transition name="fade" appear>
+                    <table class="uk-table uk-table-condensed">
+                        <thead>
+                        <tr>
+                            <th>Last 25 Channels</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr v-bind:class="{ 'currentSearch': isActiveSearch(result) }" v-for="result in to">
+                            <td v-bind:data-to="result" class="to clickable" @click="updateFilter(result)">{{result}}
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </transition>
+                <transition name="fade" appear>
                     <table class="uk-table uk-table-condensed uk-margin-bottom">
                         <thead>
                         <tr>

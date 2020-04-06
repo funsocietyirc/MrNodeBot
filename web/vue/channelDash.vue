@@ -13,7 +13,6 @@
                 <div title="Messages Recorded, click for Overall usage summary" data-uk-tooltip
                      class="uk-panel-badge uk-badge">
                     <a :href="getActionLink(result.channel)">{{numberWithCommas(result.messages)}}</a>
-
                 </div>
                 <h3 class="uk-panel-title">
                     <i data-uk-tooltip v-bind:class="{ watched: result.isWatching, primaryColorText: !result.isWatching }"
@@ -106,7 +105,6 @@
                         </table>
                     </div>
                 </div>
-
             </div>
         </div>
     </div>
@@ -127,15 +125,12 @@
     .green {
         color: forestgreen;
     }
-
     .red {
         color: indianred;
     }
-
     .watched {
         color: rgba(63, 191, 127, 0.9) !important;
     }
-
     .uk-accordion-title {
         cursor: pointer;
     }

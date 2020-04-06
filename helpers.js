@@ -135,6 +135,9 @@ const RemoveNonPrintChars = module.exports.RemoveNonPrintChars = /[\u0002\u001F\
 /** Match Fake Space characters */
 const FakeSpaceChars = module.exports.FakeSpaceChars = /[\u0009\u000A\u000B\u000C\u000D\u0085\u00A0\u1680\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u2029\u202F\u205F\u3000\u180E\u200B\u200C\u200D\u2060\uFEFF]/g;
 
+/**
+ * Youtube Expression
+ **/
 const YoutubeExpression = module.exports.YoutubeExpression = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
 
 /**
@@ -152,3 +155,9 @@ const getKeyFromObj = module.exports.getKeyFromObj = (obj, index) => Object.getO
  * @returns {*}
  */
 const getValueFromObj = module.exports.getValueFromObj = (obj, index) => obj[Object.keys(obj)[Object.keys(obj).length + index]];
+
+/**
+ * Chunk Objects
+ * @type {function(*=, *=): *}
+ */
+const chunkObj = module.exports.chunkObj = (input, size) =>  _.chain(input).toPairs().chunk(size).map(_.fromPairs).value();

@@ -30,7 +30,12 @@ const _extract = (data, filterCity) => {
         lastAccessed: moment(lastAccessedString.replace('Data last accessed at: ', ''), 'DD-MM-YYYY kk:mm'),
         maxCases: data.max_cases,
         confirmedCases: {},
+        filterCity,
     };
+
+    if (!filterCity) {
+        return output;
+    }
 
     // Normalize via Province Name
     _.each(data.confirmed_cases, confirmedCase => {

@@ -45,6 +45,7 @@ const _extractCsv = async (data, province = false) => {
     if (_.isNil(data) || !_.isString(data)) {
         throw new Error('No Data in Canadian CSV Source');
     }
+
     // Build Results Object
     return _(rows).drop(1).map(x => {
         // pruid,prname,prnameFR,date,numconf,numprob,numdeaths,numtotal,numtoday
@@ -76,7 +77,6 @@ const _extractCsv = async (data, province = false) => {
  * @returns {Promise<{numbers: {}}>}
  * @private
  */
-
 const _todaysData = async (csvResults, flattenResults) => {
     if (!csvResults) {
         throw new Error('There are no csvResults provided from the Canadian CSV Parser')
@@ -111,19 +111,13 @@ const _todaysData = async (csvResults, flattenResults) => {
     output.lastUpdate = !_.isEmpty(Object.keys(output.numbers)) ?  output.numbers[Object.keys(output.numbers)[0]].date.fromNow() : 'No Date';
 
     // No Flatten Results provided, short circuit
-    if (
-        !_.isObject(flattenResults) ||
-        !flattenResults.hasOwnProperty('confirmedCases') ||
-        !_.isObject(flattenResults.confirmedCases) ||
-        _.isEmpty(flattenResults.confirmedCases) ||
-        !flattenResults.hasOwnProperty('lastUpdated')
-    ) {
-        output.flattenDataProvided = false;
-        return output;
-    }
+    output.flattenDataProvided = (
+        flattenResults.hasOwnProperty('confirmedCases') &&
+        _.isObject(flattenResults.confirmedCases) &&
+        !_.isEmpty(flattenResults.confirmedCases) &&
+        flattenResults.hasOwnProperty('lastUpdated')
+    );
 
-    // Associate Flatten Data
-    output.flattenDataProvided = true;
     output.flattenData = flattenResults;
 
     return output;
@@ -138,7 +132,7 @@ const newVersionCSV = async (province = '', city = '') => {
         const normalizedProvince = provinces.normalizeProvince(province);
         const requested = await _request();
         const csvResults = await _extractCsv(requested, normalizedProvince);
-        const flattenResults = _.isEmpty(city) ? null : await flattenData(city);
+        const flattenResults = await flattenData(city);
         return await _todaysData(csvResults, flattenResults);
     } catch (err) {
         logger.error('Error in the _getCanadaOfficialScraper Generator', {
