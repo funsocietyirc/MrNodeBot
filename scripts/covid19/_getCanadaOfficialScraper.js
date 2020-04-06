@@ -61,6 +61,7 @@ const _extractCsv = async (data, province = false) => {
             dead: _.parseInt(deaths),
             total: _.parseInt(total),
             today: _.parseInt(today),
+            province,
         };
         out.caseFatality = (out.dead / out.total) * 100;
         out.percentPositive = out.total && out.tested ? (out.total / out.tested) * 100 : 0;
@@ -92,7 +93,8 @@ const _todaysData = async (csvResults, flattenResults) => {
 
     // Build csvResults Object
     for (let x of finalFiltered) {
-        output.numbers[provinces.formatCanadianProvinces(x.location)] = {
+        const provinceFormatted = provinces.formatCanadianProvinces(x.location);
+        output.numbers[provinceFormatted] = {
             confirmed: formatNumbers(x.confirmed),
             probable: formatNumbers(x.probable),
             dead: formatNumbers(x.dead),
@@ -103,6 +105,7 @@ const _todaysData = async (csvResults, flattenResults) => {
             percentPositive: x.percentPositive,
             date: x.date,
             caseFatality: x.caseFatality,
+            province: provinceFormatted,
         };
     }
     output.lastUpdate = !_.isEmpty(Object.keys(output.numbers)) ?  output.numbers[Object.keys(output.numbers)[0]].date.fromNow() : 'No Date';

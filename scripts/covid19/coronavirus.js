@@ -81,8 +81,8 @@ module.exports = (app) => {
                 output.insertDivider();
                 output.appendBold(results.flattenData.lastUpdated.fromNow());
                 _.each(results.flattenData.confirmedCases, (v, k) => {
-                    _.each(v, city => {
-                        output.appendBold(`${city.city}, ${city.province}`);
+                    _(v).filter(x => x.province === results.numbers[Object.keys(results.numbers)[0]].province).each(city => {
+                        output.appendBold(`${city.city}`);
                         output.append(`${helpers.formatNumber(city.cases)} confirmed`);
                     });
                 })

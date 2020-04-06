@@ -4,7 +4,6 @@ const johnHopkinsAPI = require('./_johnHopkinsAPI');
 const covid19HealthAPI = require('./_covid19HealthAPI');
 const covid19Canada = require('./_getCanadaOfficialScraper');
 const covid19Risk = require('./_covidRisk');
-const covid19FlattenCanada = require('./_flattenCanadaData');
 /**
  * Covid 19 Canada Results
  * @returns {Promise<*>}
