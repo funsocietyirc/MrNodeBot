@@ -9,7 +9,7 @@ const icons = {
     views: c.navy.bold('⚘'),
     comments: c.blue.bold('✍'),
     sideArrow: '→',
-    anchor: c.navy.bold('⚓'),
+    anchor: c.teal.bold('⚓'),
     star: c.yellow('✡'),
     happy: c.green.bold('☺'),
     person: c.yellow('☺'),
