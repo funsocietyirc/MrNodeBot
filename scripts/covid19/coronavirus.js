@@ -87,8 +87,8 @@ module.exports = (app) => {
                     });
                 })
             }
-
-            app.say(to, output.text.replace(/\s\s+/g, ' '));
+            app.say(to, `I have private messaged you the information you have requested, ${from}`);
+            app.say(from, output.text.replace(/\s\s+/g, ' '));
         }
         catch (err) {
             logger.error('Something went wrong with the Canadian Information', {

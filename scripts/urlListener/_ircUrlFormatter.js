@@ -264,7 +264,7 @@ formattingHelper = (results, app, options = {}) => {
     // We have nothing but the malicious data
     else if (results.threats.length) append('posted a malicious Link');
     // Finished
-    const finalOutput = output ? `${c[results.cached ? 'green' : 'red']('*')} ${results.from} ${icons.sideArrow} ${output}` : '';
+    const finalOutput = output ? `${c[results.cached ? 'green' : 'red']('*')} ${results.from} ${icons.sideArrow} ${output}`.replace(/\s\s+/g, ' ') : '';
 
     // record final output
     results.finalOutput = finalOutput;
