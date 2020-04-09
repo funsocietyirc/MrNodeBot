@@ -24,8 +24,6 @@ module.exports = (app) => {
             message: 'No Channel data found',
             results: [],
             total: 0,
-
-
         };
 
         try {

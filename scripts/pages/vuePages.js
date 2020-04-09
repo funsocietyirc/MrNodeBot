@@ -19,7 +19,8 @@ const defaultVueOptions = {
             {style: '/assets/app-external.css', type: 'text/css'},
         ],
         scripts: [
-            {src: 'https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js'},
+            {src: 'https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment-with-locales.min.js'},
+            {src: 'https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js'},
             {src: 'https://cdnjs.cloudflare.com/ajax/libs/uikit/2.27.5/js/uikit.min.js'},
             {src: 'https://cdnjs.cloudflare.com/ajax/libs/uikit/2.27.5/js/components/lightbox.min.js'},
             {src: 'https://cdnjs.cloudflare.com/ajax/libs/uikit/2.27.5/js/components/notify.min.js'},
@@ -78,7 +79,8 @@ module.exports = (app) => {
                     {style: '/assets/app-external.css', type: 'text/css'},
                 ],
                 scripts: [
-                    {src: 'https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js'},
+                    {src: 'https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment-with-locales.min.js'},
+                    {src: 'https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js'},
                     {src: 'https://cdnjs.cloudflare.com/ajax/libs/uikit/2.27.5/js/uikit.min.js'},
                     {src: 'https://cdnjs.cloudflare.com/ajax/libs/uikit/2.27.5/js/components/lightbox.min.js'},
                     {src: 'https://cdnjs.cloudflare.com/ajax/libs/uikit/2.27.5/js/components/notify.min.js'},
@@ -110,6 +112,7 @@ module.exports = (app) => {
         req.vueOptions = defaultVueOptions;
         res.renderVue('channelDash.vue', data, req.vueOptions);
     };
+
     app.WebRoutes.set('channels', {
         handler: channels,
         desc: 'Channels',
@@ -123,23 +126,41 @@ module.exports = (app) => {
      * @param res
      * @param next
      */
-    const links = (req, res, next) => {
-        const data = {};
+    const coronaLinks = (req, res, next) => {
+        const data = {
+            query: {
+                channels: "#coronavirus,##coronavirus,##covid-19,##covid19-facts",
+            }
+        };
         req.vueOptions = defaultVueOptions;
-        res.renderVue('coronalinks.vue', data, req.vueOptions);
+        res.renderVue('links.vue', data, req.vueOptions);
+    };
+
+    /**
+     * Provide link information
+     * @param req
+     * @param res
+     * @param next
+     */
+    const links = (req, res, next) => {
+        const data = {
+            query: req.query
+        };
+        req.vueOptions = defaultVueOptions;
+        res.renderVue('links.vue', data, req.vueOptions);
     };
 
     app.WebRoutes.set('links', {
         handler: links,
         desc: 'Links',
-        path: '/links',
+        path: '/links/:pageSize?',
         verb: 'get',
     });
 
     app.WebRoutes.set('coronalinks', {
-        handler: links,
+        handler: coronaLinks,
         desc: 'Corona Virus Links',
-        path: '/coronalinks',
+        path: '/coronalinks/:pageSize?',
         verb: 'get',
     });
 

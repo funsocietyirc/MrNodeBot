@@ -20,10 +20,10 @@ const logger = require('../../lib/logger');
  * @param diff? Object Diff Object
  */
 const appendResult = (obj, output, label, color, diff) => {
-    output = output
-        .append(
-    `${c[color](helpers.formatNumber(obj.current.value))}${_.isObject(diff) ? '(' + c[color](helpers.formatNumber(obj.current.value - diff.current.value)) + ')' : ''} ${label}`
-        );
+
+    const currentValue = c[color](helpers.formatNumber(obj.current.value));
+    const currentDiff = _.isObject(diff) ? '(' + c[color](helpers.formatNumber(obj.current.value - diff.current.value)) + ')' : '';
+    output = output.append(`${currentValue}${currentDiff} ${label}`);
     if (obj.hasOwnProperty('delta')) {
         output =  output.append(c.blue(`${helpers.formatNumber(obj.delta)} +/-`));
     }
@@ -31,6 +31,7 @@ const appendResult = (obj, output, label, color, diff) => {
 };
 
 module.exports = (app) => {
+
     /**
      * Covid19 Canada Data - Fed By Web Scraping official Canadian Government Information website
      * @param to
@@ -39,11 +40,9 @@ module.exports = (app) => {
      * @param message
      * @returns {Promise<void>}
      */
-    const covid19Canada = async (to, from, text, message) => {
+    const covid19Canada = async (to, from, text) => {
         try {
             const results = await corona.covid19CanadaResults(text);
-
-            console.dir(results);
 
             if (!results || !_.isObject(results) || _.isEmpty(results) || _.isEmpty(results.numbers)) {
                 app.say(to, `There seems to be no Canadian information available, ${from}`);
@@ -113,7 +112,7 @@ module.exports = (app) => {
         call: covid19Canada,
     });
 
-    const covid19 = async(to, from, text, message) => {
+    const covid19 = async(to, from, text) => {
         // Split on comma
         const [region, city] = text.split(',');
 
@@ -224,7 +223,7 @@ module.exports = (app) => {
      * @param message
      * @returns {Promise<void>}
      */
-    const covid19Stats = async (to, from, text, message) => {
+    const covid19Stats = async (to, from, text) => {
         // Split on comma
         const [region, province] = text.split(',');
 

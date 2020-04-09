@@ -54,7 +54,7 @@
                     </thead>
                     <tbody>
                     <tr v-bind:data-timestamp="result.timestamp" v-for="result in resultSet">
-                        <td class="to uk-width-1-6 clickable" @click="updateFilter(result.to)">{{result.to}}</td>
+                        <td class="to uk-width-1-6 clickable">{{result.to}}</td>
                         <td class="from uk-width-1-6 clickable" @click="updateFilter(result.from)">{{result.from}}</td>
                         <td class="url uk-width-3-6">
                             <a data-uk-tooltip @click="linkClicked(result, $event)"
@@ -110,7 +110,6 @@
     }
 </style>
 <script>
-
     const _ = require('lodash');
 
     export default {
@@ -130,6 +129,7 @@
                 to: [],
                 from: [],
                 searchText: '',
+                query: {},
             }
         },
         mounted() {
@@ -185,31 +185,57 @@
                 });
             },
             fetchData: function () {
-                let vm = this;
-                fetch('/api/urls?pageSize=100').then(response => response.json()).then( (data) => {
-                    vm.results = data.results;
-                }).catch(e => {
+                const vm = this;
+                let route = `/api/urls?pageSize=100`;
+                // Transfer over query params
+                if (_.isObject(vm.query) && !_.isEmpty(vm.query)) {
+                    const hashPattern = new RegExp('#', 'g');
+                    Object
+                        .keys(vm.query)
+                        .filter(k => !_.isString(k) || !_.isString(Object.hasOwnProperty(vm.query[k])))
+                        .forEach(key => route = route + `&${key}=${vm.query[key].replace(hashPattern, '%23')}`
+                        );
+                }
+                fetch(route)
+                    .then(response => response.json())
+                    .then((data) => {
+                        vm.results = data.results;
+                    }).catch(e => {
                     // TODO handle this
                     console.log(e);
                 });
             },
             socketHandler: function (data) {
                 let self = this;
-                self.results.unshift(data);
-                self.$nextTick(function () {
-                    let element = $('#linkTable').find("[data-timestamp='" + data.timestamp + "']");
-                    let navBar = $('#navBar');
-                    let to = navBar.find("[data-to='" + data.to + "']");
-                    let from = navBar.find("[data-from='" + data.from + "']");
-                    element.addClass('new');
-                    to.addClass('new');
-                    from.addClass('new');
-                    setTimeout(function () {
-                        element.removeClass('new');
-                        to.removeClass('new');
-                        from.removeClass('new');
-                    }, 5000);
-                });
+                // Filter out inappropriate messages
+                if (
+                    !_.isObject(self.query) ||
+                    _.isEmpty(self.query) ||
+                    !self.query.hasOwnProperty('channels') ||
+                    self.query.channels.trim().toLowerCase().split(',').includes(data.to.toLowerCase())
+                ) {
+
+                    const newData = Object.assign({}, data, {
+                        timestamp: moment(data.timestamp).format("YYYY-MM-DD HH:mm:ss")
+                    });
+
+                    self.results.unshift(newData);
+
+                    self.$nextTick(function () {
+                        let element = $('#linkTable').find("[data-timestamp='" + newData.timestamp + "']");
+                        let navBar = $('#navBar');
+                        let to = navBar.find("[data-to='" + data.to + "']");
+                        let from = navBar.find("[data-from='" + data.from + "']");
+                        element.addClass('new');
+                        to.addClass('new');
+                        from.addClass('new');
+                        setTimeout(function () {
+                            element.removeClass('new');
+                            to.removeClass('new');
+                            from.removeClass('new');
+                        }, 5000);
+                    });
+                }
             },
             initSocket: function () {
                 let self = this;
@@ -238,7 +264,6 @@
                 });
 
                 this.socket.on('url', self.socketHandler);
-
                 this.socket.on('image', self.socketHandler);
             }
         }
