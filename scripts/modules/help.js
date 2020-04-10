@@ -6,7 +6,7 @@ const scriptInfo = {
 const _ = require('lodash');
 const color = require('irc-colors');
 const helpers = require('../../helpers');
-
+const defaultVueOptions = require('../lib/_defaultVueOptions');
 // Provide User help
 // Commands: help list
 module.exports = (app) => {
@@ -47,45 +47,69 @@ module.exports = (app) => {
         }
     };
 
+    /**
+     * Command Handler
+     * @param req
+     * @param res
+     */
+    const commandHandler = (req, res) => {
+        req.vueOptions = defaultVueOptions({
+            head: {
+                title: 'Commands',
+            }
+        });
+        res.renderVue('commands.vue', {
+            results: [...app.Commands].map(x => ({
+                desc: x[1].desc,
+                command: x[0],
+                access: helpers.AccessString(x[1].access),
+            }))
+        }, req.vueOptions);
+    };
+
     // Provide Web Route for a command listing
     app.webRoutes.associateRoute('commands', {
-        desc: 'Command Listing',
+        handler: commandHandler,
+        desc: 'Commands',
         path: '/commands',
-        handler: (req, res) => {
-            const results = [];
-
-            app.Commands.forEach((value, key) =>
-                results.push({
-                    desc: value.desc,
-                    command: key,
-                    access: helpers.AccessString(value.access),
-                }));
-
-            res.render('commands', {
-                results: _.sortBy(results, ['access', 'command']),
-            });
-        },
+        navEnabled: true,
+        navPath: '/commands',
     });
+
+    /**
+     * Scripts Handler
+     * @param req
+     * @param res
+     */
+    const scriptsHandler = (req, res) => {
+
+        // Return sorted result
+        const results = _(app.LoadedScripts).map('info').map(x => {
+            // Assure sensible defaults
+            x.lastUpdated.date = x.lastUpdated.date || 'Unknown';
+            x.lastUpdated.author = x.lastUpdated.author || 'Unknown';
+            x.lastUpdated.subject = x.lastUpdated.subject || 'Unknown';
+            x.lastUpdated.email = x.lastUpdated.email || 'Unknown';
+            return x;
+        }).compact().sortBy(dateObj => new Date(dateObj.lastUpdated.rawDate)).value();
+
+        req.vueOptions = defaultVueOptions({
+            head: {
+                title: 'Scripts',
+            }
+        });
+        res.renderVue('scripts.vue', {
+            results
+        }, req.vueOptions);
+    };
 
     // Provide Web Route for script listing
     app.webRoutes.associateRoute('scripts', {
-        desc: 'Script Listing',
+        handler: scriptsHandler,
+        desc: 'Scripts',
         path: '/scripts',
-        handler: (req, res) => {
-            // Return sorted result
-            const results = _(app.LoadedScripts).map('info').map( x => {
-                // Assure sensible defaults
-                x.lastUpdated.date = x.lastUpdated.date || 'Unknown';
-                x.lastUpdated.author = x.lastUpdated.author || 'Unknown';
-                x.lastUpdated.subject = x.lastUpdated.subject || 'Unknown';
-                x.lastUpdated.email = x.lastUpdated.email || 'Unknown';
-                return x;
-            }).compact().sortBy(dateObj => new Date(dateObj.lastUpdated.rawDate)).value();
-            res.render('scripts', {
-                // Do not expose full path
-                results,
-            });
-        },
+        navEnabled: true,
+        navPath: '/scripts'
     });
 
     // List of available commands

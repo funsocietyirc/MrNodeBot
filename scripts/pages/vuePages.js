@@ -11,24 +11,7 @@ const scriptInfo = {
  * Default Vue Configuration Object
  * @type {{head: {title: string, styles: *[], scripts: *[]}}}
  */
-const defaultVueOptions = {
-    head: {
-        title: 'Channels',
-        styles: [
-            {style: '/assets/uikit-external.css', type: 'text/css'},
-            {style: '/assets/app-external.css', type: 'text/css'},
-        ],
-        scripts: [
-            {src: 'https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment-with-locales.min.js'},
-            {src: 'https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js'},
-            {src: 'https://cdnjs.cloudflare.com/ajax/libs/uikit/2.27.5/js/uikit.min.js'},
-            {src: 'https://cdnjs.cloudflare.com/ajax/libs/uikit/2.27.5/js/components/lightbox.min.js'},
-            {src: 'https://cdnjs.cloudflare.com/ajax/libs/uikit/2.27.5/js/components/notify.min.js'},
-            {src: 'https://cdnjs.cloudflare.com/ajax/libs/uikit/2.27.5/js/components/tooltip.min.js'},
-            {src: 'https://cdnjs.cloudflare.com/ajax/libs/uikit/2.27.5/js/components/grid.min.js'},
-            {src: 'https://cdnjs.cloudflare.com/ajax/libs/uikit/2.27.5/js/components/accordion.min.js'}]
-    }
-};
+const defaultVueOptions = require('../lib/_defaultVueOptions');
 
 module.exports = (app) => {
     // No backing table, bail
@@ -63,48 +46,6 @@ module.exports = (app) => {
     });
 
     /**
-     * Watch real time videos
-     * @param req
-     * @param res
-     * @param next
-     */
-    const watch = (req, res, next) => {
-        const data = {
-            activeChannel: app.Config.features.fsociety.mainChannel,
-        };
-        req.vueOptions = {
-            head: {
-                title: 'Watch',
-                styles: [
-                    {style: '/assets/uikit-external.css', type: 'text/css'},
-                    {style: '/assets/app-external.css', type: 'text/css'},
-                ],
-                scripts: [
-                    {src: 'https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment-with-locales.min.js'},
-                    {src: 'https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js'},
-                    {src: 'https://cdnjs.cloudflare.com/ajax/libs/uikit/2.27.5/js/uikit.min.js'},
-                    {src: 'https://cdnjs.cloudflare.com/ajax/libs/uikit/2.27.5/js/components/lightbox.min.js'},
-                    {src: 'https://cdnjs.cloudflare.com/ajax/libs/uikit/2.27.5/js/components/notify.min.js'},
-                    {src: 'https://cdnjs.cloudflare.com/ajax/libs/uikit/2.27.5/js/components/tooltip.min.js'},
-                    {src: 'https://cdnjs.cloudflare.com/ajax/libs/uikit/2.27.5/js/components/grid.min.js'},
-                    {src: 'https://cdnjs.cloudflare.com/ajax/libs/uikit/2.27.5/js/components/accordion.min.js'},
-                    {src: 'https://cdn.jsdelivr.net/npm/vue-slider-component@2.7.2/dist/index.min.js'},
-                    {src: 'https://cdn.jsdelivr.net/npm/vue-youtube-embed@2.1.3/lib/vue-youtube-embed.min.js'},
-                ]
-            }
-        };
-        res.renderVue('watch.vue', data, req.vueOptions);
-    };
-    app.webRoutes.associateRoute('watch', {
-        handler: watch,
-        desc: 'Watch',
-        path: '/watch',
-        verb: 'get',
-        navEnabled: false,
-        navPath: '/watch',
-    });
-
-    /**
      *  Provide channel information
      * @param req
      * @param res
@@ -112,7 +53,11 @@ module.exports = (app) => {
      */
     const channels = (req, res, next) => {
         const data = {};
-        req.vueOptions = defaultVueOptions;
+        req.vueOptions = defaultVueOptions({
+            head: {
+                title: 'Channels',
+            }
+        });
         res.renderVue('channelDash.vue', data, req.vueOptions);
     };
 
@@ -137,7 +82,11 @@ module.exports = (app) => {
                 channels: "#coronavirus,##coronavirus,##covid-19,##covid19-facts",
             }
         };
-        req.vueOptions = defaultVueOptions;
+        req.vueOptions = defaultVueOptions({
+            head: {
+                title: 'Corona Links',
+            }
+        });
         res.renderVue('links.vue', data, req.vueOptions);
     };
 
@@ -151,7 +100,11 @@ module.exports = (app) => {
         const data = {
             query: req.query
         };
-        req.vueOptions = defaultVueOptions;
+        req.vueOptions = defaultVueOptions({
+            head: {
+                title: 'Links',
+            }
+        });
         res.renderVue('links.vue', data, req.vueOptions);
     };
 
@@ -181,7 +134,11 @@ module.exports = (app) => {
         const data = {
             params: req.params,
         };
-        req.vueOptions = defaultVueOptions;
+        req.vueOptions = defaultVueOptions({
+            head: {
+                title: 'Logs',
+            }
+        });
         res.renderVue('log.vue', data, req.vueOptions);
     };
 
@@ -191,6 +148,31 @@ module.exports = (app) => {
         path: '/logs/:channel/:date/:page?',
         verb: 'get',
     });
+
+    /**
+     * Landing Page
+     * @param req
+     * @param res
+     */
+    const landing = (req, res) => {
+        const data = {};
+        req.vueOptions = defaultVueOptions({
+            head: {
+                title: 'Home',
+            }
+        });
+        res.renderVue('landing.vue', data, req.vueOptions);
+    };
+    app.webRoutes.associateRoute('landingPage', {
+        handler: landing,
+        desc: 'Home',
+        path: '/',
+        verb: 'get',
+        navEnabled: true,
+        navPath: '/',
+        navWeight: 0,
+    });
+
 
     // Return the script info
     return scriptInfo;

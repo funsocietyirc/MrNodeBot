@@ -8,7 +8,6 @@ const scriptInfo = {
 };
 
 module.exports = (app) => {
-
     /**
      * Generate a list of pages for nav
      * @param req

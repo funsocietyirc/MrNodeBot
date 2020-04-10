@@ -4347,8 +4347,10 @@
 
 html {
   /* give this to all tags from html to .fullscreen */
-  background: url("/assets/MrNodeBot.png") no-repeat center center fixed;
-  background-size: cover;
+  /*background: url("/assets/MrNodeBot.png") no-repeat center center fixed;*/
+  /*background-size: cover;*/
+  /*background-size: cover;*/
+  background: #191125;
 }
 
 body {
@@ -4566,6 +4568,9 @@ h1, h2, h3, h4, h5, h6 {
   color: rgba(255, 255, 255, 0.8);
 }
 
+.dark-box {
+  background: rgba(0,0,0,0.52);
+}
 
 form.selection-form {
   margin-top: 10px;

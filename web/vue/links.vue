@@ -2,7 +2,7 @@
     <div>
         <sitenav></sitenav>
         <div class="uk-grid">
-            <div id="navBar" class="uk-width-large-1-10 uk-width-medium-2-10">
+            <div id="navBar" class="uk-width-large-2-10 uk-width-medium-2-10 dark-box">
                 <h1 class="uk-text-medium uk-text-center uk-margin-top uk-text-truncate">{{searchText || 'Links' | uppercase}}</h1>
                 <div class="innerNavBar">
                     <transition name="fade" appear>
@@ -43,7 +43,7 @@
                     </transition>
                 </div>
             </div>
-            <div class="uk-width-large-9-10 uk-width-small-8-10">
+            <div class="uk-width-large-8-10 uk-width-small-8-10">
                 <div id="linkTableOverflow" class="uk-overflow-container">
                     <table id="linkTable" class="uk-table uk-table-striped uk-table-condensed uk-margin-top">
                         <thead>

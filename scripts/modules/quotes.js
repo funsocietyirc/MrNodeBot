@@ -9,7 +9,7 @@ const Models = require('funsociety-bookshelf-model-loader');
 const Moment = require('moment');
 const logger = require('../../lib/logger');
 const typo = require('../lib/_ircTypography');
-
+const defaultVueOptions = require('../lib/_defaultVueOptions');
 /**
  Keep Track of quotes
  Commands: quote-add quote-del quote
@@ -176,20 +176,37 @@ module.exports = (app) => {
         call: randomQuote,
     });
 
+    /**
+     * Quotes Handler
+     * @param req
+     * @param res
+     * @returns {Promise<void>}
+     */
+    const quotesHandler = async (req, res) => {
+        // Return sorted result
+        const results = await Models.Quotes.fetchAll();
+
+        const data = {
+            // Do not expose full path
+            results: _.map(results.toJSON(), x => Object.assign({}, x, {
+                timestamp: Moment(x.timestamp).fromNow(),
+            })),
+        };
+        req.vueOptions = defaultVueOptions({
+            head: {
+                title: 'Quotes',
+            }
+        });
+        res.renderVue('quotes.vue', data, req.vueOptions);
+    };
+
     // Provide Web Route for script listing
     app.webRoutes.associateRoute('quotes', {
         desc: 'Quotes',
         path: '/quotes',
-        handler: async (req, res) => {
-            // Return sorted result
-            const results = await Models.Quotes.fetchAll();
-            res.render('quotes', {
-                // Do not expose full path
-                results: _.map(results.toJSON(), x => Object.assign({}, x, {
-                    timestamp: Moment(x.timestamp).fromNow(),
-                })),
-            });
-        },
+        handler: quotesHandler,
+        navEnabled: true,
+        navPath: '/quotes'
     });
 
     // API Endpoint to get quotes

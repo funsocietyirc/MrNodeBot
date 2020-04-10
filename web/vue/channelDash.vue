@@ -5,7 +5,7 @@
             <h2>Loading....</h2>
         </div>
         <div v-show="loaded" class="uk-grid uk-grid-small uk-container-center" data-uk-grid-match>
-            <header class="uk-block  uk-cover-background uk-width-1-1">
+            <header class="uk-block  uk-cover-background uk-width-1-1 dark-box">
                 <h1 class="uk-text-truncate uk-text-center">Channel Usage Statistics</h1>
             </header>
             <hr class="uk-width-1-1 uk-margin-bottom">
