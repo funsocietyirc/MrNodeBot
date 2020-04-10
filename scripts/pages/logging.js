@@ -80,7 +80,7 @@ module.exports = (app) => {
         }
     };
 
-    app.WebRoutes.set('api.logging', {
+    app.webRoutes.associateRoute('api.logging', {
         handler: getLoggingHandler,
         desc: 'Logging API',
         path: '/api/log/:channel/:date/:page?',

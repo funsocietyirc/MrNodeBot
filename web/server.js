@@ -17,12 +17,12 @@ const socketIO = require('socket.io');
 // Default express view options
 const expressVueOptions = {
     rootPath: path.join(__dirname, '../web/vue'),
-    vueVersion: "2.5.16",
+    vueVersion:'2.6.11',
     head: {
         title: 'MrNodeBot',
         scripts: [
             {src: 'https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js'},
-            {src: 'https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.10/lodash.min.js'},
+            {src: 'https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.15/lodash.min.js'},
         ],
     },
 };

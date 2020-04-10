@@ -177,7 +177,7 @@ module.exports = (app) => {
     });
 
     // Provide Web Route for script listing
-    app.WebRoutes.set('quotes', {
+    app.webRoutes.associateRoute('quotes', {
         desc: 'Quotes',
         path: '/quotes',
         handler: async (req, res) => {
@@ -193,7 +193,7 @@ module.exports = (app) => {
     });
 
     // API Endpoint to get quotes
-    app.WebRoutes.set('api.quotes.get', {
+    app.webRoutes.associateRoute('api.quotes.get', {
         desc: 'api.quotes.get',
         path: '/api/quotes/get/:to?',
         handler: async (req, res) => {

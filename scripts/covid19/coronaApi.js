@@ -64,7 +64,7 @@ module.exports = (app) => {
             });
         }
     };
-    app.WebRoutes.set('api.covid19Stats', {
+    app.webRoutes.associateRoute('api.covid19Stats', {
         handler: covid19Stats,
         desc: 'Coronavirus API',
         path: '/api/coronavirus',
@@ -105,14 +105,14 @@ module.exports = (app) => {
     };
 
     // Remains for legacies purposes
-    app.WebRoutes.set('api.coronavirus-rt', {
+    app.webRoutes.associateRoute('api.coronavirus-rt', {
         handler: covid19,
         desc: 'Coronavirus Realtime API',
         path: '/api/coronavirus-rt',
         verb: 'get',
     });
 
-    app.WebRoutes.set('api.covid19', {
+    app.webRoutes.associateRoute('api.covid19', {
         handler: covid19,
         desc: 'Coronavirus Realtime API',
         path: '/api/covid19',

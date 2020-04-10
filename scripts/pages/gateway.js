@@ -56,7 +56,7 @@ module.exports = (app) => {
     };
 
     // Notification Gateway
-    app.WebRoutes.set('gateway', {
+    app.webRoutes.associateRoute('gateway', {
         handler: gatewayHandler,
         desc: 'Gateway',
         path: '/gateway',

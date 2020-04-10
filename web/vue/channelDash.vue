@@ -1,5 +1,6 @@
 <template>
     <div>
+        <sitenav></sitenav>
         <div v-show="!loaded">
             <h2>Loading....</h2>
         </div>
@@ -199,6 +200,8 @@
                 }).orderBy(['isWatching', 'messages'], ['desc', 'desc']).value();
             }
         },
-        components: {}
+        components: {
+            sitenav: require('./components/nav.vue')
+        }
     }
 </script>

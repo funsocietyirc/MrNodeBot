@@ -14,6 +14,7 @@ const helpers = require('./helpers');
 const { exec } = require('child_process');
 const { promisify } = require('util');
 const execPromise = promisify(exec);
+const clearModule = require('clear-module');
 
 // Project libs
 const logger = require('./lib/logger');
@@ -21,7 +22,7 @@ const scheduler = require('./lib/scheduler');
 const preprocessText = require('./lib/preprocessText');
 const t = require('./lib/localize');
 const IrcWrappers = require('./lib/ircWrappers');
-const clearModule = require('clear-module');
+const webRoutes = require('./lib/webRoute');
 
 /** Dynamically created collections */
 const dynCollections = _([
@@ -29,7 +30,6 @@ const dynCollections = _([
     'NickChanges', // Fired On Nick changes
     'Registered', // Fired on Server Register
     'Listeners', // Fired when messages are received
-    'WebRoutes', // Express JS Web routes
     'Commands', // IRC Trigger commands
     'Stats', // Basic usage stats
     // IRC Events
@@ -182,7 +182,7 @@ class MrNodeBot {
 
     /**
      * Initialize IRC
-     * @returns {Promise.<void>}
+     * @returns {Promise<IrcWrappers>}
      * @private
      */
     async _initIrc() {
@@ -308,13 +308,15 @@ class MrNodeBot {
         }
         ).each((value, key) => this._ircClient.addListener(key, value));
 
-        this.OnConnected.forEach(async (x) => {
+        for (const x of this.OnConnected) {
             try {
-                await x.call();
+                if(_.isFunction(x.call)) {
+                    await x.call();
+                }
             } catch (err) {
                 this._errorHandler('Error in onConnected', err);
             }
-        });
+        }
 
         if (_.isFunction(this._callback)) this._callback(this);
 
@@ -553,6 +555,9 @@ class MrNodeBot {
                 x.info.onUnload.call();
             });
 
+            // Clear Web Routes
+            this.webRoutes.clearRoutes();
+
             // Clear Dynamic Collections
             dynCollections.each(v => this[v].clear());
 
@@ -577,16 +582,7 @@ class MrNodeBot {
         }
 
         // Load the web routes
-        this.WebRoutes.forEach((route, name) => {
-            // We have a secure route, add it to the proper namespace
-            if (_.isBoolean(route.secure) && route.secure) {
-                // Remove any leading /
-                if (_.startsWith(route.path, '/')) route.path = route.path.substring(1);
-                route.path = `/secure/${route.path}`;
-            }
-            // Dynamically register the WebRoutes objects with express
-            this.WebServer[route.verb || 'get'](route.path, name, route.handler);
-        });
+        this.webRoutes.loadWebRoutes();
     }
 
     /**
@@ -751,6 +747,14 @@ class MrNodeBot {
      */
     get commandMap() {
         return this._commandMap;
+    }
+
+    /**
+     * Web Route Helper
+     * @returns {{associateRoute: associateRoute}}
+     */
+    get webRoutes() {
+        return webRoutes(this);
     }
 
     /**

@@ -29,13 +29,12 @@ module.exports = (app) => {
         }
     };
 
-    app.WebRoutes.set('api.youtubelinks.sources', {
+    app.webRoutes.associateRoute('api.youtubelinks.sources', {
         handler: getSourcesAvailableHandler,
         desc: 'URL Link API',
         path: '/api/youtubelinks/sources',
         verb: 'get',
     });
-
 
     return scriptInfo;
 };

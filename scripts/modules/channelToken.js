@@ -75,7 +75,7 @@ module.exports = (app) => {
     };
 
     // Register upload Handler
-    app.WebRoutes.set('getNickByToken', {
+    app.webRoutes.associateRoute('getNickByToken', {
         handler: getNickByTokenApi,
         desc: 'Handle File Upload',
         path: '/api/getNickByToken',

@@ -53,11 +53,13 @@ module.exports = (app) => {
             results.length ? results.models[0].attributes.url : '/'
         );
     };
-    app.WebRoutes.set('randomurl', {
+    app.webRoutes.associateRoute('randomurl', {
         handler: randomUrlHandler,
         desc: 'Random URL',
         path: '/randomurl',
         verb: 'get',
+        navEnabled: false,
+        navPath: '/randomurl'
     });
 
     /**
@@ -70,7 +72,6 @@ module.exports = (app) => {
         const data = {
             activeChannel: app.Config.features.fsociety.mainChannel,
         };
-
         req.vueOptions = {
             head: {
                 title: 'Watch',
@@ -94,11 +95,13 @@ module.exports = (app) => {
         };
         res.renderVue('watch.vue', data, req.vueOptions);
     };
-    app.WebRoutes.set('watch', {
+    app.webRoutes.associateRoute('watch', {
         handler: watch,
         desc: 'Watch',
         path: '/watch',
         verb: 'get',
+        navEnabled: false,
+        navPath: '/watch',
     });
 
     /**
@@ -113,11 +116,13 @@ module.exports = (app) => {
         res.renderVue('channelDash.vue', data, req.vueOptions);
     };
 
-    app.WebRoutes.set('channels', {
+    app.webRoutes.associateRoute('channels', {
         handler: channels,
         desc: 'Channels',
         path: '/channels',
         verb: 'get',
+        navEnabled: true,
+        navPath: '/channels',
     });
 
     /**
@@ -150,14 +155,16 @@ module.exports = (app) => {
         res.renderVue('links.vue', data, req.vueOptions);
     };
 
-    app.WebRoutes.set('links', {
+    app.webRoutes.associateRoute('links', {
         handler: links,
         desc: 'Links',
         path: '/links/:pageSize?',
         verb: 'get',
+        navEnabled: true,
+        navPath: '/links/',
     });
 
-    app.WebRoutes.set('coronalinks', {
+    app.webRoutes.associateRoute('coronalinks', {
         handler: coronaLinks,
         desc: 'Corona Virus Links',
         path: '/coronalinks/:pageSize?',
@@ -178,7 +185,7 @@ module.exports = (app) => {
         res.renderVue('log.vue', data, req.vueOptions);
     };
 
-    app.WebRoutes.set('logs', {
+    app.webRoutes.associateRoute('logs', {
         handler: logs,
         desc: 'Logs',
         path: '/logs/:channel/:date/:page?',

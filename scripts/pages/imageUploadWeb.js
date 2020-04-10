@@ -100,15 +100,17 @@ module.exports = (app) => {
     };
 
     // Register upload Form
-    app.WebRoutes.set('uploadForm', {
+    app.webRoutes.associateRoute('uploadForm', {
         handler: uploadForm,
-        desc: 'Upload a file',
+        desc: 'Image Upload',
         path: '/upload',
         verb: 'get',
+        navEnabled: true,
+        navPath: '/upload',
     });
 
     // Register upload Handler
-    app.WebRoutes.set('uploadHandler', {
+    app.webRoutes.associateRoute('uploadHandler', {
         handler: uploadHandler,
         desc: 'Handle File Upload',
         path: '/upload',

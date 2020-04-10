@@ -29,7 +29,7 @@ module.exports = (app) => {
             type: 'notfound',
         });
     };
-    app.WebRoutes.set('expose', {
+    app.webRoutes.associateRoute('expose', {
         handler: exposeRoute,
         desc: 'Image Front End',
         path: '/expose/:token',

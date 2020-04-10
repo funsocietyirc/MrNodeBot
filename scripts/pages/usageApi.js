@@ -17,7 +17,7 @@ module.exports = (app) => {
     if (!Models.Logging) return scriptInfo;
 
     // Provide a list of channels we have logging information on
-    app.WebRoutes.set('api.usage.channels.available', {
+    app.webRoutes.associateRoute('api.usage.channels.available', {
         desc: 'Get a list of channels available',
         path: '/api/usage/channels/available/:channel?',
         verb: 'get',
@@ -41,7 +41,7 @@ module.exports = (app) => {
     });
 
     // Subscribe to web service
-    app.WebRoutes.set('api.usage.channels.overtime', {
+    app.webRoutes.associateRoute('api.usage.channels.overtime', {
         desc: 'Get Usage Over Time',
         path: '/api/usage/channels/overtime/:channel/:nick?',
         verb: 'get',

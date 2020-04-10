@@ -174,10 +174,12 @@ module.exports = (app) => {
     };
 
     // Register Route with Application
-    app.WebRoutes.set('urls', {
+    app.webRoutes.associateRoute('urls', {
         handler: imagesView,
-        desc: 'Image Front End',
+        desc: 'Images',
         path: '/images/:channel?/:user?',
+        navEnabled: true,
+        navPath: '/images/'
     });
 
     // Command to clean URLS

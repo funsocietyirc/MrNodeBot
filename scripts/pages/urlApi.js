@@ -39,7 +39,6 @@ module.exports = (app) => {
                 .where(whereClause)
                 .orderBy('timestamp', 'desc'))
                 .fetchAll();
-
             res.json({
                 status: 'success',
                 results: {
@@ -105,7 +104,6 @@ module.exports = (app) => {
                     pageSize: req.query.pageSize || 25,
                     page: req.query.page || 1,
                 });
-
             res.json({
                 rowCount: results.pagination.rowCount,
                 pageCount: results.pagination.pageCount,
@@ -123,7 +121,7 @@ module.exports = (app) => {
     };
 
     // Url Route
-    app.WebRoutes.set('api.urls', {
+    app.webRoutes.associateRoute('api.urls', {
         handler: urlHandler,
         desc: 'URL Link API',
         path: '/api/urls',
@@ -131,7 +129,7 @@ module.exports = (app) => {
     });
 
     // Sources Route
-    app.WebRoutes.set('api.sources', {
+    app.webRoutes.associateRoute('api.sources', {
         handler: imageSourceHandler,
         desc: 'Get the available sources',
         path: '/api/sources',

@@ -7,12 +7,16 @@ const scriptInfo = {
 
 module.exports = (app) => {
     // Landing Page
-    app.WebRoutes.set('landingPage', {
+    app.webRoutes.associateRoute('landingPage', {
         handler: (req, res) => res.render('landing', {}),
-        desc: 'Landing Page',
+        desc: 'Home',
         path: '/',
         verb: 'get',
+        navEnabled: true,
+        navPath: '/',
+        navWeight: 0,
     });
+
 
     // Return the script info
     return scriptInfo;

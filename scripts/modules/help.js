@@ -48,7 +48,7 @@ module.exports = (app) => {
     };
 
     // Provide Web Route for a command listing
-    app.WebRoutes.set('commands', {
+    app.webRoutes.associateRoute('commands', {
         desc: 'Command Listing',
         path: '/commands',
         handler: (req, res) => {
@@ -68,7 +68,7 @@ module.exports = (app) => {
     });
 
     // Provide Web Route for script listing
-    app.WebRoutes.set('scripts', {
+    app.webRoutes.associateRoute('scripts', {
         desc: 'Script Listing',
         path: '/scripts',
         handler: (req, res) => {

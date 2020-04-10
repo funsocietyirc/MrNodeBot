@@ -1,69 +1,72 @@
 <template>
-    <div class="uk-grid">
-        <div id="navBar" class="uk-width-large-1-10 uk-width-medium-2-10">
-            <h1 class="uk-text-medium uk-text-center uk-margin-top uk-text-truncate">{{searchText || 'Links' | uppercase}}</h1>
-            <div class="innerNavBar">
-                <transition name="fade" appear>
-                    <table class="uk-table uk-table-condensed">
+    <div>
+        <sitenav></sitenav>
+        <div class="uk-grid">
+            <div id="navBar" class="uk-width-large-1-10 uk-width-medium-2-10">
+                <h1 class="uk-text-medium uk-text-center uk-margin-top uk-text-truncate">{{searchText || 'Links' | uppercase}}</h1>
+                <div class="innerNavBar">
+                    <transition name="fade" appear>
+                        <table class="uk-table uk-table-condensed">
+                            <thead>
+                            <tr>
+                                <th>Last 25 Channels</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr v-bind:class="{ 'currentSearch': isActiveSearch(result) }" v-for="result in to">
+                                <td v-bind:data-to="result" class="to clickable" @click="updateFilter(result)">{{result}}
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </transition>
+                    <transition name="fade" appear>
+                        <table class="uk-table uk-table-condensed uk-margin-bottom">
+                            <thead>
+                            <tr>
+                                <th>Last 20 Nicks</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr v-bind:class="{ 'currentSearch': isActiveSearch(result) }" v-for="result in from">
+                                <td v-bind:data-from="result" class="from clickable" @click="updateFilter(result)">{{result}}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </transition>
+                </div>
+                <div class="uk-width-1-1 clear-div">
+                    <transition name="slide-fade">
+                        <button v-show="searchText" class="uk-btn clearFilterButton uk-width-1-1" @click="updateFilter('')">
+                            Clear
+                        </button>
+                    </transition>
+                </div>
+            </div>
+            <div class="uk-width-large-9-10 uk-width-small-8-10">
+                <div id="linkTableOverflow" class="uk-overflow-container">
+                    <table id="linkTable" class="uk-table uk-table-striped uk-table-condensed uk-margin-top">
                         <thead>
                         <tr>
-                            <th>Last 25 Channels</th>
+                            <th>To</th>
+                            <th>From</th>
+                            <th>URL</th>
+                            <th>Timestamp</th>
                         </tr>
                         </thead>
                         <tbody>
-                        <tr v-bind:class="{ 'currentSearch': isActiveSearch(result) }" v-for="result in to">
-                            <td v-bind:data-to="result" class="to clickable" @click="updateFilter(result)">{{result}}
+                        <tr v-bind:data-timestamp="result.timestamp" v-for="result in resultSet">
+                            <td class="to uk-width-1-6 clickable">{{result.to}}</td>
+                            <td class="from uk-width-1-6 clickable" @click="updateFilter(result.from)">{{result.from}}</td>
+                            <td class="url uk-width-3-6">
+                                <a data-uk-tooltip @click="linkClicked(result, $event)"
+                                   :title="result.title">{{result.url}}</a>
                             </td>
+                            <td class="timeStamp uk-width-1-6">{{result.timestamp | date("%D %R")}}</td>
                         </tr>
                         </tbody>
                     </table>
-                </transition>
-                <transition name="fade" appear>
-                    <table class="uk-table uk-table-condensed uk-margin-bottom">
-                        <thead>
-                        <tr>
-                            <th>Last 20 Nicks</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr v-bind:class="{ 'currentSearch': isActiveSearch(result) }" v-for="result in from">
-                            <td v-bind:data-from="result" class="from clickable" @click="updateFilter(result)">{{result}}</td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </transition>
-            </div>
-            <div class="uk-width-1-1 clear-div">
-                <transition name="slide-fade">
-                    <button v-show="searchText" class="uk-btn clearFilterButton uk-width-1-1" @click="updateFilter('')">
-                        Clear
-                    </button>
-                </transition>
-            </div>
-        </div>
-        <div class="uk-width-large-9-10 uk-width-small-8-10">
-            <div id="linkTableOverflow" class="uk-overflow-container">
-                <table id="linkTable" class="uk-table uk-table-striped uk-table-condensed uk-margin-top">
-                    <thead>
-                    <tr>
-                        <th>To</th>
-                        <th>From</th>
-                        <th>URL</th>
-                        <th>Timestamp</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr v-bind:data-timestamp="result.timestamp" v-for="result in resultSet">
-                        <td class="to uk-width-1-6 clickable">{{result.to}}</td>
-                        <td class="from uk-width-1-6 clickable" @click="updateFilter(result.from)">{{result.from}}</td>
-                        <td class="url uk-width-3-6">
-                            <a data-uk-tooltip @click="linkClicked(result, $event)"
-                               :title="result.title">{{result.url}}</a>
-                        </td>
-                        <td class="timeStamp uk-width-1-6">{{result.timestamp | date("%D %R")}}</td>
-                    </tr>
-                    </tbody>
-                </table>
+                </div>
             </div>
         </div>
     </div>
@@ -113,6 +116,9 @@
     const _ = require('lodash');
 
     export default {
+        components: {
+            sitenav: require('./components/nav.vue')
+        },
         filters: {
             uppercase: function (value) {
                 if (!value) return;
