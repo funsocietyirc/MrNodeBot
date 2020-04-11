@@ -10,7 +10,7 @@
                 <table class="uk-table uk-table-middle uk-table-striped uk-table-condensed">
                     <thead>
                         <tr class="info">
-                            <th>ID</th>
+                            <th>ID</th >
                             <th>Quote</th>
                             <th>To</th>
                             <th>From</th>
