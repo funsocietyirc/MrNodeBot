@@ -50,7 +50,7 @@
                         <tr>
                             <th>To</th>
                             <th>From</th>
-                            <th>URL</th>
+                            <th>Title (Hover for URL)</th>
                             <th>Timestamp</th>
                         </tr>
                         </thead>
@@ -60,7 +60,7 @@
                             <td class="from uk-width-1-6 clickable" @click="updateFilter(result.from)">{{result.from}}</td>
                             <td class="url uk-width-3-6">
                                 <a data-uk-tooltip @click="linkClicked(result, $event)"
-                                   :title="result.title">{{result.url}}</a>
+                                   :title="result.url">{{result.title}}</a>
                             </td>
                             <td class="timeStamp uk-width-1-6">{{result.timestamp | date("%D %R")}}</td>
                         </tr>
@@ -125,6 +125,25 @@
             sitenav
         },
         filters: {
+            truncate: function (text, length, clamp) {
+                text = text || '';
+                clamp = clamp || '...';
+                length = length || 100;
+
+                if (text.length <= length) return text;
+
+                let tcText = text.slice(0, length - clamp.length);
+                let last = tcText.length - 1;
+
+                while (last > 0 && tcText[last] !== ' ' && tcText[last] !== clamp[0]) last -= 1;
+
+                // Fix for case when text dont have any `space`
+                last = last || length - clamp.length;
+
+                tcText =  tcText.slice(0, last);
+
+                return tcText + clamp;
+            },
             uppercase: function (value) {
                 if (!value) return;
                 return _.toUpper(value);
