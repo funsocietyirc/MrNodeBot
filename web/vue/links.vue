@@ -56,13 +56,13 @@
                         </thead>
                         <tbody>
                         <tr v-bind:data-timestamp="result.timestamp" v-for="result in resultSet">
-                            <td class="to uk-width-1-6 clickable">{{result.to}}</td>
-                            <td class="from uk-width-1-6 clickable" @click="updateFilter(result.from)">{{result.from}}</td>
-                            <td class="url uk-width-3-6">
+                            <td class="to uk-width-1-10 clickable">{{result.to}}</td>
+                            <td class="from uk-width-1-10 clickable" @click="updateFilter(result.from)">{{result.from}}</td>
+                            <td class="url uk-width-6-10">
                                 <a data-uk-tooltip @click="linkClicked(result, $event)"
                                    :title="result.url">{{prepareResult(result)}}</a>
                             </td>
-                            <td class="timeStamp uk-width-1-6">{{result.timestamp | date("%D %R")}}</td>
+                            <td class="timeStamp uk-width-2-10">{{result.timestamp | date("%D %R")}}</td>
                         </tr>
                         </tbody>
                     </table>
@@ -166,7 +166,6 @@
             $('footer').detach();
             this.searchText = '';
             this.fetchData();
-            // this.initSocket();
         },
         computed: {
             resultSet: function () {
@@ -175,7 +174,7 @@
             },
         },
         watch: {
-            results: function (val, oldVal) {
+            results: function (val) {
                 let to = _(val).map('to').uniq().take(25).value();
                 let from = _(val).map('from').uniq().take(20).value();
                 this.to = to;
