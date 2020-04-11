@@ -60,7 +60,7 @@
                             <td class="from uk-width-1-6 clickable" @click="updateFilter(result.from)">{{result.from}}</td>
                             <td class="url uk-width-3-6">
                                 <a data-uk-tooltip @click="linkClicked(result, $event)"
-                                   :title="result.url">{{result.title}}</a>
+                                   :title="result.url">{{prepareResult(result)}}</a>
                             </td>
                             <td class="timeStamp uk-width-1-6">{{result.timestamp | date("%D %R")}}</td>
                         </tr>
@@ -183,6 +183,10 @@
             }
         },
         methods: {
+            prepareResult: (result) => _.truncate(result.title || result.url, {
+               length: 150,
+               separator: '...',
+            }),
             customFilter:  (array, needle, inKeyword, key, key2) => _.filter(array, item => needle === '' || _.toLower(item[key]) === _.toLower(needle) || _.toLower(item[key2]) === _.toLower(needle)),
             linkClicked: function (link, event) {
                 if (
