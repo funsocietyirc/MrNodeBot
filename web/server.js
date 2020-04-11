@@ -28,7 +28,14 @@ const expressVueOptions = {
 
 const cleanExpressVueCache = (options = {}) => {
     const expressVueCacheDir = path.join(__dirname, '../.expressvue');
+    const hasCache = fs.existsSync(expressVueCacheDir);
+
     const vueFiles = fs.readdirSync(options.pagesPath);
+    const hasVueFiles = fs.existsSync(options.pagesPath);
+
+    // There is no files
+    if (!hasCache || !hasVueFiles) return;
+
     const vueFileMax = _(vueFiles)
         .map(f => ({
             name: f,
