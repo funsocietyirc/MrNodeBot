@@ -38,7 +38,7 @@ const ircUrlFormatter = require('./_ircUrlFormatter'); // IRC Formatter
 const scheduler = require('../../lib/scheduler');
 
 // Cache URLS to prevent unnecessary API calls
-const resultsCache = require('../../lib/hashedCacheStore');
+const resultsCache = require('./_urlCacheStore');
 
 module.exports = (app) => {
     // No Configuration available, bail

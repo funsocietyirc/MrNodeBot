@@ -58,6 +58,7 @@ module.exports = (app) => {
                 title: 'Channels',
             }
         });
+
         res.renderVue('channelDash.vue', data, req.vueOptions);
     };
 

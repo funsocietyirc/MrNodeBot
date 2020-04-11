@@ -1,6 +1,6 @@
 const config = require('../../config');
 const logger = require('../../lib/logger');
-const resultsCache = require('../../lib/hashedCacheStore');
+const resultsCache = require('./_urlCacheStore');
 
 module.exports = (results) => {
     // Cache results

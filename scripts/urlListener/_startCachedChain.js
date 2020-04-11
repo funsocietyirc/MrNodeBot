@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const resultsCache = require('../../lib/hashedCacheStore');
+const resultsCache = require('./_urlCacheStore');
 const startChain = require('./_startChain');
 
 module.exports = (url, to, from, text, message, is) => new Promise((resolve, reject) => {
