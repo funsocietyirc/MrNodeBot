@@ -138,7 +138,11 @@
 </style>
 <script>
     const _ = require('lodash');
+    const sitenav = require('./components/nav.vue');
+    const sockets = require('./mixins/sockets');
+
     export default {
+        mixins: [sockets],
         data() {
             return {
                 loaded: false,
@@ -201,7 +205,7 @@
             }
         },
         components: {
-            sitenav: require('./components/nav.vue')
+            sitenav
         }
     }
 </script>

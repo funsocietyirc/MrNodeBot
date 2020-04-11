@@ -9,10 +9,14 @@
 <style>
 </style>
 <script>
+    import sitenav from './components/nav.vue';
+    const sokets = require('./mixins/sockets');
+
     export default {
         name:'Home',
+        mixins: ['sockets'],
         components: {
-            sitenav: require('./components/nav.vue')
+            sitenav
         },
         data: function () {
             return {

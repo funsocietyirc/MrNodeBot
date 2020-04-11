@@ -4,9 +4,7 @@ const scriptInfo = {
     createdBy: 'IronY',
 };
 const gitlog = require('gitlog').default;
-console.dir(gitlog);
 const helpers = require('../../helpers');
-
 
 // Review the local git change log ( Last 5 commits )
 // Commands: changes

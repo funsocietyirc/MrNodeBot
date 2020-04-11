@@ -16,14 +16,15 @@
     }
 </style>
 <script>
-    const _ = require('lodash');
-    export default {
+    module.exports = {
+        name: 'sitenav',
         data() {
             return {
                 results: [],
                 currentLocation: () => window.location.href
             };
         },
+        render() {},
         mounted() {
             const vm = this;
             let route = `/api/pages`;

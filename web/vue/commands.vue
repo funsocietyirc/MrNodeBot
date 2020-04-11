@@ -32,9 +32,12 @@
 <style>
 </style>
 <script>
+    const sitenav = require('./components/nav.vue');
+    const sockets = require('./mixins/sockets');
     export default {
+        mixins: [sockets],
         components: {
-            sitenav: require('./components/nav.vue')
+            sitenav
         },
         data: function () {
             return {

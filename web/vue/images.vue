@@ -8,11 +8,13 @@
 <style>
 </style>
 <script>
+    const sitenav = require('./components/nav.vue');
+    const sockets = require('./mixins/sockets');
+
     export default {
         name:'Images',
-        components: {
-            sitenav: require('./components/nav.vue')
-        },
+        mixins: ['sockets'],
+        components: { sitenav },
         data: function () {
             return {
             }

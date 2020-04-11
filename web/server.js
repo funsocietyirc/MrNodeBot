@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const fs = require('fs');
 const jwt = require('jsonwebtoken');
 const path = require('path');
 const helmet = require('helmet');
@@ -16,15 +17,40 @@ const socketIO = require('socket.io');
 
 // Default express view options
 const expressVueOptions = {
-    rootPath: path.join(__dirname, '../web/vue'),
-    vueVersion:'2.6.11',
+    pagesPath: path.join(__dirname, '../web/vue'),
     head: {
         title: 'MrNodeBot',
         scripts: [
             {src: 'https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js'},
-            {src: 'https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.15/lodash.min.js'},
         ],
     },
+};
+
+const cleanExpressVueCache = (options = {}) => {
+    const expressVueCacheDir = path.join(__dirname, '../.expressvue');
+    const vueFiles = fs.readdirSync(options.pagesPath);
+    const vueFileMax = _(vueFiles)
+        .map(f => ({
+            name: f,
+            ctime: fs.statSync(path.join(options.pagesPath, f)).ctime
+        }))
+        .maxBy(f => f.ctime);
+
+    const vueCacheFiles = fs.readdirSync(expressVueCacheDir);
+    const vueCacheFileMax = _(vueCacheFiles)
+        .map(f => ({
+            name: f,
+            ctime: fs.statSync(path.join(expressVueCacheDir, f)).ctime
+        }))
+        .maxBy(f => f.ctime);
+
+    if(vueFileMax.ctime > vueCacheFileMax.ctime) {
+        logger.info(`The Express Vue Cache is stale, purging.`);
+        fs.rmdirSync(expressVueCacheDir, {
+            recursive: true,
+            maxRetries: 10,
+        })
+    }
 };
 
 //   Web Server component:
@@ -50,9 +76,10 @@ module.exports = async (app) => {
     webServer.use(helmet());
 
     // Initiate express-vue
+
     const finalVueOptions = _.isObject(app.Config.vueOptions) ? _.defaults(expressVueOptions, app.Config.vueOptions) : expressVueOptions;
-    const expressVueMiddleware = expressVue.init(finalVueOptions);
-    webServer.use(expressVueMiddleware);
+    await cleanExpressVueCache(finalVueOptions);
+    await expressVue.use(webServer, finalVueOptions);
 
     // Hold on to HTTP Server
     const server = require('http').createServer(webServer);
@@ -196,7 +223,13 @@ module.exports = async (app) => {
     // Merge query string parameters on duplicate
     webServer._router.mergeParams = true;
 
-    webServer.post('/authenticate', (req, res) => {
+    /**
+     * Authenticate Handler
+     * @param req
+     * @param res
+     * @returns {*}
+     */
+    const authenticateHandler = (req, res) => {
         if (!req.body.nick || !req.body.password) {
             return res.json({
                 success: false,
@@ -212,7 +245,6 @@ module.exports = async (app) => {
                     message: 'Authentication failed',
                 });
             }
-
 
             // Verify user
             app._userManager.verify(user.attributes.nick, req.body.password).then((authenticated) => {
@@ -250,10 +282,19 @@ module.exports = async (app) => {
                     });
                 });
         });
-    });
+    };
 
-    // Adds JSON web tokens to any route spawning from /secure
-    webServer.use('/secure', (req, res, next) => {
+    webServer.post('/authenticate', authenticateHandler);
+
+    /**
+     * Adds JSON web tokens to any route spawning from /secure
+     *
+     * @param req
+     * @param res
+     * @param next
+     * @returns {*}
+     */
+    const secureHandler = (req, res, next) => {
         const token = req.body.token || req.query.token || req.headers['x-access-token'];
 
         // No token provided in Request
@@ -277,8 +318,9 @@ module.exports = async (app) => {
             req.userInfo = userInfo;
             next();
         });
-    });
+    };
 
+    webServer.use('/secure', secureHandler);
 
     // If no port specifically set, find an available port
     if (!app.Config.express.port) {
@@ -293,6 +335,7 @@ module.exports = async (app) => {
             server.listen(port);
         });
     }
+
     // Bind the express server
     else server.listen(app.Config.express.port);
 

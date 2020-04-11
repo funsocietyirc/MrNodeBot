@@ -3,7 +3,7 @@
         <sitenav></sitenav>
         <div class="uk-grid">
             <div class="uk-width-1-1 dark-box">
-                <h1 class="uk-margin-top uk-text-center uk-margin-bottom ">Scripts</h1>
+                <h1 class="uk-margin-top uk-text-center uk-margin-bottom">Scripts</h1>
                 <hr>
             </div>
             <div class="uk-width-1-1">
@@ -40,17 +40,18 @@
 <style>
 </style>
 <script>
+    const sitenav = require('./components/nav.vue');
+    const sokets = require('./mixins/sockets');
+
     export default {
-        components: {
-            sitenav: require('./components/nav.vue')
-        },
+        mixins: ['sockets'],
+        components: { sitenav },
         data: function () {
             return {
                 results: []
             }
         },
         mounted() {
-            console.dir(this);
         },
     }
 </script>
