@@ -1,4 +1,4 @@
-const gitlog = require('gitlog');
+const gitlog = require('gitlog').default
 
 const scriptInfo = {
     name: 'origins',

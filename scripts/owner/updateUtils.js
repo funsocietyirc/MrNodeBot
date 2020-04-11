@@ -11,7 +11,7 @@ const path = require('path');
 const typo = require('../lib/_ircTypography');
 const short = require('../lib/_getShortService')();
 const shell = require('shelljs');
-const gitlog = require('gitlog');
+const gitlog = require('gitlog').default;
 const logger = require('../../lib/logger');
 
 // Handle real time upgrades, updates, and restarts

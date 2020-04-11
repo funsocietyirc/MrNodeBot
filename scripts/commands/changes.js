@@ -3,7 +3,8 @@ const scriptInfo = {
     desc: 'Allow users to see git changes from IRC',
     createdBy: 'IronY',
 };
-const gitlog = require('gitlog');
+const gitlog = require('gitlog').default;
+console.dir(gitlog);
 const helpers = require('../../helpers');
 
 
