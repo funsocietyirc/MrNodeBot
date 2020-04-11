@@ -1,9 +1,5 @@
 const sockets = {
-    name: 'sockets',
-    data() {
-        return {
-        };
-    },
+    name: 'Sockets',
     methods: {
         initSocket: function () {
             this.socket = io.connect();

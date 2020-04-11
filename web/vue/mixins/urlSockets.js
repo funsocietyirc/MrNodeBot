@@ -1,13 +1,5 @@
 const sockets = {
-    name: 'sockets',
-    props: {
-    },
-    computed: {
-    },
-    data() {
-        return {
-        };
-    },
+    name: 'UrlSockets',
     methods: {
         socketHandler: function (data) {
             let self = this;

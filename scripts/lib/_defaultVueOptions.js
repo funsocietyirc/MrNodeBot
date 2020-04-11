@@ -8,6 +8,10 @@ const _ = require('lodash');
 const _defaultVueOptions = {
     head: {
         title: 'MrNodeBot',
+        meta: [
+            { name: 'application-name', content: 'MrNodeBot' },
+            { name: 'description', content: 'A Swiss Army Knife NodeJS IRC Bot Framework' }
+        ],
         styles: [
             {style: '/assets/uikit-external.css', type: 'text/css'},
             {style: '/assets/app-external.css', type: 'text/css'},
@@ -23,7 +27,6 @@ const _defaultVueOptions = {
             {src: 'https://cdnjs.cloudflare.com/ajax/libs/uikit/2.27.5/js/components/accordion.min.js'},
             {src: 'https://cdnjs.cloudflare.com/ajax/libs/uikit/2.27.5/js/components/sortable.min.js'},
         ]
-
     }
 };
 
