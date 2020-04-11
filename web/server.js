@@ -51,6 +51,7 @@ const cleanExpressVueCache = (options = {}) => {
         }))
         .maxBy(f => f.ctime);
 
+
     if(vueFileMax.ctime > vueCacheFileMax.ctime) {
         logger.info(`The Express Vue Cache is stale, purging.`);
         fs.rmdirSync(expressVueCacheDir, {
