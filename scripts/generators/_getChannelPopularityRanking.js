@@ -1,7 +1,12 @@
 const _ = require('lodash');
 const Models = require('funsociety-bookshelf-model-loader');
 
-module.exports = async (channel) => {
+/**
+ * Handler
+ * @param channel
+ * @returns {Promise<{}|{rankings: *, meanScore: string, totalVotes: number, totalScore: number}>}
+ */
+const handler = async (channel) => {
     // Database does not exist
     if (!Models.Upvote) { throw new Error('Database not available'); }
 
@@ -26,7 +31,6 @@ module.exports = async (channel) => {
 
     const _results = _(results.toJSON());
 
-
     const scores = _results.map(x => parseInt(x.score)).value();
 
     return {
@@ -40,3 +44,5 @@ module.exports = async (channel) => {
         })).value(),
     };
 };
+
+module.exports = handler;

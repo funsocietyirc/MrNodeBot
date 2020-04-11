@@ -17,7 +17,7 @@ const scriptInfo = {
 const _ = require('lodash');
 const Models = require('funsociety-bookshelf-model-loader');
 
-const hashPattern = new RegExp('%23', 'g');
+const {hashPattern} = require('../../helpers');
 
 module.exports = (app) => {
     // Bail out if we do not have a database

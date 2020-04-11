@@ -108,21 +108,21 @@
                 </div>
             </div>
         </div>
+        <footer class="uk-block  uk-cover-background uk-width-1-1 dark-box">
+            <h4 class="uk-text-muted uk-text-center">Results update every hour.</h4>
+        </footer>
     </div>
 </template>
 <style lang="css">
     .gray {
         color: gray;
     }
-
     .white {
         color: white;
     }
-
     .yellow {
         color: yellow;
     }
-
     .green {
         color: forestgreen;
     }
@@ -140,7 +140,6 @@
     const _ = require('lodash');
     const sitenav = require('./components/nav.vue');
     const sockets = require('./mixins/sockets');
-
     export default {
         mixins: [sockets],
         data() {

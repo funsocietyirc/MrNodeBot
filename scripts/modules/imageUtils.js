@@ -3,6 +3,7 @@ const scriptInfo = {
     desc: 'Tools to remove all images from the url table, rebuild them, and them should they die',
     createdBy: 'IronY',
 };
+
 const _ = require('lodash');
 const rp = require('request-promise-native');
 const logger = require('../../lib/logger');
@@ -10,15 +11,21 @@ const Models = require('funsociety-bookshelf-model-loader');
 const fileType = require('file-type');
 const scheduler = require('../../lib/scheduler');
 const extractUrls = require('../../lib/extractUrls');
+
 // Regex Replace Pattern
-const hashPattern = new RegExp('%23', 'g');
+const {hashPattern} = require('../../helpers');
 
 // Display a list of images in the Web Front end
 module.exports = (app) => {
     // Bailout if we do not have database
     if (!Models.Url) return scriptInfo;
 
-    // Where image helpers
+    /**
+     * Where Images
+     * @param clause
+     * @param field
+     * @returns {Knex.QueryBuilder<TRecord, TResult>}
+     */
     const whereImages = (clause, field) => {
         // Default to the URL field if none specified
         field = field || 'url';
@@ -29,7 +36,12 @@ module.exports = (app) => {
             .orWhere(field, 'like', '%.png');
     };
 
-    const buildImages = async (to, from, text, message) => {
+    /**
+     * Build Images
+     * @param to
+     * @returns {Promise<void>}
+     */
+    const buildImages = async (to) => {
         try {
             const logResults = await Models.Logging.query(qb =>
                 qb
@@ -61,7 +73,12 @@ module.exports = (app) => {
         }
     };
 
-    const destroyImages = async (to, from, text, message) => {
+    /**
+     * Destroy Images
+     * @param to
+     * @returns {Promise<void>}
+     */
+    const destroyImages = async (to) => {
         try {
             await Models.Url.query(qb => qb.where(whereImages)).destroy({
                 require: false
@@ -140,6 +157,13 @@ module.exports = (app) => {
         }
     };
 
+    /**
+     * Images View
+     * @param req
+     * @param res
+     * @param next
+     * @returns {Promise<*>}
+     */
     const imagesView = async (req, res, next) => {
         try {
             const results = await Models.Url.query((qb) => {

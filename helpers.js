@@ -161,3 +161,9 @@ const getValueFromObj = module.exports.getValueFromObj = (obj, index) => obj[Obj
  * @type {function(*=, *=): *}
  */
 const chunkObj = module.exports.chunkObj = (input, size) =>  _.chain(input).toPairs().chunk(size).map(_.fromPairs).value();
+
+/**
+ * Hash Pattern Replacement Regex
+ * @type {RegExp}
+ */
+const hashPattern = module.exports.hashPattern = new RegExp('%23', 'g');

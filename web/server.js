@@ -26,6 +26,10 @@ const expressVueOptions = {
     },
 };
 
+/**
+ *  Check to see if the expressvu cache is stale
+ * @param {Object} options
+ */
 const cleanExpressVueCache = (options = {}) => {
     const expressVueCacheDir = path.join(__dirname, '../.expressvue');
     const hasCache = fs.existsSync(expressVueCacheDir);
@@ -51,12 +55,21 @@ const cleanExpressVueCache = (options = {}) => {
         }))
         .maxBy(f => f.ctime);
 
-    if(vueFileMax && vueCacheFileMax && vueFileMax.hasOwnProperty('ctime') && vueCacheFileMax.hasOwnProperty('ctime') && vueFileMax.ctime > vueCacheFileMax.ctime) {
+    if(
+        // Both Dirs Have Files
+        vueFileMax &&
+        vueCacheFileMax &&
+        // Both Files Have Times
+        vueFileMax.hasOwnProperty('ctime') &&
+        vueCacheFileMax.hasOwnProperty('ctime') &&
+        // The source file is newer than the cache file
+        vueFileMax.ctime > vueCacheFileMax.ctime
+    ) {
         logger.info(`The Express Vue Cache is stale, purging.`);
         fs.rmdirSync(expressVueCacheDir, {
             recursive: true,
             maxRetries: 10,
-        })
+        });
     }
 };
 
@@ -236,7 +249,7 @@ module.exports = async (app) => {
      * @param res
      * @returns {*}
      */
-    const authenticateHandler = (req, res) => {
+    const authenticateHandler = async (req, res) => {
         if (!req.body.nick || !req.body.password) {
             return res.json({
                 success: false,
@@ -244,7 +257,9 @@ module.exports = async (app) => {
             });
         }
 
-        app._userManager.getByNick(req.body.nick, (user) => {
+        try {
+            const user = await app._userManager.getByNick(req.body.nick);
+
             // No user available
             if (!user) {
                 return res.json({
@@ -253,42 +268,46 @@ module.exports = async (app) => {
                 });
             }
 
-            // Verify user
-            app._userManager.verify(user.attributes.nick, req.body.password).then((authenticated) => {
-                // Password mismatch
-                if (!authenticated) {
-                    return res.json({
-                        success: false,
-                        message: 'Authentication failed',
-                    });
-                }
+            const authenticated = await app._userManager.verify(user.attributes.nick, req.body.password);
 
-                const userInfo = {
-                    nick: user.attributes.nick,
-                    id: user.attributes.id,
-                    email: user.attributes.email,
-                    admin: _.includes(app.Admins, _.toLower(user.attributes.nick)) || user.attributes.admin,
-                };
-
-                // Generate the token
-                const token = jwt.sign(userInfo, getJwtSecret(), {
-                    expiresIn: 60 * 60 * 24, // Expires in 24 hours
-                });
-
+            // Password mismatch
+            if (!authenticated) {
                 return res.json({
-                    success: true,
-                    message: 'Enjoy your token!',
-                    token,
+                    success: false,
+                    message: 'Authentication failed',
                 });
-            })
-                .catch((e) => {
-                    logger.error('Something has gone wrong with user authentication', user, e.message);
-                    return res.json({
-                        success: false,
-                        message: 'Something has gone wrong',
-                    });
-                });
-        });
+            }
+
+            const userInfo = {
+                nick: user.attributes.nick,
+                id: user.attributes.id,
+                email: user.attributes.email,
+                admin: _.includes(app.Admins, _.toLower(user.attributes.nick)) || user.attributes.admin,
+            };
+
+            // Generate the token
+            const token = jwt.sign(userInfo, getJwtSecret(), {
+                expiresIn: 60 * 60 * 24, // Expires in 24 hours
+            });
+
+            return res.json({
+                success: true,
+                message: 'Enjoy your token!',
+                token,
+            });
+
+        } catch (err) {
+            logger.error('Something has gone wrong with user authentication', {
+                user,
+                message: err.message || '',
+                stack: err.stack || '',
+            });
+
+            return res.json({
+                success: false,
+                message: 'Something has gone wrong',
+            });
+        }
     };
 
     webServer.post('/authenticate', authenticateHandler);
@@ -313,8 +332,13 @@ module.exports = async (app) => {
             });
         }
 
-        // Verify User
-        jwt.verify(token, getJwtSecret(), (err, userInfo) => {
+        /**
+         *  JWT Handler
+         * @param err
+         * @param userInfo
+         * @returns {*}
+         */
+        const jwtHandler = (err, userInfo) => {
             if (err) {
                 return res.json({
                     success: false,
@@ -324,7 +348,10 @@ module.exports = async (app) => {
             }
             req.userInfo = userInfo;
             next();
-        });
+        };
+
+        // Verify User
+        jwt.verify(token, getJwtSecret(), jwtHandler);
     };
 
     webServer.use('/secure', secureHandler);

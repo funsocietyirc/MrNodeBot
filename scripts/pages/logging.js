@@ -8,7 +8,7 @@ const _ = require('lodash');
 const logger = require('../../lib/logger');
 const moment = require('moment');
 const Models = require('funsociety-bookshelf-model-loader');
-const hashPattern = new RegExp('%23', 'g');
+const {hashPattern} = require('../../helpers');
 
 module.exports = (app) => {
     // Hold on to the Model
