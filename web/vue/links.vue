@@ -198,16 +198,14 @@
                     Object
                         .keys(vm.query)
                         .filter(k => !_.isString(k) || !_.isString(Object.hasOwnProperty(vm.query[k])))
-                        .forEach(key => route = route + `&${key}=${vm.query[key].replace(hashPattern, '%23')}`
-                        );
+                        .forEach(key => route = route + `&${key}=${vm.query[key].replace(hashPattern, '%23')}`);
                 }
                 fetch(route)
                     .then(response => response.json())
                     .then((data) => {
                         vm.results = data.results;
                     }).catch(e => {
-                    // TODO handle this
-                    console.log(e);
+                        console.error(`Something went wrong: ${e.message || ''}`)
                 });
             },
         }

@@ -17,9 +17,15 @@ module.exports = (app) => {
     // Only enabled if there is a database available
     if (!Models.Logging) return scriptInfo;
 
-    const total = async (to, from, text, message) => {
+    /**
+     * Total Handler
+     * @param to
+     * @param from
+     * @param text
+     * @returns {Promise<void>}
+     */
+    const total = async (to, from, text) => {
         const channel = text.split(' ')[0] || to;
-
         try {
             const result = await Models.Logging
                 .where('to', '=', channel)
@@ -42,6 +48,14 @@ module.exports = (app) => {
         }
     };
 
+    /**
+     * Random Line Handler
+     * @param to
+     * @param from
+     * @param text
+     * @param message
+     * @returns {Promise<void>}
+     */
     const randomLine = async (to, from, text, message) => {
         try {
             const result = await Models
@@ -64,8 +78,16 @@ module.exports = (app) => {
         }
     };
 
-    // Search channel by search terms
-    const searchTerms = async (to, from, text, message) => {
+
+    /**
+     * Search Terms Handler
+     * @param to
+     * @param from
+     * @param text
+     * @param message
+     * @returns {Promise<void>}
+     */
+    const searchTerms = async (to, from, text,) => {
         let [terms, channel, nicks] = text.split(' ');
 
         channel = channel || to;
@@ -119,6 +141,14 @@ module.exports = (app) => {
         call: searchTerms,
     });
 
+    /**
+     * Last Said Handler
+     * @param to
+     * @param from
+     * @param text
+     * @param message
+     * @returns {Promise<void>}
+     */
     const lastSaid = async (to, from, text, message) => {
         // No text was provided
         if (!text) {

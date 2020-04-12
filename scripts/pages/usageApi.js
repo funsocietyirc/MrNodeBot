@@ -29,7 +29,7 @@ module.exports = (app) => {
     };
 
     // Schedule Recurrence Rule
-    scheduler.schedule('clearChannelCache', new scheduler.RecurrenceRule(null, null, null, null, 1, null, null), () => buildCache());
+    scheduler.schedule('clearChannelCache', new scheduler.RecurrenceRule(null, null, null, null, 1, null, null), async () => await buildCache());
 
     /**
      * In Channels
@@ -54,6 +54,7 @@ module.exports = (app) => {
     const channelsAvailableHandler = async (req, res) => {
         try {
             const results = _.isEmpty(cache) ? (await buildCache()) : cache;
+
             return res.json({
                 status: 'success',
                 channels: results,

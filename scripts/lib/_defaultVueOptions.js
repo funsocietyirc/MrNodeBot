@@ -8,7 +8,7 @@ const _ = require('lodash');
 const _defaultVueOptions = {
     head: {
         title: 'MrNodeBot',
-        meta: [
+        metas: [
             { name: 'application-name', content: 'MrNodeBot' },
             { name: 'description', content: 'A Swiss Army Knife NodeJS IRC Bot Framework' }
         ],
@@ -17,7 +17,6 @@ const _defaultVueOptions = {
             {style: '/assets/app-external.css', type: 'text/css'},
         ],
         scripts: [
-            {src: 'https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment-with-locales.min.js'},
             {src: 'https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js'},
             {src: 'https://cdnjs.cloudflare.com/ajax/libs/uikit/2.27.5/js/uikit.min.js'},
             {src: 'https://cdnjs.cloudflare.com/ajax/libs/uikit/2.27.5/js/components/lightbox.min.js'},
