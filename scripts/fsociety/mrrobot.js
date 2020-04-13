@@ -25,7 +25,11 @@ module.exports = app => {
         'Quote #',
     ];
 
-    const cleanQuotes = async (to, from, text, message) => {
+    /**
+     * Clean Quotes Handler
+     * @returns {Promise<void>}
+     */
+    const cleanQuotesHandler = async () => {
         try {
             // Get Results from database
             const results = await quoteModel.query((qb) => {
@@ -55,85 +59,98 @@ module.exports = app => {
             });
         }
     };
-
-    // Schedule job
-    const cronTime = new scheduler.RecurrenceRule();
-    cronTime.minute = 0;
-    scheduler.schedule('cleanMrRobotQuotes', cronTime, cleanQuotes);
-
     // Clean and merge quotes
     app.Commands.set('mrrobot-clean', {
         desc: 'Clean multi-line quotes',
         access: app.Config.accessLevels.owner,
-        call: cleanQuotes,
+        call: cleanQuotesHandler,
     });
 
-    // Listen and Log
+    /**
+     * Quotes Listener
+     * @param to
+     * @param from
+     * @param text
+     * @returns {Promise<void>}
+     */
+    const quotesListener = async (to, from, text) => {
+        // False result
+        if (!text || to !== '#MrRobot' || from !== 'MrRobot' || _.includes(includeExceptions, text) || text.split(' ').length < 3) { return; }
+
+        // Check if the quote already exists
+        try {
+            const result = await quoteModel.query(qb => qb.select(['quote']).where('quote', 'like', text).limit(1)).fetch();
+        } catch (err) {
+            // Problem communicating with the Database
+            logger.error('Error getting result from DB in MrRobotQuote', {
+                message: err.message || '',
+                stack: err.stack || '',
+            });
+            return;
+        }
+
+        // Record already exists
+        if (result) { return; }
+
+        // Attempt to save the new quote
+        try {
+            const record = await quoteModel.insert({ quote: text });
+            // Log the quote was added
+            logger.info(`Added New MrRobot show quote: ${text}`);
+        } catch (err) {
+            // Something went wrong saving the new quote
+            logger.error('Error saving result from DB in MrRobotQuote', { err });
+        }
+    };
     app.Listeners.set('mrrobotquotes', {
         desc: 'Log quotes from #MrRobot',
-        call: async (to, from, text, message) => {
-            // False result
-            if (!text || to !== '#MrRobot' || from !== 'MrRobot' || _.includes(includeExceptions, text) || text.split(' ').length < 3) { return; }
-
-            // Check if the quote already exists
-            try {
-                const result = await quoteModel.query(qb => qb.select(['quote']).where('quote', 'like', text).limit(1)).fetch();
-            } catch (err) {
-                // Problem communicating with the Database
-                logger.error('Error getting result from DB in MrRobotQuote', {
-                    message: err.message || '',
-                    stack: err.stack || '',
-                });
-                return;
-            }
-
-            // Record already exists
-            if (result) { return; }
-
-            // Attempt to save the new quote
-            try {
-                const record = await quoteModel.insert({ quote: text });
-                // Log the quote was added
-                logger.info(`Added New MrRobot show quote: ${text}`);
-            } catch (err) {
-                // Something went wrong saving the new quote
-                logger.error('Error saving result from DB in MrRobotQuote', { err });
-            }
-        },
+        call: quotesListener,
     });
 
-    // Get Quote
+    /**
+     * Quotes Handler
+     * @param to
+     * @param from
+     * @param text
+     * @returns {Promise<void>}
+     */
+    const quotesHandler =async (to, from, text) => {
+        // Decide if this is a channel or a private message
+        const chan = _.first(text) === '#'
+            ? _.first(text.split(' '))
+            : false;
+
+        try {
+            // Fetch Result
+            const result = await quoteModel.query((qb) => {
+                qb.select('quote').orderByRaw('rand()').limit(1);
+                if (text && !chan) {
+                    qb.andWhere('quote', 'like', text);
+                }
+            }).fetch();
+
+            // Report back
+            app.say(chan || to, !result
+                ? 'I have not yet encountered anything like that.'
+                : `${ircTypography.logos.mrrobot} ${result.get('quote')}`);
+        } catch (err) {
+            logger.error('Something went wrong with the mrrobot command inside mrorbot.js', {
+                message: err.message || '',
+                stack: err.stack || '',
+            });
+            app.say(chan || to, `Something went wrong fetching your quote ${from}`);
+        }
+    };
     app.Commands.set('mrrobot', {
         desc: '[Channel / Search Text] Mr Robot quotes powered by #MrRobot',
         access: app.Config.accessLevels.identified,
-        call: async (to, from, text, message) => {
-            // Decide if this is a channel or a private message
-            const chan = _.first(text) === '#'
-                ? _.first(text.split(' '))
-                : false;
-
-            try {
-                // Fetch Result
-                const result = await quoteModel.query((qb) => {
-                    qb.select('quote').orderByRaw('rand()').limit(1);
-                    if (text && !chan) {
-                        qb.andWhere('quote', 'like', text);
-                    }
-                }).fetch();
-
-                // Report back
-                app.say(chan || to, !result
-                    ? 'I have not yet encountered anything like that.'
-                    : `${ircTypography.logos.mrrobot} ${result.get('quote')}`);
-            } catch (err) {
-                logger.error('Something went wrong with the mrrobot command inside mrorbot.js', {
-                    message: err.message || '',
-                    stack: err.stack || '',
-                });
-                app.say(chan || to, `Something went wrong fetching your quote ${from}`);
-            }
-        },
+        call: quotesHandler,
     });
+
+    // Schedule job
+    const cronTime = new scheduler.RecurrenceRule();
+    cronTime.minute = 0;
+    scheduler.schedule('cleanMrRobotQuotes', cronTime, cleanQuotesHandler);
 
     return scriptInfo;
 };

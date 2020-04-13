@@ -11,17 +11,21 @@ const _ = require('lodash');
 const sjwLine = require('../generators/_sjwInsultLine');
 
 module.exports = app => {
-    const sjw = async (to, from, text, message) => {
-        // Report back to IRC
+
+    /**
+     * SJW Handler
+     * @param to
+     * @param from
+     * @returns {Promise<void>}
+     */
+    const sjwHandler = async (to, from,) => {
         const line = await sjwLine();
         app.say(to, `${from}, ${_.first(line)}`);
     };
-
-    // Report an image of our lord and savour, RaptorJesus
     app.Commands.set('sjw', {
         desc: 'Get insulted, SJW style',
         access: app.Config.accessLevels.identified,
-        call: sjw,
+        call: sjwHandler,
     });
 
     return scriptInfo;

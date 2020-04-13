@@ -10,7 +10,14 @@ const ircTypo = require('../lib/_ircTypography');
 const Models = require('funsociety-bookshelf-model-loader');
 
 module.exports = app => {
-    const flip = async (to, from, text, message) => {
+    /**
+     * Flip Handler
+     * @param to
+     * @param from
+     * @param text
+     * @returns {Promise<void>}
+     */
+    const flip = async (to, from, text) => {
         const [selection] = text.split(' ');
 
         let answer;
@@ -67,8 +74,6 @@ module.exports = app => {
             }
         }
     };
-
-    // Flip a coin
     app.Commands.set('flip', {
         desc: '[heads / tails] Flip a coin',
         access: app.Config.accessLevels.guest,

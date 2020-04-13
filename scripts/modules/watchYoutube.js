@@ -5,7 +5,6 @@ const scriptInfo = {
 };
 
 const _ = require('lodash');
-const gen = require('../generators/_youTubeVideoData');
 const logger = require('../../lib/logger');
 const shortService = require('../lib/_getShortService')();
 const searchYoutube = require('../generators/_searchYoutubeVideos');
@@ -13,11 +12,7 @@ const searchYoutube = require('../generators/_searchYoutubeVideos');
 const youTubeRoute = 'https://www.youtube.com/watch?v=';
 
 // Typography
-const {
-    logos,
-    icons,
-    StringBuilder,
-} = require('../lib/_ircTypography');
+const { StringBuilder } = require('../lib/_ircTypography');
 
 module.exports = app => {
     // No SocketIO detected, or feature is disabled
@@ -42,10 +37,17 @@ module.exports = app => {
     socket.removeAllListeners('connection');
 
     socket.on('connection', (connection) => {
-        // Decorate the active channel name to avoid collisions
+
+        /**
+         * Decorate the active channel name to avoid collisions
+         * @type {string}
+         */
         const activeChannel = activeChannelFormat(connection.handshake.query.activeChannel);
 
-        // Get Channel Stats
+        /**
+         * Get Channel Stats
+         * @returns {{} & {totalListeners: (*|number), channels: *, channelListeners: (*|number)}}
+         */
         const channelStats = () => Object.assign({}, {
             // Total Server listeners
             totalListeners: socket.adapter.rooms[room] ? socket.adapter.rooms[room].length : 0,
@@ -89,144 +91,160 @@ module.exports = app => {
 
     // TV Play Command
     if (app.Config.apiKeys.google && !_.isEmpty(app.Config.apiKeys.google)) {
+        /**
+         * TV Play Handler
+         * @param to
+         * @param from
+         * @param text
+         * @returns {Promise<void>}
+         */
+        const tvPlayHandler = async (to, from, text) => {
+            // Nothing was given
+            if (_.isEmpty(text)) {
+                app.say(to, `I need something to search, ${from}`);
+                return;
+            }
+            try {
+                // Fetch Results
+                const result = await searchYoutube(app.Config.apiKeys.google, text);
+
+                // No Results
+                if (!result || !result.items) {
+                    app.say(to, `I was unable to find anything, ${from}`);
+                    return;
+                }
+
+                const video = result.items[0];
+
+                if (!video || !video.videoId || !video.title) {
+                    app.say(to, `your search rendered no results, ${from}`);
+                    return;
+                }
+
+                // Send to socket
+                socket.to(activeChannelFormat(to)).emit('message', Object.assign({}, {
+                    to,
+                    from,
+                    timestamp: Date.now(),
+                    seekTime: 0,
+                    video: {
+                        videoTitle: video.title,
+                        key: video.videoId,
+                    },
+                }));
+
+                // Construct String Builder
+                const sb = new StringBuilder({
+                    logo: 'youTubeTv',
+                });
+
+                // Grab the short URL
+                const link = await shortService(youTubeRoute + video.videoId);
+
+                // Build String
+                sb
+                    .append(`I am now playing ${video.title} on the ${to} station for you, ${from}`)
+                    .insertLogo('youTube')
+                    .insertIcon('anchor')
+                    .insert(link || youTubeRoute + video.videoId);
+
+                // Report Back
+                app.say(
+                    to,
+                    sb.toString(),
+                );
+            }
+                // Catch Error
+            catch (err) {
+                // Log
+                logger.error('Something went wrong getting results for the tv-play command', {
+                    message: err.message || '',
+                    stack: err.stack || '',
+                });
+                // Report
+                app.say(to, `Something went wrong getting your results, ${from}`);
+            }
+        };
         app.Commands.set('tv-play', {
             desc: '<video title>',
             access: app.Config.accessLevels.identified,
-            call: async (to, from, text, message) => {
-            // Nothing was given
-                if (_.isEmpty(text)) {
-                    app.say(to, `I need something to search, ${from}`);
-                    return;
-                }
-                try {
-                // Fetch Results
-                    const result = await searchYoutube(app.Config.apiKeys.google, text);
-
-                    // No Results
-                    if (!result || !result.items) {
-                        app.say(to, `I was unable to find anything, ${from}`);
-                        return;
-                    }
-
-                    const video = result.items[0];
-
-                    if (!video || !video.videoId || !video.title) {
-                        app.say(to, `your search rendered no results, ${from}`);
-                        return;
-                    }
-
-                    // Send to socket
-                    socket.to(activeChannelFormat(to)).emit('message', Object.assign({}, {
-                        to,
-                        from,
-                        timestamp: Date.now(),
-                        seekTime: 0,
-                        video: {
-                            videoTitle: video.title,
-                            key: video.videoId,
-                        },
-                    }));
-
-                    // Construct String Builder
-                    const sb = new StringBuilder({
-                        logo: 'youTubeTv',
-                    });
-
-                    // Grab the short URL
-                    const link = await shortService(youTubeRoute + video.videoId);
-
-                    // Build String
-                    sb
-                        .append(`I am now playing ${video.title} on the ${to} station for you, ${from}`)
-                        .insertLogo('youTube')
-                        .insertIcon('anchor')
-                        .insert(link || youTubeRoute + video.videoId);
-
-                    // Report Back
-                    app.say(
-                        to,
-                        sb.toString(),
-                    );
-                }
-                // Catch Error
-                catch (err) {
-                // Log
-                    logger.error('Something went wrong getting results for the tv-play command', {
-                        message: err.message || '',
-                        stack: err.stack || '',
-                    });
-                    // Report
-                    app.say(to, `Something went wrong getting your results, ${from}`);
-                }
-            },
+            call: tvPlayHandler,
         });
     }
 
-    // Get total Listeners (Identified)
+    /**
+     * TV Watchers Handler
+     * @param to
+     * @param from
+     * @param text
+     */
+    const tvWatchersHandler = (to, from, text) => {
+        // Get specified channel
+        const channel = text.split(' ')[0];
+        const procChannel = channel ?
+            activeChannelFormat(channel) :
+            activeChannelFormat(to);
+
+        const count = socket.adapter.rooms[procChannel] ?
+            socket.adapter.rooms[procChannel].length :
+            0;
+
+        const roomCount = socket.adapter.rooms[room] ?
+            socket.adapter.rooms[room].length :
+            0;
+
+        const diff = roomCount - count;
+
+        app.say(to, `${count} connections are viewing the${procChannel
+            ? ` ${procChannel}`
+            : ''} stream, ${diff} are watching other Channels`);
+    };
     app.Commands.set('tv-watchers', {
         desc: '[channel?] Get the number of all watchers of the youtube stream',
         access: app.Config.accessLevels.identified,
-        call: (to, from, text, message) => {
-            // Get specified channel
-            const channel = text.split(' ')[0];
-            const procChannel = channel ?
-                activeChannelFormat(channel) :
-                activeChannelFormat(to);
-
-            const count = socket.adapter.rooms[procChannel] ?
-                socket.adapter.rooms[procChannel].length :
-                0;
-
-            const roomCount = socket.adapter.rooms[room] ?
-                socket.adapter.rooms[room].length :
-                0;
-
-            const diff = roomCount - count;
-
-            app.say(to, `${count} connections are viewing the${procChannel
-                ? ` ${procChannel}`
-                : ''} stream, ${diff} are watching other Channels`);
-        },
+        call: tvWatchersHandler,
     });
 
-    // TV Administration Command
-    app.Commands.set('tv-admin', {
-        desc: 'TV Administration',
-        access: app.Config.accessLevels.admin,
-        call: (to, from, text, message) => {
-            // Parse the args
-            const args = text.split(' ');
+    /**
+     * TV Admin Handler
+     * @param to
+     * @param from
+     * @param text
+     */
+    const tvAdminHandler = (to, from, text) => {
+        // Parse the args
+        const args = text.split(' ');
 
-            // No Args Provided
-            if (_.isEmpty(args)) {
-                app.say(to, 'Sub-command required, use help for more information');
-                return;
-            }
+        // No Args Provided
+        if (_.isEmpty(args)) {
+            app.say(to, 'Sub-command required, use help for more information');
+            return;
+        }
 
-            // A list of available commands
-            const cmds = {
-                help: 'Get Sub-command usage',
-                clear: '<channel?> -- Force of a clear of all connected clients queues',
-                reload: '<channel?> -- Force all clients to reload',
-                remove: '<channel> <index> -- Remove a index from all connected clients queues',
-                speak: '<channel> <message> -- Speak (or display if speak is not available) a message',
-                skip: '<channel?> -- Skip the current Video (Only if the queue contains additional videos)',
-            };
+        // A list of available commands
+        const cmds = {
+            help: 'Get Sub-command usage',
+            clear: '<channel?> -- Force of a clear of all connected clients queues',
+            reload: '<channel?> -- Force all clients to reload',
+            remove: '<channel> <index> -- Remove a index from all connected clients queues',
+            speak: '<channel> <message> -- Speak (or display if speak is not available) a message',
+            skip: '<channel?> -- Skip the current Video (Only if the queue contains additional videos)',
+        };
 
-            // Switch on the command
-            switch (args[0]) {
+        // Switch on the command
+        switch (args[0]) {
             // Usage Information
             case 'help':
                 _(cmds).each((v, k) => app.say(to, `${k}: ${v}`));
                 break;
-                // Clear a queue
+            // Clear a queue
             case 'clear':
                 socket.to(activeChannelFormat(args[1] || to)).emit('control', {
                     command: 'clear',
                 });
                 app.say(to, `The queue for ${args[1] || to} has been cleared`);
                 break;
-                // Remove an item from the queue index
+            // Remove an item from the queue index
             case 'speak':
                 if (!args[1] || !args[2]) {
                     app.say(to, 'A Channel and Message is required when speaking');
@@ -253,26 +271,30 @@ module.exports = app => {
                 // Report Back
                 app.say(to, `The TV Queue item ${args[2]} has been broadcast for deletion on ${args[1]}`);
                 break;
-                // Force The Client to reload
+            // Force The Client to reload
             case 'reload':
                 socket.to(activeChannelFormat(args[1] || to)).emit('control', {
                     command: 'reload',
                 });
                 app.say(to, `Clients on ${args[1] || to} have been Refreshed`);
                 break;
-                // Force The Client to reload
+            // Force The Client to reload
             case 'skip':
                 socket.to(activeChannelFormat(args[1] || to)).emit('control', {
                     command: 'skip',
                 });
                 app.say(to, `Current Video on ${args[1] || to} has been skipped`);
                 break;
-                // Command not found
+            // Command not found
             default:
                 app.say(to, `Sub-command not found, available commands are ${Object.keys(cmds).join(', ')}`);
                 break;
-            }
-        },
+        }
+    };
+    app.Commands.set('tv-admin', {
+        desc: 'TV Administration',
+        access: app.Config.accessLevels.admin,
+        call: tvAdminHandler,
     });
 
     // Return the script info

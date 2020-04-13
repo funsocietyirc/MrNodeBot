@@ -6,15 +6,21 @@ const scriptInfo = {
 const gen = require('../../lib/chatBotLine');
 
 module.exports = app => {
-    const line = async (to, from, text, message) => {
+    /**
+     * Converse Handler
+     * @param to
+     * @param from
+     * @param text
+     * @returns {Promise<void>}
+     */
+    const converseHandler = async (to, from, text) => {
         const result = await gen(text);
         app.say(to, `${from}, ${result}`);
     };
-
     app.Commands.set('converse', {
         desc: '[Text?] Talk to the bot',
         access: app.Config.accessLevels.identified,
-        call: line,
+        call: converseHandler,
     });
 
     return scriptInfo;

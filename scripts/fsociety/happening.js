@@ -139,8 +139,12 @@ module.exports = app => {
         }
     };
 
-    // Handle the IRC Command
-    const happening = (to, from, text, message) => {
+    /**
+     * Happening Handler
+     * @param to
+     * @param from
+     */
+    const happeningHandler = (to, from) => {
         const announcements = _.filter(channelAnnouncements, x => x.channel === to);
 
         if (!announcements || _.isEmpty(announcements)) {
@@ -155,12 +159,10 @@ module.exports = app => {
 
         app.say(to, output.trim());
     };
-
-    // Register IRC Command
     app.Commands.set('happening', {
         desc: 'Mr. Robot Season 4 countdown',
         access: app.Config.accessLevels.identified,
-        call: happening,
+        call: happeningHandler,
     });
 
     // Expose Script Info

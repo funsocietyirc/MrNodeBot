@@ -7,7 +7,14 @@ const gen = require('../generators/_getAdviceSlip');
 const logger = require('../../lib/logger');
 
 module.exports = app => {
-    const advice = async (to, from, text, message) => {
+    /**
+     * Advice Handler
+     * @param to
+     * @param from
+     * @param text
+     * @returns {Promise<void>}
+     */
+    const advice = async (to, from, text) => {
         try {
             const value = await gen(text);
             if(!value) {

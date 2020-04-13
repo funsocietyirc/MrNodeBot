@@ -7,8 +7,13 @@ const scriptInfo = {
 const _ = require('lodash');
 
 module.exports = app => {
-    // Part Channel
-    const part = (to, from, text, message) => {
+    /**
+     * Part Handler
+     * @param to
+     * @param from
+     * @param text
+     */
+    const partHandler = (to, from, text) => {
         if (_.isEmpty(text)) {
             app.say(from, 'I need some more information...');
             return;
@@ -25,15 +30,19 @@ module.exports = app => {
         // Part the channel
         app._ircClient.part(channel, () => app.say(from, `I have parted ${channel}`));
     };
-
     app.Commands.set('part', {
         desc: 'part [channel] Part a channel',
         access: app.Config.accessLevels.owner,
-        call: part,
+        call: partHandler,
     });
 
-    // Join Channel
-    const join = (to, from, text, message) => {
+    /**
+     * Join Handler
+     * @param to
+     * @param from
+     * @param text
+     */
+    const joinHandler = (to, from, text) => {
         if (_.isEmpty(text)) {
             app.say(from, 'I need some more information...');
             return;
@@ -50,15 +59,19 @@ module.exports = app => {
         // Join the channel
         app._ircClient.join(channel, () => app.say(from, `I have joined ${channel}`));
     };
-
     app.Commands.set('join', {
         desc: 'join [channel] Join a channel',
         access: app.Config.accessLevels.owner,
-        call: join,
+        call: joinHandler,
     });
 
-    // OP Someone
-    const op = (to, from, text, message) => {
+    /**
+     * OP Handler
+     * @param to
+     * @param from
+     * @param text
+     */
+    const opHandler = (to, from, text) => {
         const textArray = text.split(' ');
 
         if (textArray.length < 2) {
@@ -74,12 +87,10 @@ module.exports = app => {
         app._ircClient.send('mode', channel, '+o', nick);
         app.say(from, `I have given all the power to ${nick} on ${channel}`);
     };
-
-    // Terminate the bot and the processes watcher that keeps it up
     app.Commands.set('op', {
         desc: 'op [channel] [nick] : Give someone all the powers..',
         access: app.Config.accessLevels.owner,
-        call: op,
+        call: opHandler,
     });
 
     // Return the script info

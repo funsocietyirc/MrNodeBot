@@ -11,7 +11,14 @@ module.exports = app => {
     // Log nick changes in the alias table
     if (!Models.Alias) return;
 
-    const aka = async (to, from, text, message) => {
+    /**
+     * AKA Handler
+     * @param to
+     * @param from
+     * @param text
+     * @returns {Promise<void>}
+     */
+    const aka = async (to, from, text) => {
         if (!text) {
             app.say(to, 'No one is no one is no one...');
             return;
@@ -46,8 +53,6 @@ module.exports = app => {
             app.say(to, `Something went wrong fetching your aka data, ${from}`);
         }
     };
-
-    // List known nicks for a given alias
     app.Commands.set('aka', {
         desc: '[alias] get known aliases',
         access: app.Config.accessLevels.identified,

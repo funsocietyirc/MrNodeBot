@@ -7,10 +7,15 @@ const scriptInfo = {
 };
 
 module.exports = app => {
+    /**
+     * Deep Quote Handler
+     * @param to
+     */
+    const deepQuoteHandler = to =>app.say(to, `${gen()} -- By Jack Handy`);
     app.Commands.set('deepquote', {
         desc: 'Deep Quotes By Jack Handy',
         access: app.Config.accessLevels.identified,
-        call: (to) =>  app.say(to, `${gen()} -- By Jack Handy`),
+        call: deepQuoteHandler,
     });
     // Return the script info
     return scriptInfo;

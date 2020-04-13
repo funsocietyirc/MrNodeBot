@@ -9,14 +9,20 @@ const short = require('../lib/_getShortService')();
 const logger = require('../../lib/logger.js');
 
 module.exports = app => {
-    const urban = async (to, from, text, message) => {
+
+    /**
+     * Urban Handler
+     * @param to
+     * @param from
+     * @param text
+     * @returns {Promise<void>}
+     */
+    const urbanHandler = async (to, from, text) => {
         try {
             const results = await dict(text);
-
             const definition = _.truncate(results.definition, {
                 length: 300,
             });
-
             const shortUrl = await short(results.url);
 
             app.say(to, `${results.term}: ${definition} - ${shortUrl}`);
@@ -28,11 +34,11 @@ module.exports = app => {
             app.say(to, `Urban Dictionary Error: ${err.message}`);
         }
     };
-
     app.Commands.set('urban', {
         desc: '[term] - Urban Dictionary Lookup',
         access: app.Config.accessLevels.identified,
-        call: urban,
+        call: urbanHandler,
     });
+
     return scriptInfo;
 };

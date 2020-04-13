@@ -8,7 +8,14 @@ const logger = require('../../lib/logger');
 const ircTypography = require('../lib/_ircTypography');
 
 module.exports = app => {
-    const lmgtfy = async (to, from, text, message) => {
+    /**
+     * LMGTFY Handler
+     * @param to
+     * @param from
+     * @param text
+     * @returns {Promise<void>}
+     */
+    const lmgtfyHandler = async (to, from, text) => {
         if (!text) {
             app.say(to, 'You need to give me some more information...');
             return;
@@ -31,7 +38,7 @@ module.exports = app => {
     app.Commands.set('lmgtfy', {
         desc: '[search text] - Figure something out for someone',
         access: app.Config.accessLevels.identified,
-        call: lmgtfy,
+        call: lmgtfyHandler,
     });
 
     return scriptInfo;

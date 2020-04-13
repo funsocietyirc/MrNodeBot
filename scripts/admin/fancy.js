@@ -7,11 +7,18 @@ const scriptInfo = {
 };
 
 module.exports = app => {
-    // Echo Test command
+
+    /**
+     * Fancy Handler
+     * @param to
+     * @param from
+     * @param text
+     */
+    const fancyHandler = (to, from, text) =>  app._ircClient.say(to, fancy(text));
     app.Commands.set('fancy', {
         desc: '[text] Exactly what it sounds like',
         access: app.Config.accessLevels.admin,
-        call: (to, from, text, message) => app._ircClient.say(to, fancy(text))
+        call: fancyHandler,
     });
 
     // Return the script info

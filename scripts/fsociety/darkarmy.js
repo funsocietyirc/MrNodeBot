@@ -19,7 +19,9 @@ module.exports = app => {
     // Fetch the dark army channels
     const darkChannels = app.Config.features.fsociety.additionalChannels.concat(require('./_darkChannels')(app.Config.features.fsociety.totalChannels));
 
-    // Join the dark army channel
+    /**
+     * Join Dark Army Channels
+     */
     const joinChannels = () => {
         if (!darkChannels.length) return;
 
@@ -44,7 +46,13 @@ module.exports = app => {
         name: 'DarkArmy',
     });
 
-    // Topic lock if possible
+    /**
+     * Topic Lock if possible
+     * @param channel
+     * @param topic
+     * @param nick
+     * @param message
+     */
     const topicLock = (channel, topic, nick, message) => {
         setTimeout(() => {
             if (
@@ -59,8 +67,12 @@ module.exports = app => {
         name: 'topicjacking',
     });
 
-    // Send someone a list of the channels
-    const darkarmy = (to, from, text, message) => {
+    /**
+     * Dark Army Handler
+     * @param to
+     * @param from
+     */
+    const darkArmyHandler = (to, from) => {
         app.say(to, `I have private messaged you the dark channels, ${from}`);
         app.say(from, `Join me on ${app.Config.features.fsociety.mainChannel} or one of the other Mr. Robot channels: ${darkChannels.join(' ')}`);
     };
@@ -68,7 +80,7 @@ module.exports = app => {
     app.Commands.set('dark-channels', {
         desc: 'Get a list of Dark Army Channels',
         access: app.Config.accessLevels.guest,
-        call: darkarmy,
+        call: darkArmyHandler,
     });
 
     // Return the script info

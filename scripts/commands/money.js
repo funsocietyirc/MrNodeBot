@@ -37,7 +37,11 @@ module.exports = app => {
     // Set base currency in money.js
     fx.base = baseCur;
 
-    scheduler.schedule('updateCurRates', updateScheduleTime, async () => {
+    /**
+     * Update Current Rates
+     * @returns {Promise<void>}
+     */
+    const updateCurRatesScheduler = async () => {
         try {
             // Get the initial conversion rates
             const data = await request(fixerApi, {
@@ -113,16 +117,21 @@ module.exports = app => {
                 stack: err.stack || '',
             });
         }
-    });
+    };
+    scheduler.schedule('updateCurRates', updateScheduleTime, updateCurRatesScheduler);
 
     // initial run
     if (_.isFunction(scheduler.jobs.updateCurRates.job)) scheduler.jobs.updateCurRates.job();
-
     // The function does not exist, log error
     else logger.error('Something went wrong with the currency exchange rate job, no function exists');
 
-    // Provide exchange
-    const exchange = (to, from, text, message) => {
+    /**
+     * Exchange Handler
+     * @param to
+     * @param from
+     * @param text
+     */
+    const exchangeHandler = (to, from, text) => {
         // No exchange rates available
         if (!_.isObject(fx.rates) || _.isEmpty(fx.rates)) {
             app.say(to, `It seems I am without the current exchange rates, sorry ${from}`);
@@ -183,12 +192,10 @@ module.exports = app => {
             app.say(to, `I am unable to convert ${normalizedFrom} to ${normalizedTo} ${from}`);
         }
     };
-
-    // Evaluate
     app.Commands.set('exchange', {
         desc: '[amount from to?] - Convert currency based on current exchange rates',
         access: app.Config.accessLevels.identified,
-        call: exchange,
+        call: exchangeHandler,
     });
 
 

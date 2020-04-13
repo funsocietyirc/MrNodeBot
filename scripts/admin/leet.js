@@ -3,13 +3,17 @@ const scriptInfo = {
     desc: 'The leet speak version of tell',
     createdBy: 'IronY',
 };
-const leetSpeak = require('../../helpers').leetSpeak;
+const {leetSpeak} = require('../../helpers');
 const _ = require('lodash');
 
-// Send an elite message
-// leet <nick> <message>
 module.exports = app => {
-    const leet = (to, from, text, message) => {
+    /**
+     * Leet Handler
+     * @param to
+     * @param from
+     * @param text
+     */
+    const leetHandler = (to, from, text) => {
         const textArray = text.split(' ');
         const [nick] = textArray;
         const body = _.without(textArray, nick).join(' ');
@@ -26,7 +30,7 @@ module.exports = app => {
     app.Commands.set('leet', {
         desc: 'leet [nick] [message] : Reach out and touch somebody',
         access: app.Config.accessLevels.admin,
-        call: leet,
+        call: leetHandler,
     });
 
     // Return the script info

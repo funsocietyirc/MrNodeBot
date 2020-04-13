@@ -35,7 +35,14 @@ module.exports = app => {
     // Model
     const greetModel = Models.Greeter;
 
-    // Check DB to see if they were already greeted
+    /**
+     *  Check DB to see if they were already greeted
+     * @param channel
+     * @param nick
+     * @param host
+     * @param callback
+     * @returns {Promise<T>}
+     */
     const checkChannel = (channel, nick, host, callback) => greetModel.query(qb => qb.where((clause) => {
         clause
             .where('channel', 'like', channel)
@@ -87,8 +94,14 @@ module.exports = app => {
         name: 'fsociety-greetr',
     });
 
-    // Clear greet cache
-    const cleanGreetDb = async (to, from, text, message) => {
+    /**
+     * Clean Greet DB Handler
+     * @param to
+     * @param from
+     * @param text
+     * @returns {Promise<void>}
+     */
+    const cleanGreetDbHandler = async (to, from, text) => {
         const textArray = text.split(' ');
 
         if (!textArray.length) {
@@ -113,38 +126,41 @@ module.exports = app => {
                 err,
             });
         }
-
-
     };
     app.Commands.set('greet-clear-channel', {
         desc: 'greet-clear-channel [channel] - Clear the greet cache for  the specified channel',
         access: app.Config.accessLevels.owner,
-        call: cleanGreetDb,
+        call: cleanGreetDbHandler,
     });
 
-    // Get total greets by channel
-    const getTotalGreetedByChannel = (to, from, text, message) => {
+    /**
+     * Get Total Greeted By Channel Handler
+     * @param to
+     * @param from
+     * @param text
+     * @returns {Promise<void>}
+     */
+    const getTotalGreetedByChannelHandler = async (to, from, text) => {
         const textArray = text.split(' ');
         if (!textArray.length) {
             app.say(to, 'You must specify a channel when clearing the greeter cache');
             return;
         }
         const [channel] = textArray;
-        greetModel
-            .where('channel', 'like', channel)
-            .count()
-            .then(total => app.say(to, `A total of ${total} greets have been sent out for the channel ${channel}`))
-            .catch((err) => {
-                app.say(to, `Something went wrong fetching the greet total for ${channel}`);
-                logger.error('Error in getting greet total', {
-                    err,
-                });
+        try {
+            const total = await greetModel.where('channel', 'like', channel).count();
+            app.say(to, `A total of ${total} greets have been sent out for the channel ${channel}`)
+        } catch (err) {
+            app.say(to, `Something went wrong fetching the greet total for ${channel}`);
+            logger.error('Error in getting greet total', {
+                err,
             });
+        }
     };
     app.Commands.set('greet-total-channel', {
         desc: 'greet-total-channel [channel] - Get the total amount of greets for the specified channel',
         access: app.Config.accessLevels.owner,
-        call: getTotalGreetedByChannel,
+        call: getTotalGreetedByChannelHandler,
     });
 
     // Return the script info

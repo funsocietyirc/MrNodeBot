@@ -31,7 +31,11 @@ module.exports = app => {
     const cronTime = new scheduler.RecurrenceRule();
     cronTime.minute = autoVoiceTimeInMins;
 
-    scheduler.schedule('voiceRegulars', cronTime, () =>
+    /**
+     * Voice Regulars Schedule
+     * @returns {*|unknown[]}
+     */
+    const voiceRegularsSchedule = () =>
         _.forEach(app.channels, async (channel) => {
             // we are not an op in said channel, or channel is in ignore list
             if (_.includes(autoVoiceChannelIgnore, channel) || !app._ircClient.isOpInChannel(channel, app.nick)) return;
@@ -45,49 +49,63 @@ module.exports = app => {
                     stack: err.stack || '',
                 });
             }
-        }));
+        });
+    scheduler.schedule('voiceRegulars', cronTime, voiceRegularsSchedule);
 
-    // Voice Users on join if they meet a certain threshold
+    /**
+     * Voice Regulars On Join
+     * @param channel
+     * @param nick
+     * @returns {Promise<void>}
+     */
+    const voiceRegularsOnJoin = async (channel, nick) => {
+        // we are not an op in said channel, or channel is in ignore list
+        if (nick === app.nick || _.includes(autoVoiceChannelIgnore, channel) || !app._ircClient.isOpInChannel(channel, app.nick)) return;
+
+        try {
+            await voiceUsers(channel, threshold, app, {
+                nicks: [nick],
+            });
+        } catch (err) {
+            logger.error('Something went wrong in the voice-regulars on-join', {
+                message: err.message || '',
+                stack: err.stack || '',
+            });
+        }
+    };
     app.OnJoin.set('voice-regulars', {
-        call: async (channel, nick, message) => {
-            // we are not an op in said channel, or channel is in ignore list
-            if (nick === app.nick || _.includes(autoVoiceChannelIgnore, channel) || !app._ircClient.isOpInChannel(channel, app.nick)) return;
-
-            try {
-                await voiceUsers(channel, threshold, app, {
-                    nicks: [nick],
-                });
-            } catch (err) {
-                logger.error('Something went wrong in the voice-regulars on-join', {
-                    message: err.message || '',
-                    stack: err.stack || '',
-                });
-            }
-        },
+        call: voiceRegularsOnJoin,
         name: 'voice-regulars',
     });
 
-    // Manually voice regulars
+    /**
+     * Voice Regulars Handler
+     * @param to
+     * @param from
+     * @param text
+     * @returns {Promise<void>}
+     */
+    const voiceRegularHandler = async (to, from, text) => {
+        const channel = text.split(' ')[0] || to;
+        if (!app._ircClient.isOpInChannel(channel, app.nick)) {
+            app.say(from, `I am not a op in ${to}, ${from}`);
+            return;
+        }
+        try {
+            await voiceUsers(channel, threshold, app);
+            app.say(to, `I have just voiced all users who meet the threshold of ${threshold} messages (per month), ${from}`);
+        } catch (err) {
+            logger.error('Something went wrong in the voice-regulars command', {
+                message: err.message || '',
+                stack: err.stack || '',
+            });
+            app.say(to, `Something went wrong trying to voice the regulars, ${from}`);
+        }
+    };
     app.Commands.set('voice-regulars', {
         desc: '[channel?] voice regulars in the channel',
         access: app.Config.accessLevels.channelOpIdentified,
-        call: async (to, from, text, message) => {
-            const channel = text.split(' ')[0] || to;
-            if (!app._ircClient.isOpInChannel(channel, app.nick)) {
-                app.say(from, `I am not a op in ${to}, ${from}`);
-                return;
-            }
-            try {
-                await voiceUsers(channel, threshold, app);
-                app.say(to, `I have just voiced all users who meet the threshold of ${threshold} messages (per month), ${from}`);
-            } catch (err) {
-                logger.error('Something went wrong in the voice-regulars command', {
-                    message: err.message || '',
-                    stack: err.stack || '',
-                });
-                app.say(to, `Something went wrong trying to voice the regulars, ${from}`);
-            }
-        },
+        call: voiceRegularHandler,
     });
 
     return scriptInfo;

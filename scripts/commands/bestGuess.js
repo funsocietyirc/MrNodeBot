@@ -7,7 +7,14 @@ const scriptInfo = {
 const gen = require('../generators/_nickBestGuess');
 
 module.exports = app => {
-    const bg = async (to, from, text, message) => {
+    /**
+     * Best Guess Handler
+     * @param to
+     * @param from
+     * @param text
+     * @returns {Promise<void>}
+     */
+    const bg = async (to, from, text) => {
         const [nick] = text.split(' ');
         if (!nick) {
             app.say(to, `You are going to have to give me something to work with, ${from}`);
@@ -22,7 +29,6 @@ module.exports = app => {
 
         app.say(to, `There is a ${(result.probability * 100).toFixed(2)}% chance you're looking for ${result.nearestNeighbor.from}, ${from}`);
     };
-
     app.Commands.set('bg', {
         desc: '[Nick] Best attempt to match a nickname',
         access: app.Config.accessLevels.identified,

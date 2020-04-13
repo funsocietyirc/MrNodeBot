@@ -10,7 +10,13 @@ const defaultVueOptions = require('../lib/_defaultVueOptions');
 // Provide User help
 // Commands: help list
 module.exports = app => {
-    const list = (to, from, text, message) => {
+
+    /**
+     * List Handler
+     * @param to
+     * @param from
+     */
+    const listHandler = (to, from) => {
         app.say(from, color.white.bggray.bold(`${app._ircClient.nick} has the following commands available.`));
 
         const out = [];
@@ -23,8 +29,19 @@ module.exports = app => {
         app.say(from, out.join(' -> '));
         if (to !== from) app.say(to, `The list has been sent to you ${from}, please consider messaging me directly next time`);
     };
+    app.Commands.set('list', {
+        desc: 'Verbose list of all commands and descriptions',
+        access: app.Config.accessLevels.guest,
+        call: listHandler,
+    });
 
-    const help = (to, from, text, message) => {
+    /**
+     * Help Handler
+     * @param to
+     * @param from
+     * @param text
+     */
+    const helpHandler = (to, from, text) => {
         if (_.isEmpty(text)) {
             app.say(from, color.white.bggray.bold(`${app._ircClient.nick} has the following commands available.`));
             const keys = [];
@@ -46,6 +63,11 @@ module.exports = app => {
             } else app.say(from, `${cmd} is not a valid command`);
         }
     };
+    app.Commands.set('help', {
+        desc: '[command] provides a short list of commands or details on a specified command',
+        access: app.Config.accessLevels.guest,
+        call: helpHandler,
+    });
 
     /**
      * Command Handler
@@ -66,8 +88,6 @@ module.exports = app => {
             }))
         }, req.vueOptions);
     };
-
-    // Provide Web Route for a command listing
     app.webRoutes.associateRoute('commands', {
         handler: commandHandler,
         desc: 'Commands',
@@ -102,29 +122,12 @@ module.exports = app => {
             results
         }, req.vueOptions);
     };
-
-    // Provide Web Route for script listing
     app.webRoutes.associateRoute('scripts', {
         handler: scriptsHandler,
         desc: 'Scripts',
         path: '/scripts',
         navEnabled: true,
         navPath: '/scripts'
-    });
-
-    // List of available commands
-    app.Commands.set('list', {
-        desc: 'Verbose list of all commands and descriptions',
-        access: app.Config.accessLevels.guest,
-        call: list,
-    });
-
-    // Provide commands and take a command as an argument for more information
-    // Basically a less spammy version of list
-    app.Commands.set('help', {
-        desc: '[command] provides a short list of commands or details on a specified command',
-        access: app.Config.accessLevels.guest,
-        call: help,
     });
 
     // Return the script info

@@ -7,11 +7,17 @@ const scriptInfo = {
 };
 
 module.exports = app => {
-    // Echo Test command
+    /**
+     * Slicc Handler
+     * @param to
+     * @param from
+     * @param text
+     */
+    const sliccHandler = (to, from, text) => app.say(to, slicc(text));
     app.Commands.set('slicc', {
         desc: '[text] Exactly what it sounds like',
         access: app.Config.accessLevels.admin,
-        call: (to, from, text, message) => app.say(to, slicc(text))
+        call: sliccHandler,
     });
 
     // Return the script info

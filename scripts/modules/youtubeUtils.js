@@ -15,8 +15,13 @@ module.exports = app => {
     // Bailout if we do not have database
     if (!Models.YouTubeLink || !apiKey) return scriptInfo;
 
-    // Clean the DB of broken URLS
-    const cleanYoutube = async (to, from, text, message) => {
+    /**
+     * Clean Youtube Handler
+     * @param to
+     * @param from
+     * @returns {Promise<void>}
+     */
+    const cleanYoutubeHandler = async (to, from) => {
         const unattended = !to || !from;
         if (!unattended) app.say(to, `I am now verifying my memory for any faulty moving pictures ${from}..`);
         else logger.info(`Running clean-youtube script`);
@@ -65,7 +70,6 @@ module.exports = app => {
                 }
             }
 
-
             if (!unattended) {
                 app.say(to, `A total of ${count} broken YouTube links were removed, ${from}`);
             }
@@ -80,21 +84,20 @@ module.exports = app => {
                 stack: err.stack || '',
             });
         }
-
     };
 
     // Command to clean URLS
     app.Commands.set('clean-youtube-links', {
         desc: 'clean YouTube links',
         access: app.Config.accessLevels.owner,
-        call: cleanYoutube,
+        call: cleanYoutubeHandler,
     });
 
     const cronTime = new scheduler.RecurrenceRule();
     cronTime.second = 0;
     cronTime.minute = 0;
     cronTime.hour = [0, 4, 8, 12, 16, 20];
-    scheduler.schedule('cleanYoutube', cronTime, cleanYoutube);
+    scheduler.schedule('cleanYoutube', cronTime, cleanYoutubeHandler);
 
     // Return the script info
     return scriptInfo;

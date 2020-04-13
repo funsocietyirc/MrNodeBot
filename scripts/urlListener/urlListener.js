@@ -62,7 +62,11 @@ module.exports = app => {
     // Fetch Diversions
     const diversions = app.Config.features.urls.hasOwnProperty('diversions') && _.isArray(app.Config.features.urls.diversions) ? app.Config.features.urls.diversions : [];
 
-    // Send Response to IRC
+    /**
+     * Send To IRC
+     * @param results
+     * @returns {*}
+     */
     const sendToIrc = (results) => {
         ircUrlFormatter(results, app, {
             ignored: _.includes(announceIgnore, results.to)
@@ -99,7 +103,15 @@ module.exports = app => {
         return results;
     };
 
-    // Individual URL Processing chain
+    /**
+     * Process URL
+     * @param url
+     * @param to
+     * @param from
+     * @param text
+     * @param message
+     * @param is
+     */
     const processUrl = (url, to, from, text, message, is) => {
         const chain = resultsCache.has(url) ? startCachedChain : startChain; // Load appropriate start method based on cache
 
@@ -146,8 +158,16 @@ module.exports = app => {
             });
     };
 
-    // Handler
-    const listener = async (to, from, text, message, is) => {
+    /**
+     * Url Listener
+     * @param to
+     * @param from
+     * @param text
+     * @param message
+     * @param is
+     * @returns {Promise<void>}
+     */
+    const urlListener = async (to, from, text, message, is) => {
         try {
             // Check to see if the user is ignored from url listening, good for bots that repeat
             if (_.includes(userIgnore, from)) return;
@@ -179,18 +199,28 @@ module.exports = app => {
             });
         }
     };
-
-    // List for urls
     app.Listeners.set('url-listener', {
         desc: 'Listen for URLS',
-        call: listener,
+        call: urlListener,
     });
-
-    // Expose the link matcher via a url command
     app.Commands.set('url', {
         desc: 'Validate URL',
         access: app.Config.accessLevels.identified,
-        call: listener,
+        call: urlListener,
+    });
+
+    /**
+     * Clean URL Cache Handler
+     * @param to
+     */
+    const clearUrlCacheHandler = to => {
+        resultsCache.clear();
+        app.say(to, 'The URL Result Cache has been cleared');
+    };
+    app.Commands.set('clear-url-cache', {
+        desc: 'Clear the URL Cache',
+        access: app.Config.accessLevels.admin,
+        call: clearUrlCacheHandler,
     });
 
     // Clear cache every four hours on the 30 min mark
@@ -200,16 +230,6 @@ module.exports = app => {
     }, () => {
         logger.info('Clearing The Url Result Cache');
         resultsCache.clear();
-    });
-
-    // Allow the manual clearing of cache
-    app.Commands.set('clear-url-cache', {
-        desc: 'Clear the URL Cache',
-        access: app.Config.accessLevels.admin,
-        call: (to, from, text, message) => {
-            resultsCache.clear();
-            app.say(to, 'The URL Result Cache has been cleared');
-        },
     });
 
     // Return the script info

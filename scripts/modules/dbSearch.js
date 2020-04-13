@@ -25,7 +25,7 @@ module.exports = app => {
      * @param text
      * @returns {Promise<void>}
      */
-    const total = async (to, from, text) => {
+    const totalHandler = async (to, from, text) => {
         const channel = text.split(' ')[0] || to;
         try {
             const result = await Models.Logging
@@ -48,6 +48,11 @@ module.exports = app => {
             app.say(to, `I am sorry ${from}, something went wrong fetching the total information`);
         }
     };
+    app.Commands.set('total', {
+        desc: '[channel?] Get total amount of recorded messages for a channel',
+        access: app.Config.accessLevels.identified,
+        call: totalHandler,
+    });
 
     /**
      * Random Line Handler
@@ -56,7 +61,7 @@ module.exports = app => {
      * @param text
      * @returns {Promise<void>}
      */
-    const randomLine = async (to, from, text) => {
+    const randomLineHandler = async (to, from, text) => {
         try {
             const result = await Models
                 .Logging
@@ -77,6 +82,11 @@ module.exports = app => {
             app.say(to, `I am sorry ${from}, something went wrong fetching the random line information`);
         }
     };
+    app.Commands.set('random-line', {
+        desc: '[Search Text?] Get a random line from the channel, accepts argument as search string',
+        access: app.Config.accessLevels.identified,
+        call: randomLineHandler,
+    });
 
     /**
      * Search Terms Handler
@@ -85,7 +95,7 @@ module.exports = app => {
      * @param text
      * @returns {Promise<void>}
      */
-    const searchTerms = async (to, from, text,) => {
+    const searchTermsHandler = async (to, from, text,) => {
         let [terms, channel, nicks] = text.split(' ');
 
         channel = channel || to;
@@ -131,12 +141,10 @@ module.exports = app => {
             app.say(to, `I am sorry ${from}, something went wrong fetching the search results`);
         }
     };
-
-    // Total Messages command
     app.Commands.set('search-terms', {
         desc: '[terms] [channel?] - Search Buffer by terms',
         access: app.Config.accessLevels.admin,
-        call: searchTerms,
+        call: searchTermsHandler,
     });
 
     /**
@@ -144,10 +152,9 @@ module.exports = app => {
      * @param to
      * @param from
      * @param text
-     * @param message
      * @returns {Promise<void>}
      */
-    const lastSaid = async (to, from, text, message) => {
+    const lastSaidHandler = async (to, from, text) => {
         // No text was provided
         if (!text) {
             app.say(to, 'You did not enter in a word, silly');
@@ -184,26 +191,10 @@ module.exports = app => {
             app.say(to, `I am sorry ${from}, something went wrong fetching the last said information`);
         }
     };
-
-    // Total Messages command
-    app.Commands.set('total', {
-        desc: '[channel?] Get total amount of recorded messages for a channel',
-        access: app.Config.accessLevels.identified,
-        call: total,
-    });
-
-    // random-line command
-    app.Commands.set('random-line', {
-        desc: '[Search Text?] Get a random line from the channel, accepts argument as search string',
-        access: app.Config.accessLevels.identified,
-        call: randomLine,
-    });
-
-    // last-mentioned command
     app.Commands.set('last-said', {
         desc: '[phrase] Get the last time a phrase was said',
         access: app.Config.accessLevels.identified,
-        call: lastSaid,
+        call: lastSaidHandler,
     });
 
     // Return the script info

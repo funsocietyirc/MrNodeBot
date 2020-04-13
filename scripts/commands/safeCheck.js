@@ -12,7 +12,14 @@ module.exports = app => {
     // We require a google API Key for this command
     if (_.isUndefined(app.Config.apiKeys.google) || !_.isString(app.Config.apiKeys.google) || _.isEmpty(app.Config.apiKeys.google)) return scriptInfo;
 
-    const safeCheck = async (to, from, text, message) => {
+    /**
+     * Safe Check Handler
+     * @param to
+     * @param from
+     * @param text
+     * @returns {Promise<void>}
+     */
+    const safeCheckHandler = async (to, from, text) => {
         // No Data given
         if (!_.isString(text) || _.isEmpty(text)) {
             app.say(to, `I need some more data to work with, ${from}`);
@@ -53,11 +60,10 @@ module.exports = app => {
             app.say(to, err.message ? err.message : `Something went wrong with the Safe Check request, ${from}`);
         }
     };
-
     app.Commands.set('safe-check', {
         desc: '[urls] Safe Check a URL',
         access: app.Config.accessLevels.admin,
-        call: safeCheck,
+        call: safeCheckHandler,
     });
 
     return scriptInfo;

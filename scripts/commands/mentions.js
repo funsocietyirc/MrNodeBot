@@ -11,7 +11,13 @@ const Moment = require('moment');
 module.exports = app => {
     if (!Models.Mention || !Models.Mentioned) return scriptInfo;
 
-    const mentioned = async (to, from, text, message) => {
+    /**
+     * Mention Handler
+     * @param to
+     * @param from
+     * @returns {Promise<void>}
+     */
+    const mentionHandler = async (to, from) => {
         try {
             // Grab the results
             const results = await Models.Mentioned.query(qb => qb
@@ -45,12 +51,10 @@ module.exports = app => {
             app.say(to, `Something went wrong retrieving your mentions ${from}`);
         }
     };
-
-    // Register Mention Command
     app.Commands.set('mentions', {
         desc: 'Get the last 10 mentions',
         access: app.Config.accessLevels.identified,
-        call: mentioned,
+        call: mentionHandler,
     });
 
     return scriptInfo;

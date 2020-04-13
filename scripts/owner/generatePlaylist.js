@@ -13,7 +13,14 @@ const short = require('../lib/_getShortService')();
 
 module.exports = app => {
 
-    const mashup = async (to, from, text, message) => {
+    /**
+     * Mashup Handler
+     * @param to
+     * @param from
+     * @param text
+     * @returns {Promise<void>}
+     */
+    const mashupHandler = async (to, from, text) => {
         // No text provided
         if (_.isUndefined(text) || !_.isString(text) || _.isEmpty(text)) {
             app.say(to, `A nick or nicks are required to generate a YouTube mashup`);
@@ -56,9 +63,20 @@ module.exports = app => {
             app.say(to, `I am sorry, ${from}, something went very, very wrong`);
         }
     };
+    app.Commands.set('generate-youtube-mashup', {
+        desc: '[nick1] [nick2?] [...] Generate a mashup youtube playlist (3 nicks max)',
+        access: app.Config.accessLevels.admin,
+        call: mashupHandler,
+    });
 
-    // Send Announcement Over IRC
-    const generate = async (to, from, text, message) => {
+    /**
+     * Generate Handler
+     * @param to
+     * @param from
+     * @param text
+     * @returns {Promise<void>}
+     */
+    const generateHandler = async (to, from, text) => {
         // No text provided
         if (_.isUndefined(text) || !_.isString(text) || _.isEmpty(text)) {
             app.say(to, `A nick or nicks are required to generate a YouTube playlist`);
@@ -91,85 +109,86 @@ module.exports = app => {
             app.say(to, `I am sorry, ${from}, something went very, very wrong`);
         }
     };
-    // Handle IRC Command
     app.Commands.set('generate-youtube-playlist', {
         desc: '[nick1] [nick2?] [...] Generate a playlist with the last 25 results',
         access: app.Config.accessLevels.admin,
-        call: generate,
-    });
-    app.Commands.set('generate-youtube-mashup', {
-        desc: '[nick1] [nick2?] [...] Generate a mashup youtube playlist (3 nicks max)',
-        access: app.Config.accessLevels.admin,
-        call: mashup,
+        call: generateHandler,
     });
 
     // No SocketIO detected, or feature is disabled
     if (app.WebServer.socketIO && !_.isEmpty(app.Config.features.watchYoutube) && app.Config.features.watchYoutube) {
+        /**
+         * TV Watch Seed Handler
+         * @param to
+         * @param from
+         * @param text
+         * @returns {Promise<void>}
+         */
+        const tvWatchSeedHandler = async (to, from, text) => {
+            const activeChannelFormat = chanName => (chanName !== null ?
+                `/${chanName.toLowerCase()}` :
+                '/');
+            // No text provided
+            if (_.isUndefined(text) || !_.isString(text) || _.isEmpty(text)) {
+                app.say(to, `A nick or nicks are required to seed the tv station`);
+                return;
+            }
+            try {
+                const textArr = _.sampleSize(_.uniq(text.split(' ')), 2);
+                tracks = [];
+
+                for (const dj of textArr) {
+                    // Fetch Results
+                    const dbResults = await Models
+                        .YouTubeLink
+                        .query(qb =>
+                            qb
+                                .select(['from', 'to', 'url', 'timestamp', 'title', 'restrictions', 'embeddable'])
+                                .where('from', 'like', dj)
+                                .andWhere('restrictions', false)
+                                .andWhere('embeddable', true)
+                                .orderByRaw('rand()')
+                                .limit(100)
+                        ).fetchAll();
+
+                    // Format Results
+                    tracks.push(_.uniqBy(dbResults.toJSON(), 'url'));
+                }
+
+                _(tracks)
+                    .flattenDeep()
+                    .shuffle()
+                    .sampleSize(5)
+                    .each(x => {
+                        // Send to socket
+                        app.WebServer.socketIO.of('/youtube').to(activeChannelFormat(to)).emit('message', Object.assign({}, {
+                            to,
+                            from: x.from,
+                            timestamp: Date.now(),
+                            seekTime: 0,
+                            video: {
+                                videoTitle: x.title,
+                                key: x.url,
+                            },
+                        }));
+                    });
+
+                app.say(to, `I have seeded the watch channel with some sick beats, ${from}`);
+            }
+            catch (err) {
+                logger.error('Something went wrong seeding the tv station', {
+                    stack: err.stack,
+                    message: err.message,
+                });
+                app.say(to, `I am sorry, ${from}, something went very, very wrong`);
+            }
+        };
         app.Commands.set('tv-watch-seed', {
             desc: '[nick1] [nick2?] [...] Seed a channels videos on watch-youtube',
             access: app.Config.accessLevels.admin,
-            call: async (to, from, text, message) => {
-                const activeChannelFormat = chanName => (chanName !== null ?
-                    `/${chanName.toLowerCase()}` :
-                    '/');
-                // No text provided
-                if (_.isUndefined(text) || !_.isString(text) || _.isEmpty(text)) {
-                    app.say(to, `A nick or nicks are required to seed the tv station`);
-                    return;
-                }
-                try {
-                    const textArr = _.sampleSize(_.uniq(text.split(' ')), 2);
-                    tracks = [];
-                    for (const dj of textArr) {
-                        // Fetch Results
-                        const dbResults = await Models
-                            .YouTubeLink
-                            .query(qb =>
-                                qb
-                                    .select(['from', 'to', 'url', 'timestamp', 'title', 'restrictions', 'embeddable'])
-                                    .where('from', 'like', dj)
-                                    .andWhere('restrictions', false)
-                                    .andWhere('embeddable', true)
-                                    .orderByRaw('rand()')
-                                    .limit(100)
-                            ).fetchAll();
-
-                        // Format Results
-                        tracks.push(_.uniqBy(dbResults.toJSON(), 'url'));
-
-                    }
-
-                    _(tracks)
-                        .flattenDeep()
-                        .shuffle()
-                        .sampleSize(5)
-                        .each(x => {
-                            // Send to socket
-                            app.WebServer.socketIO.of('/youtube').to(activeChannelFormat(to)).emit('message', Object.assign({}, {
-                                to,
-                                from: x.from,
-                                timestamp: Date.now(),
-                                seekTime: 0,
-                                video: {
-                                    videoTitle: x.title,
-                                    key: x.url,
-                                },
-                            }));
-                        });
-
-                    app.say(to, `I have seeded the watch channel with some sick beats, ${from}`);
-                }
-                catch (err) {
-                    logger.error('Something went wrong seeding the tv station', {
-                        stack: err.stack,
-                        message: err.message,
-                    });
-                    app.say(to, `I am sorry, ${from}, something went very, very wrong`);
-                }
-            },
+            call: tvWatchSeedHandler,
         });
     }
-
 
     return scriptInfo;
 };

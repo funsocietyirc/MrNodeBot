@@ -14,7 +14,13 @@ const revolverRounds = 6;
 module.exports = app => {
     let round;
 
-    const lucky = async (to, from, text, message) => {
+    /**
+     * Lucky Handler
+     * @param to
+     * @param from
+     * @returns {Promise<void>}
+     */
+    const lucky = async (to, from) => {
         // Initialize Player
         if (!round.has(from)) round.set(from, revolverRounds);
 
@@ -77,17 +83,14 @@ module.exports = app => {
             }
         }
     };
-
-    const onLoad = () => round = new Map();
-
-    const onUnload = () => round.clear();
-
-    // Hello Test command
     app.Commands.set('lucky', {
         desc: 'Are you feeling lucky punk',
         access: app.Config.accessLevels.guest,
         call: lucky,
     });
+
+    const onLoad = () => round = new Map();
+    const onUnload = () => round.clear();
 
     // Return the script info
     return Object.assign({}, scriptInfo, {

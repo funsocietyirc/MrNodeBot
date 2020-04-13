@@ -13,7 +13,12 @@ const logger = require('../../lib/logger');
 const ircTypography = require('../lib/_ircTypography');
 
 module.exports = app => {
-    const fmlLine = async (to, from, text, message) => {
+    /**
+     * FML Line handler
+     * @param to
+     * @returns {Promise<void>}
+     */
+    const fmlLine = async to => {
         try {
             const result = await fml();
             if (!result) {
@@ -33,14 +38,18 @@ module.exports = app => {
             app.say(to, 'Something went wrong with the FML API');
         }
     };
-
     app.Commands.set('fml', {
         desc: 'Get a random FML quote',
         access: app.Config.accessLevels.identified,
         call: fmlLine,
     });
 
-    const tifuLine = async (to, from, text, message) => {
+    /**
+     * TIFU Handler
+     * @param to
+     * @returns {Promise<void>}
+     */
+    const tifuLine = async to => {
         try {
             const result = await tifu();
             if (!result) {
@@ -60,14 +69,18 @@ module.exports = app => {
             app.say(to, 'Something went wrong with the TIFU API');
         }
     };
-
     app.Commands.set('tifu', {
         desc: 'Get a random TIFU quote',
         access: app.Config.accessLevels.identified,
         call: tifuLine,
     });
 
-    const tilLine = async (to, from, text, message) => {
+    /**
+     * TIL Handler
+     * @param to
+     * @returns {Promise<void>}
+     */
+    const tilLine = async to => {
         try {
             const result = await til();
             if (!result) {
@@ -87,7 +100,6 @@ module.exports = app => {
             app.say(to, 'Something went wrong with the TIL API');
         }
     };
-
     app.Commands.set('til', {
         desc: 'Get a random TIL quote',
         access: app.Config.accessLevels.identified,

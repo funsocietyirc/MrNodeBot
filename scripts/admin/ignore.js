@@ -11,57 +11,75 @@ const storage = require('node-persist');
 // Users on the mute list are not acknowledged by the bot
 // Commands: mute un-mute Ignored
 module.exports = app => {
-    // Mute a user
+    /**
+     * Mute Handler
+     * @param to
+     * @param from
+     * @param text
+     * @returns {Promise<void>}
+     */
+    const muteHandler = async (to, from, text) => {
+        if (!text) {
+            app.say(from, 'You should probably specify who it is you would like to mute');
+            return;
+        }
+
+        const [nick] = text.split(' ');
+        const lowerCaseNick = _.toLower(nick);
+
+        if (!_.includes(app.Admins, lowerCaseNick) && !_.includes(app.Ignore, lowerCaseNick)) {
+            app.say(to, `${nick} has been muted. May there be peace.`);
+            app.Ignore.push(lowerCaseNick);
+            storage.setItem('ignored', app.Ignore);
+        } else app.say(to, `${nick} has either already been muted, or is an Administrator and is beyond my control`);
+    };
     app.Commands.set('mute', {
         desc: 'Mute a user',
         access: app.Config.accessLevels.admin,
-        call: async (to, from, text, message) => {
-            if (!text) {
-                app.say(from, 'You should probably specify who it is you would like to mute');
-                return;
-            }
-
-            const [nick] = text.split(' ');
-            const lowerCaseNick = _.toLower(nick);
-
-            if (!_.includes(app.Admins, lowerCaseNick) && !_.includes(app.Ignore, lowerCaseNick)) {
-                app.say(to, `${nick} has been muted. May there be peace.`);
-                app.Ignore.push(lowerCaseNick);
-                storage.setItem('ignored', app.Ignore);
-            } else app.say(to, `${nick} has either already been muted, or is an Administrator and is beyond my control`);
-        },
+        call: muteHandler
     });
 
-    // Unmute a user
+    /**
+     * Unmute Handler
+     * @param to
+     * @param from
+     * @param text
+     * @returns {Promise<void>}
+     */
+    const unmuteHandler = async (to, from, text) => {
+        if (!text) {
+            app.say(to, 'You need to specify a user');
+            return;
+        }
+
+        const [nick] = text.split(' ');
+        const lowerCaseNick = _.toLower(nick);
+
+        if (_.includes(app.Ignore, lowerCaseNick)) {
+            app.say(to, `${nick} has been unmuted`);
+            app.Ignore = _.without(app.Ignore, lowerCaseNick);
+            storage.setItem('ignored', app.Ignore);
+        } else app.say(to, `${nick} is not on the mute list`);
+    };
     app.Commands.set('unmute', {
         desc: 'Un-mute a user',
         access: app.Config.accessLevels.admin,
-        call: async (to, from, text, message) => {
-            if (!text) {
-                app.say(to, 'You need to specify a user');
-                return;
-            }
-
-            const [nick] = text.split(' ');
-            const lowerCaseNick = _.toLower(nick);
-
-            if (_.includes(app.Ignore, lowerCaseNick)) {
-                app.say(to, `${nick} has been unmuted`);
-                app.Ignore = _.without(app.Ignore, lowerCaseNick);
-                storage.setItem('ignored', app.Ignore);
-            } else app.say(to, `${nick} is not on the mute list`);
-        },
+        call: unmuteHandler
     });
 
-    // Get a list of muted users
+    /**
+     * Ignored Handler
+     * @param to
+     */
+    const ignoredHandler = to => {
+        app.say(to, '--- Ignore list ---');
+        app.Ignore.forEach(user => app.say(to, _.upperFirst(user)));
+        app.say(to, `For a total of: ${app.Ignore.length}`);
+    };
     app.Commands.set('ignored', {
         desc: 'The Ignore list of muted users',
         access: app.Config.accessLevels.admin,
-        call: (to, from, text, message) => {
-            app.say(to, '--- Ignore list ---');
-            app.Ignore.forEach(user => app.say(to, _.upperFirst(user)));
-            app.say(to, `For a total of: ${app.Ignore.length}`);
-        },
+        call: ignoredHandler,
     });
 
     // Return the script info

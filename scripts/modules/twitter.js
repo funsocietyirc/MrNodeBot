@@ -7,8 +7,13 @@ const logger = require('../../lib/logger');
 module.exports = app => {
     if (!app._twitterClient) return scriptInfo;
 
-    // Tweet a message
-    const tweetCmd = (to, from, text, message) => {
+    /**
+     * Tweet Command Handler
+     * @param to
+     * @param from
+     * @param text
+     */
+    const tweetCmdHandler = (to, from, text) => {
         if (!app._twitterClient) return;
 
         if (!text) {
@@ -36,7 +41,7 @@ module.exports = app => {
     app.Commands.set('tweet', {
         desc: '[message] - Send a message to the Twittersphere',
         access: app.Config.accessLevels.admin,
-        call: tweetCmd,
+        call: tweetCmdHandler,
     });
 
     // Return the script info

@@ -10,7 +10,12 @@ const logger = require('../../lib/logger');
 const ircTypography = require('../lib/_ircTypography');
 
 module.exports = app => {
-    const showerThought = async (to, from, text, message) => {
+    /**
+     * Shower Thought Handler
+     * @param to
+     * @returns {Promise<void>}
+     */
+    const showerThoughtHandler = async to => {
         try {
             const result = await gen();
             app.say(to, !result ?
@@ -24,11 +29,10 @@ module.exports = app => {
             app.say(to, 'Something went wrong with the Reddit API');
         }
     };
-
     app.Commands.set('shower-thought', {
         desc: 'Get a random Shower thought',
         access: app.Config.accessLevels.identified,
-        call: showerThought,
+        call: showerThoughtHandler,
     });
 
     return scriptInfo;

@@ -6,16 +6,22 @@ const scriptInfo = {
 
 module.exports = app => {
     if (!app.WebServer) return scriptInfo;
+
+    /**
+     * Images Handler
+     * @param to
+     */
+    const imagesHandler = to => {
+        if (!app.WebServer) return;
+        const path = app.WebServer.namedRoutes.build('urls', {
+            channel: to,
+        });
+        app.say(to, `You can view all images from ${to} at ${app.Config.express.address}${path}`);
+    };
     app.Commands.set('images', {
         desc: 'Show users the link to images',
         access: app.Config.accessLevels.identified,
-        call: (to, from, text, message) => {
-            if (!app.WebServer) return;
-            const path = app.WebServer.namedRoutes.build('urls', {
-                channel: to,
-            });
-            app.say(to, `You can view all images from ${to} at ${app.Config.express.address}${path}`);
-        },
+        call: imagesHandler,
     });
     return scriptInfo;
 };

@@ -10,7 +10,11 @@ const mapSearch = require('../../helpers').MapSearch;
 module.exports = app => {
     const tokens = new Map();
 
-    // Register Route with Application
+    /**
+     * Expose Route
+     * @param req
+     * @param res
+     */
     const exposeRoute = (req, res) => {
         const token = req.params.token;
         const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
@@ -36,7 +40,12 @@ module.exports = app => {
         name: 'expose',
     });
 
-    const expose = (to, from, text, message) => {
+    /**
+     * Expose Handler
+     * @param to
+     * @param from
+     */
+    const exposeHandler = (to, from) => {
         // Make sure we do not already have the token
         if (mapSearch(tokens, to)) {
             app.say(to, `${to} is already exposed ${from}`);
@@ -66,7 +75,7 @@ module.exports = app => {
     app.Commands.set('expose', {
         desc: 'See who is listening to your channel via a link callback',
         access: app.Config.accessLevels.owner,
-        call: expose,
+        call: exposeHandler,
     });
 
     return scriptInfo;

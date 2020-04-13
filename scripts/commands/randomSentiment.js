@@ -13,8 +13,13 @@ module.exports = async app => {
     // Database not available
     if (!Models.Upvote) return scriptInfo;
 
-    // Get a random sentiment
-    const randomSentiment = async (to, from, text, message) => {
+    /**
+     * Random Sentiment Handler
+     * @param to
+     * @param from
+     * @returns {Promise<void>}
+     */
+    const randomSentimentHandler = async (to, from) => {
         try {
             // Grab results
             const result = await Models.Upvote.query(qb => qb
@@ -43,12 +48,10 @@ module.exports = async app => {
             app.say(to, `Something went wrong finding a random sentiment, ${from}`);
         }
     };
-
-    // random-sentiment command
     app.Commands.set('random-sentiment', {
         desc: 'Get a random sentiment',
         access: app.Config.accessLevels.identified,
-        call: randomSentiment,
+        call: randomSentimentHandler,
     });
 
     return scriptInfo;

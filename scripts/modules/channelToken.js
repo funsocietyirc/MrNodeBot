@@ -16,13 +16,12 @@ module.exports = app => {
     // Hold the token model
     const tokenModel = Models.Token;
 
-    // Go through the users tokens and remove them if they are over a week old
-    const cleanTokens = scheduler.schedule('cleanTokens', {
-        hour: 0,
-        minute: 0,
-    }, async () => {
+    /**
+     * Clean tokens Schedule
+     * @returns {Promise<void>}
+     */
+    const cleanTokensSchedule = async () => {
         const now = moment();
-
         try {
             const results = await tokenModel.fetchAll();
             for (const result of results) {
@@ -37,9 +36,18 @@ module.exports = app => {
                 stack: err.stack || '',
             });
         }
-    });
+    };
+    const cleanTokens = scheduler.schedule('cleanTokens', {
+        hour: 0,
+        minute: 0,
+    }, cleanTokensSchedule);
 
-    // API End point, get a nick verified by channel token
+    /**
+     * Get Nick By Token API
+     * @param req
+     * @param res
+     * @returns {Promise<*>}
+     */
     const getNickByTokenApi = async (req, res) => {
         const error = {
             status: 'error',
@@ -73,8 +81,6 @@ module.exports = app => {
             res.json(error);
         }
     };
-
-    // Register upload Handler
     app.webRoutes.associateRoute('getNickByToken', {
         handler: getNickByTokenApi,
         desc: 'Handle File Upload',
@@ -82,8 +88,14 @@ module.exports = app => {
         verb: 'post',
     });
 
-    // Register a user to a token
-    const registerToken = async (to, from, text, message) => {
+
+    /**
+     * Register Token Handler
+     * @param to
+     * @param from
+     * @returns {Promise<void>}
+     */
+    const registerTokenHandler = async (to, from) => {
         // Only accept messages from channel
         if (to === from) {
             app.say(to, 'You must be in a channel to request a token');
@@ -134,12 +146,10 @@ module.exports = app => {
             app.say(to, `Something went wrong generating your Web Token, ${from}`);
         }
     };
-
-    // Register token
     app.Commands.set('token', {
         desc: 'Get a unique token for uploading images to file',
         access: app.Config.accessLevels.identified,
-        call: registerToken,
+        call: registerTokenHandler,
     });
 
     return scriptInfo;

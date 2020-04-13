@@ -40,7 +40,7 @@ module.exports = app => {
      * @param message
      * @returns {Promise<void>}
      */
-    const covid19Canada = async (to, from, text) => {
+    const covid19CanadaHandler = async (to, from, text) => {
         try {
             const results = await corona.covid19CanadaResults(text);
 
@@ -109,10 +109,17 @@ module.exports = app => {
     app.Commands.set('covid19-canada', {
         desc: 'COVID-19 Numbers Provided By Canadian Government',
         access: app.Config.accessLevels.guest,
-        call: covid19Canada,
+        call: covid19CanadaHandler,
     });
 
-    const covid19 = async(to, from, text) => {
+    /**
+     * Covid 19 Handler
+     * @param to
+     * @param from
+     * @param text
+     * @returns {Promise<void>}
+     */
+    const covid19Handler = async(to, from, text) => {
         // Split on comma
         const [region, city] = text.split(',');
 
@@ -208,11 +215,10 @@ module.exports = app => {
         // Say Output
         app.say(to, output.text);
     };
-
     app.Commands.set('covid19', {
         desc: '[Region]?, [City/Province]? - COVID-19 Facts Provided By John Hopkins',
         access: app.Config.accessLevels.guest,
-        call: covid19,
+        call: covid19Handler,
     });
 
     /**
@@ -223,7 +229,7 @@ module.exports = app => {
      * @param message
      * @returns {Promise<void>}
      */
-    const covid19Stats = async (to, from, text) => {
+    const covid19StatsHandler = async (to, from, text) => {
         // Split on comma
         const [region, province] = text.split(',');
 
@@ -263,14 +269,10 @@ module.exports = app => {
         // Say Output
         app.say(to, output.text);
     };
-
-    /**
-     * Export Command
-     */
     app.Commands.set('covid19-stats', {
         desc: '[Region]?, [City]?  - COVID-19 Stats Compiled daily by https://covid19.health',
         access: app.Config.accessLevels.guest,
-        call: covid19Stats,
+        call: covid19StatsHandler,
     });
 
     /**
@@ -281,7 +283,7 @@ module.exports = app => {
      * @param message
      * @returns {Promise<void>}
      */
-    const covidRisk = async (to, from, text) => {
+    const covidRiskHandler = async (to, from, text) => {
         try {
             const age = _.parseInt(text);
             if (!_.isNumber(age) || age > 110 || age < 0) {
@@ -326,7 +328,7 @@ module.exports = app => {
     app.Commands.set('covid19-risk', {
         desc: '[age] - COVID-19 Risk by age based on computer model provided by https://www.desmos.com/calculator/v0zif7tflm',
         access: app.Config.accessLevels.guest,
-        call: covidRisk,
+        call: covidRiskHandler,
     });
 
     // Return the script info

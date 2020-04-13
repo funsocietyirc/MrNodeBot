@@ -11,8 +11,14 @@ module.exports = app => {
     // Database not available
     if (!Models.Upvote) { return scriptInfo; }
 
-    // Purge all results for a specified channel
-    const popularityClear = async (to, from, channel, message) => {
+    /**
+     * Popularity Clear Handler
+     * @param to
+     * @param from
+     * @param channel
+     * @returns {Promise<void>}
+     */
+    const popularityClearHandler = async (to, from, channel) => {
         // No Channel Given
         if (!channel) {
             app.say(to, 'Please provide me a channel to clear');
@@ -31,15 +37,20 @@ module.exports = app => {
             app.say(to, 'An Error has occurred with your popularity-clear command');
         }
     };
-    // Bind purge command
     app.Commands.set('popularity-clear', {
         desc: '[channel] - Remove popularity information for specified channel',
         access: app.Config.accessLevels.owner,
-        call: popularityClear,
+        call: popularityClearHandler,
     });
 
-    // Purge results for a nick - channel match
-    const popularityPurge = async (to, from, text, message) => {
+    /**
+     * Popularity Purge Handler
+     * @param to
+     * @param from
+     * @param text
+     * @returns {Promise<void>}
+     */
+    const popularityPurgeHandler = async (to, from, text) => {
         // Seperate Input
         const [nick, channel] = text.split(' ');
 
@@ -61,12 +72,10 @@ module.exports = app => {
             app.say(to, 'An Error has occurred with your popularity-clear command');
         }
     };
-
-    // Bind Command
     app.Commands.set('popularity-purge', {
         desc: '[nick] [channel] - Remove a users popularity information for specified channel',
         access: app.Config.accessLevels.owner,
-        call: popularityPurge,
+        call: popularityPurgeHandler,
     });
 
     // Return the script info

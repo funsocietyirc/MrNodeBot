@@ -16,7 +16,7 @@ module.exports = app => {
      * @param to
      * @param from
      */
-    const getOrigins = (to, from) => {
+    const originsHandler = (to, from) => {
         // Grab current up-time in hours
         const procUptime = process.uptime() / 60 / 60;
 
@@ -45,13 +45,18 @@ module.exports = app => {
         app.say(from, out);
         if (to !== from) app.say(to, `I have private messaged you my origin story, ${from}`);
     };
+    app.Commands.set('origins', {
+        desc: 'My origin story',
+        access: app.Config.accessLevels.guest,
+        call: originsHandler,
+    });
 
     /**
      * Get the version
      * @param to
      * @param from
      */
-    const getVersion = async (to, from) => {
+    const versionHandler = async (to, from) => {
         try {
             const commits = await gitlogPromise(app.Config.gitLog);
             // Exit on error
@@ -72,17 +77,10 @@ module.exports = app => {
             app.say(to, `My current state of mind is ${app.Config.project.version}, ${from}`);
         }
     };
-
-    app.Commands.set('origins', {
-        desc: 'My origin story',
-        access: app.Config.accessLevels.guest,
-        call: getOrigins,
-    });
-
     app.Commands.set('version', {
         desc: 'My Version',
         access: app.Config.accessLevels.guest,
-        call: getVersion,
+        call: versionHandler,
     });
 
     return scriptInfo;

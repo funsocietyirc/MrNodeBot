@@ -31,8 +31,18 @@ module.exports = app => {
     const allowRecursion = _.getBoolean(_.get(app.Config, 'features.seen.allowRecursion', true), true);
     const maxIteration = _.getNumber(_.get(app.config, 'features.seen.recursionLimit', 5), 5);
 
-    // Show activity of given host mask
-    const seen = async (to, from, text, message, lastLine, iteration = 0, descending = true) => {
+    /**
+     * Seen handler
+     * @param to
+     * @param from
+     * @param text
+     * @param message
+     * @param lastLine
+     * @param iteration
+     * @param descending
+     * @returns {Promise<void>}
+     */
+    const seenHandler = async (to, from, text, message, lastLine, iteration = 0, descending = true) => {
         if (iteration >= maxIteration) return;
 
         // Gate
@@ -171,19 +181,15 @@ module.exports = app => {
             app.say(to, `Something went wrong finding the active state for ${text}, ${from}`);
         }
     };
-
-    // Command
     app.Commands.set('seen', {
         desc: '[nick!user@host channel] shows the last activity of the user',
         access: app.Config.accessLevels.identified,
-        call: seen,
+        call: seenHandler,
     });
-
-    // Command
     app.Commands.set('first-seen', {
         desc: '[nick!user@host channel] shows the first activity of the user',
         access: app.Config.accessLevels.identified,
-        call: (to, from, text, message) => seen(to, from, text, message, null, 0, false),
+        call: (to, from, text, message) => seenHandler(to, from, text, message, null, 0, false),
     });
 
     // Return the script info
