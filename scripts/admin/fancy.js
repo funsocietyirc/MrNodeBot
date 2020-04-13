@@ -6,7 +6,7 @@ const scriptInfo = {
     createdBy: 'IronY',
 };
 
-module.exports = (app) => {
+module.exports = app => {
     // Echo Test command
     app.Commands.set('fancy', {
         desc: '[text] Exactly what it sounds like',

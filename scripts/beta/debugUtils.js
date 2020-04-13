@@ -22,7 +22,7 @@ const simpleString = object =>
         .replace(/(\w+): ([\w :]+GMT\+[\w \(\)]+),/ig, '$1: new Date("$2"),')
         .replace(/(\S+): ,/ig, '$1: null,');
 
-module.exports = (app) => {
+module.exports = app => {
     // Evaluate
     app.Commands.set('eval', {
         desc: '[valid js] will return value to console',

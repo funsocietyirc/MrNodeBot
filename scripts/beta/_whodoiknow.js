@@ -4,7 +4,7 @@ const scriptInfo = {
     createdBy: 'IronY',
 };
 
-module.exports = (app) => {
+module.exports = app => {
     const getChannelData = async (channel) => {
         if(app._ircClient.isInChannel(channel)) {
             return app._ircClient._getChannelData(channel);

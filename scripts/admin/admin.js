@@ -29,7 +29,7 @@ i18next.addResources('en', 'admin', {
 
 // Administrator List manipulation
 // Commands: admin [list add del help]
-module.exports = (app) => {
+module.exports = app => {
     const admin = async (to, from, text, message) => {
         const textArray = text.split(' ');
         let [cmd, user] = textArray;

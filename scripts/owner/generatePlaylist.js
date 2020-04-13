@@ -11,7 +11,7 @@ const Models = require('funsociety-bookshelf-model-loader');
 const initialLink = 'http://www.youtube.com/watch_videos?video_ids=';
 const short = require('../lib/_getShortService')();
 
-module.exports = (app) => {
+module.exports = app => {
 
     const mashup = async (to, from, text, message) => {
         // No text provided

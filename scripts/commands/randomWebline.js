@@ -6,7 +6,7 @@ const scriptInfo = {
 
 const gen = require('../generators/_randomWebline');
 
-module.exports = (app) => {
+module.exports = app => {
     app.Commands.set('random-webline', {
         desc: 'Get a random web line',
         access: app.Config.accessLevels.identified,

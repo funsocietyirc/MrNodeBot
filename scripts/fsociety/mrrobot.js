@@ -9,7 +9,7 @@ const logger = require('../../lib/logger');
 const scheduler = require('../../lib/scheduler');
 const ircTypography = require('../lib/_ircTypography');
 
-module.exports = (app) => {
+module.exports = app => {
     // Do not load module if we have no database
     if (!Models.MrRobotQuotes) { return scriptInfo; }
 

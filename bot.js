@@ -308,10 +308,11 @@ class MrNodeBot {
         }
         ).each((value, key) => this._ircClient.addListener(key, value));
 
-        for (const x of this.OnConnected) {
+        for (const connectedHandler of this.OnConnected) {
+            logger.info(`Processing connected handler for ${connectedHandler[0]}`);
             try {
-                if(_.isFunction(x.call)) {
-                    await x.call();
+                if(_.isFunction(connectedHandler[1].call)) {
+                    await connectedHandler[1].call();
                 }
             } catch (err) {
                 this._errorHandler('Error in onConnected', err);

@@ -6,7 +6,7 @@ const scriptInfo = {
 
 const _ = require('lodash');
 
-module.exports = (app) => {
+module.exports = app => {
     // Part Channel
     const part = (to, from, text, message) => {
         if (_.isEmpty(text)) {

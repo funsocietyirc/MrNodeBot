@@ -8,7 +8,7 @@ const logger = require('../../lib/logger');
 const Models = require('funsociety-bookshelf-model-loader');
 const Moment = require('moment');
 
-module.exports = (app) => {
+module.exports = app => {
     if (!Models.Mention || !Models.Mentioned) return scriptInfo;
 
     const mentioned = async (to, from, text, message) => {

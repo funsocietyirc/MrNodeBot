@@ -11,7 +11,7 @@ const logger = require('../../lib/logger');
 
 const revolverRounds = 6;
 
-module.exports = (app) => {
+module.exports = app => {
     let round;
 
     const lucky = async (to, from, text, message) => {

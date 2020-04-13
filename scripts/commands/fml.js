@@ -12,7 +12,7 @@ const til = require('../generators/_tilLine');
 const logger = require('../../lib/logger');
 const ircTypography = require('../lib/_ircTypography');
 
-module.exports = (app) => {
+module.exports = app => {
     const fmlLine = async (to, from, text, message) => {
         try {
             const result = await fml();

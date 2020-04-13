@@ -10,7 +10,7 @@ const logger = require('../../lib/logger');
 
 const pattern = /\B@((?!\w*\.\w)[\w\[\]|\-`\\{}\^]{1,16}(?!\w))/gi;
 
-module.exports = (app) => {
+module.exports = app => {
     // Assure the database and logging table exists
     if (!Models.Mention || !Models.Mentioned) return scriptInfo;
     // Parse for mentions

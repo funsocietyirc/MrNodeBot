@@ -7,7 +7,7 @@ const scriptInfo = {
 const randToken = require('rand-token');
 const mapSearch = require('../../helpers').MapSearch;
 
-module.exports = (app) => {
+module.exports = app => {
     const tokens = new Map();
 
     // Register Route with Application

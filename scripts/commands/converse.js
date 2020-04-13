@@ -5,7 +5,7 @@ const scriptInfo = {
 };
 const gen = require('../../lib/chatBotLine');
 
-module.exports = (app) => {
+module.exports = app => {
     const line = async (to, from, text, message) => {
         const result = await gen(text);
         app.say(to, `${from}, ${result}`);

@@ -10,7 +10,7 @@ const _ = require('lodash');
 
 const sjwLine = require('../generators/_sjwInsultLine');
 
-module.exports = (app) => {
+module.exports = app => {
     const sjw = async (to, from, text, message) => {
         // Report back to IRC
         const line = await sjwLine();

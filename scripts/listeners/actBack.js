@@ -11,7 +11,7 @@ const scriptInfo = {
 };
 const _ = require('lodash');
 
-module.exports = (app) => {
+module.exports = app => {
     const actBack = scriptInfo.actions.actBack = (from, to, text, message) => {
         // Gate
         if (!_.isString(text) || _.isEmpty(text)) return;

@@ -14,7 +14,7 @@ const defaultVueOptions = require('../lib/_defaultVueOptions');
  Keep Track of quotes
  Commands: quote-add quote-del quote
  * */
-module.exports = (app) => {
+module.exports = app => {
     const addQuote = async (to, from, text, message) => {
         try {
             const normalizedText = text.trim();

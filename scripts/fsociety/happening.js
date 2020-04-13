@@ -9,7 +9,7 @@ const moment = require('../../lib/moment');
 const scheduler = require('../../lib/scheduler.js');
 
 // Extend moment with countdown
-module.exports = (app) => {
+module.exports = app => {
     // No Configuration available, bail
     if (!_.isArray(app.Config.features.countdowns)) return scriptInfo;
 

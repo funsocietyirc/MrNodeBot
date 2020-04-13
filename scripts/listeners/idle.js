@@ -13,7 +13,7 @@ const Models = require('funsociety-bookshelf-model-loader');
 const scheduler = require('../../lib/scheduler');
 
 // New and Improved
-module.exports = (app) => {
+module.exports = app => {
     // Gate
     if (!Models.Logging ||
         _.isUndefined(app.Config.features.idleChat) ||

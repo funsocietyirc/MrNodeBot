@@ -14,7 +14,7 @@ const logger = require('../../lib/logger');
 const getShort = require('../lib/_getShortService')();
 const extractUrls = require('../../lib/extractUrls');
 
-module.exports = (app) => {
+module.exports = app => {
     // No Database available
     if (!Models.RssFeed || !Models.RssChannelSubscription) return scriptInfo;
 

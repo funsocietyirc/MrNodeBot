@@ -14,10 +14,15 @@ const Models = require('funsociety-bookshelf-model-loader');
 
 const sampleSize = 1000;
 
-module.exports = (app) => {
+module.exports = app => {
     if (!Models.Logging) return scriptInfo;
 
-    const getResults = async (nick) => {
+    /**
+     * Get Results
+     * @param nick
+     * @returns {Promise<*>}
+     */
+    const getResults = async nick => {
         const results = await Models.Logging
             .query(qb =>
                 qb
@@ -30,8 +35,14 @@ module.exports = (app) => {
         return getSexGuess(results.pluck('text').join(' '));
     };
 
-
-    const displaySexGuess = async (to, from, text, message) => {
+    /**
+     * Display Sex guess
+     * @param to
+     * @param from
+     * @param text
+     * @returns {Promise<void>}
+     */
+    const displaySexGuess = async (to, from, text) => {
         let [nick] = text.split(' ');
         nick = nick || from;
 
@@ -58,8 +69,6 @@ module.exports = (app) => {
             app.say(to, err);
         }
     };
-
-    // Provide a OnConnected provider, this will fire when the bot connects to the network
     app.Commands.set('gender', {
         call: displaySexGuess,
         desc: '[Nick?] Guess the sex of the user',

@@ -11,7 +11,7 @@ const apiKey = require('../../config').apiKeys.google;
 const scheduler = require('../../lib/scheduler');
 
 // Display a list of images in the Web Front end
-module.exports = (app) => {
+module.exports = app => {
     // Bailout if we do not have database
     if (!Models.YouTubeLink || !apiKey) return scriptInfo;
 

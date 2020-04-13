@@ -24,7 +24,7 @@ const numOfDaysDefault = 1;
  * @param {Object} app A MrNodeBot object
  * @returns {Object} scirpt information
  */
-module.exports = (app) => {
+module.exports = app => {
     // Check we have API Key
     if (!_.has(app.Config, 'apiKeys.worldWeatherOnline.key') || _.isEmpty(app.Config.apiKeys.worldWeatherOnline)) return scriptInfo;
 

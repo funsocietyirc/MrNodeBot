@@ -6,7 +6,7 @@ const scriptInfo = {
 const Models = require('funsociety-bookshelf-model-loader');
 const _ = require('lodash');
 
-module.exports = (app) => {
+module.exports = app => {
     // Hold on to the Model
     const model = Models.YouTubeLink;
     // No Model available, abort

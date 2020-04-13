@@ -10,7 +10,7 @@ const Models = require('funsociety-bookshelf-model-loader');
 const logger = require('../../lib/logger');
 const preprocessText = require('../../lib/preprocessText');
 
-module.exports = (app) => {
+module.exports = app => {
     /**
      * Rename Handler
      * @param to

@@ -11,7 +11,7 @@ const getPopSent = require('../generators/_getPopularitySentiment');
 const getChanPopRank = require('../generators/_getChannelPopularityRanking');
 const getCanPopRank = require('../generators/_getCandidatePopularityRanking');
 
-module.exports = (app) => {
+module.exports = app => {
     // Database not available
     if (!Models.Upvote) return scriptInfo;
 

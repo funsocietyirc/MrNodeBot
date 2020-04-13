@@ -8,7 +8,7 @@ const c = require('irc-colors');
 const Models = require('funsociety-bookshelf-model-loader');
 const excuse = require('../generators/_simpleExcuse');
 
-module.exports = (app) => {
+module.exports = app => {
     // Report an image of our lord and savour, RaptorJesus
     app.Commands.set('RaptorJesus', {
         desc: 'Get a pic of RaptorJesus',

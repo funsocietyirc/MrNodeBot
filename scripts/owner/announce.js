@@ -6,7 +6,7 @@ const scriptInfo = {
 const _ = require('lodash');
 const logger = require('../../lib/logger');
 
-module.exports = (app) => {
+module.exports = app => {
     // Send Announcement Over socket
     const socket = (to, from, text, message, timestamp) => {
         // Bail if socket client is not available

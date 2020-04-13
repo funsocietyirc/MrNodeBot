@@ -9,7 +9,7 @@ const helpers = require('../../helpers');
 const defaultVueOptions = require('../lib/_defaultVueOptions');
 // Provide User help
 // Commands: help list
-module.exports = (app) => {
+module.exports = app => {
     const list = (to, from, text, message) => {
         app.say(from, color.white.bggray.bold(`${app._ircClient.nick} has the following commands available.`));
 

@@ -4,7 +4,7 @@ const scriptInfo = {
 };
 const logger = require('../../lib/logger');
 
-module.exports = (app) => {
+module.exports = app => {
     if (!app._twitterClient) return scriptInfo;
 
     // Tweet a message

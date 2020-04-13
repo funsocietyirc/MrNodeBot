@@ -8,7 +8,7 @@ const helpers = require('../../helpers');
 
 // Review the local git change log ( Last 5 commits )
 // Commands: changes
-module.exports = (app) => {
+module.exports = app => {
     app.Commands.set('changes', {
         desc: 'Review the bots change log',
         access: app.Config.accessLevels.guest,

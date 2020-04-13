@@ -9,7 +9,7 @@ const gen = require('../generators/_showerThoughts');
 const logger = require('../../lib/logger');
 const ircTypography = require('../lib/_ircTypography');
 
-module.exports = (app) => {
+module.exports = app => {
     const showerThought = async (to, from, text, message) => {
         try {
             const result = await gen();

@@ -10,7 +10,7 @@ const moment = require('moment');
 const Models = require('funsociety-bookshelf-model-loader');
 const {hashPattern} = require('../../helpers');
 
-module.exports = (app) => {
+module.exports = app => {
     // Hold on to the Model
     const model = Models.Logging;
 

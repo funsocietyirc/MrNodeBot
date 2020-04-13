@@ -7,7 +7,7 @@ const Models = require('funsociety-bookshelf-model-loader');
 const _ = require('lodash');
 const c = require('irc-colors');
 
-module.exports = (app) => {
+module.exports = app => {
     // Assure the database and logging table exists
     if (!Models.Logging) { return scriptInfo; }
 

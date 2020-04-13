@@ -7,7 +7,7 @@ const gen = require('../lib/_getShortService')();
 const logger = require('../../lib/logger');
 const ircTypography = require('../lib/_ircTypography');
 
-module.exports = (app) => {
+module.exports = app => {
     const lmgtfy = async (to, from, text, message) => {
         if (!text) {
             app.say(to, 'You need to give me some more information...');

@@ -19,7 +19,7 @@ const {
     StringBuilder,
 } = require('../lib/_ircTypography');
 
-module.exports = (app) => {
+module.exports = app => {
     // No SocketIO detected, or feature is disabled
     if (!app.WebServer.socketIO || _.isEmpty(app.Config.features.watchYoutube) || !app.Config.features.watchYoutube) { return scriptInfo; }
 

@@ -154,12 +154,12 @@
             }
         },
         methods: {
-            prepareResult: (result) => _.truncate(result.title || result.url, {
+            prepareResult: result => _.truncate(result.title || result.url, {
                length: 150,
                separator: '...',
             }),
             customFilter:  (array, needle, inKeyword, key, key2) => _.filter(array, item => needle === '' || _.toLower(item[key]) === _.toLower(needle) || _.toLower(item[key2]) === _.toLower(needle)),
-            linkClicked: (link) => {
+            linkClicked: link => {
                 // Filter on specific content
                 if (
                     interactiveSiteRegex.test(link.url) ||

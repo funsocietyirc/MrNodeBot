@@ -10,7 +10,7 @@ const logger = require('../../lib/logger');
 
 // Try and get the location of a user using geoip
 // Commands: tracker
-module.exports = (app) => {
+module.exports = app => {
     // Handler
     const tracker = async (to, from, text, message) => {
         const [user] = text.split(' ');

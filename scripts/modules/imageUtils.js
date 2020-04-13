@@ -16,7 +16,7 @@ const extractUrls = require('../../lib/extractUrls');
 const {hashPattern} = require('../../helpers');
 
 // Display a list of images in the Web Front end
-module.exports = (app) => {
+module.exports = app => {
     // Bailout if we do not have database
     if (!Models.Url) return scriptInfo;
 

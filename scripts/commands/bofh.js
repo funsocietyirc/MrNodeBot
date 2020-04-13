@@ -6,7 +6,7 @@ const scriptInfo = {
 const gen = require('../generators/_bofhExcuse');
 const ircTypography = require('../lib/_ircTypography');
 
-module.exports = (app) => {
+module.exports = app => {
     const bofh = async (to, from, text, message) => {
         const excuse = await gen();
         app.say(text.split(' ')[0] || to, `${ircTypography.logos.bofh} ${excuse}`);

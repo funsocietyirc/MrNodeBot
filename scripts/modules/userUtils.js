@@ -6,7 +6,7 @@ const scriptInfo = {
 
 const logger = require('../../lib/logger');
 
-module.exports = (app) => {
+module.exports = app => {
     // Register a User
     // Current use case: User is already registered with services, but can register and be able to
     // identify with other nicks/hosts

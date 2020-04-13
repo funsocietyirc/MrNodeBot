@@ -15,35 +15,50 @@ const {hashPattern} = require('../../helpers');
 
 let cache = [];
 
-module.exports = (app) => {
+module.exports = app => {
     // No Database
     if (!Models.Logging) return scriptInfo;
 
     /**
-     * Clear Cache
+     * Get the Cache
+     * @returns {Promise<*>}
+     */
+    const getCache = async () => {
+        const results = (_.isEmpty(cache) ? (await buildCache()) : cache);
+        // Refresh live data
+        _.each(results, (x, key) => {
+            results[key].isWatching = app._ircClient.isInChannel(key, app.nick);
+            results[key].isOperator = app._ircClient.isOpInChannel(key, app.nick);
+            results[key].isVoice = app._ircClient.isVoiceInChannel(key, app.nick);
+        });
+        return results;
+    };
+
+    /**
+     * Build Cache
+     * @returns {Promise<void>}
      */
     const buildCache = async () => {
-        cache = await getResults();
-        logger.info(`Building Channel Status Cache`);
-
+        try {
+            cache = await getUsageChansAvail(app);
+            logger.info(`Building Channel Status Cache`);
+        } catch (err) {
+            logger.error(`Something went wrong building channel cache`, {
+                message: err.message || '',
+                stack: err.stack || '',
+            });
+        }
     };
 
     // Schedule Recurrence Rule
-    scheduler.schedule('clearChannelCache', new scheduler.RecurrenceRule(null, null, null, null, null, 60, null),  () => buildCache());
+    scheduler.schedule('clearChannelCache', new scheduler.RecurrenceRule(null, null, null, null, null, 60, null), () => buildCache());
 
-    /**
-     * In Channels
-     * @returns {Promise<{}>}
-     */
-    const getResults = async () => getUsageChansAvail(app);
-
-    /**
-     * On Load build cache
-     * @returns {Promise<void>}
-     */
-    const onLoad = async () => {
-        await buildCache();
-    };
+    // Associate On Connected Event
+    app.OnConnected.set('channelResults', {
+        call: () => buildCache(),
+        desc: 'channelResults',
+        name: 'channelResults',
+    });
 
     /**
      * Channels Available Handler
@@ -53,7 +68,7 @@ module.exports = (app) => {
      */
     const channelsAvailableHandler = async (req, res) => {
         try {
-            const results = _.isEmpty(cache) ? (await buildCache()) : cache;
+            const results = await getCache();
 
             return res.json({
                 status: 'success',
@@ -69,7 +84,6 @@ module.exports = (app) => {
             });
         }
     };
-
     app.webRoutes.associateRoute('api.usage.channels.available', {
         desc: 'Get a list of channels available',
         path: '/api/usage/channels/available/:channel?',
@@ -107,15 +121,13 @@ module.exports = (app) => {
             });
         }
     };
-
     app.webRoutes.associateRoute('api.usage.channels.overtime', {
         desc: 'Get Usage Over Time',
         path: '/api/usage/channels/overtime/:channel/:nick?',
         verb: 'get',
         handler: usageOverTimeHandler,
     });
+
     // Expose Script Info
-    return Object.assign({}, scriptInfo, {
-        onLoad
-    });
+    return scriptInfo;
 };

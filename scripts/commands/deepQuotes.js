@@ -6,7 +6,7 @@ const scriptInfo = {
     createdBy: 'IronY',
 };
 
-module.exports = (app) => {
+module.exports = app => {
     app.Commands.set('deepquote', {
         desc: 'Deep Quotes By Jack Handy',
         access: app.Config.accessLevels.identified,

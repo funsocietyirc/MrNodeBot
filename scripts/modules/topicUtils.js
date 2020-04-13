@@ -13,7 +13,7 @@ const logger = require('../../lib/logger');
 const divider = ' | ';
 const lastXtopics = 20;
 
-module.exports = (app) => {
+module.exports = app => {
     // Bailout if we do not have database
     if (!app.Database || !Models.Topics) return;
 

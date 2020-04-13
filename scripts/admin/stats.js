@@ -11,7 +11,7 @@ const helpers = require('../../helpers');
 const logger = require('../../lib/logger');
 const usageOverTime = require('../generators/_getUsageOverTime');
 
-module.exports = (app) => {
+module.exports = app => {
     // Get command usage statistics
     app.Commands.set('stats', {
         desc: 'Get command usage statistics',

@@ -6,7 +6,7 @@ const scriptInfo = {
 const gen = require('../generators/_doomsday');
 const ircTypography = require('../lib/_ircTypography');
 
-module.exports = (app) => {
+module.exports = app => {
     // Random BOFH Excuse
     app.Commands.set('apocalypse', {
         desc: 'Get a reading from the Doomsday clock',

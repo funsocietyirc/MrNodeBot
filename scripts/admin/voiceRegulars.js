@@ -6,7 +6,7 @@ const scriptInfo = {
 const _ = require('lodash');
 const gen = require('../lib/_voiceUsersInChannel');
 
-module.exports = (app) => {
+module.exports = app => {
     // No Database
     if (!app.Database) return scriptInfo;
 

@@ -8,7 +8,7 @@ const gen = require('../generators/_getChuckNorris');
 const typo = require('../lib/_ircTypography');
 const logger = require('../../lib/logger');
 
-module.exports = (app) => {
+module.exports = app => {
     const chuck = async (to, from, text, message) => {
         try {
             const value = await gen();

@@ -8,7 +8,7 @@ const scriptInfo = {
 const Models = require('funsociety-bookshelf-model-loader');
 const logger = require('../../lib/logger');
 
-module.exports = (app) => {
+module.exports = app => {
 
     const gatewayHandler = (req, res) => {
         // An Admin account is needed

@@ -30,7 +30,7 @@ const appendResult = (obj, output, label, color, diff) => {
     return output;
 };
 
-module.exports = (app) => {
+module.exports = app => {
 
     /**
      * Covid19 Canada Data - Fed By Web Scraping official Canadian Government Information website

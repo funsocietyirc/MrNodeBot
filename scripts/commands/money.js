@@ -18,7 +18,7 @@ const btcApi = 'https://bitpay.com/api/rates'; // API For BTC exchange rates
 const coinMarketCapApi = 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest';
 const fixerApi = `http://data.fixer.io/api/latest`; // API For Country exchange rates
 
-module.exports = (app) => {
+module.exports = app => {
     const apiKey = _.get(app.Config, 'features.exchangeRate.apiKey', false);
     const coinMarketCapApiKey = _.get(app.Config, 'features.exchangeRate.coinMarketCapApiKey', false);
 

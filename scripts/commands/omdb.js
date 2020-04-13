@@ -9,7 +9,7 @@ const logger = require('../../lib/logger');
 const ircTypography = require('../lib/_ircTypography');
 const short = require('../lib/_getShortService')();
 
-module.exports = (app) => {
+module.exports = app => {
     // No OMDB API key provided
     if (!_.isString(app.Config.apiKeys.omdb) || _.isEmpty(app.Config.apiKeys.omdb)) return scriptInfo;
 

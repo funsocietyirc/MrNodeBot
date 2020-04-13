@@ -13,7 +13,7 @@ const scriptInfo = {
  */
 const defaultVueOptions = require('../lib/_defaultVueOptions');
 
-module.exports = (app) => {
+module.exports = app => {
     // No backing table, bail
     if (!Models.Url) return scriptInfo;
 

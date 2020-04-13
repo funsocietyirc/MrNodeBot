@@ -7,7 +7,7 @@ const scriptInfo = {
     createdBy: 'IronY',
 };
 
-module.exports = (app) => {
+module.exports = app => {
     /**
      * Generate a list of pages for nav
      * @param req

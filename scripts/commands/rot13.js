@@ -6,7 +6,7 @@ const scriptInfo = {
 const _ = require('lodash');
 const helpers = require('../../helpers');
 
-module.exports = (app) => {
+module.exports = app => {
     app.Commands.set('rot13', {
         desc: '[text] Encode a rot13 string',
         access: app.Config.accessLevels.identified,

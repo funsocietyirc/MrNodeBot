@@ -7,7 +7,7 @@ const Models = require('funsociety-bookshelf-model-loader');
 const logger = require('../../lib/logger');
 const getBestGuess = require('../generators/_nickBestGuess');
 
-module.exports = (app) => {
+module.exports = app => {
     // Log nick changes in the alias table
     if (!Models.Alias) return;
 

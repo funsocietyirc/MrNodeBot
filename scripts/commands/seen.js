@@ -15,7 +15,7 @@ const getBestGuess = require('../generators/_nickBestGuess');
 // Set a upper limit to prevent infinite recursions in some edge case situations
 
 // Exports
-module.exports = (app) => {
+module.exports = app => {
     // Bail if we do not have a complete set of database tables
     if (!Models.Logging ||
         !Models.Topics ||

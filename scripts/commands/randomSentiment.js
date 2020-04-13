@@ -9,7 +9,7 @@ const Moment = require('moment');
 const Models = require('funsociety-bookshelf-model-loader');
 const logger = require('../../lib/logger');
 
-module.exports = async (app) => {
+module.exports = async app => {
     // Database not available
     if (!Models.Upvote) return scriptInfo;
 

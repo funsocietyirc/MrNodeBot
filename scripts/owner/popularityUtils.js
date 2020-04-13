@@ -7,7 +7,7 @@ const _ = require('lodash');
 const logger = require('../../lib/logger');
 const Models = require('funsociety-bookshelf-model-loader');
 
-module.exports = (app) => {
+module.exports = app => {
     // Database not available
     if (!Models.Upvote) { return scriptInfo; }
 

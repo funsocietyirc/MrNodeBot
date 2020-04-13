@@ -12,7 +12,7 @@ const getBestGuess = require('../generators/_nickBestGuess');
 
 const errorMessage = 'Something went wrong fetching your results';
 
-module.exports = (app) => {
+module.exports = app => {
     // No Database Data available...
     if (!app.Database && !Models.Logging) return;
 

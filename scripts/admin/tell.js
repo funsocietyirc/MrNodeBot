@@ -13,7 +13,7 @@ i18next.addResources('en', 'tell', {
     reportBack: 'I have told {{- nick} {{- body}}}',
 });
 
-module.exports = (app) => {
+module.exports = app => {
     const tell = (to, from, text, message) => {
         const textArray = text.split(' ');
         const [nick] = textArray;

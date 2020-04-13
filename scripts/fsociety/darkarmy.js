@@ -7,7 +7,7 @@ const scriptInfo = {
 const _ = require('lodash');
 const logger = require('../../lib/logger');
 
-module.exports = (app) => {
+module.exports = app => {
     // Get threshold
 
     // Check to see if a main channel has been Set, if not bail out

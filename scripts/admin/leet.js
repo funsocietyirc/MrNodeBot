@@ -8,7 +8,7 @@ const _ = require('lodash');
 
 // Send an elite message
 // leet <nick> <message>
-module.exports = (app) => {
+module.exports = app => {
     const leet = (to, from, text, message) => {
         const textArray = text.split(' ');
         const [nick] = textArray;

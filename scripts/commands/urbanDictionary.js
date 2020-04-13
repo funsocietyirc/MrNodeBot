@@ -8,7 +8,7 @@ const dict = require('../generators/_getUrbanDictionaryDefinition');
 const short = require('../lib/_getShortService')();
 const logger = require('../../lib/logger.js');
 
-module.exports = (app) => {
+module.exports = app => {
     const urban = async (to, from, text, message) => {
         try {
             const results = await dict(text);

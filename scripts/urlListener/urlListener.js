@@ -40,7 +40,7 @@ const scheduler = require('../../lib/scheduler');
 // Cache URLS to prevent unnecessary API calls
 const resultsCache = require('./_urlCacheStore');
 
-module.exports = (app) => {
+module.exports = app => {
     // No Configuration available, bail
     if (!app.Config.hasOwnProperty('features') || !app.Config.features.hasOwnProperty('urls')) {
         logger.info('URL Listener loaded due to lack of configuration, please make sure you have config.features.urls available and correct');

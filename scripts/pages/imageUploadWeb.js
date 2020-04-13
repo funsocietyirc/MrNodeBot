@@ -8,7 +8,7 @@ const logger = require('../../lib/logger');
 const Models = require('funsociety-bookshelf-model-loader');
 const randToken = require('rand-token');
 
-module.exports = (app) => {
+module.exports = app => {
     // Log nick changes in the alias table
     if (!app.Database && !Models.Token) return;
 

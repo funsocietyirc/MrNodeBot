@@ -6,7 +6,7 @@ const scriptInfo = {
 const gen = require('../generators/_getAdviceSlip');
 const logger = require('../../lib/logger');
 
-module.exports = (app) => {
+module.exports = app => {
     const advice = async (to, from, text, message) => {
         try {
             const value = await gen(text);

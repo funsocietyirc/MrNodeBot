@@ -9,7 +9,7 @@ const gen = require('../generators/_getDefinition');
 const logger = require('../../lib/logger');
 const ircTypography = require('../lib/_ircTypography');
 
-module.exports = (app) => {
+module.exports = app => {
     const getDefinition = async (to, from, text, message) => {
         if (_.isEmpty(text.trim())) {
             app.say(to, `I am sorry ${from}, I need something to lookup`);

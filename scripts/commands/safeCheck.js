@@ -8,7 +8,7 @@ const logger = require('../../lib/logger.js');
 const safe = require('../generators/_getGoogleSafeUrlCheck');
 const extractUrls = require('../../lib/../lib/extractUrls');
 
-module.exports = (app) => {
+module.exports = app => {
     // We require a google API Key for this command
     if (_.isUndefined(app.Config.apiKeys.google) || !_.isString(app.Config.apiKeys.google) || _.isEmpty(app.Config.apiKeys.google)) return scriptInfo;
 

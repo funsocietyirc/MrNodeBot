@@ -10,7 +10,7 @@ const random = require('../../lib/randomEngine.js');
 // Make the bot randomly conversational
 // Commands: converse
 // Listeners: converse
-module.exports = (app) => {
+module.exports = app => {
     // No Features block
     if (!_.has(app, 'Config.features.conversational')) return scriptInfo;
 

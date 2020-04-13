@@ -9,7 +9,7 @@ const _ = require('lodash');
 const Models = require('funsociety-bookshelf-model-loader');
 const logger = require('../../lib/logger');
 
-module.exports = (app) => {
+module.exports = app => {
     // More readable inline leet speak
     const l33t = text => text
         .replace(/[a]/gi, '4')

@@ -8,7 +8,7 @@ const _ = require('lodash');
 
 // Allow the bot to talk to a channel/privmesg in technocolor
 // Commands: styleize [[Channel][Style][Message]]
-module.exports = (app) => {
+module.exports = app => {
     // Handler
     const stylize = (to, from, text, message) => {
         const txtArray = text.split(' ');

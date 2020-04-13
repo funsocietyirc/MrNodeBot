@@ -9,7 +9,7 @@ const scheduler = require('../../lib/scheduler');
 const logger = require('../../lib/logger');
 const type = require('../lib/_ircTypography');
 
-module.exports = (app) => {
+module.exports = app => {
     const argChannel = '##mrRobotARG';
     const argReddit = 'argsociety';
     const redditStream = 'new';

@@ -19,7 +19,7 @@ const Models = require('funsociety-bookshelf-model-loader');
 
 const {hashPattern} = require('../../helpers');
 
-module.exports = (app) => {
+module.exports = app => {
     // Bail out if we do not have a database
     if (!Models.Url) return scriptInfo;
 

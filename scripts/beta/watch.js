@@ -6,7 +6,7 @@ const scriptInfo = {
     desc: 'Watch Vue Page',
     createdBy: 'IronY',
 };
-module.exports = (app) => {
+module.exports = app => {
     /**
      * Watch real time videos
      * @param req

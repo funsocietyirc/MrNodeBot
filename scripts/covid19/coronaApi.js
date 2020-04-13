@@ -7,7 +7,7 @@ const scriptInfo = {
 const _ = require('lodash');
 const gen = require('./_coronavirus');
 
-module.exports = (app) => {
+module.exports = app => {
     /**
      * Covid19 Canada Numbers
      * @param req

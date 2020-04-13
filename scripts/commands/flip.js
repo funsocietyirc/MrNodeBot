@@ -9,7 +9,7 @@ const random = require('../../lib/randomEngine');
 const ircTypo = require('../lib/_ircTypography');
 const Models = require('funsociety-bookshelf-model-loader');
 
-module.exports = (app) => {
+module.exports = app => {
     const flip = async (to, from, text, message) => {
         const [selection] = text.split(' ');
 

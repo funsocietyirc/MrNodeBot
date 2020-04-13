@@ -9,7 +9,7 @@ const scriptInfo = {
     createdBy: 'IronY',
 };
 
-module.exports = (app) => {
+module.exports = app => {
 
     // Request the current minutes to midnight feed.
     const _request = () => {

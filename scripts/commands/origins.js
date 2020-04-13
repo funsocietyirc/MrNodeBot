@@ -66,7 +66,7 @@ const getVersion = async (to, from, app) => {
 
 // Provide users with a brief origins story
 // Commands: origins
-module.exports = (app) => {
+module.exports = app => {
     app.Commands.set('origins', {
         desc: 'My origin story',
         access: app.Config.accessLevels.guest,

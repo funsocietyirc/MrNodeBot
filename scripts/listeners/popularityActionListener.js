@@ -10,7 +10,7 @@ const scheduler = require('../../lib/scheduler');
 
 // Primary Logic
 // Example IronY gives <nick> a plus or minus +1
-module.exports = (app) => {
+module.exports = app => {
     // Database not available
     if (!Models.Upvote) return scriptInfo;
 

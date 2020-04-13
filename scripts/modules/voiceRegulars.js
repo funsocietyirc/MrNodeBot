@@ -8,7 +8,7 @@ const logger = require('../../lib/logger');
 const scheduler = require('../../lib/scheduler');
 const voiceUsers = require('../lib/_voiceUsersInChannel');
 
-module.exports = (app) => {
+module.exports = app => {
     // We are missing things
     if (!app.Database ||
         !_.isObject(app.Config.features.voiceRegulars) || // We need a voiceRegulars block in the features section

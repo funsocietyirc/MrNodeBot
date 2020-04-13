@@ -9,7 +9,7 @@ const logger = require('../../lib/logger');
 const randToken = require('rand-token');
 const scheduler = require('../../lib/scheduler');
 
-module.exports = (app) => {
+module.exports = app => {
     // Log nick changes in the alias table
     if (!Models.Token) return;
 

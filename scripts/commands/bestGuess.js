@@ -6,7 +6,7 @@ const scriptInfo = {
 };
 const gen = require('../generators/_nickBestGuess');
 
-module.exports = (app) => {
+module.exports = app => {
     const bg = async (to, from, text, message) => {
         const [nick] = text.split(' ');
         if (!nick) {
