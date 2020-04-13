@@ -16,100 +16,149 @@ const logger = require('../../lib/logger');
 
 // Handle real time upgrades, updates, and restarts
 // Commands: update reload halt
-module.exports = (app) => {
-    /* Helpers */
+module.exports = app => {
+    /**
+     * Exec Setting Helpers
+     * @returns {{} & {async: boolean, silent: boolean}}
+     */
     const execSettings = () => Object.assign({}, {
         async: true,
         silent: app.Config.bot.debug || false,
     });
 
-    // Perform Secure Operation via Snyk
-    const protect = () => new Promise((resolve, reject) => shell.exec('npm run snyk-protect', execSettings(), (code, stdOut, stdErr) => {
-        // Something went wrong running snyk
-        if (code !== 0) {
-            // Log Error
-            logger.error('Something went wrong securing packages with Snyk', {code, stdOut, stdErr});
-            return reject(new Error('Something went wrong securing my modules!'));
-        }
+    /**
+     * Perform Snyk Secure Operation
+     * @returns {Promise<unknown>}
+     */
+    const protect = () =>
+        new Promise((resolve, reject) => shell.exec('npm run snyk-protect', execSettings(), (code, stdOut, stdErr) => {
+            // Something went wrong running snyk
+            if (code !== 0) {
+                // Log Error
+                logger.error('Something went wrong securing packages with Snyk', {code, stdOut, stdErr});
+                return reject(new Error('Something went wrong securing my modules!'));
+            }
 
-        // Everything went fine
-        resolve({stdCode: code, stdOut, stdErr});
-    }));
+            // Everything went fine
+            resolve({stdCode: code, stdOut, stdErr});
+        }));
 
-    // Pull From Source Control
-    const pullFromGit = () => new Promise((resolve, reject) => shell.exec('git pull', execSettings(), (code, stdOut, stdErr) => {
-        // The Code did not exit properly
-        if (code !== 0) {
-            logger.error('Something went wrong during pull request in the update command', {code, stdOut, stdErr});
-            return reject(new Error('Something went wrong with the pull request'));
-        }
+    /**
+     * Pull Code From GIT
+     * @returns {Promise<unknown>}
+     */
+    const pullFromGit = () =>
+        new Promise((resolve, reject) => shell.exec('git pull', execSettings(), (code, stdOut, stdErr) => {
+            // The Code did not exit properly
+            if (code !== 0) {
+                logger.error('Something went wrong during pull request in the update command', {code, stdOut, stdErr});
+                return reject(new Error('Something went wrong with the pull request'));
+            }
 
-        // Everything went fine
-        resolve({stdCode: code, stdOut, stdErr});
-    }));
+            // Everything went fine
+            resolve({stdCode: code, stdOut, stdErr});
+        }));
 
-    // Update packages
-    const updatePackages = pkgManager => new Promise((resolve, reject) => shell.exec(pkgManager === 'yarn' ? 'yarn' : `${pkgManager} install`, execSettings(), (code, stdOut, stdErr) => {
-        // Something went wrong updating packages
-        if (code !== 0) {
-            // Log Error
-            const errMsg = `Something went wrong running ${pkgManager.toUpperCase()} install`;
-            logger.error(errMsg, {code, stdErr, stdOut});
-            return reject(new Error(errMsg));
-        }
+    /**
+     * update packages
+     * @param pkgManager
+     * @returns {Promise<unknown>}
+     */
+    const updatePackages = pkgManager =>
+        new Promise((resolve, reject) => shell.exec(pkgManager === 'yarn' ? 'yarn' : `${pkgManager} install`, execSettings(), (code, stdOut, stdErr) => {
+            // Something went wrong updating packages
+            if (code !== 0) {
+                // Log Error
+                const errMsg = `Something went wrong running ${pkgManager.toUpperCase()} install`;
+                logger.error(errMsg, {code, stdErr, stdOut});
+                return reject(new Error(errMsg));
+            }
 
-        // Everything went well
-        resolve({stdCode: code, stdOut, stdErr});
-    }));
+            // Everything went well
+            resolve({stdCode: code, stdOut, stdErr});
+        }));
 
-    // Fetch the git log
-    const getGitLog = () => new Promise((resolve, reject) => gitlog(app.Config.gitLog, (error, commits) => {
-        if (error) {
-            logger.error('Something went wrong during the get git log process in the update command', {error});
-            return reject(new Error('Something went wrong during the get git log process in the update command'));
-        }
-        resolve(commits);
-    }));
+    /**
+     * Fetch Git Log
+     * @returns {Promise<unknown>}
+     */
+    const getGitLog = () =>
+        new Promise((resolve, reject) => gitlog(app.Config.gitLog, (error, commits) => {
+            if (error) {
+                logger.error('Something went wrong during the get git log process in the update command', {error});
+                return reject(new Error('Something went wrong during the get git log process in the update command'));
+            }
+            resolve(commits);
+        }));
 
-    // Check Diff
-    const checkDiff = abbrevHash => new Promise((resolve, reject) => shell.exec(`git diff-tree --no-commit-id --name-only -r ${abbrevHash}`, execSettings(), (code, stdOut, stdErr) => {
-        // Something went wrong
-        if (code !== 0 || _.isEmpty(stdOut)) {
-            logger.error('Was unable to read the commit ', {code, stdOut, stdErr});
-            return reject(new Error('I was unable to read the commit log'));
-        }
-        // Everything went ok
-        resolve({stdCode: code, stdOut, stdErr});
-    }));
+    /**
+     * Check a Diff
+     * @param abbrevHash
+     * @returns {Promise<unknown>}
+     */
+    const checkDiff = abbrevHash =>
+        new Promise((resolve, reject) => shell.exec(`git diff-tree --no-commit-id --name-only -r ${abbrevHash}`, execSettings(), (code, stdOut, stdErr) => {
+            // Something went wrong
+            if (code !== 0 || _.isEmpty(stdOut)) {
+                logger.error('Was unable to read the commit ', {code, stdOut, stdErr});
+                return reject(new Error('I was unable to read the commit log'));
+            }
+            // Everything went ok
+            resolve({stdCode: code, stdOut, stdErr});
+        }));
 
     /* Commands */
 
-    // Cycle the bot (quit process)
+    /**
+     * Cycle the bot / quit process
+     * @param to
+     * @param from
+     * @param message
+     */
     const halt = (to, from, message) => {
         app.action(to, 'will be restarting soon');
         // Defer for 5 seconds so everything has a chance to send
         app._ircClient.disconnect(message || `${from} has asked me if I could leave for a second and do something important, I shall return`, () => process.exit());
     };
 
-    // Reload the bots scripts
-    const reload = (to, from) => {
+    /**
+     * Reload the bot scripts
+     * @param to
+     */
+    const reload = (to) => {
         app.action(to, 'is feeling so fresh and so clean');
         app.Bootstrap(false);
     };
 
     const lockFileName = 'updating.lock';
 
-    // Is Locked
+    /**
+     * Check a Lock
+     * @returns {Promise<unknown>}
+     */
     const isLocked = () => new Promise(res => fs.lstat(lockFileName, err => res(!err)));
 
-    // Enable a lock
+    /**
+     * Enable a lOck
+     * @param to
+     * @param from
+     * @returns {Promise<unknown>}
+     */
     const lock = (to, from) => new Promise(res => fs.writeFile(lockFileName, `${from} / ${to} / ${Date.now()}`, err => res(!err)));
 
-    // Disable a lock
+    /**
+     * Disable a Lock
+     * @returns {Promise<unknown>}
+     */
     const unlock = () => new Promise(res => fs.unlink(lockFileName, err => res(!err)));
 
-    // Forcefully remove the unlock file;
-    const forceUnlockCommand = async (to, from, text, message) => {
+    /**
+     * Force Unlock Handler
+     * @param to
+     * @param from
+     * @returns {Promise<void>}
+     */
+    const forceUnlockCommand = async (to, from) => {
         const lockStatus = await isLocked();
 
         if (!lockStatus) {
@@ -125,8 +174,13 @@ module.exports = (app) => {
         call: forceUnlockCommand,
     });
 
-    // Update the bot
-    const updateCommand = async (to, from, text, message) => {
+    /**
+     * Update Handler
+     * @param to
+     * @param from
+     * @returns {Promise<void>}
+     */
+    const updateCommand = async (to, from) => {
         // Log failed attempts removing the lock file
         const attemptUnlock = () => {
             const unlockStatus = unlock();
@@ -160,7 +214,6 @@ module.exports = (app) => {
             app.say(to, `Someone else is currently running an update, ${from}`);
             return;
         }
-
 
         // Pull From Git
         let committed;
@@ -318,84 +371,105 @@ module.exports = (app) => {
             else {
                 reload(to, from); // Reload scripts
             }
-        } catch(err) {
+        } catch (err) {
             logger.error('Something went wrong updating', {
                 message: err.message || '',
                 stack: err.stack || '',
             });
-        }
-        finally {
+        } finally {
             attemptUnlock();
         }
     };
-
-    // Update only works in production as to not git pull away any new changes
     app.Commands.set('update', {
         desc: 'Hot swap out the Bot, if hard is specified it will do a hard reboot',
         access: app.Config.accessLevels.owner,
         call: updateCommand,
     });
 
-    // Terminate the bot
+    /**
+     * Halt Handler
+     * @param to
+     * @param from
+     */
+    const haltHandler = (to, from) => halt(to, from);
     app.Commands.set('halt', {
         desc: 'Halt and catch fire (Quit bot / watcher proc)',
         access: app.Config.accessLevels.owner,
-        call: (to, from, text, message) => halt(to, from),
+        call: haltHandler,
     });
 
-    // Reload the configuration object
+    /**
+     * Reload Config Handler
+     * @param to
+     */
+    const reloadConfigHandler = to => {
+        app.reloadConfiguration();
+        app.action(to, 'has finished changing his mind');
+    };
     app.Commands.set('reload-config', {
         desc: 'Reload the configuration object',
         access: app.Config.accessLevels.owner,
-        call: (to, from, text, message) => {
-            app.reloadConfiguration();
-            app.action(to, 'has finished changing his mind');
-        },
+        call: reloadConfigHandler,
     });
 
-    // Live reload the scripts
+    /**
+     * Reload Scripts Handler
+     * @param to
+     * @param from
+     */
+    const reloadScriptsHandler = (to, from) => reload(to, from);
     app.Commands.set('reload-scripts', {
         desc: 'Live reload the Bot from local storage',
         access: app.Config.accessLevels.owner,
-        call: (to, from, text, message) => reload(to, from),
+        call: reloadScriptsHandler,
     });
 
-    // Reload both the scripts and the Config
+    /**
+     * Reload Handler
+     * @param {String} to
+     * @param {String} from
+     */
+    const reloadHandler = (to, from) => {
+        app.reloadConfiguration();
+        reload(to, from);
+    };
     app.Commands.set('reload', {
         desc: 'Live reload the Bot from local storage',
         access: app.Config.accessLevels.owner,
-        call: (to, from, text, message) => {
-            app.reloadConfiguration();
-            reload(to, from);
-        },
+        call: reloadHandler,
     });
 
-    // Secure
+    /**
+     * Secure Handler
+     * @param to
+     * @returns {Promise<void>}
+     */
+    const secureHandler = async to => {
+        try {
+            const secureResults = await protect();
+            app.action(to, 'successfully secured modules!');
+        } catch (err) {
+            app.say('Something went wrong securing my modules');
+        }
+    };
     app.Commands.set('secure', {
         desc: 'Secure the project using snyk',
         access: app.Config.accessLevels.owner,
-        call: async (to, from, text, message) => {
-            try {
-                const secureResults = await protect();
-                app.action(to, 'successfully secured modules!');
-            } catch (err) {
-                app.say('Something went wrong securing my modules');
-            }
-        },
+        call: secureHandler,
     });
 
-    // Pull From git
+    const pullHandler = async to => {
+        try {
+            await pullFromGit();
+            app.action(to, 'has successfully pulled himself from source!');
+        } catch (err) {
+            app.say(to, err.message);
+        }
+    };
     app.Commands.set('pull', {
         desc: 'Pull the Bot from source',
         access: app.Config.accessLevels.owner,
-        call: async (to, from, text, message) => {
-            try {
-                const pullResults = await pullFromGit();
-                app.action(to, 'has successfully pulled himself from source!');
-            } catch (err) {
-                app.say(to, err.message);
-            }
-        },
+        call: pullHandler,
     });
 
     // Return the script info
