@@ -11,7 +11,7 @@ const path = require('path');
 const typo = require('../lib/_ircTypography');
 const short = require('../lib/_getShortService')();
 const shell = require('shelljs');
-const gitlog = require('gitlog').default;
+const {gitlogPromise} = require('gitlog');
 const logger = require('../../lib/logger');
 
 // Handle real time upgrades, updates, and restarts
@@ -76,19 +76,6 @@ module.exports = app => {
 
             // Everything went well
             resolve({stdCode: code, stdOut, stdErr});
-        }));
-
-    /**
-     * Fetch Git Log
-     * @returns {Promise<unknown>}
-     */
-    const getGitLog = () =>
-        new Promise((resolve, reject) => gitlog(app.Config.gitLog, (error, commits) => {
-            if (error) {
-                logger.error('Something went wrong during the get git log process in the update command', {error});
-                return reject(new Error('Something went wrong during the get git log process in the update command'));
-            }
-            resolve(commits);
         }));
 
     /**
@@ -251,7 +238,7 @@ module.exports = app => {
         // Grab the commits
         let commits;
         try {
-            commits = await getGitLog();
+            commits = await gitlogPromise(app.Config.gitLog);
         } catch (err) {
             attemptUnlock();
             app.say(to, err.message);

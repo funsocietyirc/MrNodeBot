@@ -55,7 +55,7 @@
     "funsociety-bookshelf-model-loader": "^0.9.9",
     "funsociety-irc-rss-feed-emitter": "^1.0.12",
     "funsocietyirc-client": "^0.1.20",
-    "gitlog": "^3.3.6",
+    "gitlog": "^4.0.0",
     "helmet": "^3.22.0",
     "i18next": "^19.4.1",
     "i18next-sync-fs-backend": "^1.1.1",
