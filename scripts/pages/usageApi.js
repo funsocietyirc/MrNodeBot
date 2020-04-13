@@ -29,7 +29,7 @@ module.exports = (app) => {
     };
 
     // Schedule Recurrence Rule
-    scheduler.schedule('clearChannelCache', new scheduler.RecurrenceRule(null, null, null, null, 1, null, null), async () => await buildCache());
+    scheduler.schedule('clearChannelCache', new scheduler.RecurrenceRule(null, null, null, null, null, 60, null),  () => buildCache());
 
     /**
      * In Channels
