@@ -256,7 +256,11 @@ module.exports = (app) => {
             if (_.startsWith(file, 'package.json') || (_.startsWith(file, 'yarn.lock') && hasYarnLock)) {
                 shouldInstallPackages = true;
                 shouldCycle = true;
-            } else if (!_.startsWith(file, 'scripts') && _.endsWith(file, '.js')) {
+            } else if (
+                (!_.startsWith(file, 'scripts') && _.endsWith(file, '.js')) ||
+                // TODO Work out a better way of handling vue changes without having to quit process
+                _.endsWith(file, '.vue')
+            ) {
                 shouldCycle = true;
             }
         }
