@@ -56,7 +56,7 @@
                         </thead>
                         <tbody>
                         <tr v-bind:data-timestamp="result.timestamp" v-for="result in resultSet">
-                            <td class="to uk-width-1-10 clickable">{{result.to}}</td>
+                            <td class="to uk-width-1-10 clickable" @click="updateFilter(result.to)">{{result.to}}</td>
                             <td class="from uk-width-1-10 clickable" @click="updateFilter(result.from)">{{result.from}}</td>
                             <td class="url uk-width-6-10">
                                 <a data-uk-tooltip @click="linkClicked(result, $event)"
@@ -88,24 +88,19 @@
     .clickable:active {
         color: white;
     }
-
     .currentSearch {
         background: rgba(245, 245, 245, 0.1);
     }
-
     .new {
         background-color: rgba(60, 210, 24, 0.2) !important;
         transition: all 1s linear;
     }
-
     .innerNavBar {
         padding-top: 15px;
         padding-bottom: 5px;
     }
-
     #linkTableOverflow {
     }
-
     #linkTable > tbody > tr:first-child,
     #linkTable > tbody > tr:last-child {
         border-top-left-radius: 8px;
@@ -115,11 +110,10 @@
 <script>
     // Libs
     const _ = require('lodash');
-
     // Build Regex
     const interactiveSiteRegex = /^(https:\/\/www.youtube.com\/watch|https:\/\/youtu.be)/gm;
     const interactiveFileRegex = /(\.jpg|\.png|\.gif|\.mp4|\.jpeg|\.webm)$/gm;
-
+    const hashPattern = /#/g;
     // Components
     const sitenav = require('./components/nav.vue');
     const urlSockets = require('./mixins/urlSockets');
@@ -142,9 +136,8 @@
             }
         },
         mounted() {
-            $('footer').detach();
             this.searchText = '';
-            this.fetchData();
+            this.fetchData(this);
         },
         computed: {
             resultSet: function () {
@@ -192,23 +185,24 @@
                     $('#linkTable').trigger('display.uk.check');
                 });
             },
-            fetchData: function () {
-                const vm = this;
-                let route = `/api/urls?pageSize=100`;
+            fetchData: vm => {
+                let route = `/api/urls?pageSize=200`;
                 // Transfer over query params
                 if (_.isObject(vm.query) && !_.isEmpty(vm.query)) {
-                    const hashPattern = new RegExp('#', 'g');
                     Object
                         .keys(vm.query)
                         .filter(k => !_.isString(k) || !_.isString(Object.hasOwnProperty(vm.query[k])))
                         .forEach(key => route = route + `&${key}=${vm.query[key].replace(hashPattern, '%23')}`);
                 }
+                // Fetch Data
                 fetch(route)
                     .then(response => response.json())
                     .then((data) => {
                         vm.results = data.results;
-                    }).catch(e => {
-                        console.error(`Something went wrong: ${e.message || ''}`)
+                    })
+                    .catch(e => {
+                        console.error(`Something went wrong: ${e.message || ''}`);
+                        vm.results = [];
                 });
             },
         }
