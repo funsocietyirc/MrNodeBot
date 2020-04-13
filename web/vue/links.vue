@@ -113,7 +113,14 @@
     }
 </style>
 <script>
+    // Libs
     const _ = require('lodash');
+
+    // Build Regex
+    const interactiveSiteRegex = /^(https:\/\/www.youtube.com\/watch|https:\/\/youtu.be)/gm;
+    const interactiveFileRegex = /(\.jpg|\.png|\.gif|\.mp4|\.jpeg|\.webm)$/gm;
+
+    // Components
     const sitenav = require('./components/nav.vue');
     const urlSockets = require('./mixins/urlSockets');
     const filters = require('./mixins/filter');
@@ -159,26 +166,22 @@
                separator: '...',
             }),
             customFilter:  (array, needle, inKeyword, key, key2) => _.filter(array, item => needle === '' || _.toLower(item[key]) === _.toLower(needle) || _.toLower(item[key2]) === _.toLower(needle)),
-            linkClicked: function (link, event) {
+            linkClicked: (link) => {
+                // Filter on specific content
                 if (
-                    link.url.startsWith('https://youtu.be') ||
-                    link.url.startsWith('https://www.youtube.com/watch?') ||
-                    link.url.endsWith('.jpg') ||
-                    link.url.endsWith('.png') ||
-                    link.url.endsWith('.gif') ||
-                    link.url.endsWith('.jpeg') ||
-                    link.url.endsWith('.webm') ||
-                    link.url.endsWith('.mp4')
+                    interactiveSiteRegex.test(link.url) ||
+                    interactiveFileRegex.test(link.url)
                 ) {
-                    let lb = window.UIkit.lightbox;
-                    lb.create([{
+                    window.UIkit.lightbox.create([{
                         source: link.url,
                         title: link.title,
                         keyboard: false,
                     }]).show();
-                } else {
-                    window.open(link.url, '_blank');
+                    return;
                 }
+
+                // Just Open The link
+                window.open(link.url, '_blank');
             },
             isActiveSearch: function (val) {
                 return val === this.searchText;

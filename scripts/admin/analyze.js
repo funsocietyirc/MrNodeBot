@@ -11,7 +11,6 @@ const getLocationData = require('../generators/_ipLocationData');
 const getBestGuess = require('../generators/_nickBestGuess');
 
 const errorMessage = 'Something went wrong fetching your results';
-const locationErrorMessage = 'Something went wrong fetching your location results';
 
 module.exports = (app) => {
     // No Database Data available...

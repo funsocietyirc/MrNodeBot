@@ -4,6 +4,7 @@ const scriptInfo = {
     'and last mentioned',
     createdBy: 'IronY',
 };
+
 const _ = require('lodash');
 const Moment = require('moment');
 const Models = require('funsociety-bookshelf-model-loader');
@@ -53,10 +54,9 @@ module.exports = (app) => {
      * @param to
      * @param from
      * @param text
-     * @param message
      * @returns {Promise<void>}
      */
-    const randomLine = async (to, from, text, message) => {
+    const randomLine = async (to, from, text) => {
         try {
             const result = await Models
                 .Logging
@@ -70,7 +70,7 @@ module.exports = (app) => {
                 'Nothing like that has ever been said in here... yet!' :
                 `${result.get('from')} : ${result.get('text')}`);
         } catch (err) {
-            logger.error('Something went wrong in the randomLine Command', {
+            logger.error(`Something went wrong in the randomLine Command`, {
                 message: err.message || '',
                 stack: err.stack || '',
             });
@@ -78,13 +78,11 @@ module.exports = (app) => {
         }
     };
 
-
     /**
      * Search Terms Handler
      * @param to
      * @param from
      * @param text
-     * @param message
      * @returns {Promise<void>}
      */
     const searchTerms = async (to, from, text,) => {
