@@ -8,8 +8,6 @@ const {gitlogPromise} = require('gitlog');
 const helpers = require('../../helpers');
 const short = require('../lib/_getShortService')();
 
-
-
 // Provide users with a brief origins story
 // Commands: origins
 module.exports = app => {
