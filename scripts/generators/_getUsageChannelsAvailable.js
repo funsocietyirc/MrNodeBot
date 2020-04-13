@@ -3,7 +3,6 @@ const Models = require('funsociety-bookshelf-model-loader');
 const getChanPopRank = require('../generators/_getChannelPopularityRanking');
 const chanParticipation = require('../lib/_channelParticipation');
 
-
 /**
  * Get Results
  * @param app

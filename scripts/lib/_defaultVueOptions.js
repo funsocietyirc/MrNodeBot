@@ -6,11 +6,24 @@ const _ = require('lodash');
  * @private
  */
 const _defaultVueOptions = {
+    webpack: {
+        client: {},
+        server: {}
+    },
+    vue: {
+        app: '1.0.0',
+        client: '1.0.0',
+        server: '1.0.0',
+    },
     head: {
         title: 'MrNodeBot',
         metas: [
             { name: 'application-name', content: 'MrNodeBot' },
-            { name: 'description', content: 'A Swiss Army Knife NodeJS IRC Bot Framework' }
+            { name: 'description', content: 'A Swiss Army Knife NodeJS IRC Bot Framework' },
+            {
+                name: 'viewport',
+                content: 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'
+            }
         ],
         styles: [
             {style: '/assets/uikit-external.css', type: 'text/css'},

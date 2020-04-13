@@ -3,21 +3,32 @@ const scriptInfo = {
     desc: 'Provides a PUG form for uploading photos',
     createdBy: 'IronY',
 };
+
+const _ = require('lodash');
 const path = require('path');
 const logger = require('../../lib/logger');
 const Models = require('funsociety-bookshelf-model-loader');
 const randToken = require('rand-token');
+const defaultVueOptions = require('../lib/_defaultVueOptions');
 
 module.exports = app => {
     // Log nick changes in the alias table
     if (!app.Database && !Models.Token) return;
 
     // Show the form upload
-    const uploadForm = (req, res) => res.render('upload');
+    const uploadForm = (req, res) => {
+        const vueOptions = defaultVueOptions({
+            head: {
+                title: 'Image Upload'
+            }
+        });
+        res.renderVue('imageUpload.vue', {
+            route: app.WebServer.namedRoutes.build('uploadHandler')
+        }, vueOptions);
+    };
 
     // Process the upload
     const uploadHandler = async (req, res) => {
-        // Validation
 
         // Invalid Token
         if (!req.body.token) {
