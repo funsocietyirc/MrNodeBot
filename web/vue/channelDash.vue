@@ -141,6 +141,7 @@
     const sitenav = require('./components/nav.vue');
     const sockets = require('./mixins/sockets');
     export default {
+        name: 'channelDash',
         mixins: [sockets],
         data() {
             return {

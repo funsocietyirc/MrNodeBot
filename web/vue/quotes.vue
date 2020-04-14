@@ -45,7 +45,7 @@
     const sockets = require('./mixins/sockets');
 
     export default {
-        name: 'Quotes',
+        name: 'quotes',
         mixins: ['sockets'],
         components: {
             sitenav

@@ -60,7 +60,7 @@
     const sockets = require('./mixins/sockets');
 
     export default {
-        name: 'Image Upload',
+        name: 'imageUpload',
         mixins: ['sockets'],
         components: {sitenav},
         data: function () {

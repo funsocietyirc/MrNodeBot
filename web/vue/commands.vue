@@ -38,6 +38,7 @@
     const sitenav = require('./components/nav.vue');
     const sockets = require('./mixins/sockets');
     export default {
+        name: 'commands',
         mixins: [sockets],
         components: {
             sitenav

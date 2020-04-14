@@ -96,7 +96,7 @@ module.exports = async (app) => {
     webServer.use(helmet());
 
     // Initiate express-vue
-
+    process.env.VUE_DEV = app.Config.bot.webDebug === true;
     const finalVueOptions = _.isObject(app.Config.vueOptions) ? _.defaults(expressVueOptions, app.Config.vueOptions) : expressVueOptions;
     await cleanExpressVueCache(finalVueOptions);
     await expressVue.use(webServer, finalVueOptions);

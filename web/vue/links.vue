@@ -120,8 +120,9 @@
     const filters = require('./mixins/filter');
 
     export default {
+        name: 'links',
         mixins: [
-           urlSockets
+            urlSockets
         ],
         components: {
             sitenav

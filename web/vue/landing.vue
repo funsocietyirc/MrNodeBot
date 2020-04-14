@@ -13,17 +13,16 @@
 </style>
 <script>
     import sitenav from './components/nav.vue';
-    const sokets = require('./mixins/sockets');
 
+    const sokets = require('./mixins/sockets');
     export default {
-        name:'Home',
+        name: 'landing',
         mixins: ['sockets'],
         components: {
             sitenav
         },
         data: function () {
-            return {
-            }
+            return {}
         },
         mounted() {
         },

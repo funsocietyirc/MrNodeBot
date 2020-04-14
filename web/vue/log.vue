@@ -44,6 +44,7 @@
     const sockets = require('./mixins/sockets');
 
     export default {
+        name: 'logs',
         mixins: ['sockets'],
         components: {
             sitenav

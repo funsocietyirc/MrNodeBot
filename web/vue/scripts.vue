@@ -42,12 +42,14 @@
 <style>
 </style>
 <script>
+
     const sitenav = require('./components/nav.vue');
     const sokets = require('./mixins/sockets');
 
     export default {
+        name: 'scripts',
         mixins: ['sockets'],
-        components: { sitenav },
+        components: {sitenav},
         data: function () {
             return {
                 results: []

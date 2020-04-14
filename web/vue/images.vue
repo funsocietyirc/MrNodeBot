@@ -16,12 +16,11 @@
     const sockets = require('./mixins/sockets');
 
     export default {
-        name:'Images',
+        name: 'images',
         mixins: ['sockets'],
-        components: { sitenav },
+        components: {sitenav},
         data: function () {
-            return {
-            }
+            return {}
         },
         mounted() {
         },
