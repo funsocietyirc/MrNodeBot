@@ -45,7 +45,7 @@ module.exports = app => {
             // Attempt to clean and merge
             for (const result of results) {
                 const secondLine = await quoteModel.where('id', result.attributes.id + 1).fetch();
-                const saved = await result.set('quote', `${result.get('quote').replace('(1 more message)', '')} ${secondLine.get('quote')}`).save();
+                await result.set('quote', `${result.get('quote').replace('(1 more message)', '')} ${secondLine.get('quote')}`).save();
                 logger.info(`Cleaned up MrRobot show quotes, merged quote ${result.get('id')} and ${secondLine.get('id')}`);
                 secondLine.destroy({
                     require: false
@@ -79,7 +79,7 @@ module.exports = app => {
 
         // Check if the quote already exists
         try {
-            const result = await quoteModel.query(qb => qb.select(['quote']).where('quote', 'like', text).limit(1)).fetch();
+            await quoteModel.query(qb => qb.select(['quote']).where('quote', 'like', text).limit(1)).fetch();
         } catch (err) {
             // Problem communicating with the Database
             logger.error('Error getting result from DB in MrRobotQuote', {
@@ -94,7 +94,7 @@ module.exports = app => {
 
         // Attempt to save the new quote
         try {
-            const record = await quoteModel.insert({ quote: text });
+            await quoteModel.insert({quote: text});
             // Log the quote was added
             logger.info(`Added New MrRobot show quote: ${text}`);
         } catch (err) {
@@ -114,35 +114,30 @@ module.exports = app => {
      * @param text
      * @returns {Promise<void>}
      */
-    const quotesHandler =async (to, from, text) => {
-        // Decide if this is a channel or a private message
-        const chan = _.first(text) === '#'
-            ? _.first(text.split(' '))
-            : false;
-
+    const quotesHandler = async (to, from, text) => {
         try {
             // Fetch Result
             const result = await quoteModel.query((qb) => {
                 qb.select('quote').orderByRaw('rand()').limit(1);
-                if (text && !chan) {
-                    qb.andWhere('quote', 'like', text);
+                if (_.isString(text) && !_.isEmpty(text.trim())) {
+                    qb.andWhere('quote', 'like', `%${text}%`);
                 }
             }).fetch();
 
             // Report back
-            app.say(chan || to, !result
+            app.say(to, !result
                 ? 'I have not yet encountered anything like that.'
                 : `${ircTypography.logos.mrrobot} ${result.get('quote')}`);
         } catch (err) {
-            logger.error('Something went wrong with the mrrobot command inside mrorbot.js', {
+            logger.error('Something went wrong with the mrrobot command', {
                 message: err.message || '',
                 stack: err.stack || '',
             });
-            app.say(chan || to, `Something went wrong fetching your quote ${from}`);
+            app.say(to, `Something went wrong fetching your quote ${from}`);
         }
     };
     app.Commands.set('mrrobot', {
-        desc: '[Channel / Search Text] Mr Robot quotes powered by #MrRobot',
+        desc: '[Search Text?] Mr Robot quotes powered by #MrRobot',
         access: app.Config.accessLevels.identified,
         call: quotesHandler,
     });
