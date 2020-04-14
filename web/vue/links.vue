@@ -62,7 +62,7 @@
                                 <a data-uk-tooltip @click="linkClicked(result, $event)"
                                    :title="result.url">{{prepareResult(result)}}</a>
                             </td>
-                            <td class="timeStamp uk-width-2-10">{{result.timestamp | date("%D %R")}}</td>
+                            <td class="timeStamp uk-width-2-10">{{result.timestamp | dateString}}</td>
                         </tr>
                         </tbody>
                     </table>
@@ -123,7 +123,8 @@
     export default {
         name: 'links',
         mixins: [
-            urlSockets
+            urlSockets,
+            filters,
         ],
         components: {
             sitenav

@@ -50,9 +50,8 @@ module.exports = app => {
      *  Provide channel information
      * @param req
      * @param res
-     * @param next
      */
-    const channels = (req, res, next) => {
+    const channels = (req, res) => {
         const data = {};
         req.vueOptions = defaultVueOptions({
             head: {
@@ -78,7 +77,7 @@ module.exports = app => {
      * @param res
      * @param next
      */
-    const coronaLinks = (req, res, next) => {
+    const coronaLinks = (req, res) => {
         const data = {
             query: {
                 channels: "#coronavirus,##coronavirus,##covid-19,##covid19-facts",
@@ -96,9 +95,8 @@ module.exports = app => {
      * Provide link information
      * @param req
      * @param res
-     * @param next
      */
-    const links = (req, res, next) => {
+    const links = (req, res) => {
         const data = {
             query: req.query
         };
@@ -130,9 +128,8 @@ module.exports = app => {
      * Provide link information
      * @param req
      * @param res
-     * @param next
      */
-    const logs = (req, res, next) => {
+    const logs = (req, res) => {
         const data = {
             params: req.params,
         };

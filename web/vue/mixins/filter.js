@@ -1,3 +1,6 @@
+const _ = require('lodash');
+const moment = require('moment');
+
 const filters = {
     name: 'Filter',
     filters: {
@@ -15,6 +18,9 @@ const filters = {
             if (!value) return;
             return _.toLower(value);
         },
+        dateString: function (value) {
+            return moment(value).format("YYYY-MM-DD HH:mm:ss")
+        }
     },
 };
 module.exports = filters;
