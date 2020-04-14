@@ -4,7 +4,7 @@ const scriptInfo = {
     createdBy: 'IronY',
 };
 const _ = require('lodash');
-const gen = require('../generators/_showerThoughts');
+const gen = require('../generators/_randomWebline');
 const typo = require('../lib/_ircTypography');
 const Models = require('funsociety-bookshelf-model-loader');
 const logger = require('../../lib/logger');
@@ -167,7 +167,8 @@ module.exports = app => {
             if (!wasIgnored) {
                 app.Ignore.push(lowerNick);
             }
-            instance.join(to, () => gen(amount).then(results => Models.Logging.query(
+
+            instance.join(to, () => Promise.all(_.times(amount, gen)).then(results => Models.Logging.query(
                 qb => qb
                     .select('text')
                     // .where('from', 'like', nick)

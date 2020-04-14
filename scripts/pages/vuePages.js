@@ -1,4 +1,5 @@
 const Models = require('funsociety-bookshelf-model-loader');
+const originText = require('../lib/_originText');
 
 // Static Routes and pages
 const scriptInfo = {
@@ -9,7 +10,7 @@ const scriptInfo = {
 
 /**
  * Default Vue Configuration Object
- * @type {{head: {title: string, styles: *[], scripts: *[]}}}
+ * @type {function(*=): any}
  */
 const defaultVueOptions = require('../lib/_defaultVueOptions');
 
@@ -156,7 +157,9 @@ module.exports = app => {
      * @param res
      */
     const landing = (req, res) => {
-        const data = {};
+        const data = {
+            originText: originText(app),
+        };
         req.vueOptions = defaultVueOptions({
             head: {
                 title: 'Home',

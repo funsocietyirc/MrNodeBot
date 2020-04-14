@@ -97,7 +97,6 @@ module.exports = app => {
      */
     const searchTermsHandler = async (to, from, text,) => {
         let [terms, channel, nicks] = text.split(' ');
-
         channel = channel || to;
         terms = _.without(terms.split('|'), '');
         nicks = !_.isUndefined(nicks) ? _.without(nicks.split('|'), '') : [];
@@ -112,6 +111,7 @@ module.exports = app => {
                     .where('to', 'like', channel).andWhere(clause => terms.forEach(term => clause.andWhere('text', 'like', `%${term}%`)))
                     .andWhere(clause => nicks.forEach(nick => clause.andWhere('from', 'like', nick)))
                     .orderBy('timestamp', 'desc'))
+                .limit(10)
                 .fetchAll();
 
             if (!results.length) {
@@ -119,7 +119,7 @@ module.exports = app => {
                 return;
             }
 
-            app.say(to, `Sending ${results.length} result(s) for your search on ${terms.join(', ')} in ${channel}`);
+            app.say(to, `Sending the last ${results.length} result(s) for your search on ${terms.join(', ')} in ${channel}`);
             app.say(from, `Providing ${results.length} result(s) for term(s) ${terms.join(', ')} in ${channel}`);
 
             let delay = 0;
@@ -166,7 +166,7 @@ module.exports = app => {
                     .where('to', 'like', to)
                     .andWhere('text', 'like', text)
                     .orderBy('id', 'desc')
-                    .limit(1))
+                    .limit(15))
                 .fetch();
 
             if (!result) {
