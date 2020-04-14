@@ -67,9 +67,9 @@
         <script src="https://www.youtube.com/iframe_api"></script>
 
 
-        <youtube id="player" v-if="key" type="text/html" class="youtube-player" :player-width="windowWidth"
-        :player-height="windowHeight" :video-id="key" :player-vars="playerVars" @paused="pause"
-        @ready="ready" @playing="playing" @ended="ended"></youtube>
+        <!--        <youtube id="player" v-if="key" type="text/html" class="youtube-player" :player-width="windowWidth"-->
+        <!--        :player-height="windowHeight" :video-id="key" :player-vars="playerVars" @paused="pause"-->
+        <!--        @ready="ready" @playing="playing" @ended="ended"></youtube>-->
 
 
         <!--Background animation-->

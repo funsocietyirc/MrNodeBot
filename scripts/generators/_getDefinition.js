@@ -18,7 +18,7 @@ module.exports = async (word) => {
             },
         });
 
-        const definition = await new Promise((res, rej) => {
+        return await new Promise((res, rej) => {
             xray(results, {
                 definition: 'meta[name="description"]@content',
                 type: 'span.luna-pos',
@@ -52,8 +52,6 @@ module.exports = async (word) => {
                 });
             });
         });
-
-        return definition;
 
     } catch (err) {
         const error = new Error('Something went wrong getting a definition');

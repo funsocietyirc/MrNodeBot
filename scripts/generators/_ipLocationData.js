@@ -7,11 +7,10 @@ module.exports = async (host) => {
     if (!host) { throw new Error('No host was provided.'); }
 
     try {
-        const request = await rp({
+        return await rp({
             uri: `${endPoint}${host}`,
             json: true,
         });
-        return request;
     }
     // Catch Errors
     catch (err) {

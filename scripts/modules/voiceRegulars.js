@@ -39,9 +39,8 @@ module.exports = app => {
         _.forEach(app.channels, async (channel) => {
             // we are not an op in said channel, or channel is in ignore list
             if (_.includes(autoVoiceChannelIgnore, channel) || !app._ircClient.isOpInChannel(channel, app.nick)) return;
-
             try {
-                const result = await voiceUsers(channel, threshold, app);
+                await voiceUsers(channel, threshold, app);
                 logger.info(`Running Voice Regulars in ${channel}`);
             } catch (err) {
                 logger.error('Error in Voice Regulars', {

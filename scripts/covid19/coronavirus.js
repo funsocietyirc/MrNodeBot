@@ -37,7 +37,6 @@ module.exports = app => {
      * @param to
      * @param from
      * @param text
-     * @param message
      * @returns {Promise<void>}
      */
     const covid19CanadaHandler = async (to, from, text) => {
@@ -226,7 +225,6 @@ module.exports = app => {
      * @param to
      * @param from
      * @param text
-     * @param message
      * @returns {Promise<void>}
      */
     const covid19StatsHandler = async (to, from, text) => {
@@ -280,7 +278,6 @@ module.exports = app => {
      * @param to
      * @param from
      * @param text
-     * @param message
      * @returns {Promise<void>}
      */
     const covidRiskHandler = async (to, from, text) => {

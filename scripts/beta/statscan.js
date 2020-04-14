@@ -16,7 +16,7 @@ module.exports = app => {
         return rp({uri: endPoint, json: false});
     };
 
-    const statsCanTest = async (to, from, text, message) => {
+    const statsCanTest = async (to, from) => {
         try {
             const results = await _request();
             console.dir(results);

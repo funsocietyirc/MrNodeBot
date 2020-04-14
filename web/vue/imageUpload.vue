@@ -23,7 +23,7 @@
                             <div class="uk-form-row">
                                 <label class="uk-form-label" for="nsfw">NSFW</label>
                                 <div class="uk-form-controls">
-                                    <input type="checkbox" id="nsfw" name="nsfw" checked="false">
+                                    <input id="nsfw" name="nsfw" type="checkbox">
                                     <p class="uk-form-help-inline">Check if Not Safe For Work</p>
                                 </div>
                             </div>

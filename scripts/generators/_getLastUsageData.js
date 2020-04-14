@@ -7,10 +7,15 @@ const saidCats = ['log', 'action', 'notice'];
 
 module.exports = (input, options) => new Promise((res, rej) => {
     // Extract user information
-    let args = null;
+    let args = {};
+
     // We have a string, parse it
-    if (_.isString(input)) { args = extract(input); } // We were passed an object
-    else if (_.isObject(input)) { args = input; } // We were given an array
+    if (_.isString(input)) {
+        args = extract(input);
+    } // We were passed an object
+    else if (_.isObject(input)) {
+        args = input;
+    } // We were given an array
     else if (_.isArray(input)) {
         args = new Object({
             nick: input[0], user: input[1], host: input[2], channel: input[3],

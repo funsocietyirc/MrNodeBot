@@ -80,7 +80,7 @@ module.exports = async (app) => {
     // Helper Function to return the Configuration jwt secret, or a default with a warning
     const getJwtSecret = () => {
         // Issue User Web Tokens
-        let jwtSecret = null;
+        let jwtSecret;
         if (_.isString(app.Config.express.jwt.secret) && !_.isEmpty(app.Config.express.jwt.secret)) jwtSecret = app.Config.express.jwt.secret;
         else {
             jwtSecret = 'mrnodebot';
