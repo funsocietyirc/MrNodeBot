@@ -111,8 +111,9 @@
     // Libs
     const _ = require('lodash');
     // Build Regex
-    const interactiveSiteRegex = /^(https:\/\/www.youtube.com\/watch|https:\/\/youtu.be)/gm;
-    const interactiveFileRegex = /(\.jpg|\.png|\.gif|\.mp4|\.jpeg|\.webm)$/gm;
+    // const interactiveSiteRegex = /^(https:\/\/www.youtube.com\/watch|https:\/\/youtu.be)/gm;
+    // const interactiveFileRegex = /(\.jpg|\.png|\.gif|\.mp4|\.jpeg|\.webm)$/gm;
+
     const hashPattern = /#/g;
     // Components
     const sitenav = require('./components/nav.vue');
@@ -163,8 +164,14 @@
             linkClicked: link => {
                 // Filter on specific content
                 if (
-                    interactiveSiteRegex.test(link.url) ||
-                    interactiveFileRegex.test(link.url)
+                    link.url.startsWith('https://youtu.be') ||
+                    link.url.startsWith('https://www.youtube.com/watch?') ||
+                    link.url.endsWith('.jpg') ||
+                    link.url.endsWith('.png') ||
+                    link.url.endsWith('.gif') ||
+                    link.url.endsWith('.jpeg') ||
+                    link.url.endsWith('.webm') ||
+                    link.url.endsWith('.mp4')
                 ) {
                     window.UIkit.lightbox.create([{
                         source: link.url,
