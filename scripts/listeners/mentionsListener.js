@@ -6,8 +6,9 @@ const scriptInfo = {
 const _ = require('lodash');
 const Models = require('funsociety-bookshelf-model-loader');
 const logger = require('../../lib/logger');
-// Special Thanks to [mbm] for this wonderful regex
 
+// Special Thanks to [mbm] for this wonderful regex
+// noinspection RegExpRedundantEscape
 const pattern = /\B@((?!\w*\.\w)[\w\[\]|\-`\\{}\^]{1,16}(?!\w))/gi;
 
 module.exports = app => {
@@ -23,6 +24,7 @@ module.exports = app => {
         let results = [];
 
         // Check for matches
+        // noinspection JSAssignmentUsedAsCondition
         while (match = pattern.exec(text)) results.push(match[1]);
 
         // No initial results, bail
@@ -61,16 +63,22 @@ module.exports = app => {
             });
         }
     };
-
-    // Listen to messages
     app.Listeners.set('mentions', {
         desc: 'Mentions',
         call: mentions,
     });
 
-    // Listen to Actions
+    /**
+     *  Mention Listener
+     * @param from
+     * @param to
+     * @param text
+     * @param message
+     * @returns {Promise<undefined|*>}
+     */
+    const mentionListener = (from, to, text, message) => mentions(to, from, text, message);
     app.OnAction.set('mentions', {
-        call: (from, to, text, message) => mentions(to, from, text, message),
+        call: mentionListener,
         name: 'mentions',
     });
 

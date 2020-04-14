@@ -186,10 +186,20 @@ module.exports = app => {
         access: app.Config.accessLevels.identified,
         call: seenHandler,
     });
+
+    /**
+     * First Seen Handler
+     * @param to
+     * @param from
+     * @param text
+     * @param message
+     * @returns {Promise<void>}
+     */
+    const firstSeenHandler = (to, from, text, message) => seenHandler(to, from, text, message, null, 0, false);
     app.Commands.set('first-seen', {
         desc: '[nick!user@host channel] shows the first activity of the user',
         access: app.Config.accessLevels.identified,
-        call: (to, from, text, message) => seenHandler(to, from, text, message, null, 0, false),
+        call: firstSeenHandler,
     });
 
     // Return the script info

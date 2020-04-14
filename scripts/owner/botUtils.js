@@ -73,11 +73,16 @@ module.exports = app => {
         call: sliccedHander,
     });
 
-    // Get a list of channels the bot is on
+    /**
+     * Channels Handler
+     * @param to
+     * @param from
+     */
+    const channelsHandler = (to, from) => app.say(from, `I am currently on the following channels: ${app.channels.join(', ')}`);
     app.Commands.set('channels', {
         desc: 'Get a list of the current joined channels',
         access: app.Config.accessLevels.owner,
-        call: (to, from) => app.say(from, `I am currently on the following channels: ${app.channels.join(', ')}`),
+        call: channelsHandler,
     });
 
     /**
@@ -176,7 +181,7 @@ module.exports = app => {
                     })
                     .orderByRaw('rand()')
                     .limit(amount))
-                .fetchAll().then(logs => new Promise((res, rej) => {
+                .fetchAll().then(logs => new Promise(res => {
                     // Hold All The Promises
                     const promises = [];
                     let key = 0;

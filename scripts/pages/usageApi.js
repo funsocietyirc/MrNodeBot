@@ -49,13 +49,15 @@ module.exports = app => {
             });
         }
     };
-
-    // Schedule Recurrence Rule
     scheduler.schedule('clearChannelCache', new scheduler.RecurrenceRule(null, null, null, null, null, 60, null), () => buildCache());
 
-    // Associate On Connected Event
+    /**
+     * Build Cache On connected
+     * @returns {Promise<void>}
+     */
+    const buildCacheOnConnected = () => buildCache();
     app.OnConnected.set('channelResults', {
-        call: () => buildCache(),
+        call: buildCacheOnConnected,
         desc: 'channelResults',
         name: 'channelResults',
     });
