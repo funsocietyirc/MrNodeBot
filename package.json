@@ -60,7 +60,7 @@
     "i18next": "^19.4.1",
     "i18next-sync-fs-backend": "^1.1.1",
     "irc-colors": "^1.5.0",
-    "is-promise": "^2.1.0",
+    "is-promise": "^3.0.0",
     "jsonwebtoken": "^8.5.1",
     "knex": "^0.20.13",
     "lodash": "^4.17.15",
