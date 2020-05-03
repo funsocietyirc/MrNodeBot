@@ -1,5 +1,5 @@
 # Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
-version: v1.13.5
+version: v1.14.1
 # ignores vulnerabilities until expiry date; change duration by modifying expiry date
 ignore:
   SNYK-JS-JSYAML-173999:
@@ -80,3 +80,70 @@ patch:
   'npm:tough-cookie:20170905':
     - table-scraper > tabletojson > request > tough-cookie:
         patched: '2020-03-11T07:11:42.125Z'
+  SNYK-JS-LODASH-567746:
+    - lodash:
+        patched: '2020-05-03T03:21:26.526Z'
+    - '@babel/core > lodash':
+        patched: '2020-05-03T03:21:26.526Z'
+    - bookshelf > lodash:
+        patched: '2020-05-03T03:21:26.526Z'
+    - bookshelf-virtuals-plugin > lodash:
+        patched: '2020-05-03T03:21:26.526Z'
+    - cheerio > lodash:
+        patched: '2020-05-03T03:21:26.526Z'
+    - express-winston > lodash:
+        patched: '2020-05-03T03:21:26.526Z'
+    - funsociety-bookshelf-model-loader > lodash:
+        patched: '2020-05-03T03:21:26.526Z'
+    - funsociety-irc-rss-feed-emitter > lodash:
+        patched: '2020-05-03T03:21:26.526Z'
+    - funsocietyirc-client > lodash:
+        patched: '2020-05-03T03:21:26.526Z'
+    - knex > lodash:
+        patched: '2020-05-03T03:21:26.526Z'
+    - '@babel/preset-env > @babel/plugin-transform-block-scoping > lodash':
+        patched: '2020-05-03T03:21:26.526Z'
+    - funsociety-irc-rss-feed-emitter > async > lodash:
+        patched: '2020-05-03T03:21:26.526Z'
+    - winston > async > lodash:
+        patched: '2020-05-03T03:21:26.526Z'
+    - request-promise-native > request-promise-core > lodash:
+        patched: '2020-05-03T03:21:26.526Z'
+    - '@babel/preset-env > @babel/plugin-transform-classes > @babel/helper-define-map > lodash':
+        patched: '2020-05-03T03:21:26.526Z'
+    - express-vue > eslint-plugin-vue > vue-eslint-parser > lodash:
+        patched: '2020-05-03T03:21:26.526Z'
+    - express-vue > vue-pronto > eslint > lodash:
+        patched: '2020-05-03T03:21:26.526Z'
+    - express-vue > vue-pronto > webpack-merge > lodash:
+        patched: '2020-05-03T03:21:26.526Z'
+    - '@babel/preset-env > @babel/plugin-transform-unicode-regex > @babel/helper-create-regexp-features-plugin > @babel/helper-regex > lodash':
+        patched: '2020-05-03T03:21:26.526Z'
+    - express-vue > vue-pronto > babel-eslint > @babel/traverse > lodash:
+        patched: '2020-05-03T03:21:26.526Z'
+    - express-vue > vue-pronto > eslint-plugin-vue > vue-eslint-parser > lodash:
+        patched: '2020-05-03T03:21:26.526Z'
+    - express-vue > vue-pronto > eslint > inquirer > lodash:
+        patched: '2020-05-03T03:21:26.526Z'
+    - express-vue > vue-pronto > eslint > table > lodash:
+        patched: '2020-05-03T03:21:26.526Z'
+    - pug > pug-code-gen > constantinople > babel-types > lodash:
+        patched: '2020-05-03T03:21:26.526Z'
+    - pug > pug-filters > constantinople > babel-types > lodash:
+        patched: '2020-05-03T03:21:26.526Z'
+    - '@babel/preset-env > @babel/preset-modules > @babel/plugin-transform-dotall-regex > @babel/helper-create-regexp-features-plugin > @babel/helper-regex > lodash':
+        patched: '2020-05-03T03:21:26.526Z'
+    - express-vue > vue-pronto > babel-eslint > @babel/traverse > @babel/generator > lodash:
+        patched: '2020-05-03T03:21:26.526Z'
+    - pug > pug-code-gen > pug-attrs > constantinople > babel-types > lodash:
+        patched: '2020-05-03T03:21:26.526Z'
+    - '@babel/preset-env > @babel/plugin-transform-exponentiation-operator > @babel/helper-builder-binary-assignment-operator-visitor > @babel/helper-explode-assignable-expression > @babel/traverse > @babel/generator > lodash':
+        patched: '2020-05-03T03:21:26.526Z'
+    - express-vue > vue-pronto > babel-eslint > @babel/traverse > @babel/generator > @babel/types > lodash:
+        patched: '2020-05-03T03:21:26.526Z'
+    - '@babel/preset-env > @babel/plugin-transform-exponentiation-operator > @babel/helper-builder-binary-assignment-operator-visitor > @babel/helper-explode-assignable-expression > @babel/traverse > @babel/generator > @babel/types > lodash':
+        patched: '2020-05-03T03:21:26.526Z'
+    - express-vue > vue-pronto > babel-eslint > @babel/traverse > @babel/helper-function-name > @babel/template > @babel/types > lodash:
+        patched: '2020-05-03T03:21:26.526Z'
+    - '@babel/preset-env > @babel/plugin-transform-exponentiation-operator > @babel/helper-builder-binary-assignment-operator-visitor > @babel/helper-explode-assignable-expression > @babel/traverse > @babel/helper-function-name > @babel/template > @babel/types > lodash':
+        patched: '2020-05-03T03:21:26.526Z'
