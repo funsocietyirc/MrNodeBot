@@ -14,7 +14,7 @@ const typo = require('../lib/_ircTypography');
 const logger = require('../../lib/logger');
 const getShort = require('../lib/_getShortService')();
 const extractUrls = require('../../lib/extractUrls');
-
+const helpers = require('../../helpers');
 module.exports = app => {
     // No Database available
     if (!Models.RssFeed || !Models.RssChannelSubscription) return scriptInfo;
@@ -123,7 +123,9 @@ module.exports = app => {
                 .insertIcon('person')
                 .append(item.author)
                 .append(item.title)
-                .append(item.contentSnippet)
+                .append(_.truncate(helpers.StripNewLine(item.contentSnippet), {
+                    length: 500,
+                }))
                 .insertIcon('anchor')
                 .append(link)
                 .append(dateAgo);
