@@ -8,6 +8,7 @@ const _ = require('lodash');
 const Moment = require('moment');
 const Models = require('funsociety-bookshelf-model-loader');
 const RssFeedEmitter = require('funsociety-irc-rss-feed-emitter');
+const rssParser = require('rss-parser');
 
 const typo = require('../lib/_ircTypography');
 const logger = require('../../lib/logger');
@@ -17,6 +18,8 @@ const extractUrls = require('../../lib/extractUrls');
 module.exports = app => {
     // No Database available
     if (!Models.RssFeed || !Models.RssChannelSubscription) return scriptInfo;
+
+    const parser = new rssParser();
 
     // Initial RSS Feed Loader
     const feeder = new RssFeedEmitter({userAgent: 'MrNodeBot'});
@@ -64,6 +67,72 @@ module.exports = app => {
             });
         }
     };
+
+    /**
+     *
+     * Get Last RSS Line
+     *
+     * @param {string} to
+     * @param {string} from
+     * @param {string} text
+     * @param {object} message
+     */
+    const lastRssLine = async (to, from, text, message) => {
+        if (_.isEmpty(text)) {
+            app.say(to, `I am sorry ${from}, I require a RSS feed ID to pull the last post`);
+            return;
+        }
+        const id = parseInt(text.split(' ')[0]);
+        if (!_.isSafeInteger(id)) {
+            app.say(to, `I am sorry ${from}, the ID you gave me is not a numeric value`);
+            return;
+        }
+
+        try {
+            const feedSubscription = await Models.RssFeed.query(qb => qb.where('id', id)).fetch();
+
+            if (!feedSubscription) {
+                app.say(to, `There is no subscription with the ID ${id}`);
+                return;
+            }
+
+            const feed = await parser.parseURL(feedSubscription.get('link'));
+
+            if(!feed || !feed.items) {
+                app.say(to, `Something went wrong fetching the RSS results, ${from}`);
+                return;
+            }
+
+            const item = _.first(feed.items);
+            const link = _.isString(item.link) ? await getShort(item.link) : 'No Link';
+            const date = item.date || item.pubDate;
+            const dateAgo = date ? Moment(date).fromNow() : 'No Date';
+            const output = new typo.StringBuilder({logo: 'rss'});
+            output
+                .appendBold(feed.title || feedSubscription.attributes.name)
+                .insertIcon('person')
+                .append(item.author)
+                .append(item.title)
+                .append(item.contentSnippet)
+                .insertIcon('anchor')
+                .append(link)
+                .append(dateAgo);
+
+            app.say(to, output.toString());
+
+        } catch (err) {
+            logger.error('Something went wrong in the unsubscribe function inside the RssFeed', {
+                message: err.message || '',
+                stack: err.stack || '',
+            });
+            app.say(to, `Something went wrong removing the subscription, ${from}`);
+        }
+    };
+    app.Commands.set('rss-last-post', {
+        desc: '[id] - Get Last post from a Feed',
+        access: app.Config.accessLevels.channelOpIdentified,
+        call: lastRssLine,
+    });
 
     /**
      * Unsubscribe a channel from a RSS feed
@@ -395,13 +464,20 @@ module.exports = app => {
      * @private
      */
     const onLoad = async () => {
-        // Bind the Feeder
-        feeder.on('new-item-max', _newItemHandler);
-        // Subscribe to feeds
-        return await Models.RssFeed.fetchAll().then(feeds => feeds.forEach(feed => feeder.add({
-            url: feed.attributes.link,
-            refresh: 2000,
-        })));
+        try {
+            // Bind the Feeder
+            feeder.on('new-item-max', _newItemHandler);
+            // Subscribe to feeds
+            return await Models.RssFeed.fetchAll().then(feeds => feeds.forEach(feed => feeder.add({
+                url: feed.attributes.link,
+                refresh: 2000,
+            })));
+        } catch(err) {
+            logger.warn('Something went wrong in the RSS feed module', {
+                message: err.message || '',
+                stack: err.stack || '',
+            });
+        }
     };
 
     /**
