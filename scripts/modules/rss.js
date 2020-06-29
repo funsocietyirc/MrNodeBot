@@ -82,7 +82,11 @@ module.exports = app => {
             app.say(to, `I am sorry ${from}, I require a RSS feed ID to pull the last post`);
             return;
         }
-        const id = parseInt(text.split(' ')[0]);
+
+        const [_id, _post] = text.split(' ');
+        const id = parseInt(_id);
+        const post = _.isSafeInteger(parseInt(_post))? parseInt(_post) : 1;
+
         if (!_.isSafeInteger(id)) {
             app.say(to, `I am sorry ${from}, the ID you gave me is not a numeric value`);
             return;
@@ -98,12 +102,18 @@ module.exports = app => {
 
             const feed = await parser.parseURL(feedSubscription.get('link'));
 
-            if(!feed || !feed.items) {
+            if(!feed || !feed.items || !feed.items.length) {
                 app.say(to, `Something went wrong fetching the RSS results, ${from}`);
                 return;
             }
 
-            const item = _.first(feed.items);
+            const item = feed.items[post - 1];
+
+            if (!item) {
+                app.say(to, `That post does not exist for the feed, ${from}`);
+                return;
+            }
+
             const link = _.isString(item.link) ? await getShort(item.link) : 'No Link';
             const date = item.date || item.pubDate;
             const dateAgo = date ? Moment(date).fromNow() : 'No Date';
@@ -129,7 +139,7 @@ module.exports = app => {
         }
     };
     app.Commands.set('rss-last-post', {
-        desc: '[id] - Get Last post from a Feed',
+        desc: '[id] [post?] - Get Last post from a Feed',
         access: app.Config.accessLevels.channelOpIdentified,
         call: lastRssLine,
     });
