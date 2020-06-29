@@ -77,23 +77,21 @@ module.exports = app => {
      * @param {string} text
      * @param {object} message
      */
-    const lastRssLine = async (to, from, text, message) => {
+    const rssPost = async (to, from, text, message) => {
         if (_.isEmpty(text)) {
-            app.say(to, `I am sorry ${from}, I require a RSS feed ID to pull the last post`);
+            app.say(to, `I am sorry ${from}, I require a RSS Feed ID/Name to pull the last post`);
             return;
         }
 
         const [_id, _post] = text.split(' ');
-        const id = parseInt(_id);
-        const post = _.isSafeInteger(parseInt(_post))? parseInt(_post) : 1;
+        const idIsInt = _.isSafeInteger(parseInt(_id));
 
-        if (!_.isSafeInteger(id)) {
-            app.say(to, `I am sorry ${from}, the ID you gave me is not a numeric value`);
-            return;
-        }
+        const id = idIsInt ? parseInt(_id) : _id;
+        const post = _.isSafeInteger(parseInt(_post)) ? parseInt(_post) : 1;
 
         try {
-            const feedSubscription = await Models.RssFeed.query(qb => qb.where('id', id)).fetch();
+
+            const feedSubscription = await Models.RssFeed.query(qb => qb.where(idIsInt ? 'id' : 'name', 'like', `%${id}%`)).fetch();
 
             if (!feedSubscription) {
                 app.say(to, `There is no subscription with the ID ${id}`);
@@ -123,7 +121,7 @@ module.exports = app => {
                 .insertIcon('person')
                 .append(item.author)
                 .append(item.title)
-                .append(_.truncate(helpers.StripNewLine(item.contentSnippet), {
+                .append(_.truncate(helpers.ColorHelpArgs(helpers.StripNewLine(item.contentSnippet)), {
                     length: 500,
                 }))
                 .insertIcon('anchor')
@@ -133,17 +131,17 @@ module.exports = app => {
             app.say(to, output.toString());
 
         } catch (err) {
-            logger.error('Something went wrong in the unsubscribe function inside the RssFeed', {
+            logger.error('Something went wrong in the last-post function inside the RssFeed', {
                 message: err.message || '',
                 stack: err.stack || '',
             });
-            app.say(to, `Something went wrong removing the subscription, ${from}`);
+            app.say(to, `There was an unhandeld error in the rss-last-post command, ${from}`);
         }
     };
-    app.Commands.set('rss-last-post', {
-        desc: '[id] [post?] - Get Last post from a Feed',
+    app.Commands.set('rss-post', {
+        desc: '[id] [post?] - Get Post from a Feed',
         access: app.Config.accessLevels.channelOpIdentified,
-        call: lastRssLine,
+        call: rssPost,
     });
 
     /**
