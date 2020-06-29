@@ -51,10 +51,8 @@ module.exports = app => {
                 const output = new typo.StringBuilder({logo: 'rss'});
                 output
                     .appendBold(feed.attributes.name)
-                    .insertIcon('person')
                     .append(item.author)
                     .append(item.title)
-                    .insertIcon('anchor')
                     .append(link)
                     .append(dateAgo);
 
@@ -118,13 +116,11 @@ module.exports = app => {
             const output = new typo.StringBuilder({logo: 'rss'});
             output
                 .appendBold(feed.title || feedSubscription.attributes.name)
-                .insertIcon('person')
                 .append(item.author)
                 .append(item.title)
                 .append(_.truncate(helpers.ColorHelpArgs(helpers.StripNewLine(item.contentSnippet)), {
                     length: 500,
                 }))
-                .insertIcon('anchor')
                 .append(link)
                 .append(dateAgo);
 
@@ -135,7 +131,7 @@ module.exports = app => {
                 message: err.message || '',
                 stack: err.stack || '',
             });
-            app.say(to, `There was an unhandeld error in the rss-last-post command, ${from}`);
+            app.say(to, `There was an error in the rss-last-post command, ${from}`);
         }
     };
     app.Commands.set('rss-post', {
