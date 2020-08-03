@@ -56,7 +56,7 @@
     "funsociety-irc-rss-feed-emitter": "^1.0.12",
     "funsocietyirc-client": "^0.1.20",
     "gitlog": "^4.0.0",
-    "helmet": "^3.23.3",
+    "helmet": "^4.0.0",
     "i18next": "^19.6.3",
     "i18next-sync-fs-backend": "^1.1.1",
     "irc-colors": "^1.5.0",
