@@ -21,7 +21,7 @@ const expressVueOptions = {
     head: {
         title: 'MrNodeBot',
         scripts: [
-            {src: 'https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js'},
+            {src: '/assets/external/jquery.min.js'},
         ],
     },
 };
@@ -94,7 +94,9 @@ module.exports = async (app) => {
 
     // Initialize Helmet
     if (!app.Config.bot.debug) {
-        webServer.use(helmet());
+        webServer.use(helmet({
+
+        }));
     }
 
     // Initiate express-vue
