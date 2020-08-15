@@ -25,16 +25,16 @@ module.exports = app => {
                     {style: '/assets/app-external.css', type: 'text/css'},
                 ],
                 scripts: [
-                    {src: 'https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment-with-locales.min.js'},
-                    {src: 'https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js'},
-                    {src: 'https://cdnjs.cloudflare.com/ajax/libs/uikit/2.27.5/js/uikit.min.js'},
-                    {src: 'https://cdnjs.cloudflare.com/ajax/libs/uikit/2.27.5/js/components/lightbox.min.js'},
-                    {src: 'https://cdnjs.cloudflare.com/ajax/libs/uikit/2.27.5/js/components/notify.min.js'},
-                    {src: 'https://cdnjs.cloudflare.com/ajax/libs/uikit/2.27.5/js/components/tooltip.min.js'},
-                    {src: 'https://cdnjs.cloudflare.com/ajax/libs/uikit/2.27.5/js/components/grid.min.js'},
-                    {src: 'https://cdnjs.cloudflare.com/ajax/libs/uikit/2.27.5/js/components/accordion.min.js'},
-                    {src: 'https://cdn.jsdelivr.net/npm/vue-slider-component@2.7.2/dist/index.min.js'},
-                    {src: 'https://cdn.jsdelivr.net/npm/vue-youtube-embed@2.1.3/lib/vue-youtube-embed.min.js'},
+                    {src: '/assets/external/moment-with-locales.min.js'},
+                    {src: '/assets/external/socket.io.js'},
+                    {src: '/assets/external/uikit.min.js'},
+                    {src: '/assets/external/lightbox.min.js'},
+                    {src: '/assets/external/notify.min.js'},
+                    {src: '/assets/external/tooltip.min.js'},
+                    {src: '/assets/external/grid.min.js'},
+                    {src: '/assets/external/accordion.min.js'},
+                    {src: '/assets/external/vue-ui-slider.js'},
+                    {src: '/assets/external/vue-youtube-embed.min.js'},
                 ]
             }
         };

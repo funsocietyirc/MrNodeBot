@@ -51,14 +51,14 @@ const _defaultVueOptions = {
             {style: '/assets/app-external.css', type: 'text/css'},
         ],
         scripts: [
-            {src: 'https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js'},
-            {src: 'https://cdnjs.cloudflare.com/ajax/libs/uikit/2.27.5/js/uikit.min.js'},
-            {src: 'https://cdnjs.cloudflare.com/ajax/libs/uikit/2.27.5/js/components/lightbox.min.js'},
-            {src: 'https://cdnjs.cloudflare.com/ajax/libs/uikit/2.27.5/js/components/notify.min.js'},
-            {src: 'https://cdnjs.cloudflare.com/ajax/libs/uikit/2.27.5/js/components/tooltip.min.js'},
-            {src: 'https://cdnjs.cloudflare.com/ajax/libs/uikit/2.27.5/js/components/grid.min.js'},
-            {src: 'https://cdnjs.cloudflare.com/ajax/libs/uikit/2.27.5/js/components/accordion.min.js'},
-            {src: 'https://cdnjs.cloudflare.com/ajax/libs/uikit/2.27.5/js/components/sortable.min.js'},
+            {src: '/assets/external/socket.io.js'},
+            {src: '/assets/external/uikit.min.js'},
+            {src: '/assets/external/lightbox.min.js'},
+            {src: '/assets/external/notify.min.js'},
+            {src: '/assets/external/tooltip.min.js'},
+            {src: '/assets/external/grid.min.js'},
+            {src: '/assets/external/accordion.min.js'},
+            {src: '/assets/external/sortable.min.js'},
         ]
     }
 };
