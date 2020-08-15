@@ -26,6 +26,7 @@ const expressVueOptions = {
     },
 };
 
+
 /**
  *  Check to see if the expressvu cache is stale
  * @param {Object} options

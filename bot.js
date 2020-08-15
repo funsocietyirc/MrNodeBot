@@ -10,11 +10,10 @@ const fs = require('fs');
 const path = require('path');
 const moment = require('moment');
 const storage = require('node-persist');
-const helpers = require('./helpers');
 const { exec } = require('child_process');
 const { promisify } = require('util');
-const execPromise = promisify(exec);
 const clearModule = require('clear-module');
+const helpers = require('./helpers');
 
 // Project libs
 const logger = require('./lib/logger');
@@ -23,6 +22,9 @@ const preprocessText = require('./lib/preprocessText');
 const t = require('./lib/localize');
 const IrcWrappers = require('./lib/ircWrappers');
 const webRoutes = require('./lib/webRoute');
+const messenger = require('./lib/messenger');
+
+const execPromise = promisify(exec);
 
 /** Dynamically created collections */
 const dynCollections = _([
@@ -110,6 +112,8 @@ class MrNodeBot {
             this._ircClient = require('./lib/ircClient');
             /** Initialize the IRC Wrappers */
             this._ircWrappers = await this._initIrc();
+            /** Initialize Facebook Messenger */
+            messenger(this);
         } catch (err) {
             this._errorHandler('Something went wrong in the primary init function', err);
         }
@@ -305,13 +309,12 @@ class MrNodeBot {
                         message,
                     });
                 },
-        }
-        ).each((value, key) => this._ircClient.addListener(key, value));
+        }).each((value, key) => this._ircClient.addListener(key, value));
 
         for (const connectedHandler of this.OnConnected) {
             logger.info(`Processing connected handler for ${connectedHandler[0]}`);
             try {
-                if(_.isFunction(connectedHandler[1].call)) {
+                if (_.isFunction(connectedHandler[1].call)) {
                     await connectedHandler[1].call();
                 }
             } catch (err) {
@@ -410,7 +413,8 @@ class MrNodeBot {
                         info: require(`./${dir}/${file}`)(this),
                     };
 
-                    // Build up last updated information, do not await on this and throw it async so it does not slow down startup
+                    // Build up last updated information, do not await on this and
+                    // throw it async so it does not slow down startup
                     (async () => {
                         const together = await execPromise('git log -1 --format="%cI *|*|* %cn *|*|*  %cE *|*|* %s" -- ' + fullPath);
 
@@ -685,8 +689,7 @@ class MrNodeBot {
         return _.includes(this.Ignore, nick.toLowerCase());
     }
 
-
-    /**4
+    /**
      * Perform a Notice over IRC
      * @param {string} target Nick / Channel to say it to
      * @param {string} message What to say

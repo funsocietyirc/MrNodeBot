@@ -211,6 +211,14 @@ module.exports = {
     },
     // Feature Configuration
     features: {
+        messenger: {
+            enabled: false,
+            pageId: '',
+            accessToken: '',
+            appId: '',
+            appSecret: '',
+            verifyToken: '',
+        },
         webLogs: [
             // '#mrnodebot'
         ],
