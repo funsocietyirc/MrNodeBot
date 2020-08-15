@@ -93,7 +93,9 @@ module.exports = async (app) => {
     const webServer = Express();
 
     // Initialize Helmet
-    webServer.use(helmet());
+    if (!app.Config.bot.debug) {
+        webServer.use(helmet());
+    }
 
     // Initiate express-vue
     process.env.VUE_DEV = app.Config.bot.webDebug === true;
