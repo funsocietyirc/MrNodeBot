@@ -43,7 +43,7 @@
     "cheerio": "^1.0.0-rc.2",
     "clear-module": "^4.1.1",
     "countdown": "^2.6.0",
-    "css-loader": "^3.6.0",
+    "css-loader": "^4.2.1",
     "currency-symbol-map": "^4.0.4",
     "express": "^4.17.1",
     "express-fileupload": "^1.2.0",
