@@ -9,7 +9,7 @@ const endPoint = 'https://firebasestorage.googleapis.com/v0/b/flatten-271620.app
 // Request the current minutes to midnight feed.
 const _request = async () => {
     try {
-        return await rp({uri: endPoint, json: true});
+        return await rp({ uri: endPoint, json: true });
     } catch (err) {
         throw new Error('Something went wrong fetching flattenCanada API');
     }
