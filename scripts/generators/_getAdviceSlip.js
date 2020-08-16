@@ -3,6 +3,7 @@ const rp = require('request-promise-native');
 
 const endPoint = 'https://api.adviceslip.com/';
 
+
 module.exports = async (searchTerm) => {
         const termPresent = _.isString(searchTerm) && !_.isEmpty(searchTerm);
         // Fetch

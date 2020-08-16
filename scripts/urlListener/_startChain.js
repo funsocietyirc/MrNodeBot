@@ -1,3 +1,4 @@
+/* eslint-disable prefer-promise-reject-errors */
 const URI = require('urijs');
 
 module.exports = (url, to, from, text, message, is) => new Promise((resolve, reject) => {
