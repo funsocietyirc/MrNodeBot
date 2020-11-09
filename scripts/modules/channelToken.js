@@ -11,7 +11,7 @@ const scheduler = require('../../lib/scheduler');
 
 module.exports = app => {
     // Log nick changes in the alias table
-    if (!Models.Token) return;
+    if (!Models.Token) return scriptInfo;
 
     // Hold the token model
     const tokenModel = Models.Token;

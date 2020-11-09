@@ -13,7 +13,7 @@ const defaultVueOptions = require('../lib/_defaultVueOptions');
 
 module.exports = app => {
     // Log nick changes in the alias table
-    if (!app.Database && !Models.Token) return;
+    if (!app.Database && !Models.Token) return scriptInfo;
 
     // Show the form upload
     const uploadForm = (req, res) => {

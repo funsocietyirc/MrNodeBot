@@ -21,7 +21,7 @@ module.exports = app => {
         .replace(/[o]/gi, '0');
 
     // Do not load module if we have no database
-    if (!app.Database && !Models.Greeter) return;
+    if (!app.Database && !Models.Greeter) return scriptInfo;
 
     const salutations = _.map([
         'Greetings', 'Hail', 'Welcome', 'Salutations', 'Alhoa',

@@ -4,7 +4,7 @@ const config = require('../config');
 
 const client = new Promise((res, rej) => {
 // Do not load ORM if we have a disabled database
-    if (!config.knex.enabled) return;
+    if (!config.knex.enabled) res(false);
 
     // Switch between engines
     const knexConfig =

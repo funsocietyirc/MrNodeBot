@@ -9,7 +9,7 @@ const getBestGuess = require('../generators/_nickBestGuess');
 
 module.exports = app => {
     // Log nick changes in the alias table
-    if (!Models.Alias) return;
+    if (!Models.Alias) return scriptInfo;
 
     /**
      * AKA Handler

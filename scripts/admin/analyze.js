@@ -14,7 +14,7 @@ const errorMessage = 'Something went wrong fetching your results';
 
 module.exports = app => {
     // No Database Data available...
-    if (!app.Database && !Models.Logging) return;
+    if (!app.Database && !Models.Logging) return scriptInfo;
 
     // Helpers
     const titleLine = text => c.underline.red.bgblack(text);
