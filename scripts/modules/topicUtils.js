@@ -15,7 +15,7 @@ const lastXtopics = 20;
 
 module.exports = app => {
     // Bailout if we do not have database
-    if (!app.Database || !Models.Topics) return;
+    if (!app.Database || !Models.Topics) return scriptInfo;
 
     /**
      * Get Topics

@@ -101,7 +101,12 @@ class MrNodeBot {
             /** Application Root Path */
             this.AppRoot = require('app-root-path').toString();
             /** Database Instance */
-            this.Database = await this._initDbSubSystem();
+            try {
+                this.Database = await this._initDbSubSystem();
+            } catch (err) {
+                console.dir(err);
+                this.Database = false;
+            }
             /** Web Server Instance */
             this.WebServer = await this._initWebServer();
             /** Initialize SocketIO */
@@ -335,9 +340,13 @@ class MrNodeBot {
         // We have a Database available
         if (this.Config.knex.enabled) {
             logger.info(t('database.initializing'));
-            const db = require('./database/client');
-            logger.info(t('database.initialized'));
-            return db;
+            return require('./database/client').then((db) => {
+                logger.info(t('database.initialized'));
+                return db;
+            }).catch(() => {
+                logger.error('Something went wrong connecting to the DB, disabling');
+                return false;
+            });
         }
 
         // We have no Database available

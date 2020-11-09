@@ -5,13 +5,13 @@ const scriptInfo = {
 };
 const _ = require('lodash');
 const c = require('irc-colors');
-const logger = require('../../lib/logger');
 const Models = require('funsociety-bookshelf-model-loader');
+const logger = require('../../lib/logger');
 
 // Log all incoming channel messages to a Sql Database
-module.exports = app => {
+module.exports = (app) => {
     // Assure the database exists
-    if (!app.Database) return;
+    if (!app.Database) return scriptInfo;
 
     // Log Messages
     const msgCmd = (to, from, text, message) => {
@@ -22,8 +22,7 @@ module.exports = app => {
             text: c.stripColorsAndStyle(text),
             ident: message.user,
             host: message.host,
-        })
-            .catch(logger.error);
+        }).catch(() => logger.error('Something went wrong logging message'));
     };
     app.Listeners.set('messageLogging', {
         name: 'messageLogging',
@@ -40,8 +39,7 @@ module.exports = app => {
             type,
             user: message.user,
             host: message.host,
-        })
-            .catch(logger.error);
+        }).catch(() => logger.error('Something went wrong logging ctcp command'));
     };
     app.OnCtcp.set('ctcpLogging', {
         name: 'ctcpLogging',
@@ -58,8 +56,7 @@ module.exports = app => {
             text: c.stripColorsAndStyle(text),
             user: message.user,
             host: message.host,
-        })
-            .catch(logger.error);
+        }).catch(() => logger.error('Something went wrong logging action'));
     };
     app.OnAction.set('actionLogger', {
         call: actionCmd,
@@ -75,8 +72,7 @@ module.exports = app => {
             text: c.stripColorsAndStyle(text),
             user: message.user,
             host: message.host,
-        })
-            .catch(logger.error);
+        }).catch(() => logger.error('Something went wrong logging notice'));
     };
     app.OnNotice.set('noticeLogger', {
         call: noticeCmd,
@@ -92,7 +88,9 @@ module.exports = app => {
             user: message.user,
             host: message.host,
         })
-            .catch(logger.error);
+            .catch(() => {
+                logger.error(`Something went wrong logging join for ${channel}`);
+            });
     };
     app.OnJoin.set('joinLogger', {
         call: joinCmd,
@@ -109,7 +107,7 @@ module.exports = app => {
             user: message.user,
             host: message.host,
         })
-            .catch(logger.error);
+            .catch(() => logger.error(`Something went wrong logging part for ${channel}`));
     };
     app.OnPart.set('partLogger', {
         call: partCmd,
@@ -126,8 +124,7 @@ module.exports = app => {
             by,
             user: message.user,
             host: message.host,
-        })
-            .catch(logger.error);
+        }).catch(() => logger.error(`Something went wrong logging part for ${channel}`));
     };
     app.OnKick.set('kickLogger', {
         call: kickCmd,
@@ -143,8 +140,7 @@ module.exports = app => {
             channels: _.isArray(channels) ? channels.join() : '',
             user: message.user,
             host: message.host,
-        })
-            .catch(logger.error);
+        }).catch(() => logger.error(`Something went wrong logging quit for ${_.isArray(channels) ? channels.join() : ''}`));
     };
     app.OnQuit.set('quitLogger', {
         call: quitCmd,
@@ -161,22 +157,20 @@ module.exports = app => {
             channels: channels.join(),
             user: message.user,
             host: message.host,
-        })
-            .catch(logger.error);
+        }).catch(() => logger.error(`Something went wrong nick change ${oldnick} to ${newnick}`));
     };
     app.NickChanges.set('nickLogger', {
         name: 'nickLogger',
         call: nickCmd,
     });
 
-    // Toppic logging handler
+    // Topic logging handler
     const topicCmd = (channel, topic, nick, message) => {
         if (!Models.Topics) return;
-        Models.Topics.query(qb =>
-            qb.where('channel', 'like', channel)
-                .orderBy('id', 'desc')
-                .limit(1)
-                .select(['topic']))
+        Models.Topics.query((qb) => qb.where('channel', 'like', channel)
+            .orderBy('id', 'desc')
+            .limit(1)
+            .select(['topic']))
             .fetch()
             .then((lastTopic) => {
                 if (lastTopic && topic === lastTopic.attributes.topic) return;
@@ -187,8 +181,7 @@ module.exports = app => {
                     user: message.user,
                     host: message.host,
                 });
-            })
-            .catch(logger.error);
+            }).catch(() => logger.error(`Something went wrong topic change for ${channel}`));
     };
     app.OnTopic.set('topicLogger', {
         call: topicCmd,
