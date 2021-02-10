@@ -1,10 +1,8 @@
-
-
 // MrNodeBot
 const _ = require('lodash');
 const fs = require('fs');
-const Bot = require('./bot');
 const args = require('minimist')(process.argv.slice(2));
+const Bot = require('./bot');
 const logger = require('./lib/logger');
 
 // Check if specified config file exists
@@ -51,7 +49,6 @@ const bot = new Bot((app) => {
                 process.exit(1);
             });
         }
-
     });
 
     // Hook into control-c termination
@@ -69,7 +66,6 @@ const bot = new Bot((app) => {
             }
         }
     });
-
 }, args.config);
 
 // Initialize
