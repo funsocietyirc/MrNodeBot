@@ -30,8 +30,8 @@
     "npm": ">=6.0.0"
   },
   "dependencies": {
-    "@babel/core": "^7.13.10",
-    "@babel/preset-env": "^7.13.10",
+    "@babel/core": "^7.13.16",
+    "@babel/preset-env": "^7.13.15",
     "accounting-js": "^1.1.1",
     "app-root-path": "^3.0.0",
     "basic-auth": "^2.0.1",
@@ -56,13 +56,13 @@
     "funsociety-irc-rss-feed-emitter": "^1.0.12",
     "funsocietyirc-client": "^0.1.20",
     "gitlog": "^4.0.4",
-    "helmet": "^4.4.1",
+    "helmet": "^4.5.0",
     "i18next": "^19.9.2",
     "i18next-sync-fs-backend": "^1.1.1",
     "irc-colors": "^1.5.0",
     "is-promise": "^4.0.0",
     "jsonwebtoken": "^8.5.1",
-    "knex": "^0.95.2",
+    "knex": "^0.95.4",
     "lodash": "^4.17.21",
     "lodash-addons": "^2.0.1",
     "minimist": "^1.2.5",
@@ -81,7 +81,7 @@
     "rss-parser": "^3.12.0",
     "serve-favicon": "^2.5.0",
     "shelljs": "^0.8.4",
-    "snyk": "^1.485.0",
+    "snyk": "^1.570.0",
     "socket.io": "^2.3.0",
     "textmining": "^1.0.3",
     "twit": "^2.2.11",
@@ -89,14 +89,14 @@
     "vue-loader": "^15.9.6",
     "webpack": "^4.44.2",
     "winston": "~3.3.3",
-    "winston-daily-rotate-file": "^4.5.1",
+    "winston-daily-rotate-file": "^4.5.2",
     "x-ray": "^2.3.4"
   },
   "devDependencies": {
     "chai": "^4.3.4",
     "chai-bookshelf": "^1.0.0",
     "chai-moment": "^0.1.0",
-    "eslint": "^7.22.0",
+    "eslint": "^7.25.0",
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-plugin-chai-expect": "^2.2.0",
     "eslint-plugin-import": "^2.22.1",
@@ -106,7 +106,7 @@
     "jsdoc": "^3.6.6",
     "mocha": "^8.3.2",
     "sinon": "^9.2.4",
-    "sinon-chai": "^3.5.0"
+    "sinon-chai": "^3.6.0"
   },
   "snyk": true
 }
