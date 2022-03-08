@@ -85,7 +85,7 @@
     "socket.io": "^2.3.0",
     "textmining": "^1.0.3",
     "twit": "^2.2.11",
-    "urijs": "^1.19.6",
+    "urijs": "^1.19.10",
     "vue-loader": "^15.9.7",
     "webpack": "^4.44.2",
     "winston": "~3.3.3",
