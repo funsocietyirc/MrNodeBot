@@ -273,7 +273,8 @@ module.exports = async (app) => {
                 });
             }
 
-            const authenticated = await app._userManager.verify(user.attributes.nick, req.body.password);
+            const authenticated = await app
+            ._userManager.verify(user.attributes.nick, req.body.password);
 
             // Password mismatch
             if (!authenticated) {
