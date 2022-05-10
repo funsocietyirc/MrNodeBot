@@ -27,16 +27,14 @@ const bot = new Bot((app) => {
 
     // Unhandled exceptions
     // Note: This is being put in place to enforce a stricter protocol on catching errors
-    process.on('unhandledRejection', err => {
+    process.on('unhandledRejection', (err) => {
         // If we have a logger
         if (logger && logger.error) {
             logger.error(`Unhandled Rejection: ${err.message}`, {
                 stack: err.stack || '',
                 message: err.message || '',
             });
-        }
-        // Otherwise
-        else {
+        } else {
             console.error(err.message, err.stack);
         }
 

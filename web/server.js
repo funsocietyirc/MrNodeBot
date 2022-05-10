@@ -3,7 +3,6 @@ const fs = require('fs');
 const jwt = require('jsonwebtoken');
 const path = require('path');
 const helmet = require('helmet');
-const logger = require('../lib/logger');
 const Router = require('named-routes');
 const favicon = require('serve-favicon');
 const Express = require('express');
@@ -12,8 +11,9 @@ const RateLimit = require('express-rate-limit');
 const bodyParser = require('body-parser');
 const fileUpload = require('express-fileupload');
 const expressWinston = require('express-winston');
-const expressVue = require("express-vue");
+const expressVue = require('express-vue');
 const socketIO = require('socket.io');
+const logger = require('../lib/logger');
 
 // Default express view options
 const expressVueOptions = {
@@ -21,11 +21,10 @@ const expressVueOptions = {
     head: {
         title: 'MrNodeBot',
         scripts: [
-            {src: '/assets/external/jquery.min.js'},
+            { src: '/assets/external/jquery.min.js' },
         ],
     },
 };
-
 
 /**
  *  Check to see if the expressvu cache is stale
@@ -42,21 +41,21 @@ const cleanExpressVueCache = (options = {}) => {
     if (!hasCache || !hasVueFiles) return;
 
     const vueFileMax = _(vueFiles)
-        .map(f => ({
+        .map((f) => ({
             name: f,
-            ctime: fs.statSync(path.join(options.pagesPath, f)).ctime
+            ctime: fs.statSync(path.join(options.pagesPath, f)).ctime,
         }))
-        .maxBy(f => f.ctime);
+        .maxBy((f) => f.ctime);
 
     const vueCacheFiles = fs.readdirSync(expressVueCacheDir);
     const vueCacheFileMax = _(vueCacheFiles)
-        .map(f => ({
+        .map((f) => ({
             name: f,
-            ctime: fs.statSync(path.join(expressVueCacheDir, f)).ctime
+            ctime: fs.statSync(path.join(expressVueCacheDir, f)).ctime,
         }))
-        .maxBy(f => f.ctime);
+        .maxBy((f) => f.ctime);
 
-    if(
+    if (
         // Both Dirs Have Files
         vueFileMax &&
         vueCacheFileMax &&
@@ -66,7 +65,7 @@ const cleanExpressVueCache = (options = {}) => {
         // The source file is newer than the cache file
         vueFileMax.ctime > vueCacheFileMax.ctime
     ) {
-        logger.info(`The Express Vue Cache is stale, purging.`);
+        logger.info('The Express Vue Cache is stale, purging.');
         fs.rmdirSync(expressVueCacheDir, {
             recursive: true,
             maxRetries: 10,
@@ -150,7 +149,7 @@ module.exports = async (app) => {
         expressFormat: false, // Use the default Express/morgan request formatting. Enabling this will override any msg if true. Will only output colors with colorize set to true
         colorize: true, // Color the text and status code, using the Express/morgan color palette (text: gray, status: default green, 3XX cyan, 4XX yellow, 5XX red).
         // optional: allows to skip some log messages based on request and/or response
-        ignoreRoute(req, res) {
+        ignoreRoute() {
             return false;
         },
     }));
@@ -274,7 +273,7 @@ module.exports = async (app) => {
             }
 
             const authenticated = await app
-            ._userManager.verify(user.attributes.nick, req.body.password);
+                ._userManager.verify(user.attributes.nick, req.body.password);
 
             // Password mismatch
             if (!authenticated) {
@@ -288,7 +287,10 @@ module.exports = async (app) => {
                 nick: user.attributes.nick,
                 id: user.attributes.id,
                 email: user.attributes.email,
-                admin: _.includes(app.Admins, _.toLower(user.attributes.nick)) || user.attributes.admin,
+                admin: _.includes(
+                    app.Admins,
+                    _.toLower(user.attributes.nick),
+                ) || user.attributes.admin,
             };
 
             // Generate the token
@@ -301,10 +303,8 @@ module.exports = async (app) => {
                 message: 'Enjoy your token!',
                 token,
             });
-
         } catch (err) {
             logger.error('Something has gone wrong with user authentication', {
-                user,
                 message: err.message || '',
                 stack: err.stack || '',
             });
@@ -349,7 +349,7 @@ module.exports = async (app) => {
                 return res.json({
                     success: false,
                     message: 'Authentication failed',
-                    code: 503
+                    code: 503,
                 });
             }
             req.userInfo = userInfo;
