@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /**
  * @module bot
  * @author IronY
@@ -58,6 +59,7 @@ class MrNodeBot {
 
         /** Configuration Object */
         const currentConfigPath = configPath || './config';
+        // eslint-disable-next-line import/no-dynamic-require
         this.Config = require(currentConfigPath);
 
         // Fail-safe to prevent against auto-connect
@@ -72,7 +74,7 @@ class MrNodeBot {
         /** Irc Client Instance */
         this._ircClient = require('./lib/ircClient');
 
-        /** Declare command map for readability **/
+        /** Declare command map for readability * */
         this._commandMap = null;
 
         // Dynamically create Collections
@@ -130,6 +132,7 @@ class MrNodeBot {
      * @param err
      * @private
      */
+    // eslint-disable-next-line class-methods-use-this
     _errorHandler(message, err) {
         logger.error(message, {
             err: err.message || '',
@@ -166,11 +169,11 @@ class MrNodeBot {
             // Log Connection
             logger.info('Socket IO Connection Established');
             // Log Message
-            sock.on('message', msg => logger.info(`Socket IO Message: ${msg}`));
+            sock.on('message', (msg) => logger.info(`Socket IO Message: ${msg}`));
             // Log Disconnect
-            sock.on('disconnect', msg => logger.info('Socket IO Disconnection'));
+            sock.on('disconnect', () => logger.info('Socket IO Disconnection'));
             // Log Error
-            sock.on('error', err => this._errorHandler('Socket.IO Error', err));
+            sock.on('error', (err) => this._errorHandler('Socket.IO Error', err));
         });
     }
 
@@ -233,7 +236,7 @@ class MrNodeBot {
             // Handle OnAction
             action: (nick, to, text, message) => ircWrappers.handleAction(nick, to, text, message),
             // Handle On First Line received from IRC Client
-            registered: message => ircWrappers.handleRegistered(message),
+            registered: (message) => ircWrappers.handleRegistered(message),
             // Handle Channel Messages
             'message#': (nick, to, text, message) => ircWrappers.handleCommands(nick, to, text, message),
             // Handle Private Messages
@@ -255,14 +258,14 @@ class MrNodeBot {
                             normalizedText === `you are already logged in as ${normalizedTo}.`) {
                             // You are now identified, join channels
                             let i = 0;
-                            for (const channel of this.Config.irc.channels.filter(x => !this.channels.includes(x))) {
+                            for (const channel of this.Config.irc.channels.filter((x) => !this.channels.includes(x))) {
                                 setTimeout(
                                     () => {
                                         logger.info(`[Identified] Joining ${channel}`);
                                         this._ircClient.join(channel);
                                     },
                                     2 * 1000 * ++i,
-                                )
+                                );
                             }
                         } else ircWrappers.handleAuthenticatedCommands(nick, to, text, message);
                     } else {
@@ -425,13 +428,13 @@ class MrNodeBot {
                     // Build up last updated information, do not await on this and
                     // throw it async so it does not slow down startup
                     (async () => {
-                        const together = await execPromise('git log -1 --format="%cI *|*|* %cn *|*|*  %cE *|*|* %s" -- ' + fullPath);
+                        const together = await execPromise(`git log -1 --format="%cI *|*|* %cn *|*|*  %cE *|*|* %s" -- ${fullPath}`);
 
                         if (together.stderr) {
                             throw new Error('There was an issue getting git information for scripts, git is neither not installed or not present in the PATH');
                         }
 
-                        const togetherArr = together.stdout.split(' *|*|* ').map(x => helpers.StripNewLine(x).trim());
+                        const togetherArr = together.stdout.split(' *|*|* ').map((x) => helpers.StripNewLine(x).trim());
 
                         scriptInfo.info.lastUpdated = {
                             date: moment(helpers.StripNewLine(togetherArr[0]).trim()).fromNow(),
@@ -453,7 +456,6 @@ class MrNodeBot {
                     }
                 }
             } catch (err) {
-
                 logger.error('There was an issue loading a Script', {
                     message: err.message || '',
                     stack: err.stack || '',
@@ -462,12 +464,11 @@ class MrNodeBot {
                 this._errorHandler(t('scripts.error', {
                     path: fullPath,
                 }), err);
-
             }
         };
 
         // Unload Libs
-        _.each(this.LoadedLibraries, lib => MrNodeBot._clearCache(lib));
+        _.each(this.LoadedLibraries, (lib) => MrNodeBot._clearCache(lib));
 
         // Load all files with .js extension
         _(fs.readdirSync(normalizedPath)).each(requireScript);
@@ -518,7 +519,7 @@ class MrNodeBot {
      * @private
      */
     _buildCommandMap() {
-        this._commandMap = Array.from(this.Commands.keys()).map(x => ({ cmd: x }));
+        this._commandMap = Array.from(this.Commands.keys()).map((x) => ({ cmd: x }));
     }
 
     /**
@@ -564,7 +565,7 @@ class MrNodeBot {
             scheduler.clear();
 
             // Unload the scripts
-            this.LoadedScripts.filter(x => _.isFunction(x.info.onUnload)).forEach((x) => {
+            this.LoadedScripts.filter((x) => _.isFunction(x.info.onUnload)).forEach((x) => {
                 logger.info(`Running onUnload for ${x.info.name || x.fullPath}`);
                 x.info.onUnload.call();
             });
@@ -573,7 +574,7 @@ class MrNodeBot {
             this.webRoutes.clearRoutes();
 
             // Clear Dynamic Collections
-            dynCollections.each(v => this[v].clear());
+            dynCollections.each((v) => this[v].clear());
 
             // Clear Loaded Scripts
             this.LoadedScripts = [];
@@ -653,7 +654,6 @@ class MrNodeBot {
         this._ircClient[type](target, msg);
     }
 
-
     /**
      * Say something over IRC
      * @param {string} target Nick / Channel to say it to
@@ -715,7 +715,7 @@ class MrNodeBot {
         logger.info(t('bootstrap.reloadConfig'));
 
         MrNodeBot._clearCache('./config.js');
-        this.Config = require('./config.js');
+        this.Config = require('./config');
         // Assure AutoConnect flag is not reset
         this.Config.irc.autoConnect = false;
     }
