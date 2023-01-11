@@ -62,7 +62,7 @@
     "irc-colors": "^1.5.0",
     "is-promise": "^4.0.0",
     "jsonwebtoken": "^8.5.1",
-    "knex": "^0.95.6",
+    "knex": "^2.4.0",
     "lodash": "^4.17.21",
     "lodash-addons": "^2.0.1",
     "minimist": "^1.2.7",
@@ -87,7 +87,7 @@
     "twit": "^2.2.11",
     "urijs": "^1.19.11",
     "vue-loader": "^15.9.7",
-    "webpack": "^4.44.2",
+    "webpack": "^5.0.0",
     "winston": "^3.8.2",
     "winston-daily-rotate-file": "^4.7.1",
     "x-ray": "^2.3.4"
