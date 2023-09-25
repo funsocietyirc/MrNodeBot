@@ -194,13 +194,16 @@ module.exports = async (app) => {
         });
     }
 
+
+    
+
     // Set up rate limiting for api routes
     if (!_.isUndefined(app.Config.express.rateLimit) &&
         _.isBoolean(app.Config.express.rateLimit.enabled) &&
         app.Config.express.rateLimit.enabled
     ) {
         if (app.Config.express.forwarded) webServer.enable('trust proxy');
-        const rateLimiter = new RateLimit({
+        const rateLimiter = RateLimit({
             windowMs: (app.Config.express.rateLimit.limitInMins || 15) * 60 * 100,
             max: app.Config.express.rateLimit.max || 100,
             delayMs: app.Config.express.rateLimit.delayMs || 0,
