@@ -62,7 +62,7 @@
     "irc-colors": "^1.5.0",
     "is-promise": "^4.0.0",
     "jsonwebtoken": "^8.5.1",
-    "knex": "^2.5.1",
+    "knex": "^2.4.0",
     "lodash": "^4.17.21",
     "lodash-addons": "^2.0.1",
     "minimist": "^1.2.8",
