@@ -4,7 +4,7 @@
   "description": "Your Friendly NodeJS IRC Bot",
   "main": "index.js",
   "scripts": {
-    "start": "node ./index.js",
+    "start": "node --openssl-legacy-provider ./index.js",
     "test": "snyk test && node_modules/mocha/bin/mocha test/**/*.js --reporter spec",
     "test-watch": "./node_modules/mocha/bin/mocha test/**/*.js --reporter spec -w",
     "generate-docs": "node_modules/.bin/jsdoc -c jsdoc.json",
