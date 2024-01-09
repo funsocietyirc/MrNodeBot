@@ -87,7 +87,7 @@
     "twit": "^2.2.11",
     "urijs": "^1.19.11",
     "vue-loader": "^15.9.7",
-    "webpack": "^4.44.2",
+    "webpack": "^5.1.1",
     "winston": "^3.10.0",
     "winston-daily-rotate-file": "^4.7.1",
     "x-ray": "^2.3.4"
