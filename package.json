@@ -30,7 +30,7 @@
     "npm": ">=6.0.0"
   },
   "dependencies": {
-    "@babel/core": "^7.22.20",
+    "@babel/core": "^7.26.10",
     "@babel/preset-env": "^7.22.20",
     "accounting-js": "^1.1.1",
     "app-root-path": "^3.1.0",
@@ -80,7 +80,7 @@
     "request-promise-native": "^1.0.9",
     "rss-parser": "^3.13.0",
     "serve-favicon": "^2.5.0",
-    "shelljs": "^0.8.5",
+    "shelljs": "^0.9.0",
     "snyk": "^1.1226.0",
     "socket.io": "^2.3.0",
     "textmining": "^1.0.3",
