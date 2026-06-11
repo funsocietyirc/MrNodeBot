@@ -63,7 +63,8 @@ module.exports = {
     // User Manager configuration
     userManager: {
         salt: 'samplesalt',
-        keyLength: 64,
+        keyLength: 64, // Legacy scrypt key length; bcryptjs must not use this as cost rounds.
+        bcryptRounds: 10,
     },
     // Socket IO Configuration
     socketIO: {
