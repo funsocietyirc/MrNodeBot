@@ -12,6 +12,13 @@ module.exports = app => {
     // identify with other nicks/hosts
     const register = async (to, from, text, message) => {
         const args = text.split(' ');
+        logger.info('Account Registration Trace: register command received', {
+            from,
+            to,
+            hasEmail: !!args[0],
+            hasPassword: !!args[1],
+            host: message.host || '',
+        });
 
         if (!args[0]) {
             app.say(from, 'A Email is required');
@@ -24,7 +31,17 @@ module.exports = app => {
         }
 
         try {
-            await app._userManager.create(from, args[0], args[1], message.host);
+            logger.info('Account Registration Trace: calling user manager create', {
+                from,
+                email: args[0],
+                host: message.host || '',
+            });
+            const user = await app._userManager.create(from, args[0], args[1], message.host);
+            logger.info('Account Registration Trace: user manager create complete', {
+                from,
+                id: user && user.id ? user.id : '',
+                nick: user && user.get ? user.get('nick') : '',
+            });
             app.say(from, 'Your account has been created');
         } catch (err) {
             // Known MariaDB / MySql duplicate error
@@ -35,7 +52,13 @@ module.exports = app => {
 
             // Log
             logger.error('Account Registration Error', {
-                err,
+                name: err.name || '',
+                message: err.message || '',
+                stack: err.stack || '',
+                code: err.code || '',
+                errno: err.errno || '',
+                sqlMessage: err.sqlMessage || '',
+                sqlState: err.sqlState || '',
             });
 
             // Give back generic error
@@ -47,6 +70,12 @@ module.exports = app => {
      Master Account command, used for delegating to other commands or providing help
      * */
     const account = async (to, from, text, message) => {
+        logger.info('Account Registration Trace: account command received', {
+            from,
+            to,
+            hasText: !!text,
+        });
+
         if (!text) {
             app.say(from, 'Please refer to my help before you tamper with me.');
             return;
@@ -58,6 +87,10 @@ module.exports = app => {
 
         switch (command) {
         case 'register':
+            logger.info('Account Registration Trace: dispatching register subcommand', {
+                from,
+                to,
+            });
             const result = await register(to, from, text.join(' '), message);
             break;
         case 'help':

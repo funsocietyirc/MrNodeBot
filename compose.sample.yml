@@ -1,0 +1,68 @@
+services:
+  mrnodebot-mysql:
+    image: mariadb:11
+    container_name: mrnodebot-mysql
+    restart: unless-stopped
+
+    env_file:
+      - .env
+    
+    healthcheck:
+      test: ["CMD-SHELL", "mariadb-admin ping -h localhost -u root -p$${MYSQL_ROOT_PASSWORD}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 30s
+
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+
+    volumes:
+      - ./data/mysql:/var/lib/mysql
+
+    networks:
+    - mrnodebot_net
+
+  mrnodebot:
+    image: node:18-bullseye
+    container_name: mrnodebot
+    working_dir: /app
+    restart: unless-stopped
+
+    env_file:
+      - .env
+
+    depends_on:
+      mrnodebot-mysql:
+        condition: service_healthy
+
+    volumes:
+      - ./:/app
+      #- ./src:/app
+      #- ./config.js:/app/config.js
+      #- ./data:/app/data
+      #- ./logs:/app/logs
+      #- node_modules:/app/node_modules
+    
+    networks: 
+      - mrnodebot_net
+
+    ports:
+      - "8084:8084"
+
+    command: >
+      bash -c "
+      git config --global --add safe.directory /app &&
+      if [ ! -d node_modules ] || [ -z \"$(ls -A node_modules 2>/dev/null)\" ]; then
+        npm install;
+      fi &&
+      npm start
+      "
+
+volumes:
+  node_modules:
+
+networks: 
+  mrnodebot_net: 
+    external: true

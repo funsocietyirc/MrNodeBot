@@ -1,3 +1,6 @@
+// This file has been modified to depend upon a .env file
+// and to run in a Docker container with compose.yml
+
 module.exports = {
     // Project Config
     project: require('./package.json'),
@@ -62,9 +65,9 @@ module.exports = {
     },
     // User Manager configuration
     userManager: {
-        salt: 'samplesalt',
+        salt: process.env.USER_MANAGER_SALT,
         keyLength: 64, // Legacy scrypt key length; bcryptjs must not use this as cost rounds.
-        bcryptRounds: 10,
+        bcryptRounds: Number.parseInt(process.env.USER_MANAGER_BCRYPT_ROUNDS, 10) || 10,
     },
     // Socket IO Configuration
     socketIO: {
@@ -83,34 +86,36 @@ module.exports = {
     }],
     // Owner configuration
     owner: {
-        nick: 'IronY',
+        nick: process.env.OWNER_NICK,
         host: '',
     },
     // Irc Client Configuration see https://node-irc.readthedocs.io/en/latest/API.html#client
     irc: {
         nick: 'MrNodeBot',
-        server: 'irc.freenode.net',
+        server: 'irc.libera.chat',
         // server: 'irc.dal.net',
         userName: 'MrNodeBot',
         realName: 'MrNodeBot',
-        port: 6665,
+        port: 6697,
         localAddress: null,
-        debug: false,
+        password: process.env.NICKSERV_PASSWORD,
+        debug: true,
         showErrors: true,
         autoRejoin: true,
         channels: [
-            '#MrNodeBot',
+            //'#fsociety',
+            '#MrNodeBot'
         ],
-        secure: false,
+        secure: true,
         selfSigned: false,
         certExpired: false,
         floodProtection: true,
         floodProtectionDelay: 500,
-        sasl: false,
+        sasl: false, //true,
         retryCount: 100,
         retryDelay: 2000,
         stripColors: false,
-        channelPrefixes: '&#',
+        channelPrefixes: '#', //'&#',
         messageSplit: 512,
         encoding: 'utf8',
     },
@@ -118,46 +123,69 @@ module.exports = {
     knex: {
         enabled: true,
         engine: 'mysql',
-        mysql: {
-            client: 'mysql2',
-            connection: {
-                host: '127.0.0.1',
-                user: 'MrNodeBot',
-                password: 'MrNodeBot',
-                database: 'MrNodeBot',
-                charset: 'utf8mb4',
-            },
-        },
         sqlite: {
             client: 'sqlite3',
             database: 'mrnodebot',
             connection: {
-                filename: './data.sqlite',
+                filename: './data/data.sqlite',
             },
         },
+        mysql: {
+            client: 'mysql2',
+            connection: {
+                host: process.env.MYSQL_HOST,
+                user: process.env.MYSQL_USER,
+                password: process.env.MYSQL_PASSWORD,
+                database: process.env.MYSQL_DATABASE,
+                charset: 'utf8mb4',
+            },
+        },
+        mssql: {
+            client: 'mssql',
+            connection: {
+                server: process.env.MSSQL_SERVER,
+                port: process.env.MSSQL_PORT,
+                user: process.env.MSSQL_USER,
+                password: process.env.MSSQL_PASSWORD,
+                database: process.env.MSSQL_DATABASE,
+            }
+        },
     },
+    // pusher: {
+    //     enabled: true,
+    //     config: {
+    //         appId: process.env.PUSHER_APPID, // This comes from https://dashboard.pusher.com/
+    //         key: process.env.PUSHER_KEY,
+    //         secret: process.env.PUSHER_SECRET
+    //     }
+    // },
     // Nickserv configuration options
     nickserv: {
-        password: '',
+        password: process.env.NICKSERV_PASSWORD,
         nick: 'NickServ',
         host: '', // services.dal.net for Dalnet, empty for Freenode
         accCode: '3',
+        authType: 'acc', // either 'status' or 'acc', status for Freenode, acc for libera
     },
     // API Keys
     apiKeys: {
         firebase: {
-            apiKey: '',
-            pageLinkDomain: '',
+            apiKey: process.env.FIREBASE_API_KEY,
+            pageLinkDomain: process.env.FIREBASE_DOMAIN,
         },
         bitly: '',
         omdb: '',
         imgur: {
-            clientId: '',
-            clientSecret: '',
+            clientId: process.env.IMGUR_CLIENT_ID,
+            clientSecret: process.env.IMGUR_CLIENT_SECRET,
         },
-        google: '',
+        google: process.env.GOOGLE_API_KEY, // If this isn't filled in, the url catcher will not function. Comes from https://console.developers.google.com/apis/credentials
         twitter: {
-            enabled: false,
+            enabled: process.env.TWITTER_ENABLED,
+            consumerKey: process.env.TWITTER_CONSUMER_KEY,  // Fill these in from https://apps.twitter.com/
+            consumerSecret: process.env.TWITTER_CONSUMER_SECRET,
+            tokenKey: process.env.TWITTER_TOKEN_KEY,
+            tokenSecret: process.env.TWITTER_TOKEN_SECRET
         },
     },
     // Git Log configuration
@@ -184,11 +212,11 @@ module.exports = {
     },
     // Express Configuration
     express: {
-        port: 8084, // Bind Port
-        address: 'http://127.0.0.1:8084', // Bind address
+        port: process.env.PORT, //8084, // Bind Port
+        address: process.env.BIND_URL, //'http://127.0.0.1:8084', // Bind address
         // https://stackoverflow.com/questions/15771805/how-to-set-socket-io-origins-to-restrict-connections-to-one-url/21711242#21711242
-        allowedOrigins: 'https://www.fsociety.online:*',
-        forwarded: false, // Indiciate the site is behind a Http proxy
+        allowedOrigins: 'https://tzirc.com:*',
+        forwarded: true, // Indiciate the site is behind a Http proxy
         noFollow: true, // Prevent the express routes from being indexed by spiders
         // Rate limiter for routes in the /api/ uir space
         rateLimit: {
@@ -251,7 +279,7 @@ module.exports = {
         },
         urls: {
             // Given User Agent
-            userAgent: 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36',
+            userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36', // Updated 6/10/2026. This being stale can hurt YouTube resolution.
             // Maximum Content Length
             maxLength: 10485760,
             // IRC channels to ignore logging from
@@ -297,15 +325,17 @@ module.exports = {
             ],
         },
         fsociety: {
-            mainChannel: '#MrNodeBot',
+            mainChannel: '#fsociety',
             totalChannels: 0,
             report: false,
             delay: 5, // In seconds,
             additionalChannels: [
+                "#mrrobot",
+                "#MrNodeBot"
                 // '#th3g3ntl3man',
             ],
             greetIgnore: ['#MrNodeBot'],
-            greeterDealy: 20,
+            greeterDelay: 20,
         },
         idleChat: {
             enabled: false,
@@ -330,49 +360,49 @@ module.exports = {
         },
         weather: {},
         countdowns: [
-            {
-                who: 'Mr Robot Season 3',
-                when: new Date(2017, 9, 11, 22, 0, 0, 0), // MomentJS
-                what: [
-                    'is happening in',
-                    'is coming to a screen near you in',
-                    'is hacking all the things in',
-                    'will be brought to you in',
-                    'drops in',
-                    'is hacking your democracy in',
-                ],
-                where: 'USA Network',
-                why: {
-                    irc: {
-                        '#mrrobot': {
-                            announcements: [
-                                {
-                                    year: null,
-                                    month: null,
-                                    date: null,
-                                    dayOfWeek: null,
-                                    hour: 0,
-                                    minute: 0,
-                                    second: 0,
-                                },
-                            ],
-                        },
-                        '#fsociety': {
-                            announcements: [
-                                {
-                                    year: null,
-                                    month: null,
-                                    date: null,
-                                    dayOfWeek: null,
-                                    hour: 0,
-                                    minute: 0,
-                                    second: 0,
-                                },
-                            ],
-                        },
-                    },
-                },
-            },
+            //{
+            //    who: 'Mr Robot Season 3',
+            //    when: new Date(2017, 9, 11, 22, 0, 0, 0), // MomentJS
+            //    what: [
+            //        'is happening in',
+            //        'is coming to a screen near you in',
+            //        'is hacking all the things in',
+            //        'will be brought to you in',
+            //        'drops in',
+            //        'is hacking your democracy in',
+            //    ],
+            //    where: 'USA Network',
+            //    why: {
+            //        irc: {
+            //            '#mrrobot': {
+            //                announcements: [
+            //                    {
+            //                        year: null,
+            //                        month: null,
+            //                        date: null,
+            //                        dayOfWeek: null,
+            //                        hour: 0,
+            //                        minute: 0,
+            //                        second: 0,
+            //                    },
+            //                ],
+            //            },
+            //            '#fsociety': {
+            //                announcements: [
+            //                    {
+            //                        year: null,
+            //                        month: null,
+            //                        date: null,
+            //                        dayOfWeek: null,
+            //                        hour: 0,
+            //                        minute: 0,
+            //                        second: 0,
+            //                    },
+            //                ],
+            //            },
+            //        },
+            //    },
+            //},
         ],
     },
 };
