@@ -154,9 +154,9 @@ module.exports = {
     // pusher: {
     //     enabled: true,
     //     config: {
-    //         appId: '260274', // This comes from https://dashboard.pusher.com/
-    //         key: 'ebb7ef5b6e5092256ffe',
-    //         secret: 'a58f2bfb1c7c6d4caa98'
+    //         appId: process.env.PUSHER_APPID, // This comes from https://dashboard.pusher.com/
+    //         key: process.env.PUSHER_KEY,
+    //         secret: process.env.PUSHER_SECRET
     //     }
     // },
     // Nickserv configuration options
